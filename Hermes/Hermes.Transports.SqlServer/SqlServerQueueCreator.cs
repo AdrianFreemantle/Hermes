@@ -5,14 +5,6 @@ namespace Hermes.Transports.SqlServer
 {
     public class SqlServerQueueCreator : ICreateQueues
     {
-        private readonly string connectionString;
-
-        public SqlServerQueueCreator(string connectionString)
-        {
-            Mandate.ParameterNotNullOrEmpty(connectionString, "connectionString");
-            this.connectionString = connectionString;
-        }
-
         const string createQueueSql =
             @"IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[@queue]') AND type in (N'U'))
                   BEGIN
@@ -33,6 +25,14 @@ namespace Hermes.Transports.SqlServer
                     )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
                     
                   END";
+
+        private readonly string connectionString;
+
+        public SqlServerQueueCreator(string connectionString)
+        {
+            Mandate.ParameterNotNullOrEmpty(connectionString, "connectionString");
+            this.connectionString = connectionString;
+        }
 
         public void CreateQueueIfNecessary(Address address, string account)
         {

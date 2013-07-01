@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes", "Hermes\Hermes.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Transports.SqlServer", "Hermes.Transports.SqlServer\Hermes.Transports.SqlServer.csproj", "{78488204-E7C2-4F75-B74A-6BFFEAC3F337}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Serialization.Json", "Hermes.Serialization.Json\Hermes.Serialization.Json.csproj", "{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{78488204-E7C2-4F75-B74A-6BFFEAC3F337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78488204-E7C2-4F75-B74A-6BFFEAC3F337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78488204-E7C2-4F75-B74A-6BFFEAC3F337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

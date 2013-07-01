@@ -2,22 +2,28 @@
 using System.Data.SqlClient;
 using System.Threading;
 
+using Hermes.Serialization;
+
 namespace Hermes.Transports.SqlServer
 {
     public class SqlServerMessageSender : ISendMessages, IDisposable
     {
-        private const string SqlSend =
-            @"INSERT INTO [{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
-                                    VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
+        private const string SqlSend = @"INSERT INTO [{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
+                                         VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
 
-        private readonly ISerialize serializer;
+        private readonly ISerializeMessages serializer;
         private readonly ThreadLocal<SqlTransaction> currentTransaction = new ThreadLocal<SqlTransaction>();
         
         private bool disposed;
 
-        public SqlServerMessageSender(ISerialize serializer)
+        public SqlServerMessageSender(ISerializeMessages serializer)
         {
             this.serializer = serializer;
+        }
+
+        ~SqlServerMessageSender()
+        {
+            Dispose(false);
         }
 
         public void Send(EnvelopeMessage message, Address address)
@@ -49,11 +55,6 @@ namespace Hermes.Transports.SqlServer
             }
 
             disposed = true;
-        }
-
-        ~SqlServerMessageSender()
-        {
-            Dispose(false);
         }
     }
 }
