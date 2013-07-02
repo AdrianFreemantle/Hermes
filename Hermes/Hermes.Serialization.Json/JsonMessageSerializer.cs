@@ -37,11 +37,12 @@ namespace Hermes.Serialization.Json
             jsonWriter.Flush();
         }
 
-        public virtual object[] Deserialize(Stream stream, IList<Type> messageTypes = null)
+        public virtual object[] Deserialize(Stream stream)
         {
             JsonSerializer jsonSerializer = JsonSerializer.Create(serializerSettings);
 
             var reader = CreateJsonReader(stream);
+            reader.Read();
             var firstTokenType = reader.TokenType;
 
             if (firstTokenType == JsonToken.StartArray)
@@ -49,7 +50,7 @@ namespace Hermes.Serialization.Json
                 return jsonSerializer.Deserialize<object[]>(reader);
             }
             
-            return new[] { jsonSerializer.Deserialize<object>(reader) };
+            return new[] { jsonSerializer.Deserialize<object>(reader)};
         }
 
         protected virtual JsonWriter CreateJsonWriter(Stream stream)
