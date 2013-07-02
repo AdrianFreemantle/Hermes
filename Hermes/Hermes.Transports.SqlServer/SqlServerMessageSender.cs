@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading;
 
 using Hermes.Serialization;
 
@@ -12,14 +11,14 @@ namespace Hermes.Transports.SqlServer
         private const string SqlSend = @"INSERT INTO [@queue] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
                                          VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
 
-        private readonly ISerializeMessages serializer;
+        private readonly ISerializeObjects objectSerializer;
         private bool disposed;
 
         public string ConnectionString { get; set; }
 
-        public SqlServerMessageSender(ISerializeMessages serializer)
+        public SqlServerMessageSender(ISerializeObjects objectSerializer)
         {
-            this.serializer = serializer;
+            this.objectSerializer = objectSerializer;
         }
 
         ~SqlServerMessageSender()
@@ -40,9 +39,9 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        private static SqlCommand BuildSendCommand(EnvelopeMessage message, Address address, SqlConnection connection)
+        private SqlCommand BuildSendCommand(EnvelopeMessage message, Address address, SqlConnection connection)
         {
-            var command = new SqlCommand(string.Format(SqlSend, address.Queue), connection)
+            var command = new SqlCommand(SqlSend, connection)
             {
                 CommandType = CommandType.Text
             };
@@ -52,16 +51,16 @@ namespace Hermes.Transports.SqlServer
             command.Parameters.AddWithValue("@CorrelationId", message.CorrelationId);
             command.Parameters.AddWithValue("@ReplyToAddress", message.ReturnAddress.ToString());
             command.Parameters.AddWithValue("@Recoverable", message.Recoverable);
-            //command.Parameters.AddWithValue("@Headers", serializer.se message.Headers);
-            command.Parameters.AddWithValue("@Body", message.MessageId);
+            command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(message.Headers));
+            command.Parameters.AddWithValue("Body", message.Body);
 
-            if (message.TimeToLive == TimeSpan.MaxValue)
+            if (message.HasExpiryTime)
             {
-                command.Parameters.AddWithValue("Expires", DBNull.Value);
+                command.Parameters.AddWithValue("Expires", message.ExpiryTime);
             }
             else
             {
-                command.Parameters.AddWithValue("Expires", DateTime.UtcNow.Add(message.TimeToLive));
+                command.Parameters.AddWithValue("Expires", DBNull.Value);
             }
 
             return command;

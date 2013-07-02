@@ -20,7 +20,7 @@ namespace Hermes
         private readonly IDictionary<string, string> headers;
 
         [DataMember(Order = 5, EmitDefaultValue = false, IsRequired = false)]
-        private readonly object[] messages;
+        private readonly byte[] body;
 
         [IgnoreDataMember]
         private readonly TimeSpan timeToLive;
@@ -53,14 +53,6 @@ namespace Hermes
         }
 
         /// <summary>
-        /// Gets the maximum amount of time the message will live prior to successful receipt.
-        /// </summary>
-        public TimeSpan TimeToLive
-        {
-            get { return timeToLive; }
-        }
-
-        /// <summary>
         /// Gets a value indicating whether the message is durably stored.
         /// </summary>
         public bool Recoverable
@@ -79,9 +71,24 @@ namespace Hermes
         /// <summary>
         /// Gets the collection of dispatched logical messages.
         /// </summary>
-        public ICollection<object> Messages
+        public byte[] Body
         {
-            get { return messages; }
+            get { return body; }
+        }
+
+        public DateTime ExpiryTime
+        {
+            get
+            {
+                return timeToLive == TimeSpan.MaxValue
+                   ? DateTime.MaxValue
+                   : DateTime.UtcNow.Add(timeToLive);
+            }
+        }
+
+        public bool HasExpiryTime
+        {
+            get { return timeToLive != TimeSpan.MaxValue; }
         }
 
         /// <summary>
@@ -99,21 +106,21 @@ namespace Hermes
         /// <param name="timeToLive">The maximum amount of time the message will live prior to successful receipt.</param>
         /// <param name="recoverable">A value indicating whether the message is durably stored.</param>
         /// <param name="headers">The message headers which contain additional metadata about the logical messages.</param>
-        /// <param name="messages">The collection of dispatched logical messages.</param>
+        /// <param name="body">The collection of dispatched logical messages.</param>
         public EnvelopeMessage(
             Guid messageId,
             Address returnAddress,
             TimeSpan timeToLive,
             bool recoverable,
             IDictionary<string, string> headers,
-            params object[] messages)
+            byte[] body)
         {
             this.messageId = messageId;
             this.returnAddress = returnAddress;
             this.timeToLive = timeToLive;
             this.recoverable = recoverable;
             this.headers = headers ?? new Dictionary<string, string>();
-            this.messages = messages;
-        }
+            this.body = body;
+        }        
     }
 }

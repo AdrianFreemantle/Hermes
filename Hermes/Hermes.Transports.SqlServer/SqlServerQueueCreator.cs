@@ -26,17 +26,11 @@ namespace Hermes.Transports.SqlServer
                     
                   END";
 
-        private readonly string connectionString;
-
-        public SqlServerQueueCreator(string connectionString)
-        {
-            Mandate.ParameterNotNullOrEmpty(connectionString, "connectionString");
-            this.connectionString = connectionString;
-        }
+        public string ConnectionString { get; set; }
 
         public void CreateQueueIfNecessary(Address address, string account)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
 
