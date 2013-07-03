@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
-{   
+{
     public class SqlServerMessageSender : ISendMessages, IDisposable
     {
         private const string SqlSend = @"INSERT INTO [@queue] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
@@ -28,23 +28,19 @@ namespace Hermes.Transports.SqlServer
 
         public void Send(EnvelopeMessage message, Address address)
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var transactionalConnection = new TransactionalSqlConnection(ConnectionString))
             {
-                connection.Open();
-
-                using (var command = BuildSendCommand(message, address, connection))
+                using (var command = BuildSendCommand(transactionalConnection, message, address))
                 {
                     command.ExecuteNonQuery();
                 }
             }
         }
 
-        private SqlCommand BuildSendCommand(EnvelopeMessage message, Address address, SqlConnection connection)
+        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, EnvelopeMessage message, Address address)
         {
-            var command = new SqlCommand(SqlSend, connection)
-            {
-                CommandType = CommandType.Text
-            };
+            var command = connection.BuildCommand(SqlSend);
+            command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@queue", address.Queue);
             command.Parameters.AddWithValue("@Id", message.MessageId);
