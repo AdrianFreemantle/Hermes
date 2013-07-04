@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Hermes
 {
     [DataContract]
-    public class EnvelopeMessage 
+    public class MessageEnvelope 
     {
         [DataMember(Order = 1, EmitDefaultValue = false, IsRequired = false)]
         private readonly Guid messageId;
@@ -94,7 +94,7 @@ namespace Hermes
         /// <summary>
         /// Initializes a new instance of the EnvelopeMessage class.
         /// </summary>
-        protected EnvelopeMessage()
+        protected MessageEnvelope()
         {
         }
 
@@ -107,7 +107,7 @@ namespace Hermes
         /// <param name="recoverable">A value indicating whether the message is durably stored.</param>
         /// <param name="headers">The message headers which contain additional metadata about the logical messages.</param>
         /// <param name="body">The collection of dispatched logical messages.</param>
-        public EnvelopeMessage(
+        public MessageEnvelope(
             Guid messageId,
             Address returnAddress,
             TimeSpan timeToLive,

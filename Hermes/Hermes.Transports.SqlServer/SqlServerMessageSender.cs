@@ -26,7 +26,7 @@ namespace Hermes.Transports.SqlServer
             Dispose(false);
         }
 
-        public void Send(EnvelopeMessage message, Address address)
+        public void Send(MessageEnvelope message, Address address)
         {
             using (var transactionalConnection = new TransactionalSqlConnection(ConnectionString))
             {
@@ -37,7 +37,7 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, EnvelopeMessage message, Address address)
+        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, MessageEnvelope message, Address address)
         {
             var command = connection.BuildCommand(SqlSend);
             command.CommandType = CommandType.Text;

@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace Hermes.Transports.SqlServer
 {
-    public class SqlMessageDequeueStrategy : IDequeueSqlMessage
+    public class SqlMessageDequeueStrategy : IMessageDequeueStrategy
     {
         private readonly string connectionString;
 
@@ -19,7 +19,7 @@ namespace Hermes.Transports.SqlServer
             this.connectionString = connectionString;
         }
       
-        public void Dequeue(Func<EnvelopeMessage, TransactionalSqlConnection, bool> tryProcessMessage)
+        public void Dequeue(Func<MessageEnvelope, bool> tryProcessMessage)
         {
             using (var transactionalConnection = new TransactionalSqlConnection(connectionString))
             {
@@ -30,13 +30,13 @@ namespace Hermes.Transports.SqlServer
             }           
         }
 
-        private void TryDequeue(Func<EnvelopeMessage, TransactionalSqlConnection, bool> tryProcessMessage, SqlCommand command, TransactionalSqlConnection transactionalConnection)
+        private void TryDequeue(Func<MessageEnvelope, bool> tryProcessMessage, SqlCommand command, TransactionalSqlConnection transactionalConnection)
         {
             try
             {
                 var message = ExecuteCommand(command);
 
-                if (tryProcessMessage(message, transactionalConnection))
+                if (tryProcessMessage(message))
                 {
                     transactionalConnection.Commit();
                 }
@@ -52,7 +52,7 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        EnvelopeMessage ExecuteCommand(SqlCommand command)
+        MessageEnvelope ExecuteCommand(SqlCommand command)
         {
             return null;
         }

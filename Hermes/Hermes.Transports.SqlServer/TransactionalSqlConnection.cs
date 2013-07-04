@@ -9,21 +9,21 @@ namespace Hermes.Transports.SqlServer
     {
         private readonly SqlConnection connection;
         private readonly SqlTransaction transaction;
-        private readonly TransactionScope scope;
+        //private readonly TransactionScope scope;
         private bool disposed;
 
         public TransactionalSqlConnection(string connectionString)
         {
-            scope = new TransactionScope(TransactionScopeOption.Required);
+            //scope = new TransactionScope(TransactionScopeOption.Required);
             connection = new SqlConnection(connectionString);
             connection.Open();
-            transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+            //transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
         public void Commit()
         {
             transaction.Commit();
-            scope.Complete();
+            //scope.Complete();
         }
 
         public void Rollback()
@@ -61,7 +61,7 @@ namespace Hermes.Transports.SqlServer
             {
                 transaction.Dispose();
                 connection.Dispose();
-                scope.Dispose();
+                //scope.Dispose();
             }
 
             disposed = true;

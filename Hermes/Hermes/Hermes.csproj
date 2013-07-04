@@ -41,6 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="Messages\IHandleMessage.cs" />
+    <Compile Include="Messages\ICommand.cs" />
+    <Compile Include="Messages\IEvent.cs" />
+    <Compile Include="Messages\IMessage.cs" />
     <Compile Include="Serialization\ISerializeMessages.cs" />
     <Compile Include="MessageEnvelope.cs" />
     <Compile Include="IdentityFactory.cs" />
@@ -50,6 +54,7 @@
     <Compile Include="RuntimeEnvironment.cs" />
     <Compile Include="Serialization\ISerializeObjects.cs" />
     <Compile Include="Serialization\MessageSerializationBinder.cs" />
+    <Compile Include="Transports\IProcessMessage.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\ICreateQueues.cs" />
     <Compile Include="Transports\IDequeueMessages.cs" />

@@ -34,7 +34,7 @@ namespace Hermes.Transports
         /// </summary>
         /// <param name="message">The message to be sent.</param>
         /// <param name="recipients">The set of addresses for the interested recipients.</param>
-        void Send(EnvelopeMessage message, params Address[] recipients);
+        void Send(MessageEnvelope message, params Address[] recipients);
 
         /// <summary>
         /// Gets the maximum concurrency level this <see cref="ITransportMessages"/> is able to support.

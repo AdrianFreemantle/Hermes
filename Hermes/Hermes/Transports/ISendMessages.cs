@@ -14,6 +14,6 @@
         /// </summary>
         /// <param name="message"><see cref="TransportMessage"/> to send.</param>
         /// <param name="address">Destination <see cref="Address"/>.</param>
-        void Send(EnvelopeMessage message, Address address);
+        void Send(MessageEnvelope message, Address address);
     }
 }
