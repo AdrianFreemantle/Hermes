@@ -1,10 +1,15 @@
 ﻿using System.Transactions;
 
-namespace Hermes.Transports.SqlServer
+namespace Hermes
 {
     public class TransactionScopeUtils
     {
         public static TransactionScope Begin()
+        {
+            return Begin(TransactionScopeOption.Required);
+        }
+
+        public static TransactionScope Begin(TransactionScopeOption scopeOption)
         {
             var transactionOptions = new TransactionOptions
             {
@@ -12,7 +17,7 @@ namespace Hermes.Transports.SqlServer
                 Timeout = TransactionManager.MaximumTimeout
             };
 
-            return new TransactionScope(TransactionScopeOption.Required, transactionOptions);
+            return new TransactionScope(scopeOption, transactionOptions);
         }
     }
 }

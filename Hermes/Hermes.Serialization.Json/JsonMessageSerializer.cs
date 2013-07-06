@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
@@ -6,10 +7,11 @@ using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Hermes.Serialization.Json
 {
-    public class JsonMessageSerializer : ISerializeMessages
+  public class JsonMessageSerializer : ISerializeMessages
     {
         private readonly Encoding encoding = Encoding.UTF8;
 

@@ -12,7 +12,7 @@
         /// <summary>
         /// Starts the receipt of messages.
         /// </summary>
-        void Start();
+        void Start(Address queueAddress);
 
         /// <summary>
         /// Stops receiving new messages.

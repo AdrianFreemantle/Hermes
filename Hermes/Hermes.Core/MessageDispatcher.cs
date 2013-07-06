@@ -1,38 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hermes.Messages;
-using Hermes.Transports;
-using Microsoft.Practices.ServiceLocation;
+using System.Linq;
+
+using Hermes.Messages.Attributes;
 
 namespace Hermes.Core
 {
     public class MessageDispatcher : IDispatchMessagesToHandlers
     {
-        private readonly IServiceLocator serviceLocator;
+        private readonly IBuildMessageHandlers handlerFactory;
 
-        public MessageDispatcher(IServiceLocator serviceLocator)
+        public MessageDispatcher(IBuildMessageHandlers handlerFactory)
         {
-            this.serviceLocator = serviceLocator;
+            this.handlerFactory = handlerFactory;
         }
 
         public void DispatchToHandlers(object message)
         {
-            Type handlerGenericType = typeof(IHandleMessage<>);
-            Type handlerType = handlerGenericType.MakeGenericType(new[] { message.GetType() });
-            IEnumerable<object> handlers = serviceLocator.GetAllInstances(handlerType);
+            Console.WriteLine("{1}: Dispatching message {0}", message.GetType(), System.Threading.Thread.CurrentThread.ManagedThreadId);
 
-            foreach (var handler in handlers)
+            var handlers = handlerFactory.GetMessageHandlers(message.GetType());
+            var attribute = GetRetryAttribute(message);
+
+            if (attribute == null)
             {
-                ((dynamic)handler).Handle((dynamic)message);
+                DispatchMessage(message, handlers);
+            }
+            else
+            {
+                DispatchMessageWithRetry(message, handlers, attribute);
             }
         }
 
-        public void DispatchToHandlers(IEnumerable<object> messages)
+        private static RetryAttribute GetRetryAttribute(object message)
         {
-            foreach (var message in messages)
+            return Attribute.GetCustomAttributes(message.GetType())
+                                     .FirstOrDefault(a => a is RetryAttribute) as RetryAttribute;
+        }
+
+        private static void DispatchMessage(object message, IEnumerable<object> handlers)
+        {
+            foreach (var handler in handlers)
             {
-                DispatchToHandlers(message);
+                RouteMessageToHandleMethod(message, handler);
             }
+        }
+
+        private static void DispatchMessageWithRetry(object message, IEnumerable<object> handlers, RetryAttribute attribute)
+        {
+            foreach (var handler in handlers)
+            {
+                Action<Exception> onError = ex => Console.WriteLine("Retrying message after error: {0}", ex.Message);
+                var dispatch = new Action(() => RouteMessageToHandleMethod(message, handler));
+                Retry.Action(dispatch, onError, attribute.RetryCount, attribute.RetryMilliseconds);
+            }
+        }
+
+        private static void RouteMessageToHandleMethod(object message, object handler)
+        {
+            ((dynamic)handler).Handle((dynamic)message);
         }
     }
 }

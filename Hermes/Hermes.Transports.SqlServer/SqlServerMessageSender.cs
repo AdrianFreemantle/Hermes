@@ -6,49 +6,52 @@ using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
 {
-    public class SqlServerMessageSender : ISendMessages, IDisposable
+    public class SqlServerMessageSender : ISendMessages
     {
-        private const string SqlSend = @"INSERT INTO [@queue] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
+        private const string SqlSend = @"INSERT INTO [{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
                                          VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
 
         private readonly ISerializeObjects objectSerializer;
-        private bool disposed;
-
-        public string ConnectionString { get; set; }
+        private readonly string connectionString;
 
         public SqlServerMessageSender(ISerializeObjects objectSerializer)
         {
             this.objectSerializer = objectSerializer;
-        }
-
-        ~SqlServerMessageSender()
-        {
-            Dispose(false);
+            connectionString = Configuration.GetSetting<string>(Configuration.ConnectionString);
         }
 
         public void Send(MessageEnvelope message, Address address)
         {
-            using (var transactionalConnection = TransactionalSqlConnection.Begin(ConnectionString))
+            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
             {
                 using (var command = BuildSendCommand(transactionalConnection, message, address))
                 {
                     command.ExecuteNonQuery();
                 }
+
+                transactionalConnection.Commit();
             }
         }
 
         private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, MessageEnvelope message, Address address)
         {
-            var command = connection.BuildCommand(SqlSend);
+            var command = connection.BuildCommand(String.Format(SqlSend, address.Queue));
             command.CommandType = CommandType.Text;
 
-            command.Parameters.AddWithValue("@queue", address.Queue);
             command.Parameters.AddWithValue("@Id", message.MessageId);
-            command.Parameters.AddWithValue("@CorrelationId", message.CorrelationId);
             command.Parameters.AddWithValue("@ReplyToAddress", message.ReplyToAddress.ToString());
             command.Parameters.AddWithValue("@Recoverable", message.Recoverable);
             command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(message.Headers));
             command.Parameters.AddWithValue("Body", message.Body);
+
+            if (message.CorrelationId != Guid.Empty)
+            {
+                command.Parameters.AddWithValue("@CorrelationId", message.CorrelationId);
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@CorrelationId", DBNull.Value);
+            }
 
             if (message.HasExpiryTime)
             {
@@ -60,31 +63,6 @@ namespace Hermes.Transports.SqlServer
             }
 
             return command;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                // Dispose managed resources.
-                //currentTransaction.Dispose();
-            }
-
-            disposed = true;
         }
     }
 }

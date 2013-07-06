@@ -1,30 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Transactions;
+
 using Hermes.Serialization;
-using Hermes.Transports;
 
 namespace Hermes.Core
 {
-    public class MessageProcessor : IProcessMessage
+    public class MessageProcessor : IProcessMessages
     {
         private readonly ISerializeMessages messageSerializer;
-        private readonly IDispatchMessagesToHandlers messageDispatcher;
+        private readonly IObjectBuilder objectBuilder;
 
-        public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher)
+        public MessageProcessor(ISerializeMessages messageSerializer, IObjectBuilder objectBuilder)
         {
             this.messageSerializer = messageSerializer;
-            this.messageDispatcher = messageDispatcher;
+            this.objectBuilder = objectBuilder;
         }
 
-        public bool Process(MessageEnvelope envelope)
+        public void Process(MessageEnvelope envelope)
         {
             var messages = ExtractMessages(envelope);
-            messageDispatcher.DispatchToHandlers(messages);
 
-            return true;
+            try
+            {
+                using(var childBuilder = objectBuilder.BeginLifetimeScope())
+                using(var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Suppress))
+                {
+                    var messageDispatcher = childBuilder.GetInstance<IDispatchMessagesToHandlers>();
+                    
+                    foreach (var message in messages)
+                    {
+                        messageDispatcher.DispatchToHandlers(message);
+                    }
+                    //commit all units of work
+                    scope.Complete();
+                }
+            }
+            catch(Exception ex)
+            {
+                //logg exception 
+                //rollback all units of work
+                throw new MessageProcessingFailedException(envelope, ex);
+            }
         }
 
         private IEnumerable<object> ExtractMessages(MessageEnvelope envelope)

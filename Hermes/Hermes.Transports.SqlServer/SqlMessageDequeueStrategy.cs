@@ -10,51 +10,27 @@ namespace Hermes.Transports.SqlServer
     public class SqlMessageDequeueStrategy : IMessageDequeueStrategy
     {
         private readonly string connectionString;
-        private readonly ISerializeObjects objectSerializer;        
+        private readonly ISerializeObjects objectSerializer;
 
         private const string SqlReceive =
-            @"WITH message AS (SELECT TOP(1) * FROM [@queue] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
+            @"WITH message AS (SELECT TOP(1) * FROM [{0}] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
             DELETE FROM message 
             OUTPUT deleted.Id, deleted.CorrelationId, deleted.ReplyToAddress, 
             deleted.Recoverable, deleted.Expires, deleted.Headers, deleted.Body;";
 
-        public SqlMessageDequeueStrategy(string connectionString, ISerializeObjects objectSerializer)
+        public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
-            this.connectionString = connectionString;
+            connectionString = Configuration.GetSetting<string>(Configuration.ConnectionString);
             this.objectSerializer = objectSerializer;
         }
 
-        public void Dequeue(Address address, Func<MessageEnvelope, bool> processMessage)
+        public MessageEnvelope Dequeue(Address address)
         {
             using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
-            using (var command = transactionalConnection.BuildCommand(SqlReceive, new SqlParameter("@queue", address.Queue)))
+            using (var command = transactionalConnection.BuildCommand(String.Format(SqlReceive, address.Queue)))
             {
-                
-                var message = FetchNextMessage(command);
-
-                if (message == MessageEnvelope.Undefined)
-                {
-                    transactionalConnection.Commit();
-                    return;
-                }
-
-                TryProcessMessage(processMessage, message);
                 transactionalConnection.Commit();
-            }
-        }
-
-        private static void TryProcessMessage(Func<MessageEnvelope, bool> processMessage, MessageEnvelope messageEnvelope)
-        {
-            try
-            {
-                if (!processMessage(messageEnvelope))
-                {
-                    throw new MessageProcessingFailedException(messageEnvelope);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new MessageProcessingFailedException(messageEnvelope, ex);
+                return FetchNextMessage(command);
             }
         }
 
@@ -72,7 +48,7 @@ namespace Hermes.Transports.SqlServer
                     }
 
                     var messageId = dataReader.GetGuid(0);
-                    var correlationId = dataReader.GetGuid(1);
+                    var correlationId = dataReader.IsDBNull(1) ? Guid.Empty : dataReader.GetGuid(1);
                     var replyToAddress = dataReader.IsDBNull(2) ? null : Address.Parse(dataReader.GetString(2));
                     var recoverable = dataReader.GetBoolean(3);
                     var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(5));

@@ -32,7 +32,7 @@ namespace Hermes
         /// <summary>
         /// Undefined address.
         /// </summary>
-        public static readonly Address Undefined = new Address(String.Empty, String.Empty);
+        public static readonly Address Undefined = new Address("__UNDEFINED__", String.Empty);
 
         /// <summary>
         /// Self address.
