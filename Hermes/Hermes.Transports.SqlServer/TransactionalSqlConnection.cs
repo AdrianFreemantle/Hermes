@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
-using System.Transactions;
-using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Hermes.Transports.SqlServer
 {
@@ -9,31 +8,50 @@ namespace Hermes.Transports.SqlServer
     {
         private readonly SqlConnection connection;
         private readonly SqlTransaction transaction;
-        //private readonly TransactionScope scope;
         private bool disposed;
 
-        public TransactionalSqlConnection(string connectionString)
+        private TransactionalSqlConnection(string connectionString, IsolationLevel isolationLevel)
         {
-            //scope = new TransactionScope(TransactionScopeOption.Required);
             connection = new SqlConnection(connectionString);
             connection.Open();
-            //transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+            transaction = connection.BeginTransaction(isolationLevel);
+        }
+
+        public static TransactionalSqlConnection Begin(string connectionString)
+        {
+            return new TransactionalSqlConnection(connectionString, IsolationLevel.ReadCommitted);
+        }
+
+        public static TransactionalSqlConnection Begin(string connectionString, IsolationLevel isolationLevel)
+        {
+            return new TransactionalSqlConnection(connectionString, isolationLevel);
         }
 
         public void Commit()
         {
             transaction.Commit();
-            //scope.Complete();
         }
 
         public void Rollback()
         {
-            transaction.Rollback();   
+            transaction.Rollback();
         }
 
-        public SqlCommand BuildCommand(string sql)
+        public SqlCommand BuildCommand(string sql, params SqlParameter[] parameters)
         {
-            return new SqlCommand(sql, connection, transaction);
+            return BuildCommand(sql, CommandType.Text, parameters);
+        }
+
+        public SqlCommand BuildCommand(string sql, CommandType commandType, params SqlParameter[] parameters)
+        {
+            var command = new SqlCommand(sql, connection, transaction) {CommandType = commandType};
+
+            foreach (var sqlParameter in parameters)
+            {
+                command.Parameters.Add(sqlParameter);
+            }
+
+            return command;
         }
 
         ~TransactionalSqlConnection()
@@ -61,7 +79,6 @@ namespace Hermes.Transports.SqlServer
             {
                 transaction.Dispose();
                 connection.Dispose();
-                //scope.Dispose();
             }
 
             disposed = true;

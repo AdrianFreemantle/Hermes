@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="MessageProcessingFailedException.cs" />
     <Compile Include="Messages\IHandleMessage.cs" />
     <Compile Include="Messages\ICommand.cs" />
     <Compile Include="Messages\IEvent.cs" />

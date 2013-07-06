@@ -4,6 +4,6 @@ namespace Hermes.Transports.SqlServer
 {
     public interface IMessageDequeueStrategy
     {
-        void Dequeue(Func<MessageEnvelope, bool> tryProcessMessage);
+        void Dequeue(Address address, Func<MessageEnvelope, bool> processMessage);
     }
 }

@@ -28,7 +28,7 @@ namespace Hermes.Transports.SqlServer
 
         public void Send(MessageEnvelope message, Address address)
         {
-            using (var transactionalConnection = new TransactionalSqlConnection(ConnectionString))
+            using (var transactionalConnection = TransactionalSqlConnection.Begin(ConnectionString))
             {
                 using (var command = BuildSendCommand(transactionalConnection, message, address))
                 {
@@ -45,7 +45,7 @@ namespace Hermes.Transports.SqlServer
             command.Parameters.AddWithValue("@queue", address.Queue);
             command.Parameters.AddWithValue("@Id", message.MessageId);
             command.Parameters.AddWithValue("@CorrelationId", message.CorrelationId);
-            command.Parameters.AddWithValue("@ReplyToAddress", message.ReturnAddress.ToString());
+            command.Parameters.AddWithValue("@ReplyToAddress", message.ReplyToAddress.ToString());
             command.Parameters.AddWithValue("@Recoverable", message.Recoverable);
             command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(message.Headers));
             command.Parameters.AddWithValue("Body", message.Body);
