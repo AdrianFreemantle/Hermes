@@ -11,13 +11,12 @@ namespace Hermes.ObjectBuilder.Autofac
 {   
     public class AutofacServiceAdapter : ServiceLocatorImplBase, IObjectBuilder
     {
-        private readonly ContainerBuilder builder;
-        private ILifetimeScope lifetimeScope;
+        public ILifetimeScope lifetimeScope { get; set; }
         private bool disposed;
 
-        public AutofacServiceAdapter(ContainerBuilder builder)
+        public AutofacServiceAdapter()
         {
-            this.builder = builder;
+            
         }
 
         public AutofacServiceAdapter(ILifetimeScope lifetimeScope)
@@ -35,22 +34,12 @@ namespace Hermes.ObjectBuilder.Autofac
             Dispose(false);
         }
 
-        private void BuildContiner()
-        {
-            if (builder != null && lifetimeScope == null)
-            {
-                lifetimeScope = builder.Build();
-            }
-        }
-
         protected override object DoGetInstance(Type serviceType, string key)
         {
             if (serviceType == null)
             {
                 throw new ArgumentNullException("serviceType");
             }
-
-            BuildContiner();
 
             return key != null
                 ? lifetimeScope.ResolveNamed(key, serviceType)
@@ -63,8 +52,6 @@ namespace Hermes.ObjectBuilder.Autofac
             {
                 throw new ArgumentNullException("serviceType");
             }
-
-            BuildContiner();
 
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             object instance = lifetimeScope.Resolve(enumerableType);
@@ -95,7 +82,6 @@ namespace Hermes.ObjectBuilder.Autofac
 
         public IObjectBuilder BeginLifetimeScope()
         {
-            BuildContiner();
             return new AutofacServiceAdapter(lifetimeScope.BeginLifetimeScope());
         }
     }

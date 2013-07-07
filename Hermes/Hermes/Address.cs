@@ -20,12 +20,12 @@ namespace Hermes
         private readonly string machine;
 
         /// <summary>
-        /// The (lowercase) name of the queue not including the name of the machine or location depending on the address mode.
+        /// The name of the queue not including the name of the machine or location depending on the address mode.
         /// </summary>
         public string Queue { get { return queue; } }
 
         /// <summary>
-        /// The (lowercase) name of the machine or the (normal) name of the location depending on the address mode.
+        /// The  name of the machine or the (normal) name of the location depending on the address mode.
         /// </summary>
         public string Machine { get { return machine; } }
 
@@ -47,9 +47,9 @@ namespace Hermes
         public Address(string queueName, string machineName)
         {
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName", "Invalid queue name specified");
-            queue = queueName.ToLower();
+            queue = queueName;
             machine = machineName ?? RuntimeEnvironment.MachineName;
-            machine = Machine.ToLower();
+            machine = Machine;
         }
 
         /// <summary>

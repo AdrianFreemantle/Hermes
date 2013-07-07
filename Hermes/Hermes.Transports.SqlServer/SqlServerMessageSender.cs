@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
+using Hermes.Configuration;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
@@ -17,7 +18,7 @@ namespace Hermes.Transports.SqlServer
         public SqlServerMessageSender(ISerializeObjects objectSerializer)
         {
             this.objectSerializer = objectSerializer;
-            connectionString = Configuration.GetSetting<string>(Configuration.ConnectionString);
+            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
         }
 
         public void Send(MessageEnvelope message, Address address)

@@ -5,54 +5,27 @@ using System.Security.Authentication;
 
 using Autofac;
 
+using Hermes.Configuration;
 using Hermes.Core;
 using Hermes.Messages;
-using Hermes.Messages.Attributes;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization;
 using Hermes.Serialization.Json;
 using Hermes.Transports;
 using Hermes.Transports.SqlServer;
 
-using Microsoft.Practices.ServiceLocation;
-
 namespace Hermes.Shell
 {
     class Program
     {
         private const string connection = @"Data Source=CHANDRA\SQLEXPRESS;Initial Catalog=AsbaBank;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        static Address testQueue;
 
         static void Main(string[] args)
         {
-            Configuration.AddSetting(Configuration.ConnectionString, connection);
+            Initialize();
 
-            var builder = new ContainerBuilder();
-            var autofacServiceAdapter = new AutofacServiceAdapter(builder);
-
-            builder.RegisterType<JsonObjectSerializer>().As<ISerializeObjects>().SingleInstance();
-            builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
-            builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
-            builder.RegisterType<SqlMessageDequeueStrategy>().As<IMessageDequeueStrategy>().SingleInstance();
-            builder.RegisterType<SqlServerMessageSender>().As<ISendMessages>().SingleInstance();
-            builder.RegisterType<MessageProcessor>().As<IProcessMessages>().SingleInstance();
-            
-            builder.RegisterType<MessageHandlerFactory>().As<IBuildMessageHandlers>().InstancePerLifetimeScope();
-            builder.RegisterType<MessageDispatcher>().As<IDispatchMessagesToHandlers>().InstancePerLifetimeScope();
-            
-            builder.RegisterType<MessageHandler>().As<IHandleMessage<SimpleMessage>>().As<IHandleMessage<SimpleMessage2>>().InstancePerLifetimeScope();
-
-            builder.RegisterInstance(autofacServiceAdapter).As<IObjectBuilder>().As<IServiceLocator>();
-
-
-            var queueCreator = new SqlServerQueueCreator();
-            Address documentAddress = Address.Parse("Queues.Testing.Document");
-            queueCreator.CreateQueueIfNecessary(documentAddress);
-
-            var dequeue = autofacServiceAdapter.GetInstance<IMessageDequeueStrategy>();
-            var messageProcessor = autofacServiceAdapter.GetInstance<IProcessMessages>();
-
-            var receiver = new SqlServerMessageReceiver(dequeue, messageProcessor);
-            receiver.Start(documentAddress);
+            var messageSerializer = Settings.Builder.GetInstance<ISerializeMessages>();
 
             while (true)
             {
@@ -70,56 +43,66 @@ namespace Hermes.Shell
 
                 using (var stream = new MemoryStream())
                 {
-                    autofacServiceAdapter.GetInstance<ISerializeMessages>();
-                    var messageSerializer = autofacServiceAdapter.GetInstance<ISerializeMessages>();
                     messageSerializer.Serialize(new object[] { message1, message2 }, stream);
                     stream.Flush();
                     messages = stream.ToArray();
                 }
 
-                var sender = autofacServiceAdapter.GetInstance<ISendMessages>();
+                var sender = Settings.Builder.GetInstance<ISendMessages>();
 
-                sender.Send(new MessageEnvelope(Guid.NewGuid(), Guid.Empty, Address.Self, TimeSpan.MaxValue, true, new Dictionary<string, string>(), messages), documentAddress);
-                System.Threading.Thread.Sleep(100);       
+                sender.Send(new MessageEnvelope(Guid.NewGuid(), Guid.Empty, Address.Self, TimeSpan.MaxValue, true, new Dictionary<string, string>(), messages), testQueue);
+                System.Threading.Thread.Sleep(500);       
             }
         }
-    }
 
-    public class MessageHandler 
-        : IHandleMessage<SimpleMessage>
-        , IHandleMessage<SimpleMessage2>
-    {
-        public void Handle(SimpleMessage command)
+        private static void Initialize()
         {
-            Console.WriteLine("Handling SimpleMessage");
-            SimulateTransientError();
+            Configure.With()
+                     .ConnectionString(connection)
+                     .ObjectBuilder(ConfigureBuilder())
+                     .ConsoleWindowLogger();
+
+            InitializeQueues();
+            InitializeReceiver();
+        }
+        
+        private static void InitializeReceiver()
+        {
+            var dequeue = Settings.Builder.GetInstance<IMessageDequeueStrategy>();
+            var messageProcessor = Settings.Builder.GetInstance<IProcessMessages>();
+            var receiver = new SqlServerMessageReceiver(dequeue, messageProcessor);
+            receiver.Start(testQueue);
         }
 
-        public void Handle(SimpleMessage2 command)
+        private static void InitializeQueues()
         {
-            Console.WriteLine("Handling SimpleMessage2");
-            SimulateTransientError();
+            var queueCreator = new SqlServerQueueCreator();
+            testQueue = Address.Parse("Queues.Testing.MyTestQueue");
+            queueCreator.CreateQueueIfNecessary(testQueue);
         }
 
-        private static void SimulateTransientError()
+        private static AutofacServiceAdapter ConfigureBuilder()
         {
-            //this code is here to simulate a transient error happening on the network
-            if (DateTime.Now.Second % 2 == 0)
-            {
-                throw new Exception("Some random error has happened. This would normally mean our user must retry their action.");
-            }
+            var builder = new ContainerBuilder();
+            var autofacServiceAdapter = new AutofacServiceAdapter();
+            builder.RegisterType<JsonObjectSerializer>().As<ISerializeObjects>().SingleInstance();
+            builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
+            builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
+            builder.RegisterType<SqlMessageDequeueStrategy>().As<IMessageDequeueStrategy>().SingleInstance();
+            builder.RegisterType<SqlServerMessageSender>().As<ISendMessages>().SingleInstance();
+            builder.RegisterType<MessageProcessor>().As<IProcessMessages>().SingleInstance();
+            builder.RegisterType<MessageHandlerFactory>().As<IBuildMessageHandlers>().InstancePerLifetimeScope();
+            builder.RegisterType<MessageDispatcher>().As<IDispatchMessagesToHandlers>().InstancePerLifetimeScope();
+           
+            builder.RegisterType<MessageHandler>()
+                   .As<IHandleMessage<SimpleMessage>>()
+                   .As<IHandleMessage<SimpleMessage2>>()
+                   .InstancePerLifetimeScope();
+
+            builder.RegisterInstance(autofacServiceAdapter).As<IObjectBuilder>();
+
+            autofacServiceAdapter.lifetimeScope = builder.Build();
+            return autofacServiceAdapter;
         }
-    }
-
-    [Retry(RetryCount = 3, RetryMilliseconds = 100)]
-    public class SimpleMessage : IMessage
-    {
-        public string Hello { get; set; }
-    }
-
-    [Retry(RetryCount = 3, RetryMilliseconds = 100)]
-    public class SimpleMessage2 : IMessage
-    {
-        public string Hello { get; set; }
     }
 }

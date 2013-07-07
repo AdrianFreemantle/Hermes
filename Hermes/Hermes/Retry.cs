@@ -27,13 +27,12 @@ namespace Hermes
                 }
                 catch (Exception ex)
                 {
-                    onError(ex);
-
                     if (retryAttempts <= 0)
                     {
                         throw;
                     }
 
+                    onError(ex);
                     Thread.Sleep(retryMilliseconds);
                 }
             } while (retryAttempts-- > 0);

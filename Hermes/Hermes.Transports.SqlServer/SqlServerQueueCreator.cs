@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 
+using Hermes.Configuration;
+
 namespace Hermes.Transports.SqlServer
 {
     public class SqlServerQueueCreator : ICreateQueues
@@ -30,7 +32,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlServerQueueCreator()
         {
-            connectionString = Configuration.GetSetting<string>(Configuration.ConnectionString);
+            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
         }
 
         public void CreateQueueIfNecessary(Address address)

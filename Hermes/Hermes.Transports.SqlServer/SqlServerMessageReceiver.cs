@@ -2,8 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hermes.Backoff;
+
 namespace Hermes.Transports.SqlServer
-{
+{  
     public class SqlServerMessageReceiver : IDequeueMessages
     {
         private CancellationTokenSource tokenSource;
@@ -43,26 +45,41 @@ namespace Hermes.Transports.SqlServer
 
         public void WorkerAction(object obj)
         {
+            var backoff = new BackOff(TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(1000));
             var cancellationToken = (CancellationToken)obj;
 
             while (!cancellationToken.IsCancellationRequested)
             {
+                bool foundWork;
+
                 using (var scope = TransactionScopeUtils.Begin())
                 {
                     var message = dequeueStrategy.Dequeue(address);
-                    ProcessMessage(message);
+                    foundWork = ProcessMessage(message);
                     scope.Complete();
                 }
 
-                Thread.Sleep(50);
+                SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
             }
         }
 
-        public void ProcessMessage(MessageEnvelope message)
+        private static void SlowDownPollingIfNoWorkAvailable(bool foundWork, BackOff backoff)
+        {
+            if (foundWork)
+            {
+                backoff.Reset();
+            }
+            else
+            {
+                backoff.Delay();
+            }
+        }
+
+        public bool ProcessMessage(MessageEnvelope message)
         {
             if (message == MessageEnvelope.Undefined)
             {
-                return;
+                return false;
             }
 
             try
@@ -71,8 +88,10 @@ namespace Hermes.Transports.SqlServer
             }
             catch (MessageProcessingFailedException ex)
             {
-                //send to second level retry queue or dead letter queue depending on retry count.
+                //todo send to second level retry queue or dead letter queue depending on retry count.
             }
+
+            return true;
         }
 
         public void Stop()

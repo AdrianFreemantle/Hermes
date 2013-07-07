@@ -47,10 +47,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="Backoff\BackOff.cs" />
+    <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
+    <Compile Include="Backoff\IBackOffStrategy.cs" />
+    <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="Configuration\ObjectBuilderConfiguration.cs" />
+    <Compile Include="Configuration\Settings.cs" />
     <Compile Include="ConfigurationSettingNotFoundException.cs" />
+    <Compile Include="Configuration\LoggingConfiguration.cs" />
+    <Compile Include="Configuration\Configure.cs" />
     <Compile Include="IBuildMessageHandlers.cs" />
     <Compile Include="IObjectBuilder.cs" />
+    <Compile Include="Logging\ConsoleWindowLogger.cs" />
+    <Compile Include="Logging\LogFactory.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\LoggingExtensionMethods.cs" />
     <Compile Include="Messages\Attributes\RetryAttribute.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="MessageProcessingFailedException.cs" />

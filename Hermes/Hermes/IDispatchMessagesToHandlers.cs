@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 
+using Microsoft.Practices.ServiceLocation;
+
 namespace Hermes
 {
     public interface IDispatchMessagesToHandlers
     {
-        void DispatchToHandlers(object message);
+        void DispatchToHandlers(IServiceLocator serviceLocator, object message);
     }
 }

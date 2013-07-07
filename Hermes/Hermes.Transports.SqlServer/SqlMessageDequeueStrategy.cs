@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
+using Hermes.Configuration;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
@@ -20,7 +21,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
-            connectionString = Configuration.GetSetting<string>(Configuration.ConnectionString);
+            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
             this.objectSerializer = objectSerializer;
         }
 
