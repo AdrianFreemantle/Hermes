@@ -10,6 +10,13 @@ namespace Hermes.Configuration
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
         static IObjectBuilder builder;
+        static int numberOfWorkers = 1;
+
+        public static int NumberOfWorkers
+        {
+            get { return numberOfWorkers; }
+            internal set { numberOfWorkers = value; }
+        }
 
         public static IObjectBuilder Builder
         {

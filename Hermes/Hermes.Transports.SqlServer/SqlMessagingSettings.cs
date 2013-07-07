@@ -6,7 +6,7 @@ namespace Hermes.Transports.SqlServer
     {
         public const string MessagingConnectionStringKey = "Hermes.Transports.SqlServer.ConnectionString";
 
-        public static Configure ConnectionString(this Configure config, string connectionString)
+        public static Configure MessageQueueConnectionString(this Configure config, string connectionString)
         {
             Settings.AddSetting(MessagingConnectionStringKey, connectionString);
             return config;

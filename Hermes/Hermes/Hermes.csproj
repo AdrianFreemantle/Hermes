@@ -51,13 +51,15 @@
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
-    <Compile Include="Configuration\ObjectBuilderConfiguration.cs" />
+    <Compile Include="IRegisterMessageRoute.cs" />
+    <Compile Include="IRouteMessageToEndpoint.cs" />
+    <Compile Include="IMessageBus.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="ConfigurationSettingNotFoundException.cs" />
-    <Compile Include="Configuration\LoggingConfiguration.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="IBuildMessageHandlers.cs" />
     <Compile Include="IObjectBuilder.cs" />
+    <Compile Include="IStartableMessageBus.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />
     <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Messages\ICommand.cs" />
     <Compile Include="Messages\IEvent.cs" />
     <Compile Include="Messages\IMessage.cs" />
+    <Compile Include="RouteNotDefinedException.cs" />
     <Compile Include="Serialization\ISerializeMessages.cs" />
     <Compile Include="MessageEnvelope.cs" />
     <Compile Include="IdentityFactory.cs" />

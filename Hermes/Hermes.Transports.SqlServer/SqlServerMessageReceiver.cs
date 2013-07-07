@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Hermes.Backoff;
+using Hermes.Configuration;
 
 namespace Hermes.Transports.SqlServer
 {  
@@ -12,8 +13,6 @@ namespace Hermes.Transports.SqlServer
         private readonly IMessageDequeueStrategy dequeueStrategy;
         private readonly IProcessMessages messageProcessor;
         private Address address;
-
-        const int maximumConcurrencyLevel = 4;
 
         public SqlServerMessageReceiver(IMessageDequeueStrategy dequeueStrategy, IProcessMessages messageProcessor)
         {
@@ -31,7 +30,7 @@ namespace Hermes.Transports.SqlServer
             address = queueAddress;
             tokenSource = new CancellationTokenSource();
 
-            for (int i = 0; i < maximumConcurrencyLevel; i++)
+            for (int i = 0; i < Settings.NumberOfWorkers; i++)
             {
                 StartThread();
             }
@@ -97,6 +96,6 @@ namespace Hermes.Transports.SqlServer
         public void Stop()
         {
             tokenSource.Cancel();
-        }        
+        }
     }
 }

@@ -9,20 +9,19 @@ namespace Hermes.Backoff
 {
     public class BackOff
     {
-        private readonly TimeSpan maximumDelayTime = TimeSpan.FromSeconds(30);
-        private readonly TimeSpan intialDelayTime = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan maximumDelayTime;
+        private readonly TimeSpan intialDelayTime;
         private readonly IBackOffStrategy backOffStrategy;
-        private TimeSpan currentDelayTime = TimeSpan.FromSeconds(1);
+        private TimeSpan currentDelayTime;
 
         public BackOff()
+            : this(new ExponentialBackOffStrategy(), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30))
         {
-            backOffStrategy = new ExponentialBackOffStrategy();
         }
 
         public BackOff(TimeSpan intialDelayTime, TimeSpan maximumDelayTime)
+            : this(new ExponentialBackOffStrategy(), intialDelayTime, maximumDelayTime)
         {
-            this.intialDelayTime = intialDelayTime;
-            this.maximumDelayTime = maximumDelayTime;
         }
 
         public BackOff(IBackOffStrategy backOffStrategy, TimeSpan intialDelayTime, TimeSpan maximumDelayTime)
@@ -30,12 +29,8 @@ namespace Hermes.Backoff
             this.backOffStrategy = backOffStrategy;
             this.intialDelayTime = intialDelayTime;
             this.maximumDelayTime = maximumDelayTime;
-        }
-
-        public BackOff(IBackOffStrategy backOffStrategy)
-        {
-            this.backOffStrategy = backOffStrategy;
-        }
+            currentDelayTime = intialDelayTime;
+        }      
 
         public void Delay()
         {

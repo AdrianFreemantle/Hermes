@@ -45,9 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageBus.cs" />
     <Compile Include="MessageDispatcher.cs" />
     <Compile Include="MessageHandlerFactory.cs" />
     <Compile Include="MessageProcessor.cs" />
+    <Compile Include="MessageRouter.cs" />
+    <Compile Include="MessageTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,15 +5,15 @@ using Hermes.Messages;
 namespace Hermes.Shell
 {
     public class MessageHandler 
-        : IHandleMessage<SimpleMessage>
-            , IHandleMessage<SimpleMessage2>
+        : IHandleMessage<RegisterNewClient>
+            , IHandleMessage<TransferMoneyToAccount>
     {
-        public void Handle(SimpleMessage command)
+        public void Handle(RegisterNewClient command)
         {
             SimulateTransientError();
         }
 
-        public void Handle(SimpleMessage2 command)
+        public void Handle(TransferMoneyToAccount command)
         {
             SimulateTransientError();
         }

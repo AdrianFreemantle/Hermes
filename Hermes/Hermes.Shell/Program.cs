@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Authentication;
 
 using Autofac;
 
@@ -19,66 +16,64 @@ namespace Hermes.Shell
     class Program
     {
         private const string connection = @"Data Source=CHANDRA\SQLEXPRESS;Initial Catalog=AsbaBank;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
-        static Address testQueue;
+        static Address testEndpoint;
+        static IMessageBus bus;
 
         static void Main(string[] args)
         {
             Initialize();
 
-            var messageSerializer = Settings.Builder.GetInstance<ISerializeMessages>();
-
             while (true)
             {
-                var message1 = new SimpleMessage
+                var message1 = new RegisterNewClient
                 {
                     Hello = DateTime.Now.ToShortTimeString()
                 };
 
-                var message2 = new SimpleMessage2
+                var message2 = new TransferMoneyToAccount
                 {
                     Hello = DateTime.Now.ToShortTimeString()
                 };
 
-                byte[] messages;
-
-                using (var stream = new MemoryStream())
-                {
-                    messageSerializer.Serialize(new object[] { message1, message2 }, stream);
-                    stream.Flush();
-                    messages = stream.ToArray();
-                }
-
-                var sender = Settings.Builder.GetInstance<ISendMessages>();
-
-                sender.Send(new MessageEnvelope(Guid.NewGuid(), Guid.Empty, Address.Self, TimeSpan.MaxValue, true, new Dictionary<string, string>(), messages), testQueue);
-                System.Threading.Thread.Sleep(500);       
+                bus.Send(message1, message2);
+                System.Threading.Thread.Sleep(100);       
             }
         }
 
         private static void Initialize()
         {
             Configure.With()
-                     .ConnectionString(connection)
+                     .MessageQueueConnectionString(connection)
                      .ObjectBuilder(ConfigureBuilder())
-                     .ConsoleWindowLogger();
+                     .ConsoleWindowLogger()
+                     .NumberOfWorkers(4);
 
             InitializeQueues();
-            InitializeReceiver();
+            InitializeRoutes();
+            StartMessageBus();
         }
-        
-        private static void InitializeReceiver()
+
+        private static void StartMessageBus()
         {
-            var dequeue = Settings.Builder.GetInstance<IMessageDequeueStrategy>();
-            var messageProcessor = Settings.Builder.GetInstance<IProcessMessages>();
-            var receiver = new SqlServerMessageReceiver(dequeue, messageProcessor);
-            receiver.Start(testQueue);
+            bus = Settings.Builder.GetInstance<IMessageBus>();
+            var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
+            busStarter.Start(testEndpoint);
         }
 
         private static void InitializeQueues()
         {
+            testEndpoint = Address.Parse("Queues.Testing.MyTestQueue");
             var queueCreator = new SqlServerQueueCreator();
-            testQueue = Address.Parse("Queues.Testing.MyTestQueue");
-            queueCreator.CreateQueueIfNecessary(testQueue);
+            queueCreator.CreateQueueIfNecessary(testEndpoint);
+        }
+
+        private static void InitializeRoutes()
+        {
+            var routeConfig = Settings.Builder.GetInstance<IRegisterMessageRoute>();
+
+            routeConfig
+                .RegisterRoute(typeof (RegisterNewClient), testEndpoint)
+                .RegisterRoute(typeof (TransferMoneyToAccount), testEndpoint);
         }
 
         private static AutofacServiceAdapter ConfigureBuilder()
@@ -91,12 +86,21 @@ namespace Hermes.Shell
             builder.RegisterType<SqlMessageDequeueStrategy>().As<IMessageDequeueStrategy>().SingleInstance();
             builder.RegisterType<SqlServerMessageSender>().As<ISendMessages>().SingleInstance();
             builder.RegisterType<MessageProcessor>().As<IProcessMessages>().SingleInstance();
+            builder.RegisterType<MessageTransport>().As<ITransportMessages>().SingleInstance();
+            builder.RegisterType<SqlServerMessageReceiver>().As<IDequeueMessages>().SingleInstance();
+            builder.RegisterType<MessageBus>().As<IMessageBus>().As<IStartableMessageBus>().SingleInstance();
+            
+            builder.RegisterType<MessageRouter>()
+                   .As<IRouteMessageToEndpoint>()
+                   .As<IRegisterMessageRoute>()
+                   .SingleInstance();
+
             builder.RegisterType<MessageHandlerFactory>().As<IBuildMessageHandlers>().InstancePerLifetimeScope();
             builder.RegisterType<MessageDispatcher>().As<IDispatchMessagesToHandlers>().InstancePerLifetimeScope();
            
             builder.RegisterType<MessageHandler>()
-                   .As<IHandleMessage<SimpleMessage>>()
-                   .As<IHandleMessage<SimpleMessage2>>()
+                   .As<IHandleMessage<RegisterNewClient>>()
+                   .As<IHandleMessage<TransferMoneyToAccount>>()
                    .InstancePerLifetimeScope();
 
             builder.RegisterInstance(autofacServiceAdapter).As<IObjectBuilder>();
