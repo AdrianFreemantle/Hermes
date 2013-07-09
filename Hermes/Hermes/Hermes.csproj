@@ -51,6 +51,10 @@
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="Callbacks\BusAsyncResultEventArgs.cs" />
+    <Compile Include="Callbacks\BusAsyncResult.cs" />
+    <Compile Include="Callbacks\CompletionResult.cs" />
+    <Compile Include="Callbacks\ICallback.cs" />
     <Compile Include="IRegisterMessageRoute.cs" />
     <Compile Include="IRouteMessageToEndpoint.cs" />
     <Compile Include="IMessageBus.cs" />
@@ -83,7 +87,9 @@
     <Compile Include="Serialization\MessageSerializationBinder.cs" />
     <Compile Include="IDispatchMessagesToHandlers.cs" />
     <Compile Include="IProcessMessages.cs" />
+    <Compile Include="Subscriptions\ISubscriptionStorage.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
+    <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\ICreateQueues.cs" />
     <Compile Include="Transports\IDequeueMessages.cs" />

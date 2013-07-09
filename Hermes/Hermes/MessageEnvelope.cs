@@ -8,7 +8,7 @@ namespace Hermes
     public class MessageEnvelope 
     {
         [DataMember(Order = 1, EmitDefaultValue = false, IsRequired = false)]
-        private readonly Guid messageId;
+        private Guid messageId;
 
         [DataMember(Order = 2, EmitDefaultValue = false, IsRequired = false)]
         private readonly Guid correlationId;  
@@ -132,6 +132,11 @@ namespace Hermes
             this.recoverable = recoverable;
             this.headers = headers ?? new Dictionary<string, string>();
             this.body = body;
-        }        
+        }  
+      
+        public void ChangeMessageId(Guid id)
+        {
+            messageId = id;
+        }
     }
 }

@@ -5,9 +5,9 @@ using Hermes.Configuration;
 
 namespace Hermes.Transports.SqlServer
 {
-    public class SqlServerQueueCreator : ICreateQueues
+    public class SqlQueueCreator : ICreateQueues
     {
-        const string createQueueSql =
+        const string CreateQueueSql =
             @"IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{0}]') AND type in (N'U'))
                   BEGIN
                     CREATE TABLE [dbo].[{0}](
@@ -30,7 +30,7 @@ namespace Hermes.Transports.SqlServer
 
         private readonly string connectionString;
 
-        public SqlServerQueueCreator()
+        public SqlQueueCreator()
         {
             connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
         }
@@ -41,7 +41,7 @@ namespace Hermes.Transports.SqlServer
             {
                 connection.Open();
 
-                using (var command = new SqlCommand(string.Format(createQueueSql, address.Queue), connection))
+                using (var command = new SqlCommand(string.Format(CreateQueueSql, address.Queue), connection))
                 {
                     command.CommandType = CommandType.Text; 
                     command.ExecuteNonQuery();

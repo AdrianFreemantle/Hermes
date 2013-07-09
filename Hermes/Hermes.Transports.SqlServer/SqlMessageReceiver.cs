@@ -7,14 +7,14 @@ using Hermes.Configuration;
 
 namespace Hermes.Transports.SqlServer
 {  
-    public class SqlServerMessageReceiver : IDequeueMessages
+    public class SqlMessageReceiver : IDequeueMessages
     {
         private CancellationTokenSource tokenSource;
         private readonly IMessageDequeueStrategy dequeueStrategy;
         private readonly IProcessMessages messageProcessor;
         private Address address;
 
-        public SqlServerMessageReceiver(IMessageDequeueStrategy dequeueStrategy, IProcessMessages messageProcessor)
+        public SqlMessageReceiver(IMessageDequeueStrategy dequeueStrategy, IProcessMessages messageProcessor)
         {
             this.dequeueStrategy = dequeueStrategy;
             this.messageProcessor = messageProcessor;

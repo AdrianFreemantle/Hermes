@@ -40,13 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SqlMessagePublisher.cs" />
     <Compile Include="SqlMessagingSettings.cs" />
     <Compile Include="IMessageDequeueStrategy.cs" />
     <Compile Include="SqlMessageDequeueStrategy.cs" />
-    <Compile Include="SqlServerMessageReceiver.cs" />
-    <Compile Include="SqlServerMessageSender.cs" />
-    <Compile Include="SqlServerQueueCreator.cs" />
+    <Compile Include="SqlMessageReceiver.cs" />
+    <Compile Include="SqlMessageSender.cs" />
+    <Compile Include="SqlQueueCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlSubscriptionStorage.cs" />
     <Compile Include="TransactionalSqlConnection.cs" />
   </ItemGroup>
   <ItemGroup>

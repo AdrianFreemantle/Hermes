@@ -7,7 +7,7 @@ using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
 {
-    public class SqlServerMessageSender : ISendMessages
+    public class SqlMessageSender : ISendMessages
     {
         private const string SqlSend = @"INSERT INTO [{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
                                          VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
@@ -15,7 +15,7 @@ namespace Hermes.Transports.SqlServer
         private readonly ISerializeObjects objectSerializer;
         private readonly string connectionString;
 
-        public SqlServerMessageSender(ISerializeObjects objectSerializer)
+        public SqlMessageSender(ISerializeObjects objectSerializer)
         {
             this.objectSerializer = objectSerializer;
             connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);

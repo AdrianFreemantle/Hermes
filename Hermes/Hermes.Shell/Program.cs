@@ -63,7 +63,7 @@ namespace Hermes.Shell
         private static void InitializeQueues()
         {
             testEndpoint = Address.Parse("Queues.Testing.MyTestQueue");
-            var queueCreator = new SqlServerQueueCreator();
+            var queueCreator = new SqlQueueCreator();
             queueCreator.CreateQueueIfNecessary(testEndpoint);
         }
 
@@ -84,10 +84,10 @@ namespace Hermes.Shell
             builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
             builder.RegisterType<JsonMessageSerializer>().As<ISerializeMessages>().SingleInstance();
             builder.RegisterType<SqlMessageDequeueStrategy>().As<IMessageDequeueStrategy>().SingleInstance();
-            builder.RegisterType<SqlServerMessageSender>().As<ISendMessages>().SingleInstance();
+            builder.RegisterType<SqlMessageSender>().As<ISendMessages>().SingleInstance();
             builder.RegisterType<MessageProcessor>().As<IProcessMessages>().SingleInstance();
             builder.RegisterType<MessageTransport>().As<ITransportMessages>().SingleInstance();
-            builder.RegisterType<SqlServerMessageReceiver>().As<IDequeueMessages>().SingleInstance();
+            builder.RegisterType<SqlMessageReceiver>().As<IDequeueMessages>().SingleInstance();
             builder.RegisterType<MessageBus>().As<IMessageBus>().As<IStartableMessageBus>().SingleInstance();
             
             builder.RegisterType<MessageRouter>()
