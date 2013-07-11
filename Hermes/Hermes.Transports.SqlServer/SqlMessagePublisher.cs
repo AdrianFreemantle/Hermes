@@ -10,10 +10,10 @@ namespace Hermes.Transports.SqlServer
     /// </summary>
     public class SqlMessagePublisher : IPublishMessages
     {
-        private readonly ISubscriptionStorage subscriptionStorage;
+        private readonly IStoreSubscriptions subscriptionStorage;
         private readonly ISendMessages messageSender;
 
-        public SqlMessagePublisher(ISendMessages messageSender, ISubscriptionStorage subscriptionStorage)
+        public SqlMessagePublisher(ISendMessages messageSender, IStoreSubscriptions subscriptionStorage)
         {
             this.messageSender = messageSender;
             this.subscriptionStorage = subscriptionStorage;

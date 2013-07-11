@@ -87,7 +87,7 @@
     <Compile Include="Serialization\MessageSerializationBinder.cs" />
     <Compile Include="IDispatchMessagesToHandlers.cs" />
     <Compile Include="IProcessMessages.cs" />
-    <Compile Include="Subscriptions\ISubscriptionStorage.cs" />
+    <Compile Include="Subscriptions\IStoreSubscriptions.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />

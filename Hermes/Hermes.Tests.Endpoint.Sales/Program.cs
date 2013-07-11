@@ -1,4 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 using Autofac;
 
@@ -13,12 +16,12 @@ using Hermes.Tests.Messages;
 using Hermes.Transports;
 using Hermes.Transports.SqlServer;
 
-namespace Hermes.Shell
+namespace Hermes.Tests.Endpoint.Sales
 {
     class Program
     {
         private const string connection = @"Data Source=CHANDRA\SQLEXPRESS;Initial Catalog=AsbaBank;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
-        static Address testEndpoint;
+        static Address thisEndpoint;
         static IMessageBus bus;
 
         static void Main(string[] args)
@@ -27,9 +30,7 @@ namespace Hermes.Shell
 
             while (true)
             {
-                System.Threading.Thread.Sleep(100);       
-                Console.WriteLine("Selling Shoes");
-                bus.Send(new SellShoes {ShoeTypeId = 1, Size = 2});
+                System.Threading.Thread.Sleep(50);
             }
         }
 
@@ -39,31 +40,25 @@ namespace Hermes.Shell
                      .MessageQueueConnectionString(connection)
                      .ObjectBuilder(ConfigureBuilder())
                      .ConsoleWindowLogger()
-                     .NumberOfWorkers(4);
+                     .NumberOfWorkers(1);
 
             InitializeQueues();
             InitializeRoutes();
             StartMessageBus();
-            SubscribeToEvents();
         }
 
         private static void StartMessageBus()
         {
             bus = Settings.Builder.GetInstance<IMessageBus>();
             var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
-            busStarter.Start(testEndpoint);
-        }
-
-        private static void SubscribeToEvents()
-        {
-            bus.Subscribe<OrderShipped>();
+            busStarter.Start(thisEndpoint);
         }
 
         private static void InitializeQueues()
         {
-            testEndpoint = Address.Parse("Queues.Shell");
+            thisEndpoint = Address.Parse("Queues.Sales");
             var queueCreator = new SqlQueueCreator();
-            queueCreator.CreateQueueIfNecessary(testEndpoint);
+            queueCreator.CreateQueueIfNecessary(thisEndpoint);
         }
 
         private static void InitializeRoutes()
@@ -71,8 +66,8 @@ namespace Hermes.Shell
             var routeConfig = Settings.Builder.GetInstance<IRegisterMessageRoute>();
 
             routeConfig
-                .RegisterRoute(typeof(OrderShipped), testEndpoint)
-                .RegisterRoute(typeof (SellShoes), Address.Parse("Queues.Sales"));
+                .RegisterRoute(typeof(SellShoes), thisEndpoint)
+                .RegisterRoute(typeof (ShoesSold), Address.Parse("Queues.Warehouse"));
         }
 
         private static AutofacServiceAdapter ConfigureBuilder()
@@ -90,7 +85,7 @@ namespace Hermes.Shell
             builder.RegisterType<MessageBus>().As<IMessageBus>().As<IStartableMessageBus>().SingleInstance();
             builder.RegisterType<SqlSubscriptionStorage>().As<IStoreSubscriptions>().SingleInstance();
             builder.RegisterType<SqlMessagePublisher>().As<IPublishMessages>().SingleInstance();
-            
+
             builder.RegisterType<MessageRouter>()
                    .As<IRouteMessageToEndpoint>()
                    .As<IRegisterMessageRoute>()
@@ -99,8 +94,8 @@ namespace Hermes.Shell
             builder.RegisterType<MessageHandlerFactory>().As<IBuildMessageHandlers>().InstancePerLifetimeScope();
             builder.RegisterType<MessageDispatcher>().As<IDispatchMessagesToHandlers>().InstancePerLifetimeScope();
 
-            builder.RegisterType<ShellHandler>()
-                   .As<IHandleMessage<OrderShipped>>()
+            builder.RegisterType<SalesHandler>()
+                   .As<IHandleMessage<SellShoes>>()
                    .InstancePerLifetimeScope();
 
             builder.RegisterInstance(autofacServiceAdapter).As<IObjectBuilder>();
@@ -108,6 +103,5 @@ namespace Hermes.Shell
             autofacServiceAdapter.lifetimeScope = builder.Build();
             return autofacServiceAdapter;
         }
-       
     }
 }

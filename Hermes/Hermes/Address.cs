@@ -11,7 +11,7 @@ namespace Hermes
     {
         private const int queueIndex = 0;
         private const int machineIndex = 1;
-        private static bool ignoreMachineName;
+        private static bool ignoreMachineName = true;
 
         [DataMember(Order = 1, EmitDefaultValue = false, IsRequired = false)]
         private readonly string queue;

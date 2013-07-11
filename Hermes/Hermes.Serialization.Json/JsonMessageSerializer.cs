@@ -23,19 +23,32 @@ namespace Hermes.Serialization.Json
             Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.RoundtripKind }, new XContainerConverter() }
         };
 
+        readonly JsonSerializerSettings serializerSettings2 = new JsonSerializerSettings
+        {
+            TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.RoundtripKind }, new XContainerConverter() }
+        };
+
         public virtual void Serialize(object[] messages, Stream stream)
         {
-            var jsonSerializer = JsonSerializer.Create(serializerSettings);
-            jsonSerializer.Binder = new MessageSerializationBinder();
-
-            var jsonWriter = CreateJsonWriter(stream);
-
             if (messages.Length == 1)
+            {
+                var jsonSerializer = JsonSerializer.Create(serializerSettings2);
+                jsonSerializer.Binder = new MessageSerializationBinder();
+                var jsonWriter = CreateJsonWriter(stream);
                 jsonSerializer.Serialize(jsonWriter, messages[0]);
+                jsonWriter.Flush();
+            }
             else
+            {
+                var jsonSerializer = JsonSerializer.Create(serializerSettings);
+                jsonSerializer.Binder = new MessageSerializationBinder();
+                var jsonWriter = CreateJsonWriter(stream);
                 jsonSerializer.Serialize(jsonWriter, messages);
-
-            jsonWriter.Flush();
+                jsonWriter.Flush();
+            }
         }
 
         public virtual object[] Deserialize(Stream stream)

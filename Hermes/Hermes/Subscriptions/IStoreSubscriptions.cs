@@ -3,22 +3,21 @@ using System.Collections.Generic;
 
 namespace Hermes.Subscriptions
 {
-    public interface ISubscriptionStorage
+    public interface IStoreSubscriptions
     {
-
         /// <summary>
         /// Subscribes the given client address to messages of the given types.
         /// </summary>
         /// <param name="client"></param>
         /// <param name="messageTypes"></param>
-        void Subscribe(Address client, IEnumerable<Type> messageTypes);
+        void Subscribe(Address client, params Type[] messageTypes);
 
         /// <summary>
         /// Unsubscribes the given client address from messages of the given types.
         /// </summary>
         /// <param name="client"></param>
         /// <param name="messageTypes"></param>
-        void Unsubscribe(Address client, IEnumerable<Type> messageTypes);
+        void Unsubscribe(Address client, params Type[] messageTypes);
 
         /// <summary>
         /// Returns a list of addresses of subscribers that previously requested to be notified

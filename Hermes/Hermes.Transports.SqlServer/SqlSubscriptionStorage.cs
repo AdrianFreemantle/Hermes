@@ -9,7 +9,7 @@ using Hermes.Subscriptions;
 
 namespace Hermes.Transports.SqlServer
 {
-    public class SqlSubscriptionStorage : ISubscriptionStorage
+    public class SqlSubscriptionStorage : IStoreSubscriptions
     {
         private readonly string connectionString;
 
@@ -36,13 +36,13 @@ namespace Hermes.Transports.SqlServer
                             ([SubscriberEndpoint]
                             ,[MessageType])
                       VALUES
-                            (@Subscription
+                            (@SubscriberEndpoint
                             ,@MessageType)
              END";
 
         private const string UnsubscribeSql =
             @"DELETE FROM [dbo].[Message.Subscription]
-                     WHERE [dbo].[Message.Subscription].[SubscriberEndpoint] = @Subscription
+                     WHERE [dbo].[Message.Subscription].[SubscriberEndpoint] = @SubscriberEndpoint
                      AND [dbo].[Message.Subscription].[MessageType] = @MessageType";
 
         private const string GetSubscribersSql =
@@ -69,8 +69,13 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        public void Subscribe(Address client, IEnumerable<Type> messageTypes)
+        public void Subscribe(Address client, params Type[] messageTypes)
         {
+            if (messageTypes == null || messageTypes.Length == 0)
+            {
+                return;
+            }
+
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
             {
@@ -88,8 +93,13 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        public void Unsubscribe(Address client, IEnumerable<Type> messageTypes)
+        public void Unsubscribe(Address client, params Type[] messageTypes)
         {
+            if (messageTypes == null || messageTypes.Length == 0)
+            {
+                return;
+            }
+
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
             {
