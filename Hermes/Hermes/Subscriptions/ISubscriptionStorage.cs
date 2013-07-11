@@ -27,11 +27,5 @@ namespace Hermes.Subscriptions
         /// <param name="messageTypes"></param>
         /// <returns></returns>
         IEnumerable<Address> GetSubscriberAddressesForMessage(IEnumerable<Type> messageTypes);
-
-        /// <summary>
-        /// Notifies the subscription storage that now is the time to perform
-        /// any initialization work
-        /// </summary>
-        void Init();
     }
 }
