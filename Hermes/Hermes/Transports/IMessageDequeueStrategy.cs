@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Hermes.Transports.SqlServer
+﻿namespace Hermes.Transports
 {
     public interface IMessageDequeueStrategy
     {

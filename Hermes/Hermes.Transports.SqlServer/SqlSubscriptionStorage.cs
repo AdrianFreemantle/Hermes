@@ -51,7 +51,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlSubscriptionStorage()
         {
-            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
             CreateSubcribtionTableIfNecessary();
         }
 

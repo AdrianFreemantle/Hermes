@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Reflection;
 
+using Hermes.Ioc;
 using Hermes.Logging;
+using Hermes.Transports;
 
 namespace Hermes.Configuration
 {
-    public class Configure
+    public class Configure : IConfigureEnvironment, IConfigureBus
     {
         private static readonly Configure instance;
 
@@ -18,33 +21,74 @@ namespace Hermes.Configuration
             
         }
 
-        public static Configure With()
+        public static IConfigureEnvironment Environment(IObjectBuilder objectBuilder)
         {
+            objectBuilder.RegisterSingleton<IObjectBuilder>(objectBuilder);
+            Settings.Builder = objectBuilder;
             return instance;
         }
 
-        public Configure ObjectBuilder(IObjectBuilder objectBuilder)
-        {
-            Settings.Builder = objectBuilder;
-            return this;
-        }
-
-        public Configure NumberOfWorkers(int numberOfWorkers)
-        {
-            Settings.NumberOfWorkers = numberOfWorkers;
-            return this;
-        }
-
-        public Configure ConsoleWindowLogger()
+        IConfigureEnvironment IConfigureEnvironment.ConsoleWindowLogger()
         {
             LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             return this;
         }
 
-        public Configure Logger(Func<Type, ILog> buildLogger)
+        IConfigureEnvironment IConfigureEnvironment.Logger(Func<Type, ILog> buildLogger)
         {
             LogFactory.BuildLogger = buildLogger;
             return this;
+        }
+
+        public static IConfigureBus Bus(Address thisEndpoint)
+        {
+            if (Settings.Builder == null)
+            {
+                throw new EnvironmentConfigurationException("You must first configure the environment settings before attempting to configure the Bus");
+            }
+
+            Settings.ThisEndpoint = thisEndpoint;
+            return instance;
+        }
+
+        IConfigureBus IConfigureBus.NumberOfWorkers(int numberOfWorkers)
+        {
+            Settings.NumberOfWorkers = numberOfWorkers;
+            return this;
+        }
+
+        IConfigureBus IConfigureBus.ScanForHandlersIn(params Assembly[] assemblies)
+        {
+            Settings.Builder.RegisterHandlers(assemblies);
+            return this;
+        }
+
+        IConfigureBus IConfigureBus.RegisterMessageRoute<TMessage>(Address endpointAddress)
+        {
+            var router = Settings.Builder.GetInstance<IRegisterMessageRoute>();
+            router.RegisterRoute(typeof(TMessage), endpointAddress);
+            return this;
+        }
+
+        public IConfigureBus SubscribeToEvent<TMessage>()
+        {
+            Settings.MessageBus.Subscribe<TMessage>();
+            return this;
+        }
+
+        void IConfigureBus.Start()
+        {
+            var queueCreator = Settings.Builder.GetInstance<ICreateQueues>();
+            queueCreator.CreateQueueIfNecessary(Settings.ThisEndpoint);
+
+            var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
+            busStarter.Start();
+        }
+
+        void IConfigureBus.Stop()
+        {
+            var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
+            busStarter.Stop();
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IStartableMessageBus
     {
-        void Start(Address localAddress);
+        void Start();
         void Stop();
     }
 }

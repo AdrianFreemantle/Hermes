@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Hermes.Ioc;
+
 namespace Hermes.Configuration
 {
     /// <summary>
@@ -10,6 +12,7 @@ namespace Hermes.Configuration
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
         static IObjectBuilder builder;
+        static Address thisEndpoint = Address.Undefined;
         static int numberOfWorkers = 1;
 
         public static int NumberOfWorkers
@@ -30,6 +33,17 @@ namespace Hermes.Configuration
 
             internal set { builder = value; }
         } 
+
+        public static Address ThisEndpoint
+        {
+            get { return thisEndpoint; }
+            internal set { thisEndpoint = value; }
+        }
+
+        public static IMessageBus MessageBus
+        {
+            get { return Builder.GetInstance<IMessageBus>(); }
+        }
  
         public static T GetSetting<T>(string settingKey)
         {

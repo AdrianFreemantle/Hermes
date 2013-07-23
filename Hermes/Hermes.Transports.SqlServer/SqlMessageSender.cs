@@ -9,7 +9,7 @@ namespace Hermes.Transports.SqlServer
 {
     public class SqlMessageSender : ISendMessages
     {
-        private const string SqlSend = @"INSERT INTO [{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
+        private const string SqlSend = @"INSERT INTO [queue].[{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
                                          VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
 
         private readonly ISerializeObjects objectSerializer;
@@ -18,7 +18,7 @@ namespace Hermes.Transports.SqlServer
         public SqlMessageSender(ISerializeObjects objectSerializer)
         {
             this.objectSerializer = objectSerializer;
-            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
         }
 
         public void Send(MessageEnvelope message, Address address)

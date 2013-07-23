@@ -42,6 +42,11 @@ namespace Hermes.Transports.SqlServer
             Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
+        public void Stop()
+        {
+            tokenSource.Cancel();
+        }
+
         public void WorkerAction(object obj)
         {
             var backoff = new BackOff(TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(1000));
@@ -91,11 +96,6 @@ namespace Hermes.Transports.SqlServer
             }
 
             return true;
-        }
-
-        public void Stop()
-        {
-            tokenSource.Cancel();
-        }
+        }      
     }
 }

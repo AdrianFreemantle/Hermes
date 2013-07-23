@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using Hermes.Configuration;
 using Hermes.Serialization;
 using Hermes.Subscriptions;
 using Hermes.Transports;
@@ -27,9 +28,9 @@ namespace Hermes.Core
             this.subscriptionStore = subscriptionStore;
         }
 
-        public void Start(Address localAddress)
+        public void Start()
         {
-            messageTransport.Start(localAddress);
+            messageTransport.Start(Settings.ThisEndpoint);
         }
 
         public void Stop()
@@ -97,8 +98,7 @@ namespace Hermes.Core
 
         public void Subscribe(Type messageType)
         {
-            var destination = messageRouter.GetDestinationFor(messageType);
-            subscriptionStore.Subscribe(destination, messageType);
+            subscriptionStore.Subscribe(Settings.ThisEndpoint, messageType);
         }
 
         public void Unsubscribe<T>()
@@ -108,8 +108,7 @@ namespace Hermes.Core
 
         public void Unsubscribe(Type messageType)
         {
-            var destination = messageRouter.GetDestinationFor(messageType);
-            subscriptionStore.Unsubscribe(destination, messageType);
+            subscriptionStore.Unsubscribe(Settings.ThisEndpoint, messageType);
         }
     }
 }

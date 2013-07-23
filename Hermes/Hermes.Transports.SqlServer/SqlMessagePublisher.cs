@@ -5,9 +5,6 @@ using Hermes.Subscriptions;
 
 namespace Hermes.Transports.SqlServer
 {
-    /// <summary>
-    /// Published messages based on whats registered in the given subscription storage
-    /// </summary>
     public class SqlMessagePublisher : IPublishMessages
     {
         private readonly IStoreSubscriptions subscriptionStorage;
@@ -19,12 +16,6 @@ namespace Hermes.Transports.SqlServer
             this.subscriptionStorage = subscriptionStorage;
         }
 
-        /// <summary>
-        /// Pubvlishes the given message to all subscribers
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="eventTypes"></param>
-        /// <returns></returns>
         public bool Publish(MessageEnvelope message, IEnumerable<Type> eventTypes)
         {
             if (subscriptionStorage == null)

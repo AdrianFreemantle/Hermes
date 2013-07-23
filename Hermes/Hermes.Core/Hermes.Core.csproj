@@ -46,7 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Callbacks\Callback.cs" />
+    <Compile Include="CoreConfig.cs" />
+    <Compile Include="DefermentProcessor.cs" />
     <Compile Include="MessageBus.cs" />
     <Compile Include="MessageDispatcher.cs" />
     <Compile Include="MessageHandlerFactory.cs" />

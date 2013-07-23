@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Transactions;
 
+using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Serialization;
 
@@ -13,7 +14,7 @@ namespace Hermes.Core
     {
         private readonly ISerializeMessages messageSerializer;
         private readonly IObjectBuilder objectBuilder;
-        private static ILog logger = LogFactory.BuildLogger(typeof(MessageDispatcher)); 
+        private static readonly ILog logger = LogFactory.BuildLogger(typeof(MessageDispatcher)); 
 
         public MessageProcessor(ISerializeMessages messageSerializer, IObjectBuilder objectBuilder)
         {
@@ -56,6 +57,11 @@ namespace Hermes.Core
                 return new object[0];
             }
 
+            return TryDeserializeMessages(envelope);
+        }
+
+        private IEnumerable<object> TryDeserializeMessages(MessageEnvelope envelope)
+        {
             try
             {
                 using (var stream = new MemoryStream(envelope.Body))

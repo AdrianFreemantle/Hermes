@@ -51,10 +51,10 @@
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
-    <Compile Include="Callbacks\BusAsyncResultEventArgs.cs" />
-    <Compile Include="Callbacks\BusAsyncResult.cs" />
-    <Compile Include="Callbacks\CompletionResult.cs" />
-    <Compile Include="Callbacks\ICallback.cs" />
+    <Compile Include="Configuration\IConfigureBus.cs" />
+    <Compile Include="Configuration\IConfigureEnvironment.cs" />
+    <Compile Include="EnvironmentConfigurationException.cs" />
+    <Compile Include="Ioc\DependencyLifecycle.cs" />
     <Compile Include="IRegisterMessageRoute.cs" />
     <Compile Include="IRouteMessageToEndpoint.cs" />
     <Compile Include="IMessageBus.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="IBuildMessageHandlers.cs" />
-    <Compile Include="IObjectBuilder.cs" />
+    <Compile Include="Ioc\IObjectBuilder.cs" />
     <Compile Include="IStartableMessageBus.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />
     <Compile Include="Logging\LogFactory.cs" />
@@ -89,6 +89,7 @@
     <Compile Include="IProcessMessages.cs" />
     <Compile Include="Subscriptions\IStoreSubscriptions.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
+    <Compile Include="Transports\IMessageDequeueStrategy.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\ICreateQueues.cs" />

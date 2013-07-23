@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 using Hermes.Logging;
 using Hermes.Messages.Attributes;
@@ -13,7 +12,7 @@ namespace Hermes.Core
     public class MessageDispatcher : IDispatchMessagesToHandlers
     {
         private readonly IBuildMessageHandlers handlerFactory;
-        private static ILog logger = LogFactory.BuildLogger(typeof (MessageDispatcher)); 
+        private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessageDispatcher)); 
 
         public MessageDispatcher(IBuildMessageHandlers handlerFactory)
         {
@@ -33,20 +32,30 @@ namespace Hermes.Core
 
             if (attribute == null)
             {
-                foreach (var handler in handlers)
-                {
-                    handler.Invoke();
-                }
+                InvokeHandlers(handlers);
             }
             else
             {
-                foreach (var handler in handlers)
-                {
-                    Retry.Action(handler, OnRetryError, attribute.RetryCount, attribute.RetryMilliseconds);
-                }
+                InvokeHandlersWithRetry(handlers, attribute);
             }
         }
 
+        private static void InvokeHandlers(IEnumerable<Action> handlers)
+        {
+            foreach (var handler in handlers)
+            {
+                handler.Invoke();
+            }
+        }
+
+        private void InvokeHandlersWithRetry(IEnumerable<Action> handlers, RetryAttribute attribute)
+        {
+            foreach (var handler in handlers)
+            {
+                Retry.Action(handler, OnRetryError, attribute.RetryCount, attribute.RetryMilliseconds);
+            }
+        }
+      
         private void OnRetryError(Exception ex)
         {
             logger.Warn("Error while dispatching message, attempting retry: {0}", ex.Message);

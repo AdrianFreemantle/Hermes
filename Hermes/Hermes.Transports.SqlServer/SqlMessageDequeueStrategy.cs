@@ -14,14 +14,14 @@ namespace Hermes.Transports.SqlServer
         private readonly ISerializeObjects objectSerializer;
 
         private const string SqlReceive =
-            @"WITH message AS (SELECT TOP(1) * FROM [{0}] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
+            @"WITH message AS (SELECT TOP(1) * FROM [queue].[{0}] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
             DELETE FROM message 
             OUTPUT deleted.Id, deleted.CorrelationId, deleted.ReplyToAddress, 
             deleted.Recoverable, deleted.Expires, deleted.Headers, deleted.Body;";
 
         public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
-            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
             this.objectSerializer = objectSerializer;
         }
 

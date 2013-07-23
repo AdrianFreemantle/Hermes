@@ -8,9 +8,9 @@ namespace Hermes.Transports.SqlServer
     public class SqlQueueCreator : ICreateQueues
     {
         const string CreateQueueSql =
-            @"IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{0}]') AND type in (N'U'))
+            @"IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[queue].[{0}]') AND type in (N'U'))
                   BEGIN
-                    CREATE TABLE [dbo].[{0}](
+                    CREATE TABLE [queue].[{0}](
 	                    [Id] [uniqueidentifier] NOT NULL,
 	                    [CorrelationId] [varchar](255) NULL,
 	                    [ReplyToAddress] [varchar](255) NULL,
@@ -21,7 +21,7 @@ namespace Hermes.Transports.SqlServer
 	                    [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
                     ) ON [PRIMARY];                    
 
-                    CREATE CLUSTERED INDEX [Index_RowVersion] ON [dbo].[{0}] 
+                    CREATE CLUSTERED INDEX [Index_RowVersion] ON [queue].[{0}] 
                     (
 	                    [RowVersion] ASC
                     )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -32,7 +32,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlQueueCreator()
         {
-            connectionString = Settings.GetSetting<string>(SqlMessagingSettings.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
         }
 
         public void CreateQueueIfNecessary(Address address)
