@@ -51,6 +51,7 @@
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Configuration\IConfigureBus.cs" />
     <Compile Include="Configuration\IConfigureEnvironment.cs" />
     <Compile Include="EnvironmentConfigurationException.cs" />

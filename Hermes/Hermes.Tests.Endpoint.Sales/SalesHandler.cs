@@ -18,7 +18,7 @@ namespace Hermes.Tests.Endpoint.Sales
         {
             Console.WriteLine("Publishing shoes sold event");
 
-            bus.Send(new ShoesSold
+            bus.Defer(TimeSpan.FromSeconds(10), new ShoesSold
             {
                 OrderNumber = DateTime.Now.Ticks.ToString(),
                 ShoeTypeId = command.ShoeTypeId,

@@ -9,6 +9,8 @@ namespace Hermes
 
         void Publish(params object[] messages);
 
+        void Defer(TimeSpan delay, params object[] messages);
+
         void Subscribe<T>();
         void Subscribe(Type messageType);
         void Unsubscribe<T>();

@@ -4,17 +4,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{8DDDD239-566D-4C58-A1D8-FCC9C1E1A584}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hermes.Core</RootNamespace>
-    <AssemblyName>Hermes.Core</AssemblyName>
+    <RootNamespace>Hermes.Tests.Endpoint.Deferment</RootNamespace>
+    <AssemblyName>Hermes.Tests.Endpoint.Deferment</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,10 +37,12 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,30 +50,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoreConfig.cs" />
-    <Compile Include="Deferment\DefermentProcessor.cs" />
-    <Compile Include="Deferment\InMemoryTimeoutPersistence.cs" />
-    <Compile Include="Deferment\IPersistTimeouts.cs" />
-    <Compile Include="Deferment\ITimeoutProcessor.cs" />
-    <Compile Include="Deferment\TimeoutData.cs" />
-    <Compile Include="Deferment\TimeoutHeaders.cs" />
-    <Compile Include="Deferment\TimeoutProcessor.cs" />
-    <Compile Include="MessageBus.cs" />
-    <Compile Include="MessageDispatcher.cs" />
-    <Compile Include="MessageHandlerFactory.cs" />
-    <Compile Include="MessageProcessor.cs" />
-    <Compile Include="MessageRouter.cs" />
-    <Compile Include="MessageTransport.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hermes.Core\Hermes.Core.csproj">
+      <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
+      <Name>Hermes.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hermes.ObjectBuilder.Autofac\Hermes.ObjectBuilder.Autofac.csproj">
+      <Project>{DB529F69-F0FE-4B40-BC7F-46850A7B400B}</Project>
+      <Name>Hermes.ObjectBuilder.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hermes.Serialization.Json\Hermes.Serialization.Json.csproj">
+      <Project>{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}</Project>
+      <Name>Hermes.Serialization.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hermes.Transports.SqlServer\Hermes.Transports.SqlServer.csproj">
+      <Project>{78488204-E7C2-4F75-B74A-6BFFEAC3F337}</Project>
+      <Name>Hermes.Transports.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes\Hermes.csproj">
       <Project>{2266CC77-210B-48DB-8FA9-29C4CB432C1A}</Project>
       <Name>Hermes</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

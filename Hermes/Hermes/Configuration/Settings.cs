@@ -11,9 +11,11 @@ namespace Hermes.Configuration
     public static class Settings
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
-        static IObjectBuilder builder;
-        static Address thisEndpoint = Address.Undefined;
-        static int numberOfWorkers = 1;
+        private static readonly Address defermentEndpoint = Address.Parse("Deferment");
+
+        private static IObjectBuilder builder;
+        private static Address thisEndpoint = Address.Undefined;
+        private static int numberOfWorkers = 1;
 
         public static int NumberOfWorkers
         {
@@ -33,6 +35,11 @@ namespace Hermes.Configuration
 
             internal set { builder = value; }
         } 
+
+        public static Address DefermentEndpoint
+        {
+            get { return defermentEndpoint; }
+        }
 
         public static Address ThisEndpoint
         {

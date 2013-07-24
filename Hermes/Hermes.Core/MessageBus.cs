@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using Hermes.Configuration;
+using Hermes.Core.Deferment;
 using Hermes.Serialization;
 using Hermes.Subscriptions;
 using Hermes.Transports;
@@ -41,6 +41,20 @@ namespace Hermes.Core
         public void Dispose()
         {
             Stop();
+        }
+
+        public void Defer(TimeSpan delay, params object[] messages)
+        {
+            if (messages == null || messages.Length == 0)
+            {
+                return;
+            }
+
+            MessageEnvelope message = BuildMessageEnvelope(messages);
+            message.Headers[TimeoutHeaders.Expire] = DateTime.UtcNow.Add(delay).ToWireFormattedString();
+            message.Headers[TimeoutHeaders.RouteExpiredTimeoutTo] = messageRouter.GetDestinationFor(messages.First().GetType()).ToString();
+
+            messageTransport.Send(message, Settings.DefermentEndpoint);
         }
 
         public void Send(params object[] messages)
@@ -81,10 +95,6 @@ namespace Hermes.Core
                 stream.Flush();
                 messageBody = stream.ToArray();
             }
-
-            string debug = Encoding.UTF8.GetString(messageBody);
-
-            var l = debug.Length;
 
             var message = new MessageEnvelope(Guid.NewGuid(), Guid.Empty, Address.Self, TimeSpan.MaxValue, true, new Dictionary<string, string>(), messageBody);
 

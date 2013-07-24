@@ -11,7 +11,7 @@ namespace Hermes.Tests.Endpoint.Sales
 {
     class Program
     {
-        private const string connectionString = @"Data Source=CHANDRA\SQLEXPRESS;Initial Catalog=AsbaBank;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=ShoeShop;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         static void Main(string[] args)
         {
