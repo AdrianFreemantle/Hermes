@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2266CC77-210B-48DB-8FA9-29C4CB432C1A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hermes</RootNamespace>
+    <AssemblyName>Hermes</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Address.cs" />
+    <Compile Include="Backoff\BackOff.cs" />
+    <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
+    <Compile Include="Backoff\IBackOffStrategy.cs" />
+    <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="Configuration\IConfigureBus.cs" />
+    <Compile Include="Configuration\IConfigureEnvironment.cs" />
+    <Compile Include="EnvironmentConfigurationException.cs" />
+    <Compile Include="IInMemoryBus.cs" />
+    <Compile Include="IManageSubscriptions.cs" />
+    <Compile Include="IManageUnitOfWork.cs" />
+    <Compile Include="Ioc\DependencyLifecycle.cs" />
+    <Compile Include="IRegisterMessageRoute.cs" />
+    <Compile Include="IRouteMessageToEndpoint.cs" />
+    <Compile Include="IMessageBus.cs" />
+    <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="ConfigurationSettingNotFoundException.cs" />
+    <Compile Include="Configuration\Configure.cs" />
+    <Compile Include="IBuildMessageHandlers.cs" />
+    <Compile Include="Ioc\IObjectBuilder.cs" />
+    <Compile Include="IStartableMessageBus.cs" />
+    <Compile Include="Logging\ConsoleWindowLogger.cs" />
+    <Compile Include="Logging\LogFactory.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\LoggingExtensionMethods.cs" />
+    <Compile Include="Messages\Attributes\RetryAttribute.cs" />
+    <Compile Include="Retry.cs" />
+    <Compile Include="MessageProcessingFailedException.cs" />
+    <Compile Include="Messages\IHandleMessage.cs" />
+    <Compile Include="Messages\ICommand.cs" />
+    <Compile Include="Messages\IEvent.cs" />
+    <Compile Include="Messages\IMessage.cs" />
+    <Compile Include="RouteNotDefinedException.cs" />
+    <Compile Include="Serialization\ISerializeMessages.cs" />
+    <Compile Include="MessageEnvelope.cs" />
+    <Compile Include="IdentityFactory.cs" />
+    <Compile Include="Headers.cs" />
+    <Compile Include="Mandate.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuntimeEnvironment.cs" />
+    <Compile Include="Serialization\ISerializeObjects.cs" />
+    <Compile Include="Serialization\MessageSerializationBinder.cs" />
+    <Compile Include="IDispatchMessagesToHandlers.cs" />
+    <Compile Include="IProcessMessages.cs" />
+    <Compile Include="Subscriptions\IStoreSubscriptions.cs" />
+    <Compile Include="TransactionScopeUtils.cs" />
+    <Compile Include="Transports\IMessageDequeueStrategy.cs" />
+    <Compile Include="Transports\IPublishMessages.cs" />
+    <Compile Include="Transports\ITransportMessages.cs" />
+    <Compile Include="Transports\ICreateQueues.cs" />
+    <Compile Include="Transports\IDequeueMessages.cs" />
+    <Compile Include="Transports\ISendMessages.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Endpoints\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
