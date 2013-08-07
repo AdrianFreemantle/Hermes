@@ -4,7 +4,6 @@ namespace Hermes
 {
     public interface IMessageBus 
     {
-        IInMemoryBus InMemory { get; }
         void Send(params object[] messages);
         void Send(Address address, params object[] messages);
         void Send(Address address, Guid corrolationId, params object[] messages);

@@ -13,27 +13,42 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.ObjectBuilder.Autofac
 {
-    public class AutofacServiceAdapter : ServiceLocatorImplBase, IObjectBuilder
+    public class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, Ioc.IContainer
     {
-        public ILifetimeScope container { get; set; }
+        private readonly ILifetimeScope lifetimeScope;
         private bool disposed;
 
-        public AutofacServiceAdapter()
+        public Ioc.IContainer Container { get { return this; } }
+
+        public AutofacAdapter()
             :this(null)
         {
         }
 
-        public AutofacServiceAdapter(ILifetimeScope container)
+        public AutofacAdapter(ILifetimeScope container)
         {
-            this.container = this.container = container ?? new ContainerBuilder().Build();            
+            if (container == null)
+            {
+                lifetimeScope = new ContainerBuilder().Build();
+                ((IContainerBuilder)this).RegisterType<AutofacAdapter>(DependencyLifecycle.InstancePerLifetimeScope);
+            }
+            else
+            {
+                lifetimeScope = container;
+            }
         }
 
-        ~AutofacServiceAdapter()
+        ~AutofacAdapter()
         {
             Dispose(false);
         }
 
-        void IObjectBuilder.RegisterHandlers(IEnumerable<Assembly> assemblies)
+        public Ioc.IContainer BeginLifetimeScope()
+        {
+            return new AutofacAdapter(lifetimeScope.BeginLifetimeScope());
+        }
+
+        void IContainerBuilder.RegisterHandlers(IEnumerable<Assembly> assemblies)
         {
             if (assemblies == null)
             {
@@ -45,17 +60,17 @@ namespace Hermes.ObjectBuilder.Autofac
             builder.RegisterAssemblyTypes(assemblies.ToArray())
                    .AsClosedTypesOf(typeof(IHandleMessage<>)).InstancePerLifetimeScope();
 
-            builder.Update(container.ComponentRegistry);
+            builder.Update(lifetimeScope.ComponentRegistry);
         }
 
-        void IObjectBuilder.RegisterSingleton<T>(object instance)
+        void IContainerBuilder.RegisterSingleton<T>(object instance)
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(instance).As<T>().PropertiesAutowired();
-            builder.Update(container.ComponentRegistry);
+            builder.Update(lifetimeScope.ComponentRegistry);
         }
 
-        void IObjectBuilder.RegisterType<T>(DependencyLifecycle dependencyLifecycle)
+        void IContainerBuilder.RegisterType<T>(DependencyLifecycle dependencyLifecycle)
         {
             if (IsComponentAlreadyRegistered(typeof (T)))
             {
@@ -68,7 +83,7 @@ namespace Hermes.ObjectBuilder.Autofac
             var registration = builder.RegisterType<T>().As(services).PropertiesAutowired();
             
             ConfigureLifetimeScope(dependencyLifecycle, registration);
-            builder.Update(container.ComponentRegistry);
+            builder.Update(lifetimeScope.ComponentRegistry);
         }
 
         private static void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> registration)
@@ -110,7 +125,7 @@ namespace Hermes.ObjectBuilder.Autofac
 
         private bool IsComponentAlreadyRegistered(Type concreteComponent)
         {
-            return container.ComponentRegistry.Registrations.FirstOrDefault(x => x.Activator.LimitType == concreteComponent) != null;
+            return lifetimeScope.ComponentRegistry.Registrations.FirstOrDefault(x => x.Activator.LimitType == concreteComponent) != null;
         }
 
         protected override object DoGetInstance(Type serviceType, string key)
@@ -121,8 +136,8 @@ namespace Hermes.ObjectBuilder.Autofac
             }
 
             return key != null
-                ? container.ResolveNamed(key, serviceType)
-                : container.Resolve(serviceType);
+                ? lifetimeScope.ResolveNamed(key, serviceType)
+                : lifetimeScope.Resolve(serviceType);
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
@@ -133,7 +148,7 @@ namespace Hermes.ObjectBuilder.Autofac
             }
 
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-            object instance = container.Resolve(enumerableType);
+            object instance = lifetimeScope.Resolve(enumerableType);
 
             return ((IEnumerable)instance).Cast<object>();
         }        
@@ -151,17 +166,12 @@ namespace Hermes.ObjectBuilder.Autofac
                 return;
             }
 
-            if (disposing && container != null)
+            if (disposing && lifetimeScope != null)
             {
-                container.Dispose();
+                lifetimeScope.Dispose();
             }
 
             disposed = true;
-        }
-
-        public IObjectBuilder BeginLifetimeScope()
-        {
-            return new AutofacServiceAdapter(container.BeginLifetimeScope());
-        }
+        }      
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="IManageSubscriptions.cs" />
     <Compile Include="IManageUnitOfWork.cs" />
     <Compile Include="Ioc\DependencyLifecycle.cs" />
+    <Compile Include="Ioc\IContainer.cs" />
     <Compile Include="IRegisterMessageRoute.cs" />
     <Compile Include="IRouteMessageToEndpoint.cs" />
     <Compile Include="IMessageBus.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="IBuildMessageHandlers.cs" />
-    <Compile Include="Ioc\IObjectBuilder.cs" />
+    <Compile Include="Ioc\IContainerBuilder.cs" />
     <Compile Include="IStartableMessageBus.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />
     <Compile Include="Logging\LogFactory.cs" />

@@ -25,7 +25,7 @@ namespace Hermes.Tests.Endpoint.Sales
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("Sales"))

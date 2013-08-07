@@ -7,19 +7,18 @@ namespace Hermes.Tests.Endpoint.Sales
 {
     public class SalesHandler : IHandleMessage<SellShoes>, IHandleMessage<TestEvent>
     {
-        private readonly IMessageBus bus;
+        private readonly IInMemoryBus inMemoryBus;
 
-        public SalesHandler(IMessageBus bus)
+        public SalesHandler(IInMemoryBus inMemoryBus)
         {
-            this.bus = bus;
+            this.inMemoryBus = inMemoryBus;
         }
 
         public void Handle(SellShoes command)
         {
             Console.WriteLine("Publishing shoes sold event");
-
             Console.WriteLine("SellShoes message handled by {0} on thread {1}", GetHashCode(), Thread.CurrentThread.ManagedThreadId);
-            bus.InMemory.Raise(new TestEvent { Message =  "Raise" });
+            inMemoryBus.Raise(new TestEvent { Message = "Raise" });
 
             //bus.Defer(TimeSpan.FromSeconds(10), new ShoesSold
             //{

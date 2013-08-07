@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Hermes
+﻿namespace Hermes
 {
     public interface IProcessMessages
     {
         void Process(MessageEnvelope envelope);
-        void DispatchToHandlers(IEnumerable<object> messageBodies);
     }
 }

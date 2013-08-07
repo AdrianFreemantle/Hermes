@@ -9,23 +9,22 @@ namespace Hermes.Configuration
 {
     public class Configure : IConfigureEnvironment, IConfigureBus
     {
-        private static readonly Configure instance;
+        private static readonly Configure Instance;
 
         static Configure()
         {
-            instance = new Configure();
+            Instance = new Configure();
         }
 
         private Configure()
         {
-            
         }
 
-        public static IConfigureEnvironment Environment(IObjectBuilder objectBuilder)
+        public static IConfigureEnvironment Environment(IContainerBuilder containerBuilder)
         {
-            objectBuilder.RegisterSingleton<IObjectBuilder>(objectBuilder);
-            Settings.Builder = objectBuilder;
-            return instance;
+            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
+            Settings.Builder = containerBuilder;
+            return Instance;
         }
 
         IConfigureEnvironment IConfigureEnvironment.ConsoleWindowLogger()
@@ -48,7 +47,7 @@ namespace Hermes.Configuration
             }
 
             Settings.ThisEndpoint = thisEndpoint;
-            return instance;
+            return Instance;
         }
 
         IConfigureBus IConfigureBus.NumberOfWorkers(int numberOfWorkers)
@@ -65,7 +64,7 @@ namespace Hermes.Configuration
 
         IConfigureBus IConfigureBus.RegisterMessageRoute<TMessage>(Address endpointAddress)
         {
-            var router = Settings.Builder.GetInstance<IRegisterMessageRoute>();
+            var router = Settings.RootContainer.GetInstance<IRegisterMessageRoute>();
             router.RegisterRoute(typeof(TMessage), endpointAddress);
             return this;
         }
@@ -78,16 +77,16 @@ namespace Hermes.Configuration
 
         void IConfigureBus.Start()
         {
-            var queueCreator = Settings.Builder.GetInstance<ICreateQueues>();
+            var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Settings.ThisEndpoint);
 
-            var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
+            var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
             busStarter.Start();
         }
 
         void IConfigureBus.Stop()
         {
-            var busStarter = Settings.Builder.GetInstance<IStartableMessageBus>();
+            var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
             busStarter.Stop();
         }
     }

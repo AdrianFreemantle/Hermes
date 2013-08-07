@@ -10,14 +10,14 @@ using Hermes.Transports;
 
 namespace Hermes.Core
 {
-    public class MessageBus : IMessageBus, IStartableMessageBus, IInMemoryBus, IDisposable
+    public class MessageBus : IMessageBus, IStartableMessageBus, IDisposable
     {
         private readonly ISerializeMessages messageSerializer;
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPublishMessages messagePublisher;
 
-        public IInMemoryBus InMemory { get { return this; } }
+        //public IInMemoryBus InMemory { get { return this; } }
 
         public MessageBus(ISerializeMessages messageSerializer, ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPublishMessages messagePublisher)
         {
@@ -120,10 +120,10 @@ namespace Hermes.Core
             return message;
         }        
 
-        void IInMemoryBus.Raise(object @event)
-        {
-            var messageProcessor = Settings.Builder.GetInstance<IProcessMessages>();
-            messageProcessor.DispatchToHandlers(new [] { @event });
-        }
+        //void IInMemoryBus.Raise(object @event)
+        //{
+        //    var messageProcessor = Settings.RootContainer.GetInstance<IProcessMessages>();
+        //    messageProcessor.DispatchToHandlers(new [] { @event });
+        //}
     }
 }

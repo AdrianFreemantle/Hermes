@@ -16,16 +16,16 @@ namespace Hermes.Core
     {
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
-        private readonly IObjectBuilder objectBuilder;
+        private readonly IContainer container;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageDispatcher));
 
         readonly ThreadLocal<IServiceLocator> localServiceLocator = new ThreadLocal<IServiceLocator>();
 
-        public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IObjectBuilder objectBuilder)
+        public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;
-            this.objectBuilder = objectBuilder;
+            this.container = container;
         }
 
         public void Process(MessageEnvelope envelope)
@@ -50,7 +50,7 @@ namespace Hermes.Core
 
         private void TryProcess(IEnumerable<object> messageBodies)
         {
-            using (var childBuilder = objectBuilder.BeginLifetimeScope())
+            using (var childBuilder = container.BeginLifetimeScope())
             {
                 using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Suppress))
                 {
@@ -62,7 +62,7 @@ namespace Hermes.Core
             }
         }
 
-        public void DispatchToHandlers(IEnumerable<object> messageBodies)
+        private void DispatchToHandlers(IEnumerable<object> messageBodies)
         {
             foreach (var body in messageBodies)
             {

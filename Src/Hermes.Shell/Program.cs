@@ -28,7 +28,7 @@ namespace Hermes.Shell
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                     .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("Shell"))
