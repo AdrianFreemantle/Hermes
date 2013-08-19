@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Hermes.Logging;
-using Microsoft.Practices.ServiceLocation;
+﻿using Hermes.Logging;
 
 namespace Hermes.Core.Deferment
 {
@@ -21,11 +18,6 @@ namespace Hermes.Core.Deferment
             Logger.Debug("Defering message: {0}", envelope.MessageId);
 
             timeoutStore.Add(new TimeoutData(envelope));
-        }
-
-        public void DispatchToHandlers(IEnumerable<object> messageBodies)
-        {
-            throw new NotSupportedException("The deferment message-processor does not support the processing of message bodies. Please submit the message body wrapped in a MessageEnvelope.");
         }
     }
 }

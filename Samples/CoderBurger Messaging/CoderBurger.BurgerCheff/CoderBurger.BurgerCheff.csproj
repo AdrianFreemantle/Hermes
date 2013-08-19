@@ -32,23 +32,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hermes">
-      <HintPath>..\..\..\Src\Hermes.Core\bin\Debug\Hermes.dll</HintPath>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Core">
-      <HintPath>..\..\..\Src\Hermes.Core\bin\Debug\Hermes.Core.dll</HintPath>
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\..\..\Src\Hermes.ObjectBuilder.Autofac\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    <Reference Include="Hermes.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\..\..\Src\Hermes.Serialization.Json\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\..\..\Src\Hermes.Transports.SqlServer\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
+    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.Serialization.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Transports.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\CoderBurger.Messages\bin\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -64,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoderBurger.Messages\CoderBurger.Messages.csproj">

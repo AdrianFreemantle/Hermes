@@ -36,22 +36,25 @@
       <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes">
-      <HintPath>..\..\..\Src\Hermes.Core\bin\Debug\Hermes.dll</HintPath>
+      <HintPath>..\Libs\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Core">
-      <HintPath>..\..\..\Src\Hermes.Core\bin\Debug\Hermes.Core.dll</HintPath>
+      <HintPath>..\Libs\Hermes.Core.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\..\..\Src\Hermes.ObjectBuilder.Autofac\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\Libs\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\..\..\Src\Hermes.Serialization.Json\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\Libs\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\..\..\Src\Hermes.Transports.SqlServer\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
+      <HintPath>..\Libs\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\..\Src\Hermes\bin\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Stateless">
       <HintPath>..\packages\stateless-4.0.2.3.1.1\lib\net40\Stateless.dll</HintPath>

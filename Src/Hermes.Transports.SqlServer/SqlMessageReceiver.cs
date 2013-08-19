@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Transactions;
 using Hermes.Backoff;
 using Hermes.Configuration;
+using Hermes.Ioc;
+using Hermes.Logging;
 
 namespace Hermes.Transports.SqlServer
 {  
     public class SqlMessageReceiver : IDequeueMessages
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(SqlMessageReceiver));
+
         private CancellationTokenSource tokenSource;
         private readonly IMessageDequeueStrategy dequeueStrategy;
         private readonly IProcessMessages messageProcessor;
@@ -54,16 +58,46 @@ namespace Hermes.Transports.SqlServer
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                bool foundWork;
+                TryDequeueWork(backoff);
+            }
+        }
 
-                using (var scope = TransactionScopeUtils.Begin())
+        private void TryDequeueWork(BackOff backoff)
+        {
+            bool foundWork = false;
+
+            try
+            {
+                foundWork = DequeueWork();
+            }
+            catch (TransactionAbortedException)
+            {
+                Logger.Info("Transaction Aborted Exception.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Info("Error while attempting to dequeue work: {0}", ex.Message);
+            }
+            finally
+            {
+                SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
+            }
+        }
+
+        private bool DequeueWork()
+        {
+            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))
+            {
+                var message = dequeueStrategy.Dequeue(address);
+
+                try
                 {
-                    var message = dequeueStrategy.Dequeue(address);
-                    foundWork = ProcessMessage(message);
+                    return ProcessMessage(message);
+                }
+                finally
+                {
                     scope.Complete();
                 }
-
-                SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
             }
         }
 
@@ -80,18 +114,19 @@ namespace Hermes.Transports.SqlServer
         }
 
         public bool ProcessMessage(MessageEnvelope message)
-        {
-            if (message == MessageEnvelope.Undefined)
-            {
-                return false;
-            }
-
+        {           
             try
             {
+                if (message == MessageEnvelope.Undefined)
+                {
+                    return false;
+                }
+
                 messageProcessor.Process(message);
             }
             catch (MessageProcessingFailedException ex)
             {
+                Logger.Info("Moving message {0} to dead letter or retry queue.", message.MessageId);
                 //todo send to second level retry queue or dead letter queue depending on retry count.
             }
 

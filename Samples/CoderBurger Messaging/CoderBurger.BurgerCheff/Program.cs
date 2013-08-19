@@ -24,6 +24,8 @@ namespace CoderBurger.BurgerCheff
         {
             Initialize();
 
+            Console.WriteLine("BurgerCheff Ready");
+
             while (true)
             {
                 System.Threading.Thread.Sleep(100);
@@ -32,7 +34,7 @@ namespace CoderBurger.BurgerCheff
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("BurgerCheff"))
@@ -45,19 +47,23 @@ namespace CoderBurger.BurgerCheff
         }
     }
 
-    public class WaiterHandler : IHandleMessage<OrderPlaced>
+    public class BurgerCheffHandler : IHandleMessage<OrderPlaced>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(WaiterHandler));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(BurgerCheffHandler));
         private readonly IMessageBus messageBus;
+        private readonly Random rand = new Random((int)DateTime.Now.Ticks);
 
-        public WaiterHandler(IMessageBus messageBus)
+        public BurgerCheffHandler(IMessageBus messageBus)
         {
             this.messageBus = messageBus;
         }
 
         public void Handle(OrderPlaced command)
         {
-            Logger.Info("Received notice of new order {0}", command.OrderId);
+            Logger.Info("Received notice of new order");
+            System.Threading.Thread.Sleep(rand.Next(1000, 5000));
+            Logger.Info("Order processed");
+
             messageBus.Publish(new BurgerPrepared() { OrderId = command.OrderId });
         }
     }

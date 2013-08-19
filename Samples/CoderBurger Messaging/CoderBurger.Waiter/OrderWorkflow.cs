@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoderBurger.Messages;
-using CoderBurger.Messages.Waiter;
 using Hermes;
 using Hermes.Logging;
+using Hermes.Messages;
 using Stateless;
 
 namespace CoderBurger.Waiter
@@ -16,35 +17,50 @@ namespace CoderBurger.Waiter
         Ready,
         Collected,
         Abandoned
+    }    
+
+    public static class OrderRepository
+    {
+        public static Dictionary<Guid, Order> Store { get; set; }
+
+        static OrderRepository()
+        {
+            Store = new Dictionary<Guid, Order>();
+        }
     }
 
-    enum OrderTrigger
+    public class OrderWorkflow 
+        : IHandleMessage<AbandonOrder>
+        , IHandleMessage<PayOrder>
+        , IHandleMessage<CancelOrder>
+        , IHandleMessage<CollectOrder>
+        , IHandleMessage<PlaceOrder>
+        , IHandleMessage<RefundCustomer>
+        , IHandleMessage<FriesPrepared>
+        , IHandleMessage<BurgerPrepared>
+        , IHandleMessage<DrinkPrepared>
     {
-        OrderPlaced,
-        OrderPaid,
-        OrderCanceled,
-        FoodItemReady,
-        OrderCollected,
-        OrderAbandoned
-    }   
+        enum OrderTrigger
+        {
+            OrderPlaced,
+            OrderPaid,
+            OrderCanceled,
+            FoodItemReady,
+            OrderCollected,
+            OrderAbandoned
+        }
 
-    public class OrderWorkflow
-    {  
-        public Guid OrderId { get; set; }
-        public OrderState CurrentStatus { get; private set; }
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(OrderWorkflow));
+        private readonly StateMachine<OrderState, OrderTrigger> orderState;
+        private readonly IMessageBus messageBus;
 
         private Order order = new Order();
 
-        private readonly StateMachine<OrderState, OrderTrigger> orderState;
-        private readonly IMessageBus bus;
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(OrderWorkflow));
-
-        public OrderWorkflow(IMessageBus bus, Guid id)
+        public OrderWorkflow(IMessageBus messageBus)
         {
-            this.OrderId = id;
-            this.bus = bus;
-            CurrentStatus = OrderState.NoOrder;
-            orderState = new StateMachine<OrderState, OrderTrigger>(GetCurrentState, s => CurrentStatus = s);
+            this.messageBus = messageBus;
+
+            orderState = new StateMachine<OrderState, OrderTrigger>(() => order.CurrentStatus, s => order.CurrentStatus = s);
 
             orderState.Configure(OrderState.NoOrder)
                       .Permit(OrderTrigger.OrderPlaced, OrderState.Unpaid);
@@ -75,90 +91,125 @@ namespace CoderBurger.Waiter
                       .Ignore(OrderTrigger.OrderCanceled)
                       .OnEntry(RefundCustomer);
 
-            orderState.OnUnhandledTrigger((state, trigger) => Console.WriteLine("Invalid state transition {0} : {1}", trigger, state));
+            orderState.OnUnhandledTrigger((state, trigger) => Logger.Warn("Invalid state transition {0} : {1}", trigger, state));
         }
 
-        public OrderState GetCurrentState()
+        private void GetOrder(Guid orderId)
         {
-            return CurrentStatus;
+            if (!OrderRepository.Store.ContainsKey(orderId))
+            {
+                OrderRepository.Store[orderId] = new Order{ OrderId = orderId };
+            }
+
+            order = OrderRepository.Store[orderId];
         }
 
-        public void PlaceOrder()
+        public void Handle(PayOrder command)
         {
-            orderState.Fire(OrderTrigger.OrderPlaced);
-        }
-
-        public void Pay()
-        {
+            Logger.Info("Accepting payment for order");
+            GetOrder(command.OrderId);
+           
             orderState.Fire(OrderTrigger.OrderPaid);
         }
 
-        public void CancelOrder()
+        public void Handle(AbandonOrder command)
         {
+            Logger.Info("Abandoning order");
+            GetOrder(command.OrderId);
+
+            orderState.Fire(OrderTrigger.OrderAbandoned);
+        }
+
+        public void Handle(CancelOrder command)
+        {
+            Logger.Info("Cancelling order");
+            GetOrder(command.OrderId);
+           
             orderState.Fire(OrderTrigger.OrderCanceled);
         }
 
-        public void FriesPrepared()
+        public void Handle(CollectOrder command)
         {
+            Logger.Info("Order is being collected");
+            GetOrder(command.OrderId);
+           
+            orderState.Fire(OrderTrigger.OrderCollected);
+        }
+
+        public void Handle(PlaceOrder command)
+        {
+            Logger.Info("Accpeting new order");
+            GetOrder(command.OrderId);
+         
+            orderState.Fire(OrderTrigger.OrderPlaced);
+        }
+
+        public void Handle(RefundCustomer command)
+        {
+            Logger.Info("Refunding customer for order");
+            messageBus.Publish(new CustomerRefunded { OrderId = command.OrderId });
+        }
+
+        public void Handle(FriesPrepared command)
+        {
+            Logger.Info("Received fries");
+            GetOrder(command.OrderId);
+           
             order.FriesReady = true;
             orderState.Fire(OrderTrigger.FoodItemReady);
         }
 
-        public void DrinkPrepared()
+        public void Handle(BurgerPrepared command)
         {
-            order.DrinkReady = true;
-            orderState.Fire(OrderTrigger.FoodItemReady);
-        }
+            Logger.Info("Received burger ");
+            GetOrder(command.OrderId);
 
-        public void BurgerPrepared()
-        {
             order.BurgerReady = true;
             orderState.Fire(OrderTrigger.FoodItemReady);
         }
 
-        public void Collect()
+        public void Handle(DrinkPrepared command)
         {
-            orderState.Fire(OrderTrigger.OrderCollected);
+            Logger.Info("Received drink");
+            GetOrder(command.OrderId);
+
+            order.DrinkReady = true;
+            orderState.Fire(OrderTrigger.FoodItemReady);
         }
 
-        public void Abandon()
+        private void SubmitOrderToKitchen()
         {
-            orderState.Fire(OrderTrigger.OrderAbandoned);
+            Logger.Info("Submitting order to kitchen");
+            messageBus.Publish(new OrderPlaced { OrderId = order.OrderId });
         }
 
-        void SubmitOrderToKitchen()
+        private void OrderReady()
         {
-            Logger.Info("Submitting order {0} to kitchen", OrderId);
-            bus.Publish(new OrderPlaced { OrderId = OrderId });
+            Logger.Info("Starting order abandonment timer for order");
+            messageBus.Defer(TimeSpan.FromSeconds(15), new AbandonOrder { OrderId = order.OrderId });
+            messageBus.Publish(new OrderReady { OrderId = order.OrderId });
         }
 
-        void OrderReady()
+        private void StartPaymentTimer()
         {
-            Logger.Info("Starting order abandonment timer for order {0}", OrderId);
-            bus.Defer(TimeSpan.FromSeconds(15), new AbandonOrder { OrderId = OrderId });
-            bus.Publish(new OrderReady { OrderId = OrderId });
+            Logger.Info("Starting payment timer for order");
+            messageBus.Defer(TimeSpan.FromSeconds(15), new CancelOrder { OrderId = order.OrderId });
         }
 
-        void StartPaymentTimer()
+        private void RefundCustomer()
         {
-            Logger.Info("Starting payment timer for order {0}", OrderId);
-            bus.Defer(TimeSpan.FromSeconds(15), new CancelOrder { OrderId = OrderId });
+            Logger.Info("Refunding Customer");
+            messageBus.Send(new RefundCustomer { OrderId = order.OrderId });
         }
 
-        void RefundCustomer()
-        {
-            Logger.Info("Refunding Customer {0}", OrderId);
-            bus.Send(new RefundCustomer { OrderId = OrderId });
-        }
-
-        bool IsReadyForCollection()
+        private bool IsReadyForCollection()
         {
             return order.DrinkReady && order.FriesReady && order.BurgerReady;
         }
 
-        void Collected()
+        private void Collected()
         {
-            bus.Publish(new OrderCollected { OrderId = OrderId });            
+            messageBus.Publish(new OrderCollected { OrderId = order.OrderId });            
         }
     }
 }

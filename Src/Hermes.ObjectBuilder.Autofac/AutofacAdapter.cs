@@ -7,6 +7,7 @@ using System.Reflection;
 using Autofac;
 using Autofac.Builder;
 using Hermes.Ioc;
+using Hermes.Logging;
 using Hermes.Messages;
 
 using Microsoft.Practices.ServiceLocation;
@@ -15,6 +16,8 @@ namespace Hermes.ObjectBuilder.Autofac
 {
     public class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, Ioc.IContainer
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AutofacAdapter));
+
         private readonly ILifetimeScope lifetimeScope;
         private bool disposed;
 
@@ -36,6 +39,8 @@ namespace Hermes.ObjectBuilder.Autofac
             {
                 lifetimeScope = container;
             }
+
+            Logger.Verbose("Starting new container {0}", lifetimeScope.GetHashCode());
         }
 
         ~AutofacAdapter()
@@ -135,6 +140,8 @@ namespace Hermes.ObjectBuilder.Autofac
                 throw new ArgumentNullException("serviceType");
             }
 
+            Logger.Verbose("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+
             return key != null
                 ? lifetimeScope.ResolveNamed(key, serviceType)
                 : lifetimeScope.Resolve(serviceType);
@@ -146,6 +153,8 @@ namespace Hermes.ObjectBuilder.Autofac
             {
                 throw new ArgumentNullException("serviceType");
             }
+
+            Logger.Verbose("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
 
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             object instance = lifetimeScope.Resolve(enumerableType);
@@ -168,10 +177,16 @@ namespace Hermes.ObjectBuilder.Autofac
 
             if (disposing && lifetimeScope != null)
             {
+                Logger.Verbose("Disposing container {0}", GetHashCode());
                 lifetimeScope.Dispose();
             }
 
             disposed = true;
-        }      
+        }   
+   
+        public override int GetHashCode()
+        {
+            return lifetimeScope.GetHashCode();
+        }
     }
 }

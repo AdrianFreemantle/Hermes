@@ -23,6 +23,8 @@ namespace Hermes.Configuration
             internal set { numberOfWorkers = value; }
         }
 
+        public static bool UseDistributedTransaction { get; internal set; }
+
         public static IContainerBuilder Builder
         {
             get

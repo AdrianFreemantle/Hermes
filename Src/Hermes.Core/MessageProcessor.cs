@@ -4,22 +4,22 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Transactions;
-
+using Hermes.Configuration;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Serialization;
 using Microsoft.Practices.ServiceLocation;
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Core
 {
     public class MessageProcessor : IProcessMessages
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageProcessor));
+
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
         private readonly IContainer container;
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageDispatcher));
-
-        readonly ThreadLocal<IServiceLocator> localServiceLocator = new ThreadLocal<IServiceLocator>();
 
         public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container)
         {
@@ -30,12 +30,12 @@ namespace Hermes.Core
 
         public void Process(MessageEnvelope envelope)
         {
-            Logger.Debug("Processing messsage {0}", envelope.MessageId);
+            Logger.Debug("Processing message {0}", envelope.MessageId);
             IEnumerable<object> messageBodies = ExtractMessages(envelope);
 
             try
             {
-                TryProcess(messageBodies);
+                ProcessMessages(messageBodies);
             }
             catch (Exception ex)
             {
@@ -44,29 +44,34 @@ namespace Hermes.Core
             }
             finally
             {
-                localServiceLocator.Value = null;
+                ServiceLocator.Current.SetServiceProvider(null);
             }
         }
 
-        private void TryProcess(IEnumerable<object> messageBodies)
+        private void ProcessMessages(IEnumerable<object> messageBodies)
         {
-            using (var childBuilder = container.BeginLifetimeScope())
+            using (var childContainer = container.BeginLifetimeScope())
+            using (var scope = StartTransactionScope())
             {
-                using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Suppress))
-                {
-                    localServiceLocator.Value = childBuilder;
-                    DispatchToHandlers(messageBodies);
-                    CommitUnitsOfWork(childBuilder.GetAllInstances<IManageUnitOfWork>());
-                    scope.Complete();
-                }
+                ServiceLocator.Current.SetServiceProvider(childContainer);
+                DispatchToHandlers(messageBodies, childContainer);
+                CommitUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
+                scope.Complete();
             }
         }
 
-        private void DispatchToHandlers(IEnumerable<object> messageBodies)
+        private static TransactionScope StartTransactionScope()
+        {
+            return Settings.UseDistributedTransaction 
+                ? TransactionScopeUtils.Begin(TransactionScopeOption.RequiresNew) 
+                : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
+        }
+
+        private void DispatchToHandlers(IEnumerable<object> messageBodies, IServiceLocator serviceLocator)
         {
             foreach (var body in messageBodies)
             {
-                messageDispatcher.DispatchToHandlers(localServiceLocator.Value, body);
+                messageDispatcher.DispatchToHandlers(serviceLocator, body);
             }
         }
 

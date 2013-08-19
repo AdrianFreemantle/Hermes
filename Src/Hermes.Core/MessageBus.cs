@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Transactions;
 using Hermes.Configuration;
 using Hermes.Core.Deferment;
 using Hermes.Serialization;
@@ -119,11 +119,5 @@ namespace Hermes.Core
 
             return message;
         }        
-
-        //void IInMemoryBus.Raise(object @event)
-        //{
-        //    var messageProcessor = Settings.RootContainer.GetInstance<IProcessMessages>();
-        //    messageProcessor.DispatchToHandlers(new [] { @event });
-        //}
     }
 }

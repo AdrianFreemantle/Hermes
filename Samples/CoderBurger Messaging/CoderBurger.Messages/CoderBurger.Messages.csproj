@@ -30,8 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hermes">
-      <HintPath>..\..\..\Src\Hermes\bin\Debug\Hermes.dll</HintPath>
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,13 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Waiter\AbandonOrder.cs" />
-    <Compile Include="Waiter\PayOrder.cs" />
-    <Compile Include="Waiter\RefundCustomer.cs" />
-    <Compile Include="Waiter\CancelOrder.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="Waiter\CollectOrder.cs" />
-    <Compile Include="Waiter\PlaceOrder.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

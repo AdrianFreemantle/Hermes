@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using CoderBurger.Messages;
-using CoderBurger.Messages.Waiter;
 using Hermes;
 using Hermes.Configuration;
 using Hermes.Core;
@@ -10,7 +9,6 @@ using Hermes.Messages;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Transports.SqlServer;
-using Stateless;
 
 namespace CoderBurger.Customer
 {
@@ -45,7 +43,7 @@ namespace CoderBurger.Customer
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("Customer"))
@@ -73,17 +71,17 @@ namespace CoderBurger.Customer
 
         public void Handle(OrderReady command)
         {
-            Logger.Info("Order {0} is ready", command.OrderId);
+            Logger.Info("Order is ready");
         }
 
         public void Handle(CustomerRefunded command)
         {
-            Logger.Info("You have been refunded for order {0}", command.OrderId);
+            Logger.Info("You have been refunded for your order");
         }
 
         public void Handle(OrderCollected command)
         {
-            Logger.Info("Hmmm... burger and chips", command.OrderId);
+            Logger.Info("Hmmm... burger and chips");
         }
     }
 

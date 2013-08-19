@@ -8,6 +8,7 @@ namespace Hermes.Configuration
         IConfigureBus ScanForHandlersIn(params Assembly[] assemblies);
         IConfigureBus RegisterMessageRoute<TMessage>(Address endpointAddress);
         IConfigureBus SubscribeToEvent<T>();
+        IConfigureBus UseDistributedTransaction();
         void Start();
         void Stop();
     }

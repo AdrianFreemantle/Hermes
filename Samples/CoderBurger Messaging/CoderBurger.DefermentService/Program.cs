@@ -28,7 +28,7 @@ namespace CoderBurger.DefermentService
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Settings.DefermentEndpoint)
@@ -37,7 +37,7 @@ namespace CoderBurger.DefermentService
                      .UsingSqlTransport(ConnectionString)
                      .Start();
 
-            var timeoutProcessor = Settings.Builder.GetInstance<ITimeoutProcessor>();
+            var timeoutProcessor = Settings.RootContainer.GetInstance<ITimeoutProcessor>();
             timeoutProcessor.Start();
         }
     }

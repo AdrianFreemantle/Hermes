@@ -24,6 +24,8 @@ namespace CoderBurger.Barman
         {
             Initialize();
 
+            Console.WriteLine("Barman Ready");
+
             while (true)
             {
                 System.Threading.Thread.Sleep(100);
@@ -32,7 +34,7 @@ namespace CoderBurger.Barman
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("Barman"))
@@ -45,19 +47,23 @@ namespace CoderBurger.Barman
         }
     }
 
-    public class WaiterHandler : IHandleMessage<OrderPlaced>
+    public class BarmanHandler : IHandleMessage<OrderPlaced>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (WaiterHandler));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (BarmanHandler));
         private readonly IMessageBus messageBus;
+        private readonly Random rand = new Random((int)DateTime.Now.Ticks);
 
-        public WaiterHandler(IMessageBus messageBus)
+        public BarmanHandler(IMessageBus messageBus)
         {
             this.messageBus = messageBus;
         }
 
         public void Handle(OrderPlaced command)
         {
-            Logger.Info("Received notice of new order {0}", command.OrderId);
+            Logger.Info("Received notice of new order", command.OrderId);
+            System.Threading.Thread.Sleep(rand.Next(1000, 5000));
+            Logger.Info("Order processed", command.OrderId);
+
             messageBus.Publish(new DrinkPrepared() { OrderId = command.OrderId });
         }
     }

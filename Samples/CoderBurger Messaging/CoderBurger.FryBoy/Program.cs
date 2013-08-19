@@ -24,6 +24,8 @@ namespace CoderBurger.FryBoy
         {
             Initialize();
 
+            Console.WriteLine("Fry Boy Ready");
+
             while (true)
             {
                 System.Threading.Thread.Sleep(100);
@@ -32,7 +34,7 @@ namespace CoderBurger.FryBoy
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacServiceAdapter())
+            Configure.Environment(new AutofacAdapter())
                      .ConsoleWindowLogger();
 
             Configure.Bus(Address.Parse("FryBoy"))
@@ -45,20 +47,24 @@ namespace CoderBurger.FryBoy
         }
     }
 
-    public class WaiterHandler : IHandleMessage<OrderPlaced>
+    public class FryBoyHandler : IHandleMessage<OrderPlaced>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(WaiterHandler));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(FryBoyHandler));
         private readonly IMessageBus messageBus;
+        private readonly Random rand = new Random((int)DateTime.Now.Ticks);
 
-        public WaiterHandler(IMessageBus messageBus)
+        public FryBoyHandler(IMessageBus messageBus)
         {
             this.messageBus = messageBus;
         }
 
         public void Handle(OrderPlaced command)
         {
-            Logger.Info("Received notice of new order {0}", command.OrderId);
-            messageBus.Publish(new FriesPrepared() { OrderId = command.OrderId });
+            Logger.Info("Received notice of new order", command.OrderId);
+            System.Threading.Thread.Sleep(rand.Next(1000, 5000));
+            Logger.Info("Order processed", command.OrderId);
+
+            messageBus.Publish(new FriesPrepared { OrderId = command.OrderId });            
         }
     }
 }

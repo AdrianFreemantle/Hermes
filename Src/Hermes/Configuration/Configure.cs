@@ -75,6 +75,12 @@ namespace Hermes.Configuration
             return this;
         }
 
+        public IConfigureBus UseDistributedTransaction()
+        {
+            Settings.UseDistributedTransaction = true;
+            return this;
+        }
+
         void IConfigureBus.Start()
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
