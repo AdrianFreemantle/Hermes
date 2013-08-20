@@ -7,6 +7,7 @@ using Hermes;
 using Hermes.Core;
 using Hermes.Ioc;
 using Hermes.Logging;
+using Hermes.Messages;
 
 namespace MyDomain.Shell
 {
@@ -35,12 +36,10 @@ namespace MyDomain.Shell
 
             using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))
             {
-                var inMemoryBus = ServiceLocator.Current.GetService<IInMemoryBus>();
-
                 foreach (EventMessage @event in commit.Events)
                 {
                     Logger.Info("Dispatching event {0} from commit {1}", @event.GetType().Name, commit.CommitId);
-                    inMemoryBus.Raise(@event.Body);
+                    DomainEvent.Current.Raise(@event.Body);
                 }
 
                 TestError.Throw();

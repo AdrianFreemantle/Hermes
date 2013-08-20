@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading;
+using System.Transactions;
+
 using EventStore;
 using Hermes;
 using Hermes.Configuration;
@@ -27,6 +29,7 @@ namespace MyDomain.Shell
         {
             LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             Logger = LogFactory.BuildLogger(typeof(Program));
+
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
             contextFactory.GetContext().Database.CreateIfNotExists();
 
@@ -53,17 +56,30 @@ namespace MyDomain.Shell
 
             Settings.Builder.RegisterSingleton<IStoreEvents>(EventStore.WireupEventStore());
      
-            var token = new CancellationTokenSource(TimeSpan.FromMinutes(10));
+            var token = new CancellationTokenSource(TimeSpan.FromHours(1));
+
+            long errorCounter = 0;
+            long messageCounter = 0;
 
             while (!token.IsCancellationRequested)
             {
-                Logger.Info("=================================================");         
-                Settings.MessageBus.Send(new IntimateClaimEvent { Id = Guid.NewGuid(), MessageId = Guid.NewGuid() });
-                Thread.Sleep(1000);
-                //Console.ReadKey();
+                Logger.Info("=================================================");
+                var claimEventId = Guid.NewGuid();
+
+                try
+                {
+                    messageCounter++;
+                    Settings.MessageBus.InMemory.Execute(new IntimateClaimEvent { Id = claimEventId, MessageId = Guid.NewGuid() }, new RegisterClaim { Amount = 10, ClaimEventId = claimEventId, ClaimId = Guid.NewGuid() });
+                    Thread.Sleep(1000);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error {0} from {1} messages.", ++errorCounter, messageCounter);
+                }
             }
 
             Console.WriteLine("Finished");
+            Console.ReadKey();
         }
     }
 }

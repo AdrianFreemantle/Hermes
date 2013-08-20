@@ -11,6 +11,7 @@ namespace Hermes.Ioc
 
         private ServiceLocator()
         {
+            SetServiceProvider(null);
         }
 
         public static ServiceLocator Current
@@ -36,7 +37,7 @@ namespace Hermes.Ioc
 
         public void SetServiceProvider(IServiceProvider provider)
         {
-            serviceProvider = provider;
+            serviceProvider = provider ?? new DisposedProvider();
         }
 
         public object GetService(Type serviceType)

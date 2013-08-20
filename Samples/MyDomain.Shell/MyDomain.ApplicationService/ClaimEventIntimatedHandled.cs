@@ -16,12 +16,14 @@ namespace MyDomain.ApplicationService
 
         public void Handle(ClaimEventIntimated @event)
         {
-            messageBus.Send(new RegisterClaim
-            {
-                ClaimId = Guid.NewGuid(),
-                ClaimEventId = @event.Id,
-                Amount = 100
-            });
+            //messageBus.Send(new RegisterClaim
+            //{
+            //    ClaimId = Guid.NewGuid(),
+            //    ClaimEventId = @event.Id,
+            //    Amount = 100
+            //});
+
+            TestError.Throw();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Hermes.Core
 {
     public class MessageHandlerFactory : IBuildMessageHandlers
     {
-        public IEnumerable<Action> GetHandler(IServiceLocator serviceLocator, object message)
+        public IEnumerable<Action> GetHandlers(IServiceLocator serviceLocator, object message)
         {
             Type handlerGenericType = typeof(IHandleMessage<>);
             Type handlerType = handlerGenericType.MakeGenericType(new[] { message.GetType() });

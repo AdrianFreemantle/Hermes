@@ -1,4 +1,6 @@
-﻿using Hermes.Logging;
+﻿using System.Collections.Generic;
+
+using Hermes.Logging;
 
 namespace Hermes.Core.Deferment
 {
@@ -13,11 +15,16 @@ namespace Hermes.Core.Deferment
             this.timeoutStore = timeoutStore;
         }
 
-        public void Process(MessageEnvelope envelope)
+        public void ProcessEnvelope(MessageEnvelope envelope)
         {
             Logger.Debug("Defering message: {0}", envelope.MessageId);
 
             timeoutStore.Add(new TimeoutData(envelope));
+        }
+
+        public void ProcessMessages(IEnumerable<object> messageBodies)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

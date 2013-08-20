@@ -15,7 +15,7 @@ namespace Hermes.Core
             Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageRouter>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<InMemoryBus>(DependencyLifecycle.InstancePerLifetimeScope);
+            //Settings.Builder.RegisterType<InMemoryBus>(DependencyLifecycle.InstancePerLifetimeScope);
             
             return config;
         }

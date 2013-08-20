@@ -52,13 +52,11 @@
     <Compile Include="Deferment\IPersistTimeouts.cs" />
     <Compile Include="Deferment\ITimeoutProcessor.cs" />
     <Compile Include="Deferment\TimeoutData.cs" />
-    <Compile Include="Deferment\TimeoutHeaders.cs" />
     <Compile Include="Deferment\TimeoutProcessor.cs" />
-    <Compile Include="LocalBus.cs" />
-    <Compile Include="InMemoryBus.cs" />
     <Compile Include="MessageBus.cs" />
     <Compile Include="MessageDispatcher.cs" />
     <Compile Include="MessageHandlerFactory.cs" />
+    <Compile Include="MessageHeaders.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="MessageRouter.cs" />
     <Compile Include="MessageTransport.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -40,7 +41,7 @@ namespace Hermes.ObjectBuilder.Autofac
                 lifetimeScope = container;
             }
 
-            Logger.Verbose("Starting new container {0}", lifetimeScope.GetHashCode());
+            Logger.Debug("Starting new container {0}", lifetimeScope.GetHashCode());
         }
 
         ~AutofacAdapter()
@@ -140,11 +141,17 @@ namespace Hermes.ObjectBuilder.Autofac
                 throw new ArgumentNullException("serviceType");
             }
 
-            Logger.Verbose("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+            LogServiceType(serviceType);
 
             return key != null
                 ? lifetimeScope.ResolveNamed(key, serviceType)
                 : lifetimeScope.Resolve(serviceType);
+        }
+
+        private static string GetGenericParametersString(Type serviceType)
+        {
+             var genericArguments = serviceType.GenericTypeArguments.Select(type => type.Name.ToString(CultureInfo.InvariantCulture));
+             return String.Join(", ", genericArguments);
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
@@ -154,13 +161,27 @@ namespace Hermes.ObjectBuilder.Autofac
                 throw new ArgumentNullException("serviceType");
             }
 
-            Logger.Verbose("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+            LogServiceType(serviceType);
 
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             object instance = lifetimeScope.Resolve(enumerableType);
 
             return ((IEnumerable)instance).Cast<object>();
-        }        
+        }
+
+        private void LogServiceType(Type serviceType)
+        {
+            string genericParametrs = GetGenericParametersString(serviceType);
+
+            if (genericParametrs.Length > 0)
+            {
+                Logger.Debug("Resolving service {0}<{1}> from container {2}", serviceType.Name, genericParametrs, GetHashCode());
+            }
+            else
+            {
+                Logger.Debug("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+            }
+        }
 
         public void Dispose()
         {
@@ -177,7 +198,7 @@ namespace Hermes.ObjectBuilder.Autofac
 
             if (disposing && lifetimeScope != null)
             {
-                Logger.Verbose("Disposing container {0}", GetHashCode());
+                Logger.Debug("Disposing container {0}", GetHashCode());
                 lifetimeScope.Dispose();
             }
 

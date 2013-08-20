@@ -15,6 +15,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.Persistence.ReadMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.Infrastructure.EntityFramework", "MyDomain.Infrastructure.EntityFramework\MyDomain.Infrastructure.EntityFramework.csproj", "{832693AA-4998-428A-86D4-E70AEE539034}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C9B36F2D-4CC0-4505-A85D-D84F59AB6D22}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.DefermentService", "MyDomain.DefermentService\MyDomain.DefermentService.csproj", "{E4F57A36-B0B9-4D42-A391-EB35242F6BF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +58,10 @@ Global
 		{832693AA-4998-428A-86D4-E70AEE539034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{832693AA-4998-428A-86D4-E70AEE539034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{832693AA-4998-428A-86D4-E70AEE539034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4F57A36-B0B9-4D42-A391-EB35242F6BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4F57A36-B0B9-4D42-A391-EB35242F6BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4F57A36-B0B9-4D42-A391-EB35242F6BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4F57A36-B0B9-4D42-A391-EB35242F6BF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

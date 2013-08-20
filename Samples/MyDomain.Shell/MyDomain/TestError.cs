@@ -8,7 +8,9 @@ namespace MyDomain
 
         public static void Throw()
         {
-            if (Random.Next() % 12 == 0)
+            var rand = Random.Next(0, 100);
+
+            if (rand == 50)
             {
                 throw new Exception("=== Test Error ===");
             }

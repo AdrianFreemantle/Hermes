@@ -72,11 +72,11 @@ namespace Hermes.Transports.SqlServer
             }
             catch (TransactionAbortedException)
             {
-                Logger.Info("Transaction Aborted Exception.");
+                Logger.Warn("Transaction Aborted Exception.");
             }
             catch (Exception ex)
             {
-                Logger.Info("Error while attempting to dequeue work: {0}", ex.Message);
+                Logger.Fatal("Error while attempting to dequeue work: {0}", ex.Message);
             }
             finally
             {
@@ -108,7 +108,7 @@ namespace Hermes.Transports.SqlServer
                 return false;
             }
 
-            messageProcessor.Process(message);
+            messageProcessor.ProcessEnvelope(message);
 
             return true;
         }

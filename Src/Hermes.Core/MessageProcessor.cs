@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Threading;
+using System.Text;
 using System.Transactions;
 using Hermes.Configuration;
-using Hermes.Core.Deferment;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Serialization;
@@ -16,12 +15,6 @@ using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Core
 {
-
-    public class RetryHeaders
-    {
-        public const string Count = "Hermes.Retry.Count";
-    }
-
     public class MessageProcessor : IProcessMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageProcessor));
@@ -39,53 +32,114 @@ namespace Hermes.Core
             this.messageSender = messageSender;
         }
 
-        public void Process(MessageEnvelope envelope)
+        public void ProcessEnvelope(MessageEnvelope envelope)
         {
-            Logger.Debug("Processing message {0}", envelope.MessageId);
-            IEnumerable<object> messageBodies = ExtractMessages(envelope);
+            Logger.Verbose("Processing message {0}", envelope.MessageId);
 
             try
             {
-                ProcessMessages(messageBodies);
+                TryProcessEnvelope(envelope);
+                Logger.Verbose("Processing completed for message {0}", envelope.MessageId);
             }
             catch (Exception ex)
             {
-                Logger.Error("Processing failed for message {0}: {1}", envelope.MessageId, ex.Message);
-
-                int retryCount = 0;
-
-                if (envelope.Headers.ContainsKey(RetryHeaders.Count))
-                {
-                    retryCount = Int32.Parse(envelope.Headers[RetryHeaders.Count]);
-                }
-
-                if (retryCount >= 3)
-                {
-                    messageSender.Send(envelope, Settings.ErrorEndpoint);
-                }
-                else
-                {
-                    envelope.Headers[RetryHeaders.Count] = (++retryCount).ToString(CultureInfo.InvariantCulture);
-                    envelope.Headers[TimeoutHeaders.Expire] = DateTime.UtcNow.Add(TimeSpan.FromSeconds(15)).ToWireFormattedString();
-                    envelope.Headers[TimeoutHeaders.RouteExpiredTimeoutTo] = Settings.ThisEndpoint.ToString();
-                    messageSender.Send(envelope, Settings.DefermentEndpoint);
-                }
-            }
-            finally
-            {
-                ServiceLocator.Current.SetServiceProvider(null);
+                HandleProcessingError(envelope, ex);
             }
         }
 
-        private void ProcessMessages(IEnumerable<object> messageBodies)
+        private void HandleProcessingError(MessageEnvelope envelope, Exception ex)
+        {
+            Logger.Warn("Error while processing message {0} : {1}", envelope.MessageId, ex.Message);
+            int retryCount = 0;
+
+            if (envelope.Headers.ContainsKey(MessageHeaders.Count))
+            {
+                retryCount = Int32.Parse(envelope.Headers[MessageHeaders.Count]);
+            }
+
+            if (++retryCount > 3)
+            {
+                SendToErrorQueue(envelope, ex);
+            }
+            else
+            {
+                SendToRetryQueue(envelope, retryCount);
+            }
+        }
+
+        private void SendToRetryQueue(MessageEnvelope envelope, int retryCount)
+        {
+            Logger.Warn("Sending message {0} to retry queue: attempt {1}", envelope.MessageId, retryCount);
+            envelope.Headers[MessageHeaders.Count] = (retryCount).ToString(CultureInfo.InvariantCulture);
+            envelope.Headers[MessageHeaders.Expire] = DateTime.UtcNow.Add(TimeSpan.FromSeconds(2)).ToWireFormattedString();
+            envelope.Headers[MessageHeaders.RouteExpiredTimeoutTo] = Settings.ThisEndpoint.ToString();
+            messageSender.Send(envelope, Settings.DefermentEndpoint);
+        }
+
+        private void SendToErrorQueue(MessageEnvelope envelope, Exception ex)
+        {
+            Logger.Error("Final retry failed for message {0}.", envelope.MessageId);
+            envelope.Headers[MessageHeaders.Failed] = GetExceptionMessage(ex);
+            messageSender.Send(envelope, Settings.ErrorEndpoint);
+        }
+
+        private static string GetExceptionMessage(Exception ex)
+        {
+            var exceptionMessage = new StringBuilder();
+            var currentException = ex;
+
+            while (currentException != null)
+            {
+                exceptionMessage.AppendLine(String.Format("{0}\n", ex));
+                currentException = currentException.InnerException;
+            }
+
+            return exceptionMessage.ToString();
+        }
+
+        private void TryProcessEnvelope(MessageEnvelope envelope)
+        {
+            using (var scope = StartTransactionScope())
+            {
+                ProcessMessages(ExtractMessages(envelope));
+                RemoveRetryHeaders(envelope);
+                messageSender.Send(envelope, Settings.AuditEndpoint);
+                scope.Complete();
+            }
+        }
+
+        private void RemoveRetryHeaders(MessageEnvelope envelope)
+        {
+            envelope.Headers.Remove(MessageHeaders.Count);
+            envelope.Headers.Remove(MessageHeaders.Expire);
+            envelope.Headers.Remove(MessageHeaders.RouteExpiredTimeoutTo);
+            envelope.Headers.Remove(MessageHeaders.Failed);
+        }
+
+        public void ProcessMessages(IEnumerable<object> messageBodies)
         {
             using (var childContainer = container.BeginLifetimeScope())
-            using (var scope = StartTransactionScope())
+            {
+                TryProcessMessages(messageBodies, childContainer);
+            }
+        }
+
+        private void TryProcessMessages(IEnumerable<object> messageBodies, IContainer childContainer)
+        {
+            try
             {
                 ServiceLocator.Current.SetServiceProvider(childContainer);
                 DispatchToHandlers(messageBodies, childContainer);
                 CommitUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
-                scope.Complete();
+            }
+            catch
+            {
+                RollBackUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
+                throw;
+            }
+            finally
+            {
+                ServiceLocator.Current.SetServiceProvider(null);
             }
         }
 
@@ -109,6 +163,14 @@ namespace Hermes.Core
             foreach (var unitOfWork  in unitsOfWork)
             {
                 unitOfWork.Commit();
+            }
+        }
+
+        private static void RollBackUnitsOfWork(IEnumerable<IManageUnitOfWork> unitsOfWork)
+        {
+            foreach (var unitOfWork in unitsOfWork)
+            {
+                unitOfWork.Rollback();
             }
         }
   

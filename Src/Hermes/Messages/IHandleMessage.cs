@@ -2,6 +2,6 @@
 {
     public interface IHandleMessage<in TMessage> 
     {
-        void Handle(TMessage command);
+        void Handle(TMessage message);
     }
 }

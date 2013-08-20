@@ -1,5 +1,4 @@
 ﻿using System;
-using Hermes.Messages.Attributes;
 
 namespace MyDomain.ApplicationService
 {

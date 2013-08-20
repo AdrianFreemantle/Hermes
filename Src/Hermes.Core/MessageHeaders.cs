@@ -1,7 +1,9 @@
-namespace Hermes.Core.Deferment
+﻿namespace Hermes.Core
 {
-    public class TimeoutHeaders
+    public class MessageHeaders
     {
+        public const string Count = "Hermes.Retry.Count";
+        public const string Failed = "Hermes.Failed.Exception";
         public const string Expire = "Hermes.Timeout.Expire";
         public const string RouteExpiredTimeoutTo = "Hermes.Timeout.RouteExpiredTimeoutTo";
         public const string ClearTimeouts = "Hermes.ClearTimeouts";

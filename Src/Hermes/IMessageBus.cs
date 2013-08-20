@@ -2,7 +2,7 @@
 
 namespace Hermes
 {
-    public interface IMessageBus 
+    public interface IMessageBus  
     {
         void Send(params object[] messages);
         void Send(Address address, params object[] messages);
@@ -12,5 +12,7 @@ namespace Hermes
 
         void Defer(TimeSpan delay, params object[] messages);
         void Defer(TimeSpan delay, Guid corrolationId, params object[] messages);
+
+        IInMemoryBus InMemory { get; }
     }
 }

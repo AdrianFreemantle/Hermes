@@ -17,7 +17,7 @@ namespace MyDomain.ApplicationService
 
         public void Handle(RegisterClaim command)
         {
-            Logger.Info("Handling ClaimEventIntimated");
+            Logger.Info("Handling RegisterClaim");
             var claimEvent = repository.GetById<ClaimEvent>(command.ClaimEventId);
             var claim = claimEvent.RegisterClaim(command.Amount);
                        

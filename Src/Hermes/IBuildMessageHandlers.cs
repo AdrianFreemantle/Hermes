@@ -7,6 +7,6 @@ namespace Hermes
 {
     public interface IBuildMessageHandlers
     {
-        IEnumerable<Action> GetHandler(IServiceLocator serviceLocator, object message);
+        IEnumerable<Action> GetHandlers(IServiceLocator serviceLocator, object message);
     }
 }

@@ -60,6 +60,7 @@
     <Compile Include="IManageUnitOfWork.cs" />
     <Compile Include="Ioc\DebugDependencyResolver.cs" />
     <Compile Include="Ioc\DependencyLifecycle.cs" />
+    <Compile Include="Ioc\DisposedProvider.cs" />
     <Compile Include="Ioc\IContainer.cs" />
     <Compile Include="Ioc\ServiceLocator.cs" />
     <Compile Include="Ioc\ServiceProviderAdapter.cs" />
@@ -76,7 +77,7 @@
     <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\LoggingExtensionMethods.cs" />
-    <Compile Include="Messages\Attributes\RetryAttribute.cs" />
+    <Compile Include="Messages\DomainEvent.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="Messages\IHandleMessage.cs" />
     <Compile Include="Messages\ICommand.cs" />

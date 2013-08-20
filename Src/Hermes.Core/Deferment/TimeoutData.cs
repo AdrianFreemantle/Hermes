@@ -19,18 +19,18 @@ namespace Hermes.Core.Deferment
 
         public TimeoutData(MessageEnvelope message)
         {
-            if (!message.Headers.ContainsKey(TimeoutHeaders.Expire))
+            if (!message.Headers.ContainsKey(MessageHeaders.Expire))
             {
                 throw new InvalidOperationException("Non timeout message arrived at the timeout manager, id:" + message.MessageId);
             }
 
-            Destination = message.Headers.ContainsKey(TimeoutHeaders.RouteExpiredTimeoutTo) 
-                              ? Address.Parse(message.Headers[TimeoutHeaders.RouteExpiredTimeoutTo]) 
+            Destination = message.Headers.ContainsKey(MessageHeaders.RouteExpiredTimeoutTo)
+                              ? Address.Parse(message.Headers[MessageHeaders.RouteExpiredTimeoutTo]) 
                               : message.ReplyToAddress;
 
             Id = message.MessageId;
             State = message.Body;
-            ExpiryTime = message.Headers[TimeoutHeaders.Expire].ToUtcDateTime();
+            ExpiryTime = message.Headers[MessageHeaders.Expire].ToUtcDateTime();
             CorrelationId = message.CorrelationId;
             Headers = message.Headers;
         }

@@ -2,7 +2,7 @@
 {
     public interface IInMemoryBus
     {
-        void Raise(object @event);
-        void Execute(object command);
+        void Raise(params object[] @events);
+        void Execute(params object[] command);
     }
 }
