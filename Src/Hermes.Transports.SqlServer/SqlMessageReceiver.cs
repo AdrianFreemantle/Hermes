@@ -101,6 +101,18 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
+        public bool ProcessMessage(MessageEnvelope message)
+        {
+            if (message == MessageEnvelope.Undefined)
+            {
+                return false;
+            }
+
+            messageProcessor.Process(message);
+
+            return true;
+        }
+
         private static void SlowDownPollingIfNoWorkAvailable(bool foundWork, BackOff backoff)
         {
             if (foundWork)
@@ -111,26 +123,6 @@ namespace Hermes.Transports.SqlServer
             {
                 backoff.Delay();
             }
-        }
-
-        public bool ProcessMessage(MessageEnvelope message)
-        {           
-            try
-            {
-                if (message == MessageEnvelope.Undefined)
-                {
-                    return false;
-                }
-
-                messageProcessor.Process(message);
-            }
-            catch (MessageProcessingFailedException ex)
-            {
-                Logger.Info("Moving message {0} to dead letter or retry queue.", message.MessageId);
-                //todo send to second level retry queue or dead letter queue depending on retry count.
-            }
-
-            return true;
-        }      
+        }        
     }
 }

@@ -78,7 +78,6 @@
     <Compile Include="Logging\LoggingExtensionMethods.cs" />
     <Compile Include="Messages\Attributes\RetryAttribute.cs" />
     <Compile Include="Retry.cs" />
-    <Compile Include="MessageProcessingFailedException.cs" />
     <Compile Include="Messages\IHandleMessage.cs" />
     <Compile Include="Messages\ICommand.cs" />
     <Compile Include="Messages\IEvent.cs" />

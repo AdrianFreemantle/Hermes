@@ -11,10 +11,13 @@ namespace Hermes.Configuration
     public static class Settings
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
-        private static readonly Address defermentEndpoint = Address.Parse("Deferment");
 
         private static IContainerBuilder builder;
         private static Address thisEndpoint = Address.Undefined;
+        private static Address auditAddress = Address.Parse("Audit");
+        private static Address errorAddress = Address.Parse("Error");
+        private static Address defermentEndpoint = Address.Parse("Deferment");
+
         private static int numberOfWorkers = 1;
 
         public static int NumberOfWorkers
@@ -52,12 +55,25 @@ namespace Hermes.Configuration
         public static Address DefermentEndpoint
         {
             get { return defermentEndpoint; }
+            internal set { defermentEndpoint = value; }
         }
 
         public static Address ThisEndpoint
         {
             get { return thisEndpoint; }
             internal set { thisEndpoint = value; }
+        }
+
+        public static Address ErrorEndpoint
+        {
+            get { return errorAddress; }
+            internal set { errorAddress = value; }
+        }
+
+        public static Address AuditEndpoint
+        {
+            get { return auditAddress; }
+            internal set { auditAddress = value; }
         }
 
         public static IMessageBus MessageBus

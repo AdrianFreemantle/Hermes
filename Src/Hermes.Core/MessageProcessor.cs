@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Transactions;
 using Hermes.Configuration;
+using Hermes.Core.Deferment;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Serialization;
+using Hermes.Transports;
 using Microsoft.Practices.ServiceLocation;
 using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Core
 {
+
+    public class RetryHeaders
+    {
+        public const string Count = "Hermes.Retry.Count";
+    }
+
     public class MessageProcessor : IProcessMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageProcessor));
@@ -20,12 +29,14 @@ namespace Hermes.Core
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
         private readonly IContainer container;
+        private readonly ISendMessages messageSender;
 
-        public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container)
+        public MessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container, ISendMessages messageSender)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;
             this.container = container;
+            this.messageSender = messageSender;
         }
 
         public void Process(MessageEnvelope envelope)
@@ -40,7 +51,25 @@ namespace Hermes.Core
             catch (Exception ex)
             {
                 Logger.Error("Processing failed for message {0}: {1}", envelope.MessageId, ex.Message);
-                throw new MessageProcessingFailedException(envelope, ex);
+
+                int retryCount = 0;
+
+                if (envelope.Headers.ContainsKey(RetryHeaders.Count))
+                {
+                    retryCount = Int32.Parse(envelope.Headers[RetryHeaders.Count]);
+                }
+
+                if (retryCount >= 3)
+                {
+                    messageSender.Send(envelope, Settings.ErrorEndpoint);
+                }
+                else
+                {
+                    envelope.Headers[RetryHeaders.Count] = (++retryCount).ToString(CultureInfo.InvariantCulture);
+                    envelope.Headers[TimeoutHeaders.Expire] = DateTime.UtcNow.Add(TimeSpan.FromSeconds(15)).ToWireFormattedString();
+                    envelope.Headers[TimeoutHeaders.RouteExpiredTimeoutTo] = Settings.ThisEndpoint.ToString();
+                    messageSender.Send(envelope, Settings.DefermentEndpoint);
+                }
             }
             finally
             {

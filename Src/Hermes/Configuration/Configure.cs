@@ -85,6 +85,9 @@ namespace Hermes.Configuration
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Settings.ThisEndpoint);
+            queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
+            queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
+            queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
 
             var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
             busStarter.Start();
