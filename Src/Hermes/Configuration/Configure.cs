@@ -3,6 +3,7 @@ using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Logging;
+using Hermes.Messaging;
 using Hermes.Transports;
 
 namespace Hermes.Configuration
@@ -78,6 +79,20 @@ namespace Hermes.Configuration
         public IConfigureBus UseDistributedTransaction()
         {
             Settings.UseDistributedTransaction = true;
+            return this;
+        }
+
+        IConfigureBus IConfigureBus.FirstLevelRetry(int attempts, TimeSpan delay)
+        {
+            Settings.FirstLevelRetryAttempts = attempts;
+            Settings.FirstLevelRetryDelay = delay;
+            return this;
+        }
+
+        IConfigureBus IConfigureBus.SecondLevelRetry(int attempts, TimeSpan delay)
+        {
+            Settings.SecondLevelRetryAttempts = attempts;
+            Settings.SecondLevelRetryDelay = delay;
             return this;
         }
 

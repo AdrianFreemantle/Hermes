@@ -1,6 +1,7 @@
 ﻿using System;
 using Hermes.Logging;
-using Hermes.Messages;
+using Hermes.Messaging;
+
 using MyDomain.Domain.Models;
 using MyDomain.Infrastructure;
 

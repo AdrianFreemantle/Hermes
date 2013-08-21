@@ -70,6 +70,10 @@
       <Project>{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}</Project>
       <Name>Hermes.Serialization.Json</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hermes.Storage.SqlServer\Hermes.Storage.SqlServer.csproj">
+      <Project>{5A6334D2-3410-47E3-B9A3-98A77108D58E}</Project>
+      <Name>Hermes.Storage.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes.Transports.SqlServer\Hermes.Transports.SqlServer.csproj">
       <Project>{78488204-E7C2-4F75-B74A-6BFFEAC3F337}</Project>
       <Name>Hermes.Transports.SqlServer</Name>

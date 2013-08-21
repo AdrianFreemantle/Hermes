@@ -53,14 +53,16 @@
     <Compile Include="Deferment\ITimeoutProcessor.cs" />
     <Compile Include="Deferment\TimeoutData.cs" />
     <Compile Include="Deferment\TimeoutProcessor.cs" />
-    <Compile Include="MessageBus.cs" />
-    <Compile Include="MessageDispatcher.cs" />
-    <Compile Include="MessageHandlerFactory.cs" />
-    <Compile Include="MessageHeaders.cs" />
-    <Compile Include="MessageProcessor.cs" />
-    <Compile Include="MessageRouter.cs" />
+    <Compile Include="Bus.cs" />
+    <Compile Include="Dispatcher.cs" />
+    <Compile Include="ErrorHandler.cs" />
+    <Compile Include="Headers.cs" />
+    <Compile Include="Processor.cs" />
+    <Compile Include="Router.cs" />
     <Compile Include="MessageTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Publisher.cs" />
+    <Compile Include="Receiver.cs" />
     <Compile Include="SubscriptionManager.cs" />
   </ItemGroup>
   <ItemGroup>

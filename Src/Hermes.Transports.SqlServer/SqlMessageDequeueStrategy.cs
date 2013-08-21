@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 
 using Hermes.Configuration;
+using Hermes.Messaging;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
@@ -12,12 +13,6 @@ namespace Hermes.Transports.SqlServer
     {
         private readonly string connectionString;
         private readonly ISerializeObjects objectSerializer;
-
-        private const string SqlReceive =
-            @"WITH message AS (SELECT TOP(1) * FROM [queue].[{0}] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
-            DELETE FROM message 
-            OUTPUT deleted.Id, deleted.CorrelationId, deleted.ReplyToAddress, 
-            deleted.Recoverable, deleted.Expires, deleted.Headers, deleted.Body;";
 
         public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
@@ -28,7 +23,7 @@ namespace Hermes.Transports.SqlServer
         public MessageEnvelope Dequeue(Address address)
         {
             using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
-            using (var command = transactionalConnection.BuildCommand(String.Format(SqlReceive, address.Queue)))
+            using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address.Queue)))
             {
                 var message = FetchNextMessage(command);
                 transactionalConnection.Commit();
@@ -51,12 +46,11 @@ namespace Hermes.Transports.SqlServer
 
                     var messageId = dataReader.GetGuid(0);
                     var correlationId = dataReader.IsDBNull(1) ? Guid.Empty : Guid.Parse(dataReader.GetString(1));
-                    var replyToAddress = dataReader.IsDBNull(2) ? null : Address.Parse(dataReader.GetString(2));
-                    var recoverable = dataReader.GetBoolean(3);
-                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(5));
-                    var body = dataReader.IsDBNull(6) ? null : dataReader.GetSqlBinary(6).Value;
+                    var recoverable = dataReader.GetBoolean(2);
+                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(4));
+                    var body = dataReader.IsDBNull(5) ? null : dataReader.GetSqlBinary(5).Value;
 
-                    return new MessageEnvelope(messageId, correlationId, replyToAddress, timeTolive, recoverable, headers, body);
+                    return new MessageEnvelope(messageId, correlationId, timeTolive, recoverable, headers, body);
                 }
             }
 
@@ -65,14 +59,14 @@ namespace Hermes.Transports.SqlServer
 
         private static TimeSpan GetTimeTolive(SqlDataReader dataReader)
         {
-            if (dataReader.IsDBNull(4))
+            if (dataReader.IsDBNull(3))
             {
                 return TimeSpan.MaxValue;
             }
 
-            DateTime expireDateTime = dataReader.GetDateTime(4);
+            DateTime expireDateTime = dataReader.GetDateTime(3);
 
-            if (dataReader.GetDateTime(4) < DateTime.UtcNow)
+            if (dataReader.GetDateTime(3) < DateTime.UtcNow)
             {
                 return TimeSpan.Zero;
             }

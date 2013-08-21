@@ -2,6 +2,7 @@
 
 using Hermes.Configuration;
 using Hermes.Core;
+using Hermes.Messaging;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Tests.Messages;

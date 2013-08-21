@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Hermes.Messages;
+
+using Hermes.Messaging;
 using Hermes.Tests.Messages;
 
 namespace Hermes.Tests.Endpoint.Sales

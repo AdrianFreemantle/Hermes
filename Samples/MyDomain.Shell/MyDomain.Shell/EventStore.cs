@@ -1,13 +1,9 @@
-﻿using System;
-using System.Transactions;
+﻿using System.Transactions;
 using EventStore;
 using EventStore.Dispatcher;
 using EventStore.Persistence.SqlPersistence.SqlDialects;
 using Hermes;
-using Hermes.Core;
-using Hermes.Ioc;
 using Hermes.Logging;
-using Hermes.Messages;
 
 namespace MyDomain.Shell
 {

@@ -20,7 +20,7 @@ namespace Hermes.Logging
             }
             catch (Exception ex)
             {
-                return String.Format("Logging Error: an error occured while formatting your logg message\n{0}", ex);
+                return String.Format("Logging Error: an error occured while formatting your logg message from {0}. {1}", typeToLog.FullName, ex.GetFullExceptionMessage());
             }
         }
     }

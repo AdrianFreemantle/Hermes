@@ -49,6 +49,9 @@
     <Reference Include="Hermes.Serialization.Json">
       <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.Storage.SqlServer">
+      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
       <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Hermes.Logging;
+using Hermes.Messaging;
 
 namespace Hermes.Core.Deferment
 {

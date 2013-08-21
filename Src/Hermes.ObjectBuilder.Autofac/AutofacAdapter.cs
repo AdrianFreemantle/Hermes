@@ -9,7 +9,7 @@ using Autofac;
 using Autofac.Builder;
 using Hermes.Ioc;
 using Hermes.Logging;
-using Hermes.Messages;
+using Hermes.Messaging;
 
 using Microsoft.Practices.ServiceLocation;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Hermes.Ioc;
+using Hermes.Messaging;
 
 namespace Hermes.Configuration
 {
@@ -17,6 +18,11 @@ namespace Hermes.Configuration
         private static Address auditAddress = Address.Parse("Audit");
         private static Address errorAddress = Address.Parse("Error");
         private static Address defermentEndpoint = Address.Parse("Deferment");
+
+        private static int firstLevelRetryAttempts = 3;
+        private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
+        private static int secondLevelRetryAttempts = 3;
+        private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(15);
 
         private static int numberOfWorkers = 1;
 
@@ -50,6 +56,30 @@ namespace Hermes.Configuration
 
                 return builder.Container;
             } 
+        }
+
+        public static int SecondLevelRetryAttempts
+        {
+            get { return secondLevelRetryAttempts; }
+            internal set { secondLevelRetryAttempts = value; }
+        }
+
+        public static TimeSpan SecondLevelRetryDelay
+        {
+            get { return secondLevelRetryDelay; }
+            internal set { secondLevelRetryDelay = value; }
+        }
+
+        public static int FirstLevelRetryAttempts
+        {
+            get { return firstLevelRetryAttempts; }
+            internal set { firstLevelRetryAttempts = value; }
+        }
+
+        public static TimeSpan FirstLevelRetryDelay
+        {
+            get { return firstLevelRetryDelay; }
+            internal set { firstLevelRetryDelay = value; }
         }
 
         public static Address DefermentEndpoint

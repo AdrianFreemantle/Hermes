@@ -3,6 +3,7 @@ using Hermes.Core;
 using Hermes.Core.Deferment;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
+using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
 
 namespace Hermes.Tests.Endpoint.Deferment
@@ -29,7 +30,8 @@ namespace Hermes.Tests.Endpoint.Deferment
 
             Configure.Bus(Settings.DefermentEndpoint)
                      .UsingJsonSerialization()
-                     .UsingDefermentBus(new InMemoryTimeoutPersistence())
+                     .UsingDefermentBus()
+                     .UsingSqlStorage(connectionString)
                      .UsingSqlTransport(connectionString)
                      .Start();
 

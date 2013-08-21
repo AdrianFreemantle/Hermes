@@ -11,9 +11,6 @@ namespace Hermes.Transports.SqlServer
         {
             Settings.Builder.RegisterType<SqlMessageDequeueStrategy>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SqlMessageSender>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlMessageReceiver>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlSubscriptionStorage>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlMessagePublisher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
 
             Settings.AddSetting(MessagingConnectionStringKey, connectionString);

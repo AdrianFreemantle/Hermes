@@ -3,13 +3,14 @@ using Hermes.Core;
 using Hermes.Core.Deferment;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
+using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
 
 namespace MyDomain.DefermentService
 {
     class Program
     {
-        private const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         private static void Main(string[] args)
         {
@@ -28,8 +29,9 @@ namespace MyDomain.DefermentService
 
             Configure.Bus(Settings.DefermentEndpoint)
                      .UsingJsonSerialization()
-                     .UsingDefermentBus(new InMemoryTimeoutPersistence())
-                     .UsingSqlTransport(connectionString)
+                     .UsingDefermentBus()
+                     .UsingSqlTransport(ConnectionString)
+                     .UsingSqlStorage(ConnectionString)
                      .Start();
 
             var timeoutProcessor = Settings.RootContainer.GetInstance<ITimeoutProcessor>();

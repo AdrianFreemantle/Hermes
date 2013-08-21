@@ -14,8 +14,8 @@ namespace Hermes.Core.Deferment
             lock (lockObject)
             {
                 var results = storage
-                    .Where(data => data.ExpiryTime <= DateTime.UtcNow)
-                    .OrderBy(data => data.ExpiryTime)
+                    .Where(data => data.Expires <= DateTime.UtcNow)
+                    .OrderBy(data => data.Expires)
                     .Select(t => t.Id)
                     .ToList();
                 
@@ -37,7 +37,6 @@ namespace Hermes.Core.Deferment
             lock (lockObject)
             {
                 timeoutData = storage.SingleOrDefault(t => t.Id == timeoutId);
-
                 return timeoutData != null && storage.Remove(timeoutData);
             }
         }

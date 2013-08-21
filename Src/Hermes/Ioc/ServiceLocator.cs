@@ -11,7 +11,7 @@ namespace Hermes.Ioc
 
         private ServiceLocator()
         {
-            SetServiceProvider(null);
+            SetCurrentLifetimeScope(new DisposedProvider());
         }
 
         public static ServiceLocator Current
@@ -35,7 +35,7 @@ namespace Hermes.Ioc
             return instance;
         }
 
-        public void SetServiceProvider(IServiceProvider provider)
+        public void SetCurrentLifetimeScope(IServiceProvider provider)
         {
             serviceProvider = provider ?? new DisposedProvider();
         }
@@ -52,7 +52,7 @@ namespace Hermes.Ioc
 
         public bool HasServiceProvider()
         {
-            return serviceProvider != null;
+            return serviceProvider != null && !(serviceProvider is DisposedProvider);
         }
     }
 }

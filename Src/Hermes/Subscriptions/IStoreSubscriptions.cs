@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Hermes.Messaging;
+
 namespace Hermes.Subscriptions
 {
     public interface IStoreSubscriptions

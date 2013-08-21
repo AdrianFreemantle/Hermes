@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Hermes.Messages;
+using Hermes.Messaging;
 using Hermes.Tests.Messages;
 
 namespace Hermes.Tests.Endpoint.Warehouse

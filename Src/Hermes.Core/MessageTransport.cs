@@ -1,4 +1,5 @@
-﻿using Hermes.Transports;
+﻿using Hermes.Messaging;
+using Hermes.Transports;
 
 namespace Hermes.Core
 {

@@ -3,16 +3,15 @@ using System.Data;
 using System.Data.SqlClient;
 
 using Hermes.Configuration;
+using Hermes.Messaging;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
 {
     public class SqlMessageSender : ISendMessages
     {
-        private const string SqlSend = @"INSERT INTO [queue].[{0}] ([Id],[CorrelationId],[ReplyToAddress],[Recoverable],[Expires],[Headers],[Body]) 
-                                         VALUES (@Id,@CorrelationId,@ReplyToAddress,@Recoverable,@Expires,@Headers,@Body)";
+        private readonly ISerializeObjects objectSerializer;   
 
-        private readonly ISerializeObjects objectSerializer;
         private readonly string connectionString;
 
         public SqlMessageSender(ISerializeObjects objectSerializer)
@@ -36,14 +35,13 @@ namespace Hermes.Transports.SqlServer
 
         private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, MessageEnvelope message, Address address)
         {
-            var command = connection.BuildCommand(String.Format(SqlSend, address.Queue));
+            var command = connection.BuildCommand(String.Format(SqlCommands.Send, address.Queue));
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", message.MessageId);
-            command.Parameters.AddWithValue("@ReplyToAddress", message.ReplyToAddress.ToString());
             command.Parameters.AddWithValue("@Recoverable", message.Recoverable);
             command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(message.Headers));
-            command.Parameters.AddWithValue("Body", message.Body);
+            command.Parameters.AddWithValue("@Body", message.Body);
 
             if (message.CorrelationId != Guid.Empty)
             {
@@ -56,11 +54,11 @@ namespace Hermes.Transports.SqlServer
 
             if (message.HasExpiryTime)
             {
-                command.Parameters.AddWithValue("Expires", message.ExpiryTime);
+                command.Parameters.AddWithValue("@Expires", message.ExpiryTime);
             }
             else
             {
-                command.Parameters.AddWithValue("Expires", DBNull.Value);
+                command.Parameters.AddWithValue("@Expires", DBNull.Value);
             }
 
             return command;

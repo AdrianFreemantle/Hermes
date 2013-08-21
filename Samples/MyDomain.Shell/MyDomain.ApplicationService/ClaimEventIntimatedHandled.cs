@@ -1,6 +1,7 @@
 ﻿using System;
 using Hermes;
-using Hermes.Messages;
+using Hermes.Messaging;
+
 using MyDomain.Domain.Events;
 
 namespace MyDomain.ApplicationService

@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 
+using Hermes.Messaging;
+
 namespace Hermes.Core.Deferment
 {
     public class TimeoutData 
     {
         public Guid Id { get; set; }
         public Address Destination { get; set; }
-        public byte[] State { get; set; }
-        public DateTime ExpiryTime { get; set; }
+        public byte[] Body { get; set; }
+        public DateTime Expires { get; set; }
         public Guid CorrelationId { get; set; }
         public IDictionary<string, string> Headers { get; set; }
 
@@ -19,30 +21,32 @@ namespace Hermes.Core.Deferment
 
         public TimeoutData(MessageEnvelope message)
         {
-            if (!message.Headers.ContainsKey(MessageHeaders.Expire))
+            if (!message.Headers.ContainsKey(Core.Headers.TimeoutExpire))
             {
-                throw new InvalidOperationException("Non timeout message arrived at the timeout manager, id:" + message.MessageId);
+                throw new InvalidOperationException("Non-timeout message arrived at the timeout manager, id:" + message.MessageId);
             }
 
-            Destination = message.Headers.ContainsKey(MessageHeaders.RouteExpiredTimeoutTo)
-                              ? Address.Parse(message.Headers[MessageHeaders.RouteExpiredTimeoutTo]) 
-                              : message.ReplyToAddress;
+            if (!message.Headers.ContainsKey(Core.Headers.RouteExpiredTimeoutTo))
+            {
+                throw new InvalidOperationException("No routing address provided for deferred message, id:" + message.MessageId);
+            }
 
+            Destination = Address.Parse(message.Headers[Core.Headers.RouteExpiredTimeoutTo]);
             Id = message.MessageId;
-            State = message.Body;
-            ExpiryTime = message.Headers[MessageHeaders.Expire].ToUtcDateTime();
+            Body = message.Body;
+            Expires = message.Headers[Core.Headers.TimeoutExpire].ToUtcDateTime();
             CorrelationId = message.CorrelationId;
             Headers = message.Headers;
         }
 
         public override string ToString()
         {
-            return string.Format("Timeout({0}) - Expires:{1}", Id, ExpiryTime);
+            return string.Format("Timeout({0}) - Expires:{1}", Id, Expires);
         }
 
         public MessageEnvelope ToMessageEnvelope()
         {
-            return new MessageEnvelope(Id, CorrelationId, Address.Undefined, TimeSpan.MaxValue, true, Headers, State);
+            return new MessageEnvelope(Id, CorrelationId, TimeSpan.MaxValue, true, Headers, Body);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Hermes.Configuration;
+using Hermes.Messaging;
 using Hermes.Subscriptions;
 
 namespace Hermes.Core

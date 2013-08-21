@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Hermes
 {
     public static class Retry
     {
-        public static void Action(Action action, int retryAttempts, int retryMilliseconds)
+        public static void Action(Action action, int retryAttempts, TimeSpan retryDelay)
         {
-            Action(action, (ex) => { }, retryAttempts, retryMilliseconds);
+            Action(action, (arg1) => { }, retryAttempts, retryDelay);
         }
 
-        public static void Action(Action action, Action<Exception> onError, int retryAttempts, int retryMilliseconds)
+        public static void Action(Action action, Action<Exception> onRetry, int retryAttempts, TimeSpan retryDelay)
         {
             Mandate.ParameterNotNull(action, "action");
+
+            int retryCount = retryAttempts;
 
             do
             {
@@ -27,15 +25,15 @@ namespace Hermes
                 }
                 catch (Exception ex)
                 {
-                    if (retryAttempts <= 0)
+                    if (retryCount <= 0)
                     {
                         throw;
                     }
 
-                    onError(ex);
-                    Thread.Sleep(retryMilliseconds);
+                    onRetry(ex);
+                    Thread.Sleep(retryDelay);
                 }
-            } while (retryAttempts-- > 0);
+            } while (retryCount-- > 0);
         }
     }
 }

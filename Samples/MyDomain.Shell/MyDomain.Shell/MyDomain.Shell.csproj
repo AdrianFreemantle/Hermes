@@ -58,6 +58,9 @@
     <Reference Include="Hermes.Serialization.Json">
       <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.Storage.SqlServer">
+      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
       <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
@@ -79,13 +82,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainEvent.cs" />
     <Compile Include="EventStore.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWorkManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

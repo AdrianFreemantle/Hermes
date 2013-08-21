@@ -1,27 +1,26 @@
 ﻿using System;
-using Hermes.Messages;
 
 namespace Hermes.Tests.Messages
 {
-    public class SellShoes : ICommand
+    public class SellShoes 
     {
         public int ShoeTypeId { get; set; }
         public int Size { get; set; }
     }
 
-    public class ShoesSold : IEvent
+    public class ShoesSold 
     {
         public int ShoeTypeId { get; set; }
         public int Size { get; set; }
         public string OrderNumber { get; set; }
     }
 
-    public class OrderShipped : IEvent
+    public class OrderShipped 
     {
         public string OrderNumber { get; set; }
     }
 
-    public class TestEvent : IEvent
+    public class TestEvent 
     {
         public string Message { get; set; }
     }

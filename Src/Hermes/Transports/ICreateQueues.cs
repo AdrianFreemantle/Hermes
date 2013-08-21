@@ -1,4 +1,6 @@
-﻿namespace Hermes.Transports
+﻿using Hermes.Messaging;
+
+namespace Hermes.Transports
 {
     /// <summary>
     /// Abstraction of the capability to create queues
