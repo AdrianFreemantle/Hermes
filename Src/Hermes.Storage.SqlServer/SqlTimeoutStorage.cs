@@ -36,7 +36,7 @@ namespace Hermes.Storage.SqlServer
             }
         }
 
-        public IEnumerable<Guid> GetExpired()
+        public IEnumerable<long> GetExpired()
         {
             using (var connection = new SqlConnection(connectionString))
             using (var command = connection.CreateCommand())
@@ -54,13 +54,13 @@ namespace Hermes.Storage.SqlServer
             }
         }
 
-        private static IEnumerable<Guid> GetExpiredIds(SqlDataReader dataReader)
+        private static IEnumerable<long> GetExpiredIds(SqlDataReader dataReader)
         {
-            var results = new List<Guid>();
+            var results = new List<long>();
 
             while (dataReader.Read())
             {
-                results.Add(dataReader.GetGuid(0));
+                results.Add((long)dataReader.GetSqlInt64(0));
             }
 
             return results;
@@ -84,7 +84,7 @@ namespace Hermes.Storage.SqlServer
             var command = connection.BuildCommand(SqlCommands.AddTimeout);
             command.CommandType = CommandType.Text;
 
-            command.Parameters.AddWithValue("@Id", timoutData.Id);
+            command.Parameters.AddWithValue("@Id", timoutData.MessageId);
             command.Parameters.AddWithValue("@Destination", timoutData.Destination.ToString());
             command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(timoutData.Headers));
             command.Parameters.AddWithValue("@Expires", timoutData.Expires);
@@ -102,7 +102,7 @@ namespace Hermes.Storage.SqlServer
             return command;
         }
 
-        public bool TryRemove(Guid timeoutId, out TimeoutData timeoutData)
+        public bool TryRemove(long timeoutId, out TimeoutData timeoutData)
         {
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
             using (var command = connection.BuildCommand(SqlCommands.TryRemoveTimeout))
@@ -126,7 +126,7 @@ namespace Hermes.Storage.SqlServer
             {
                 return  new TimeoutData
                 {
-                    Id = dataReader.GetGuid(0),
+                    MessageId = dataReader.GetGuid(0),
                     CorrelationId = dataReader.IsDBNull(1) ? Guid.Empty : Guid.Parse(dataReader.GetString(1)),
                     Destination = Address.Parse(dataReader.GetString(2)),
                     Expires = dataReader.GetDateTime(3),

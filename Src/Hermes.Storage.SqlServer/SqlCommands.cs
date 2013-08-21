@@ -47,12 +47,13 @@
 	                 [Destination] [varchar](255) NOT NULL,
                      [Expires] [datetime] NOT NULL,
 	                 [Headers] [varchar](max) NOT NULL,
-	                 [Body] [varbinary](max) NULL
+	                 [Body] [varbinary](max) NULL,
+                     [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
                  ) ON [PRIMARY];        
            
-                 CREATE CLUSTERED INDEX [Index_Id] ON [dbo].[Message.TimeoutData]
+                 CREATE CLUSTERED INDEX [Index_RowVersion] ON [dbo].[Message.TimeoutData]
                  (
-	                 [Id] ASC
+	                 [RowVersion] ASC
                  )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
                  CREATE NONCLUSTERED INDEX [Index_Expires] ON [dbo].[Message.TimeoutData]
@@ -66,12 +67,12 @@
               VALUES (@Id,@CorrelationId,@Destination,@Expires,@Headers,@Body)";
 
         public const string TryRemoveTimeout =
-            @"WITH message AS (SELECT * FROM [dbo].[Message.TimeoutData] WITH (UPDLOCK, READPAST, ROWLOCK) WHERE [dbo].[Message.TimeoutData].[ID] = @id) 
+            @"WITH message AS (SELECT * FROM [dbo].[Message.TimeoutData] WITH (UPDLOCK, READPAST, ROWLOCK) WHERE [dbo].[Message.TimeoutData].[RowVersion] = @id) 
             DELETE FROM message 
             OUTPUT deleted.Id, deleted.CorrelationId, deleted.Destination, deleted.Expires, deleted.Headers, deleted.Body;";
 
         public const string GetExpired =
-            @"SELECT [ID], [Expires]
+            @"SELECT [RowVersion]
               FROM [dbo].[Message.TimeoutData]      
               WHERE [Expires] < @Expiry
               ORDER BY [Expires]";

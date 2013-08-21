@@ -5,8 +5,8 @@ namespace Hermes.Core.Deferment
 {
     public interface IPersistTimeouts
     {
-        IEnumerable<Guid> GetExpired();
+        IEnumerable<long> GetExpired();
         void Add(TimeoutData timeout);
-        bool TryRemove(Guid timeoutId, out TimeoutData timeoutData);
+        bool TryRemove(long timeoutId, out TimeoutData timeoutData);
     }
 }

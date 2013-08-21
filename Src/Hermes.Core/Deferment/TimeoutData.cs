@@ -7,7 +7,7 @@ namespace Hermes.Core.Deferment
 {
     public class TimeoutData 
     {
-        public Guid Id { get; set; }
+        public Guid MessageId { get; set; }
         public Address Destination { get; set; }
         public byte[] Body { get; set; }
         public DateTime Expires { get; set; }
@@ -32,7 +32,7 @@ namespace Hermes.Core.Deferment
             }
 
             Destination = Address.Parse(message.Headers[Core.Headers.RouteExpiredTimeoutTo]);
-            Id = message.MessageId;
+            MessageId = message.MessageId;
             Body = message.Body;
             Expires = message.Headers[Core.Headers.TimeoutExpire].ToUtcDateTime();
             CorrelationId = message.CorrelationId;
@@ -41,12 +41,12 @@ namespace Hermes.Core.Deferment
 
         public override string ToString()
         {
-            return string.Format("Timeout({0}) - Expires:{1}", Id, Expires);
+            return string.Format("Timeout({0}) - Expires:{1}", MessageId, Expires);
         }
 
         public MessageEnvelope ToMessageEnvelope()
         {
-            return new MessageEnvelope(Id, CorrelationId, TimeSpan.MaxValue, true, Headers, Body);
+            return new MessageEnvelope(MessageId, CorrelationId, TimeSpan.MaxValue, true, Headers, Body);
         }
     }
 }

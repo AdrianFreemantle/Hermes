@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="CoreConfig.cs" />
     <Compile Include="Deferment\DefermentProcessor.cs" />
-    <Compile Include="Deferment\InMemoryTimeoutPersistence.cs" />
     <Compile Include="Deferment\IPersistTimeouts.cs" />
     <Compile Include="Deferment\ITimeoutProcessor.cs" />
     <Compile Include="Deferment\TimeoutData.cs" />
