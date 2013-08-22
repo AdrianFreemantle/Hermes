@@ -10,10 +10,10 @@ namespace MyDomain
         {
             var rand = Random.Next(0, 100);
 
-            if (rand % 10 == 0)
-            {
-                throw new Exception("=== Test Error ===");
-            }
+            //if (rand % 10 == 0)
+            //{
+            //    throw new Exception("=== Test Error ===");
+            //}
         }
     }
 }

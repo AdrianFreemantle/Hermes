@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Threading;
 
 namespace Hermes.Ioc
 {
     public class ServiceLocator : IServiceProvider
     {
-        [ThreadStatic]
-        private static volatile ServiceLocator instance;
+        private static readonly ThreadLocal<ServiceLocator> instance = new ThreadLocal<ServiceLocator>();
         private static readonly object SyncRoot = new Object();
         private IServiceProvider serviceProvider;
 
@@ -21,18 +21,18 @@ namespace Hermes.Ioc
 
         private static ServiceLocator GetInstance()
         {
-            if (instance == null)
+            if (!instance.IsValueCreated)
             {
                 lock (SyncRoot)
                 {
-                    if (instance == null)
+                    if (!instance.IsValueCreated)
                     {
-                        instance = new ServiceLocator();
+                        instance.Value = new ServiceLocator();
                     }
                 }
             }
 
-            return instance;
+            return instance.Value;
         }
 
         public void SetCurrentLifetimeScope(IServiceProvider provider)

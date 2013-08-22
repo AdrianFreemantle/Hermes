@@ -35,7 +35,7 @@ namespace MyDomain.Producer
 
         private static void Main(string[] args)
         {
-            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             Logger = LogFactory.BuildLogger(typeof (Program));
 
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
@@ -73,7 +73,7 @@ namespace MyDomain.Producer
                         new RegisterClaim {Amount = 10, ClaimEventId = claimEventId, ClaimId = Guid.NewGuid()});
 
                     //Console.ReadKey();
-                    Thread.Sleep(50);
+                    Thread.Sleep(500);
                 }
                 catch (Exception ex)
                 {

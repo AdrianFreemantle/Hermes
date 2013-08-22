@@ -36,36 +36,6 @@ namespace Hermes.Storage.SqlServer
             }
         }
 
-        public IEnumerable<long> GetExpired()
-        {
-            using (var connection = new SqlConnection(connectionString))
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = SqlCommands.GetExpired;
-                command.CommandType = CommandType.Text;
-                command.Parameters.AddWithValue("@Expiry", DateTime.UtcNow);
-
-                connection.Open();
-
-                using (var dataReader = command.ExecuteReader())
-                {
-                    return GetExpiredIds(dataReader);
-                }
-            }
-        }
-
-        private static IEnumerable<long> GetExpiredIds(SqlDataReader dataReader)
-        {
-            var results = new List<long>();
-
-            while (dataReader.Read())
-            {
-                results.Add((long)dataReader.GetSqlInt64(0));
-            }
-
-            return results;
-        }
-
         public void Add(TimeoutData timeout)
         {
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
@@ -102,13 +72,11 @@ namespace Hermes.Storage.SqlServer
             return command;
         }
 
-        public bool TryRemove(long timeoutId, out TimeoutData timeoutData)
+        public bool TryFetchNextTimeout(out TimeoutData timeoutData)
         {
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
             using (var command = connection.BuildCommand(SqlCommands.TryRemoveTimeout))
             {
-                command.Parameters.AddWithValue("@Id", timeoutId);
-
                 using (var dataReader = command.ExecuteReader())
                 {
                     timeoutData = FoundTimeoutData(dataReader);

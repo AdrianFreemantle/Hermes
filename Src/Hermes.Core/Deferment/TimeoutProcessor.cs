@@ -46,43 +46,24 @@ namespace Hermes.Core.Deferment
 
         private void WorkerAction(object obj)
         {
-            var backoff = new BackOff(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10));
+            var backoff = new BackOff(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(1000));
             var cancellationToken = (CancellationToken)obj;
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                var expired = timeoutStore.GetExpired().ToList();
-                bool foundWork = false;
+                TimeoutData timeoutData;
 
-                if (expired.Any())
+                if (timeoutStore.TryFetchNextTimeout(out timeoutData))
                 {
-                    foundWork = true;
-
-                    foreach (var id in expired)
-                    {
-                        TimeoutData timeoutData;
-
-                        if (timeoutStore.TryRemove(id, out timeoutData))
-                        {
-                            Logger.Debug("Sending expired message: {0} to {1}", id, timeoutData.Destination);
-                            messageSender.Send(timeoutData.ToMessageEnvelope(), timeoutData.Destination);
-                        }
-                    }
+                    Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.Destination);
+                    messageSender.Send(timeoutData.ToMessageEnvelope(), timeoutData.Destination);
+                    backoff.Reset();
+                }
+                else
+                {
+                    backoff.Delay();
                 }
 
-                SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
-            }
-        }
-
-        private static void SlowDownPollingIfNoWorkAvailable(bool foundWork, BackOff backoff)
-        {
-            if (foundWork)
-            {
-                backoff.Reset();
-            }
-            else
-            {
-                backoff.Delay();
             }
         }
     }

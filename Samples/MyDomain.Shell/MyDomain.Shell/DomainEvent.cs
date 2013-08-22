@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 using Hermes.Messaging;
 
@@ -10,8 +11,7 @@ namespace MyDomain.Shell
 {
     public sealed class DomainEvent
     {
-        [ThreadStatic]
-        private static volatile DomainEvent instance;
+        private static readonly ThreadLocal<DomainEvent> instance = new ThreadLocal<DomainEvent>();
         private static readonly object SyncRoot = new Object();
 
         private readonly IDispatchMessagesToHandlers messageDispatcher;
@@ -25,16 +25,18 @@ namespace MyDomain.Shell
         {
             get
             {
-                if (instance == null)
+                if (!instance.IsValueCreated)
                 {
                     lock (SyncRoot)
                     {
-                        if (instance == null)
-                            instance = new DomainEvent();
+                        if (!instance.IsValueCreated)
+                        {
+                            instance.Value = new DomainEvent();
+                        }
                     }
                 }
 
-                return instance;
+                return instance.Value;
             }
         }
 

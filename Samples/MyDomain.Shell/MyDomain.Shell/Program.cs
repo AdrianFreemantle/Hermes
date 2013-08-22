@@ -28,7 +28,7 @@ namespace MyDomain.Shell
 
         private static void Main(string[] args)
         {
-            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             Logger = LogFactory.BuildLogger(typeof(Program));
 
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
@@ -53,7 +53,7 @@ namespace MyDomain.Shell
                 .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.ApplicationService")), Assembly.Load(new AssemblyName("MyDomain.Persistence.ReadModel")))
                 .SubscribeToEvent<ClaimEventIntimated>()
                 .SubscribeToEvent<ClaimRegistered>() 
-                .NumberOfWorkers(2)
+                .NumberOfWorkers(1)
                 .Start();
 
             Settings.Builder.RegisterSingleton<IStoreEvents>(EventStore.WireupEventStore());
@@ -62,7 +62,7 @@ namespace MyDomain.Shell
 
             while (!token.IsCancellationRequested)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(100);
             }
 
             Console.WriteLine("Finished");
