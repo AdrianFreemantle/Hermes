@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Hermes
@@ -7,6 +8,7 @@ namespace Hermes
     /// <summary>
     /// A static class which simplifies the basic checking of parameters.
     /// </summary>
+    [DebuggerStepThrough]
     public static class Mandate
     {
         /// <summary>

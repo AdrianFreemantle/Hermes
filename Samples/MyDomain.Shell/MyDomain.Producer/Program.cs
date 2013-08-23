@@ -31,11 +31,11 @@ namespace MyDomain.Producer
         private static ILog Logger;
 
         private const string ConnectionString =
-            @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+            @"Data Source=.\SQLEXPRESS;Initial Catalog=MyDomain;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         private static void Main(string[] args)
         {
-            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             Logger = LogFactory.BuildLogger(typeof (Program));
 
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
@@ -52,14 +52,14 @@ namespace MyDomain.Producer
                 .Bus(Address.Parse("Producer"))
                 .UsingJsonSerialization()
                 .UsingUnicastBus()
-                .UseDistributedTransaction()
+                //.UseDistributedTransaction()
                 .UsingSqlTransport(ConnectionString)
                 .UsingSqlStorage(ConnectionString)
                 .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
                 .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"))
                 .Start();
 
-            var token = new CancellationTokenSource(TimeSpan.FromHours(1));
+            var token = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
 
             while (!token.IsCancellationRequested)
@@ -69,11 +69,25 @@ namespace MyDomain.Producer
 
                 try
                 {
-                    Settings.MessageBus.Send(new IntimateClaimEvent {Id = claimEventId, MessageId = Guid.NewGuid()},
-                        new RegisterClaim {Amount = 10, ClaimEventId = claimEventId, ClaimId = Guid.NewGuid()});
+                    var commands = new object[]
+                    {
+                        new IntimateClaimEvent
+                        {
+                            Id = claimEventId,
+                            MessageId = Guid.NewGuid()
+                        },
+                        new RegisterClaim
+                        {
+                            Amount = 10,
+                            ClaimEventId = claimEventId,
+                            ClaimId = Guid.NewGuid()
+                        }
+                    };
+
+                    Settings.MessageBus.Send(commands);
 
                     //Console.ReadKey();
-                    Thread.Sleep(500);
+                    Thread.Sleep(10);
                 }
                 catch (Exception ex)
                 {

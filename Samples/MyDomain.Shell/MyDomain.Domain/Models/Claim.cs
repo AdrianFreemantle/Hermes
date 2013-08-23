@@ -13,7 +13,7 @@ namespace MyDomain.Domain.Models
             state = new ClaimState();
         }
 
-        internal Claim(decimal amount, Guid claimEventId)
+        public Claim(decimal amount, Guid claimEventId)
             :this(Guid.NewGuid())
         {
             RaiseEvent(new ClaimRegistered

@@ -49,77 +49,107 @@ namespace Hermes.Core
             Stop();
         }
 
-        public void Defer(TimeSpan delay, params object[] messages)
+        public void Defer(TimeSpan delay, object command)
         {
-            Defer(delay, Guid.Empty, messages);
+            Defer(delay, Guid.Empty, new[] { command });
         }
 
-        public void Defer(TimeSpan delay, Guid correlationId, params object[] messages)
+        public void Defer(TimeSpan delay, ICollection<object> commands)
         {
-            if (messages == null || messages.Length == 0)
+            Defer(delay, Guid.Empty, commands);
+        }
+
+        public void Defer(TimeSpan delay, Guid correlationId, object commands)
+        {
+            Defer(delay, Guid.Empty, new[] { commands });
+        }
+
+        public void Defer(TimeSpan delay, Guid correlationId, ICollection<object> commands)
+        {
+            if (commands == null || !commands.Any())
             {
                 return;
             }
 
-            MessageEnvelope message = BuildMessageEnvelope(messages);
+            MessageEnvelope message = BuildMessageEnvelope(commands);
             message.Headers[Headers.TimeoutExpire] = DateTime.UtcNow.Add(delay).ToWireFormattedString();
-            message.Headers[Headers.RouteExpiredTimeoutTo] = messageRouter.GetDestinationFor(messages.First().GetType()).ToString();
+            message.Headers[Headers.RouteExpiredTimeoutTo] = messageRouter.GetDestinationFor(commands.First().GetType()).ToString();
 
             messageTransport.Send(message, Settings.DefermentEndpoint); 
         }
 
-        public void Send(params object[] messages)
+        public void Send(object command)
         {
-            if (messages == null || messages.Length == 0)
+            Send(new[] { command });
+        }
+
+        public void Send(ICollection<object> commands)
+        {
+            if (commands == null || !commands.Any())
             {
                 return;
             }
 
-            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
+            Address destination = messageRouter.GetDestinationFor(commands.First().GetType());
 
-            Send(destination, messages);
+            Send(destination, commands);
         }
 
-        public void Send(Address address, params object[] messages)
+        public void Send(Address address, object command)
         {
-            Send(address, Guid.Empty, messages);
+            Send(address, Guid.Empty, new[] { command });
         }
 
-        public void Send(Address address, Guid corrolationId, params object[] messages)
+        public void Send(Address address, ICollection<object> commands)
         {
-            if (messages == null || messages.Length == 0)
+            Send(address, Guid.Empty, commands);
+        }
+
+        public void Send(Address address, Guid corrolationId, object command)
+        {
+            Send(address, corrolationId, new[] { command });
+        }
+
+        public void Send(Address address, Guid corrolationId, ICollection<object> commands)
+        {
+            if (commands == null || !commands.Any())
             {
                 return;
             }
 
-            MessageEnvelope message = BuildMessageEnvelope(messages, corrolationId);
+            MessageEnvelope message = BuildMessageEnvelope(commands, corrolationId);
             messageTransport.Send(message, address);
         }
 
-        public void Publish(params object[] messages)
+        public void Publish(object @event)
         {
-            if (messages == null || messages.Length == 0) 
+            Publish(new [] { @event });
+        }
+
+        public void Publish(ICollection<object> events)
+        {
+            if (events == null || !events.Any()) 
             {
                 return;
             }
 
-            var messageTypes = messages.Select(o => o.GetType());
-            MessageEnvelope message = BuildMessageEnvelope(messages);
+            var messageTypes = events.Select(o => o.GetType());
+            MessageEnvelope message = BuildMessageEnvelope(events);
             messagePublisher.Publish(message, messageTypes);
         }
 
-        private MessageEnvelope BuildMessageEnvelope(object[] messages)
+        private MessageEnvelope BuildMessageEnvelope(IEnumerable<object> messages)
         {
             return BuildMessageEnvelope(messages, Guid.Empty);
         }
 
-        private MessageEnvelope BuildMessageEnvelope(object[] messages, Guid correlationId)
+        private MessageEnvelope BuildMessageEnvelope(IEnumerable<object> messages, Guid correlationId)
         {
             byte[] messageBody;
 
             using (var stream = new MemoryStream())
             {
-                messageSerializer.Serialize(messages, stream);
+                messageSerializer.Serialize(messages.ToArray(), stream);
                 stream.Flush();
                 messageBody = stream.ToArray();
             }
@@ -129,7 +159,12 @@ namespace Hermes.Core
             return message;
         }
 
-        void IInMemoryBus.Raise(params object[] events)
+        void IInMemoryBus.Raise(object @event)
+        {
+            Raise(new [] { @event });
+        }
+
+        void IInMemoryBus.Raise(ICollection<object> events)
         {
             Retry.Action(() => Raise(events), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
         }
@@ -143,7 +178,12 @@ namespace Hermes.Core
             }
         }
 
-        void IInMemoryBus.Execute(params object[] commands)
+        void IInMemoryBus.Execute(object command)
+        {
+            Execute(new[] { command });
+        }
+
+        void IInMemoryBus.Execute(ICollection<object> commands)
         {
             Retry.Action(() => Execute(commands), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
         }
