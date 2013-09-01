@@ -11,6 +11,12 @@ namespace Starbucks.Controllers
 {
     public class BarristaController : Controller
     {
+        public async Task<ActionResult> Test()
+        {
+            await Task.Delay(2000);
+            return View("BuyCoffee", ErrorCodes.Success);
+        }
+
         public async Task<ActionResult> BuyCoffeeAsync()
         {
             Task<ErrorCodes> b = MvcApplication.Bus.Send(new Guid(), new BuyCoffee()).Register<ErrorCodes>();

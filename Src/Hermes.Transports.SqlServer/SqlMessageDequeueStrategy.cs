@@ -44,8 +44,7 @@ namespace Hermes.Transports.SqlServer
 
         private TransportMessage TryDequeue(Address address)
         {
-            lock(Logger)
-            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.RepeatableRead))
+            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
             {
                 using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address.Queue)))
                 {

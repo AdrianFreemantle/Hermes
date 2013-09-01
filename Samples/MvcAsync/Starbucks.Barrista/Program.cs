@@ -43,6 +43,7 @@ namespace Starbucks.Barrista
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
                 .ScanForHandlersIn(Assembly.GetExecutingAssembly())
+                .NumberOfWorkers(4)
                 .Start();
         }
     }
@@ -60,7 +61,7 @@ namespace Starbucks.Barrista
         public void Handle(BuyCoffee message)
         {
             Logger.Info("Barista is attempting to prepare your order");
-            System.Threading.Thread.Sleep(2000);
+            System.Threading.Thread.Sleep(1000);
             
             if (DateTime.Now.Ticks % 2 == 0)
             {
