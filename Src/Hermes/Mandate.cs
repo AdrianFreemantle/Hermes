@@ -122,7 +122,7 @@ namespace Hermes
         /// <param name="condition">if set to <c>true</c>, throws exception <typeparamref name="TException"/>.</param>
         /// <param name="message">The message to place in the exception</param>
         /// <exception cref="Exception">An exception of type <typeparamref name="TException"/> is raised if the condition is false.</exception>
-        public static void That<TException>(bool condition, string message) where TException : Exception, new()
+        public static void That<TException>(bool condition, string message) where TException : Exception
         {
             if (condition)
                 return;

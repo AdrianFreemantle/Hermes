@@ -7,7 +7,6 @@ using System.Transactions;
 
 using Hermes.Configuration;
 using Hermes.Messaging;
-using Hermes.Subscriptions;
 
 namespace Hermes.Storage.SqlServer
 {

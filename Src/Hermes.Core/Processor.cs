@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Transactions;
 using Hermes.Configuration;
@@ -24,6 +25,10 @@ namespace Hermes.Core
         private readonly ISendMessages messageSender;
         private readonly IHandleMessageErrors errorProcessor;
 
+        public event EventHandler<StartedMessageProcessingEventArgs> StartedMessageProcessing;
+        public event EventHandler<CompletedMessageProcessingEventArgs> CompletedMessageProcessing;
+        public event EventHandler<FailedMessageProcessingEventArgs> FailedMessageProcessing;
+
         public Processor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container, ISendMessages messageSender, IHandleMessageErrors errorProcessor)
         {
             this.messageSerializer = messageSerializer;
@@ -33,52 +38,81 @@ namespace Hermes.Core
             this.errorProcessor = errorProcessor;
         }
 
-        public void ProcessEnvelope(MessageEnvelope envelope)
+        public void ProcessEnvelope(TransportMessage transportMessage)
         {
-            Logger.Verbose("Processing message {0}", envelope.MessageId);
+            Logger.Verbose("Processing message {0}", transportMessage.MessageId);
+
+            object[] messages = ExtractMessages(transportMessage).ToArray();
+            RaiseStartedProcessingMessageEvent(transportMessage, messages);
 
             try
             {
-                Retry.Action(() => TryProcessEnvelope(envelope), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+                Retry.Action(() => TryProcessEnvelope(transportMessage, messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+                RaiseMessageProcessingCompletedEvent(transportMessage, messages);
             }
             catch (Exception ex)
             {
-                errorProcessor.Handle(envelope, ex);
+                RaiseMessageProcessingFailedEvent(ex);
+                errorProcessor.Handle(transportMessage, ex);
+            }
+        }
+
+        private void RaiseMessageProcessingFailedEvent(Exception ex)
+        {
+            if (FailedMessageProcessing != null)
+            {
+                FailedMessageProcessing(this, new FailedMessageProcessingEventArgs(ex));
+            }
+        }
+
+        private void RaiseMessageProcessingCompletedEvent(TransportMessage transportMessage, object[] messages)
+        {
+            if (CompletedMessageProcessing != null)
+            {
+                CompletedMessageProcessing(this, new CompletedMessageProcessingEventArgs(transportMessage, messages));
+            }
+        }
+
+        private void RaiseStartedProcessingMessageEvent(TransportMessage transportMessage, object[] messages)
+        {
+            if (StartedMessageProcessing != null)
+            {
+                StartedMessageProcessing(this, new StartedMessageProcessingEventArgs(transportMessage, messages));
             }
         }
 
         private void OnRetryError(Exception ex)
         {
             Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
-        } 
+        }
 
-        private void TryProcessEnvelope(MessageEnvelope envelope)
+        private void TryProcessEnvelope(TransportMessage transportMessage, IEnumerable<object> messages)
         {
             using (var scope = StartTransactionScope())
             {
-                ProcessMessages(ExtractMessages(envelope));
-                errorProcessor.RemoveRetryHeaders(envelope);
-                messageSender.Send(envelope, Settings.AuditEndpoint);
+                ProcessMessages(messages);
+                errorProcessor.RemoveRetryHeaders(transportMessage);
+                messageSender.Send(transportMessage, Settings.AuditEndpoint);
                 scope.Complete();
             }
 
-            Logger.Verbose("Processing completed for message {0}", envelope.MessageId);
+            Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
         }       
 
-        public void ProcessMessages(IEnumerable<object> messageBodies)
+        public void ProcessMessages(IEnumerable<object> messages)
         {
             using (var childContainer = container.BeginLifetimeScope())
             {
                 ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                TryProcessMessages(messageBodies, childContainer);
+                TryProcessMessages(messages, childContainer);
             }
         }
 
-        private void TryProcessMessages(IEnumerable<object> messageBodies, IContainer childContainer)
+        private void TryProcessMessages(IEnumerable<object> messages, IContainer childContainer)
         {
             try
             {                
-                DispatchToHandlers(messageBodies, childContainer);
+                DispatchToHandlers(messages, childContainer);
                 CommitUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
             }
             catch
@@ -123,21 +157,21 @@ namespace Hermes.Core
             }
         }
   
-        private IEnumerable<object> ExtractMessages(MessageEnvelope envelope)
+        private IEnumerable<object> ExtractMessages(TransportMessage transportMessage)
         {
-            if (envelope.Body == null || envelope.Body.Length == 0)
+            if (transportMessage.Body == null || transportMessage.Body.Length == 0)
             {
                 return new object[0];
             }
 
-            return TryDeserializeMessages(envelope);
+            return TryDeserializeMessages(transportMessage.Body);
         }
 
-        private IEnumerable<object> TryDeserializeMessages(MessageEnvelope envelope)
+        private IEnumerable<object> TryDeserializeMessages(byte[] messages)
         {
             try
             {
-                using (var stream = new MemoryStream(envelope.Body))
+                using (var stream = new MemoryStream(messages))
                 {
                     return messageSerializer.Deserialize(stream);
                 }

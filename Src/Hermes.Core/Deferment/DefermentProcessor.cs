@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Storage;
 
 namespace Hermes.Core.Deferment
 {
@@ -11,16 +13,19 @@ namespace Hermes.Core.Deferment
 
         private readonly IPersistTimeouts timeoutStore;
 
+        public event EventHandler<StartedMessageProcessingEventArgs> StartedMessageProcessing;
+        public event EventHandler<CompletedMessageProcessingEventArgs> CompletedMessageProcessing;
+        public event EventHandler<FailedMessageProcessingEventArgs> FailedMessageProcessing;
+
         public DefermentProcessor(IPersistTimeouts timeoutStore)
         {
             this.timeoutStore = timeoutStore;
         }
 
-        public void ProcessEnvelope(MessageEnvelope envelope)
+        public void ProcessEnvelope(TransportMessage transportMessage)
         {
-            Logger.Debug("Defering message: {0}", envelope.MessageId);
-
-            timeoutStore.Add(new TimeoutData(envelope));
+            Logger.Debug("Defering message: {0}", transportMessage.MessageId);
+            timeoutStore.Add(new TimeoutData(transportMessage));
         }
 
         public void ProcessMessages(IEnumerable<object> messageBodies)

@@ -20,11 +20,11 @@ namespace Hermes.Transports.SqlServer
             connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
         }
 
-        public void Send(MessageEnvelope message, Address address)
+        public void Send(TransportMessage transportMessage, Address address)
         {
             using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
             {
-                using (var command = BuildSendCommand(transactionalConnection, message, address))
+                using (var command = BuildSendCommand(transactionalConnection, transportMessage, address))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -33,28 +33,28 @@ namespace Hermes.Transports.SqlServer
             }
         }
 
-        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, MessageEnvelope message, Address address)
+        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, TransportMessage transportMessage, Address address)
         {
             var command = connection.BuildCommand(String.Format(SqlCommands.Send, address.Queue));
             command.CommandType = CommandType.Text;
 
-            command.Parameters.AddWithValue("@Id", message.MessageId);
-            command.Parameters.AddWithValue("@Recoverable", message.Recoverable);
-            command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(message.Headers));
-            command.Parameters.AddWithValue("@Body", message.Body);
+            command.Parameters.AddWithValue("@Id", transportMessage.MessageId);
+            command.Parameters.AddWithValue("@ReplyTo", transportMessage.ReplyToAddress.ToString());
+            command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(transportMessage.Headers));
+            command.Parameters.AddWithValue("@Body", transportMessage.Body);
 
-            if (message.CorrelationId != Guid.Empty)
+            if (transportMessage.CorrelationId != Guid.Empty)
             {
-                command.Parameters.AddWithValue("@CorrelationId", message.CorrelationId);
+                command.Parameters.AddWithValue("@CorrelationId", transportMessage.CorrelationId);
             }
             else
             {
                 command.Parameters.AddWithValue("@CorrelationId", DBNull.Value);
             }
 
-            if (message.HasExpiryTime)
+            if (transportMessage.HasExpiryTime)
             {
-                command.Parameters.AddWithValue("@Expires", message.ExpiryTime);
+                command.Parameters.AddWithValue("@Expires", transportMessage.ExpiryTime);
             }
             else
             {

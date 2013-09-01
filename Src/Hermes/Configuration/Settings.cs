@@ -14,9 +14,8 @@ namespace Hermes.Configuration
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
 
         private static IContainerBuilder builder;
-        private static Address thisEndpoint = Address.Undefined;
-        private static Address auditAddress = Address.Parse("Audit");
-        private static Address errorAddress = Address.Parse("Error");
+        private static Address auditAddress = Address.Undefined;
+        private static Address errorAddress = Address.Undefined;
         private static Address defermentEndpoint = Address.Parse("Deferment");
 
         private static int firstLevelRetryAttempts = 3;
@@ -88,22 +87,14 @@ namespace Hermes.Configuration
             internal set { defermentEndpoint = value; }
         }
 
-        public static Address ThisEndpoint
-        {
-            get { return thisEndpoint; }
-            internal set { thisEndpoint = value; }
-        }
-
         public static Address ErrorEndpoint
         {
             get { return errorAddress; }
-            internal set { errorAddress = value; }
         }
 
         public static Address AuditEndpoint
         {
             get { return auditAddress; }
-            internal set { auditAddress = value; }
         }
 
         public static IMessageBus MessageBus
@@ -114,6 +105,13 @@ namespace Hermes.Configuration
         public static IManageSubscriptions Subscriptions
         {
             get { return builder.Container.GetInstance<IManageSubscriptions>(); }
+        }
+
+        internal static void SetEndpointName(string endpointName)
+        {
+            Address.InitializeLocalAddress(endpointName);
+            auditAddress = Address.Local.SubScope("Audit");
+            errorAddress = Address.Local.SubScope("Error");            
         }
  
         public static T GetSetting<T>(string settingKey)

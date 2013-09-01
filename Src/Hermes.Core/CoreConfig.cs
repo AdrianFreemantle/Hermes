@@ -6,33 +6,34 @@ namespace Hermes.Core
 {
     public static class CoreConfig
     {
-        public static IConfigureBus UsingUnicastBus(this IConfigureBus config)
+        public static IConfigureEndpoint UseUnicastBus(this IConfigureEndpoint config)
         {
             Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Processor>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Bus>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Publisher>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             
             return config;
         }
 
-        public static IConfigureBus UsingDefermentBus(this IConfigureBus config) 
+        public static IConfigureEndpoint UseDefermentBus(this IConfigureEndpoint config) 
         {
             Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<DefermentProcessor>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Bus>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Publisher>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
 
             return config;
         }

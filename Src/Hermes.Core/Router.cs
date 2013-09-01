@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Hermes.Messaging;
+using Hermes.Routing;
 
 namespace Hermes.Core
 {

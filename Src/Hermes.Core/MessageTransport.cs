@@ -1,4 +1,6 @@
-﻿using Hermes.Messaging;
+﻿using System;
+
+using Hermes.Messaging;
 using Hermes.Transports;
 
 namespace Hermes.Core
@@ -6,9 +8,9 @@ namespace Hermes.Core
     public class MessageTransport : ITransportMessages
     {
         private readonly ISendMessages messageSender;
-        private readonly IDequeueMessages messageReceiver;
+        private readonly IReceiveMessages messageReceiver;
 
-        public MessageTransport(ISendMessages messageSender, IDequeueMessages messageReceiver)
+        public MessageTransport(ISendMessages messageSender, IReceiveMessages messageReceiver)
         {
             this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;
@@ -19,9 +21,9 @@ namespace Hermes.Core
             messageReceiver.Stop();
         }
 
-        public void Start(Address queueAddress)
+        public void Start()
         {
-            messageReceiver.Start(queueAddress);
+            messageReceiver.Start();
         }
 
         public void Stop()
@@ -29,9 +31,9 @@ namespace Hermes.Core
             messageReceiver.Stop();
         }
 
-        public void Send(MessageEnvelope message, Address recipient)
+        public void Send(TransportMessage transportMessage, Address recipient)
         {
-            messageSender.Send(message, recipient);
+            messageSender.Send(transportMessage, recipient);
         }
     }
 }

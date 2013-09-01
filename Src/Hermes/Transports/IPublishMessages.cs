@@ -7,6 +7,6 @@ namespace Hermes.Transports
 {
     public interface IPublishMessages
     {
-       bool Publish(MessageEnvelope message, IEnumerable<Type> eventTypes);
+       bool Publish(TransportMessage transportMessage, IEnumerable<Type> eventTypes);
     }
 }

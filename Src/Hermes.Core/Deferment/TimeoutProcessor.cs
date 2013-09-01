@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Hermes.Backoff;
 using Hermes.Configuration;
 using Hermes.Logging;
+using Hermes.Messaging;
+using Hermes.Storage;
 using Hermes.Transports;
 
 namespace Hermes.Core.Deferment
@@ -55,8 +57,8 @@ namespace Hermes.Core.Deferment
 
                 if (timeoutStore.TryFetchNextTimeout(out timeoutData))
                 {
-                    Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.Destination);
-                    messageSender.Send(timeoutData.ToMessageEnvelope(), timeoutData.Destination);
+                    Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.DestinationAddress);
+                    messageSender.Send(timeoutData.ToMessageEnvelope(), Address.Parse(timeoutData.DestinationAddress));
                     backoff.Reset();
                 }
                 else

@@ -1,7 +1,7 @@
 ﻿using System;
 using Hermes.Configuration;
 using Hermes.Messaging;
-using Hermes.Subscriptions;
+using Hermes.Storage;
 
 namespace Hermes.Core
 {
@@ -21,7 +21,7 @@ namespace Hermes.Core
 
         public void Subscribe(Type messageType)
         {
-            subscriptionStore.Subscribe(Settings.ThisEndpoint, messageType);
+            subscriptionStore.Subscribe(Address.Local, messageType);
         }
 
         public void Unsubscribe<T>()
@@ -31,7 +31,7 @@ namespace Hermes.Core
 
         public void Unsubscribe(Type messageType)
         {
-            subscriptionStore.Unsubscribe(Settings.ThisEndpoint, messageType);
+            subscriptionStore.Unsubscribe(Address.Local, messageType);
         }
     }
 }
