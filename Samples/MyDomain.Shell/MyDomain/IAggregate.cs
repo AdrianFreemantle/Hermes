@@ -6,7 +6,7 @@ namespace MyDomain
     public interface IAggregate
     {
         int Version { get; }
-        Guid Id { get; }
+        Guid Identity { get; }
         IEnumerable<object> GetUncommittedEvents();
         void ClearUncommittedEvents();
         void ApplyEvent(object @event);
