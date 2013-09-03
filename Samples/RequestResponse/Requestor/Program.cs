@@ -25,7 +25,7 @@ namespace Requestor
     {
         private static Random rand = new Random();
         private static ILog Logger;
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string ConnectionString = @"data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01;";
 
         private static void Main(string[] args)
         {
@@ -33,7 +33,7 @@ namespace Requestor
 
             Configure
                 .Endpoint("Requestor", new AutofacAdapter())
-                .UseConsoleWindowLogger()
+                //.UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()
                 .UseDistributedTransaction()
@@ -44,15 +44,16 @@ namespace Requestor
                 .Start();
 
             Logger = LogFactory.BuildLogger(typeof(Program));        
-            var token = new CancellationTokenSource(TimeSpan.FromHours(1));
+            var token = new CancellationTokenSource(TimeSpan.FromHours(2));
 
             Console.WriteLine("Press any key to send a request");
             Console.ReadKey();
 
             while (!token.IsCancellationRequested)
             {
-                Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
-                Console.ReadKey();
+              //  Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
+                Thread.Sleep(10);
+                //Console.ReadKey();
             }
 
             Console.WriteLine("Finished");
@@ -63,6 +64,7 @@ namespace Requestor
         {
             var x = rand.Next(0, 10);
             var y = rand.Next(0, 10);
+            Logger.Info("Adding numbers {0} and {1}", x, y);
             return new AddNumbers { X = x, Y = y };
         }
 
@@ -75,10 +77,8 @@ namespace Requestor
             }
             else
             {
-                Logger.Fatal("No result returned");
+                Logger.Error("Error result returned");
             }
-
-            Console.WriteLine("Press any key to send a request");
         }
     }    
 }

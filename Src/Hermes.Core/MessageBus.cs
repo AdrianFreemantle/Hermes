@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -9,7 +8,6 @@ using Hermes.Configuration;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Routing;
-using Hermes.Serialization;
 using Hermes.Transports;
 
 namespace Hermes.Core
@@ -18,57 +16,29 @@ namespace Hermes.Core
     {
         private static readonly ILog logger = LogFactory.BuildLogger(typeof(MessageBus)); 
 
-        private readonly ISerializeMessages messageSerializer;
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPublishMessages messagePublisher;
-        private readonly IProcessMessages messageProcessor;
-        private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();        
-        private readonly CallBackManager callBackManager = new CallBackManager();
+        private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();
 
-        public IMessageContext CurrentMessageContext
-        {
-            get
-            {
-                return currentMessageBeingProcessed.Value == null
-                    ? new MessageContext(TransportMessage.Undefined)
-                    : new MessageContext(currentMessageBeingProcessed.Value);
-            }
-        }
+        public IMessageContext CurrentMessageContext { get { return messageTransport.CurrentMessageContext; } }
 
-        public MessageBus(ISerializeMessages messageSerializer, ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPublishMessages messagePublisher, IProcessMessages messageProcessor)
+        public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPublishMessages messagePublisher)
         {
-            this.messageSerializer = messageSerializer;
             this.messageTransport = messageTransport;
             this.messageRouter = messageRouter;
             this.messagePublisher = messagePublisher;
-            this.messageProcessor = messageProcessor;
         }
 
         public void Start()
-        {
-            messageProcessor.CompletedMessageProcessing += CompletedMessageProcessing;
-            messageProcessor.StartedMessageProcessing += StartedMessageProcessing;
+        {            
             messageTransport.Start();
-        }
-
-        void StartedMessageProcessing(object sender, StartedMessageProcessingEventArgs e)
-        {
-            currentMessageBeingProcessed.Value = e.TransportMessage;
-            callBackManager.HandleCorrelatedMessage(e.TransportMessage, e.Messages);
-        }
-
-        void CompletedMessageProcessing(object sender, CompletedMessageProcessingEventArgs e)
-        {
-            currentMessageBeingProcessed.Value = TransportMessage.Undefined;
-        }
+        }      
 
         public void Stop()
         {
             messageTransport.Stop();
-            currentMessageBeingProcessed.Value = TransportMessage.Undefined;
-            messageProcessor.CompletedMessageProcessing -= CompletedMessageProcessing;
-            messageProcessor.StartedMessageProcessing -= StartedMessageProcessing;
+            currentMessageBeingProcessed.Value = TransportMessage.Undefined;            
         }
 
         public void Dispose()
@@ -84,15 +54,18 @@ namespace Hermes.Core
         public void Defer(TimeSpan delay, Guid correlationId, params object[] messages)
         {
             if (messages == null || messages.Length == 0)
+                throw new InvalidOperationException("Cannot send an empty set of messages.");
+
+            string destination = messageRouter.GetDestinationFor(messages.First().GetType()).ToString();
+            string timeout = DateTime.UtcNow.Add(delay).ToWireFormattedString();
+
+            var headers = new Dictionary<string, string>
             {
-                return;
-            }
+                {Headers.TimeoutExpire, timeout},
+                {Headers.RouteExpiredTimeoutTo, destination}
+            };
 
-            TransportMessage transportMessage = BuildTransportMessage(messages);
-            transportMessage.Headers[Headers.TimeoutExpire] = DateTime.UtcNow.Add(delay).ToWireFormattedString();
-            transportMessage.Headers[Headers.RouteExpiredTimeoutTo] = messageRouter.GetDestinationFor(messages.First().GetType()).ToString();
-
-            messageTransport.Send(transportMessage, Settings.DefermentEndpoint); 
+            messageTransport.SendMessage(Settings.DefermentEndpoint, correlationId, delay, messages, headers); 
         }        
 
         public ICallback Send(params object[] messages)
@@ -133,10 +106,7 @@ namespace Hermes.Core
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
 
-            var transportMessage = BuildTransportMessage(corrolationId, timeToLive, messages);
-            messageTransport.Send(transportMessage, address);
-
-            return callBackManager.SetupCallback(transportMessage.CorrelationId);
+            return messageTransport.SendMessage(address, corrolationId, timeToLive, messages);
         } 
 
         public void Reply(params object[] messages)
@@ -162,10 +132,9 @@ namespace Hermes.Core
             if (currentMessage.ReplyToAddress == Address.Undefined)
                 throw new InvalidOperationException("Return was called with undefined reply-to-address field.");
 
-            var returnMessage = TransportMessage.BuildControlMessage(currentMessage.CorrelationId);
-            returnMessage.Headers[Headers.ReturnMessageErrorCodeHeader] = errorCode.GetHashCode().ToString(CultureInfo.InvariantCulture);
+            var errorCodeHeader = HeaderValue.FromEnum(Headers.ReturnMessageErrorCodeHeader, errorCode);
 
-            messageTransport.Send(returnMessage, currentMessage.ReplyToAddress);
+            messageTransport.SendControlMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, errorCodeHeader);
         }
 
         private Address GetDestination(params object[] messages)
@@ -178,35 +147,8 @@ namespace Hermes.Core
 
         public void Publish(params object[] messages)
         {
-            if (messages == null || messages.Length == 0) 
-            {
-                return;
-            }
-
-            var messageTypes = messages.Select(o => o.GetType());
-            TransportMessage transportMessage = BuildTransportMessage(messages);
-            messagePublisher.Publish(transportMessage, messageTypes);
+            messagePublisher.Publish(messages);
         }
-
-        private TransportMessage BuildTransportMessage(object[] messages)
-        {
-            return BuildTransportMessage(Guid.Empty, TimeSpan.MaxValue, messages);
-        }
-
-        private TransportMessage BuildTransportMessage(Guid correlationId, TimeSpan timeToLive, object[] messages)
-        {
-            byte[] messageBody;
-
-            using (var stream = new MemoryStream())
-            {
-                messageSerializer.Serialize(messages, stream);
-                stream.Flush();
-                messageBody = stream.ToArray();
-            }
-
-            var message = new TransportMessage(IdentityFactory.NewComb(), correlationId, Address.Local, timeToLive, new Dictionary<string, string>(), messageBody);
-
-            return message;
-        }        
-    }
+    }   
 }
+

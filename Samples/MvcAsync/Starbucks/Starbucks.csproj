@@ -49,22 +49,22 @@
       <HintPath>..\packages\Autofac.Mvc4.3.1.0\lib\net40\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Hermes">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Core">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Storage.SqlServer">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -155,7 +155,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\BarristaController.cs" />
+    <Compile Include="Controllers\BaristaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -265,7 +265,8 @@
     <Content Include="Views\Web.config" />
     <Content Include="packages.config" />
     <None Include="readme.txt" />
-    <Content Include="Views\Barrista\BuyCoffee.cshtml" />
+    <Content Include="Views\Barista\BuyCoffee.cshtml" />
+    <Content Include="Views\Barista\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

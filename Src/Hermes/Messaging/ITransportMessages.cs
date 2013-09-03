@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Hermes.Messaging
 {
@@ -10,6 +11,8 @@ namespace Hermes.Messaging
     /// </remarks>
     public interface ITransportMessages : IDisposable
     {
+        IMessageContext CurrentMessageContext { get; }
+
         /// <summary>
         /// Starts the transport listening for new messages to receive.
         /// </summary>
@@ -20,6 +23,8 @@ namespace Hermes.Messaging
         /// </summary>
         void Stop();
 
-        void Send(TransportMessage transportMessage, Address recipient);
+        ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages);
+        ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers);
+        void SendControlMessage(Address recipient, Guid correlationId, params HeaderValue[] headerValues);
     }
 }

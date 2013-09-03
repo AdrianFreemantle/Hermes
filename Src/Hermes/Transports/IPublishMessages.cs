@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Hermes.Messaging;
-
-namespace Hermes.Transports
+﻿namespace Hermes.Transports
 {
     public interface IPublishMessages
     {
-       bool Publish(TransportMessage transportMessage, IEnumerable<Type> eventTypes);
+        bool Publish(params object[] messages);
     }
 }

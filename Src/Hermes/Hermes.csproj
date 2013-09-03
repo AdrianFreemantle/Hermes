@@ -59,6 +59,8 @@
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="Messaging\HeaderValue.cs" />
+    <Compile Include="Messaging\ITransportMessageFactory.cs" />
     <Compile Include="Messaging\CompletedMessageProcessingEventArgs.cs" />
     <Compile Include="Messaging\FailedMessageProcessingEventArgs.cs" />
     <Compile Include="Messaging\IMessageContext.cs" />

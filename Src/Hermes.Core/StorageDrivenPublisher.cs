@@ -11,29 +11,36 @@ namespace Hermes.Core
     public class StorageDrivenPublisher : IPublishMessages
     {
         private readonly IStoreSubscriptions subscriptionStorage;
+        private readonly ITransportMessageFactory messageFactory;
         private readonly ISendMessages messageSender;
 
-        public StorageDrivenPublisher(ISendMessages messageSender, IStoreSubscriptions subscriptionStorage)
+        public StorageDrivenPublisher(ISendMessages messageSender, IStoreSubscriptions subscriptionStorage, ITransportMessageFactory messageFactory)
         {
             this.messageSender = messageSender;
             this.subscriptionStorage = subscriptionStorage;
+            this.messageFactory = messageFactory;
         }
 
-        public bool Publish(TransportMessage transportMessage, IEnumerable<Type> eventTypes)
+        public bool Publish(params object[] messages)
         {
-            if (subscriptionStorage == null)
-                throw new InvalidOperationException("Cannot publish on this endpoint - no subscription storage has been configured. Add either 'MsmqSubscriptionStorage()' or 'DbSubscriptionStorage()' after 'NServiceBus.Configure.With()'.");
+            if (messages == null || messages.Length == 0)
+                throw new InvalidOperationException("Cannot publish an empty set of messages.");
 
-            var subscribers = subscriptionStorage.GetSubscriberAddressesForMessage(eventTypes).ToList();
+            if (subscriptionStorage == null)
+                throw new InvalidOperationException("Cannot publish on this endpoint - no subscription storage has been configured.");
+
+            var messageTypes = messages.Select(o => o.GetType());
+            var subscribers = subscriptionStorage.GetSubscriberAddressesForMessage(messageTypes).ToList();
 
             if (!subscribers.Any())
             {
                 return false;
             }
 
+            var transportMessage = messageFactory.BuildTransportMessage(messages);
+
             foreach (var subscriber in subscribers)
             {
-                //this is unicast so we give the message a unique ID
                 transportMessage.ChangeMessageId(IdentityFactory.NewComb());
                 messageSender.Send(transportMessage, subscriber);
             }

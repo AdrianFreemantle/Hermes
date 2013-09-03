@@ -21,8 +21,7 @@ namespace Respondor
 {
     class Program
     {
-        private static ILog Logger;
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string ConnectionString = @"data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01;";
 
         private static void Main(string[] args)
         {
@@ -40,12 +39,11 @@ namespace Respondor
                 .ScanForHandlersIn(Assembly.GetExecutingAssembly())
                 .Start();
 
-            Logger = LogFactory.BuildLogger(typeof(Program));
-            var token = new CancellationTokenSource(TimeSpan.FromHours(1));
+            var token = new CancellationTokenSource(TimeSpan.FromHours(2));
 
             while (!token.IsCancellationRequested)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(50);
             }
             
             Console.WriteLine("Finished");
@@ -67,12 +65,14 @@ namespace Respondor
         {
             if (DateTime.Now.Ticks % 2 == 0)
             {
-                Logger.Info("Adding numbers {0} and {1}", message.X, message.Y);
-                bus.Reply(new AdditionResult {Result = message.X + message.Y});
+                var result = message.X + message.Y;
+
+                Logger.Info("{0} = {1} + {2}", result, message.X, message.Y);
+                bus.Reply(new AdditionResult { Result = result });
             }
             else
             {
-                Logger.Info("Sending error response");
+                Logger.Warn("Simulating response to failed business rule.");
                 bus.Return(ErrorCodes.CalculationFault);
             }
         }

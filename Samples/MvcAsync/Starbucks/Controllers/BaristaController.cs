@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-
-using Hermes;
-
 using Starbucks.Messages;
 
 namespace Starbucks.Controllers
 {
-    public class BarristaController : Controller
+    public class BaristaController : Controller
     {
-        public async Task<ActionResult> Test()
-        {
-            await Task.Delay(2000);
-            return View("BuyCoffee", ErrorCodes.Success);
-        }
-
+        [AsyncTimeout(100)]
+        [HandleError(ExceptionType = typeof(TimeoutException), View = "Error")]
         public async Task<ActionResult> BuyCoffeeAsync()
         {
             Task<ErrorCodes> b = MvcApplication.Bus.Send(new Guid(), new BuyCoffee()).Register<ErrorCodes>();
-            return View("BuyCoffee", await b);
+            ErrorCodes result = await b;
+            return View("BuyCoffee", result);
         }
     }
 }

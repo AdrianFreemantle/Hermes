@@ -135,6 +135,17 @@ namespace Hermes.Messaging
         /// <summary>
         /// Initializes a new instance of the EnvelopeMessage class.
         /// </summary>
+        /// <param name="messageId">The value which uniquely identifies the envelope message.</param>
+        /// <param name="correlationId">The unique identifier of another message bundle this message bundle is associated with.</param>
+        /// <param name="headers">The message headers which contain additional metadata about the logical messages.</param>
+        public TransportMessage(Guid messageId, Guid correlationId, IDictionary<string, string> headers)
+            : this(messageId, messageId, Address.Local, TimeSpan.MaxValue, headers, new byte[0])
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the EnvelopeMessage class.
+        /// </summary>
         /// <param name="body">The collection of dispatched logical messages.</param>
         public TransportMessage(byte[] body)
             : this(IdentityFactory.NewComb(), body)
@@ -144,14 +155,7 @@ namespace Hermes.Messaging
         public void ChangeMessageId(Guid id)
         {
             messageId = id;
-        }
-
-        public static TransportMessage BuildControlMessage(Guid correlationId)
-        {
-            var controlMessage = new TransportMessage(IdentityFactory.NewComb(), correlationId, new byte[0]);
-            controlMessage.Headers.Add(Hermes.Headers.ControlMessageHeader, true.ToString());
-            return controlMessage;
-        }
+        }        
 
         public bool IsControlMessage()
         {
