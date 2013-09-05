@@ -14,6 +14,8 @@ namespace Hermes.Core.BusCallback
         private readonly CompletionResult result;
         private volatile bool completed;
         private readonly ManualResetEvent sync;
+        private readonly DateTime registeredTime;
+        public TimeSpan TimeSinceRegistered { get { return DateTime.UtcNow - registeredTime; } }
 
         /// <summary>
         /// Creates a new object storing the given callback and state.
@@ -22,6 +24,7 @@ namespace Hermes.Core.BusCallback
         /// <param name="state"></param>
         public BusAsyncResult(AsyncCallback callback, object state)
         {
+            registeredTime = DateTime.UtcNow;
             this.callback = callback;
             result = new CompletionResult {State = state};
             sync = new ManualResetEvent(false);
