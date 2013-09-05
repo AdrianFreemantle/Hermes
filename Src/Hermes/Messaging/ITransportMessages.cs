@@ -10,8 +10,8 @@ namespace Hermes.Messaging
     /// Object instances which implement this interface must be designed to be multi-thread safe.
     /// </remarks>
     public interface ITransportMessages : IDisposable
-    {
-        IMessageContext CurrentMessageContext { get; }
+    {        
+        TransportMessage CurrentTransportMessage { get; }
 
         /// <summary>
         /// Starts the transport listening for new messages to receive.

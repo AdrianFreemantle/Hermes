@@ -15,13 +15,11 @@ namespace Hermes.Core
         private readonly CallBackManager callBackManager = new CallBackManager();
         private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();
 
-        public IMessageContext CurrentMessageContext
+        public TransportMessage CurrentTransportMessage
         {
             get
             {
-                return currentMessageBeingProcessed.Value == null
-                    ? new MessageContext(TransportMessage.Undefined)
-                    : new MessageContext(currentMessageBeingProcessed.Value);
+                return currentMessageBeingProcessed.Value ?? TransportMessage.Undefined;
             }
         }
 

@@ -18,6 +18,7 @@ namespace Hermes.Core
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
             
             return config;
         }
@@ -34,6 +35,7 @@ namespace Hermes.Core
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
+            Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
 
             return config;
         }

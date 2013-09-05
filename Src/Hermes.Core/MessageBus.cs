@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
-
 using Hermes.Configuration;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -19,9 +16,11 @@ namespace Hermes.Core
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPublishMessages messagePublisher;
-        private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();
 
-        public IMessageContext CurrentMessageContext { get { return messageTransport.CurrentMessageContext; } }
+        public IMessageContext CurrentMessageContext
+        {
+            get { return new MessageContext(messageTransport.CurrentTransportMessage); }
+        }
 
         public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPublishMessages messagePublisher)
         {
@@ -38,7 +37,6 @@ namespace Hermes.Core
         public void Stop()
         {
             messageTransport.Stop();
-            currentMessageBeingProcessed.Value = TransportMessage.Undefined;            
         }
 
         public void Dispose()
@@ -111,7 +109,7 @@ namespace Hermes.Core
 
         public void Reply(params object[] messages)
         {
-            var currentMessage = currentMessageBeingProcessed.Value;
+            var currentMessage = messageTransport.CurrentTransportMessage;
 
             if (currentMessage == null || currentMessage == TransportMessage.Undefined)
                 throw new InvalidOperationException("Reply was called but we have no current message to reply to.");
@@ -124,7 +122,7 @@ namespace Hermes.Core
 
         public void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible
         {
-            var currentMessage = currentMessageBeingProcessed.Value;
+            var currentMessage = messageTransport.CurrentTransportMessage;
 
             if (currentMessage == null || currentMessage == TransportMessage.Undefined)
                 throw new InvalidOperationException("Return was called but we have no current message to return.");

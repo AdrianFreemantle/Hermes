@@ -17,13 +17,9 @@ using RequestResponseMessages;
 
 namespace Requestor
 {
-    /*
-     * NB !!! Remember to manually flush the queues before starting or the expected results wont match
-     */
-
     class Program
     {
-        private static Random rand = new Random();
+        private static readonly Random Rand = new Random();
         private static ILog Logger;
         private const string ConnectionString = @"data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01;";
 
@@ -33,7 +29,7 @@ namespace Requestor
 
             Configure
                 .Endpoint("Requestor", new AutofacAdapter())
-                //.UseConsoleWindowLogger()
+                .UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()
                 .UseDistributedTransaction()
@@ -51,9 +47,8 @@ namespace Requestor
 
             while (!token.IsCancellationRequested)
             {
-              //  Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
-                Thread.Sleep(10);
-                //Console.ReadKey();
+                Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
+                Thread.Sleep(1000);
             }
 
             Console.WriteLine("Finished");
@@ -62,8 +57,8 @@ namespace Requestor
 
         public static AddNumbers NewCalculation()
         {
-            var x = rand.Next(0, 10);
-            var y = rand.Next(0, 10);
+            var x = Rand.Next(0, 10);
+            var y = Rand.Next(0, 10);
             Logger.Info("Adding numbers {0} and {1}", x, y);
             return new AddNumbers { X = x, Y = y };
         }
