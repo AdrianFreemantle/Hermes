@@ -139,7 +139,7 @@ namespace Hermes.Messaging
         /// <param name="correlationId">The unique identifier of another message bundle this message bundle is associated with.</param>
         /// <param name="headers">The message headers which contain additional metadata about the logical messages.</param>
         public TransportMessage(Guid messageId, Guid correlationId, IDictionary<string, string> headers)
-            : this(messageId, messageId, Address.Local, TimeSpan.MaxValue, headers, new byte[0])
+            : this(messageId, correlationId, Address.Local, TimeSpan.MaxValue, headers, new byte[0])
         {
         }
 
