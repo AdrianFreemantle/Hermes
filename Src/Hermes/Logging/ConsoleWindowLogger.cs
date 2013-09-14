@@ -2,11 +2,26 @@
 
 namespace Hermes.Logging
 {
+
+
     public class ConsoleWindowLogger : ILog
     {
         private static readonly object Sync = new object();
         private readonly ConsoleColor originalColor = Console.ForegroundColor;
         private readonly Type typeToLog;
+
+        public static LogLevel MinimumLogLevel { get; set; }
+
+        public enum LogLevel
+        {
+            Debug,
+            Verbose,
+            Info,
+            Warn,
+            Error,
+            Fatal,
+            NoLogging
+        }
 
         public ConsoleWindowLogger(Type typeToLog)
         {
@@ -15,32 +30,38 @@ namespace Hermes.Logging
 
         public virtual void Verbose(string message, params object[] values)
         {
-            this.Log(ConsoleColor.DarkGreen, message, values);
+            if(MinimumLogLevel <= LogLevel.Verbose)
+                Log(ConsoleColor.DarkGreen, message, values);
         }
 
         public virtual void Debug(string message, params object[] values)
         {
-            this.Log(ConsoleColor.Green, message, values);
+            if (MinimumLogLevel <= LogLevel.Debug)
+                Log(ConsoleColor.Green, message, values);
         }
 
         public virtual void Info(string message, params object[] values)
         {
-            this.Log(ConsoleColor.DarkCyan, message, values);
+            if (MinimumLogLevel <= LogLevel.Info)
+                Log(ConsoleColor.DarkCyan, message, values);
         }
 
         public virtual void Warn(string message, params object[] values)
         {
-            this.Log(ConsoleColor.Yellow, message, values);
+            if (MinimumLogLevel <= LogLevel.Warn)
+                Log(ConsoleColor.Yellow, message, values);
         }
 
         public virtual void Error(string message, params object[] values)
         {
-            this.Log(ConsoleColor.DarkRed, message, values);
+            if (MinimumLogLevel <= LogLevel.Error)
+                Log(ConsoleColor.DarkRed, message, values);
         }
 
         public virtual void Fatal(string message, params object[] values)
         {
-            this.Log(ConsoleColor.Red, message, values);
+            if (MinimumLogLevel <= LogLevel.Fatal)
+                Log(ConsoleColor.Red, message, values);
         }
 
         private void Log(ConsoleColor color, string message, params object[] values)

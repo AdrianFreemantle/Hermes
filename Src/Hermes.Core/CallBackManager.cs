@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+
+using Hermes.Core.BusCallback;
+using Hermes.Messaging;
+
+namespace Hermes.Core
+{
+    internal class CallBackManager
+    {
+        /// <summary>
+        /// Map of message IDs to Async Results - useful for cleanup in case of timeouts.
+        /// </summary>
+        protected readonly IDictionary<Guid, BusAsyncResult> messageIdToAsyncResultLookup = new Dictionary<Guid, BusAsyncResult>();
+
+        public void HandleCorrelatedMessage(TransportMessage message, IReadOnlyCollection<object> messages)
+        {
+            if (message.CorrelationId == Guid.Empty)
+                return;
+
+            BusAsyncResult busAsyncResult;
+
+            lock (messageIdToAsyncResultLookup)
+            {
+                messageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
+                messageIdToAsyncResultLookup.Remove(message.CorrelationId);
+            }
+
+            if (busAsyncResult == null)
+                return;
+
+            var statusCode = 0;
+
+            if (message.IsControlMessage() && message.Headers.ContainsKey(Headers.ReturnMessageErrorCodeHeader))
+                statusCode = int.Parse(message.Headers[Headers.ReturnMessageErrorCodeHeader]);
+
+            busAsyncResult.Complete(statusCode, messages);
+        }
+
+        public ICallback SetupCallback(Guid messageId)
+        {
+            Mandate.That<ArgumentException>(messageId != Guid.Empty, "You must provide correlationId that is a non-empty Guid in order to perform a callback action.");
+
+            var result = new Callback(messageId);
+
+            result.Registered += delegate(object sender, BusAsyncResultEventArgs args)
+            {
+                lock (messageIdToAsyncResultLookup)
+                {
+                    messageIdToAsyncResultLookup[args.MessageId] = args.Result;
+                }
+            };
+
+            return result;
+        }
+    }
+}

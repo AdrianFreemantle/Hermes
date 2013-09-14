@@ -11,14 +11,13 @@ using Hermes.Transports;
 
 namespace Hermes.Core
 {  
-    public class Receiver : IDequeueMessages
+    public class Receiver : IReceiveMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Receiver));
 
         private CancellationTokenSource tokenSource;
         private readonly IMessageDequeueStrategy dequeueStrategy;
         private readonly IProcessMessages messageProcessor;
-        private Address address;
 
         public Receiver(IMessageDequeueStrategy dequeueStrategy, IProcessMessages messageProcessor)
         {
@@ -26,14 +25,8 @@ namespace Hermes.Core
             this.messageProcessor = messageProcessor;
         }
 
-        public void Start(Address queueAddress)
+        public void Start()
         {
-            if (queueAddress == null)
-            {
-                throw new ArgumentNullException("queueAddress");
-            }
-
-            address = queueAddress;
             tokenSource = new CancellationTokenSource();
 
             for (int i = 0; i < Settings.NumberOfWorkers; i++)
@@ -72,13 +65,9 @@ namespace Hermes.Core
             {
                 foundWork = DequeueWork();
             }
-            catch (TransactionAbortedException)
-            {
-                Logger.Warn("Transaction Aborted Exception.");
-            }
             catch (Exception ex)
             {
-                Logger.Fatal("Error while attempting to dequeue work: {0}", ex.Message);
+                Logger.Fatal("Error while attempting to dequeue work: {0}", ex.GetFullExceptionMessage());
             }
             finally
             {
@@ -103,14 +92,14 @@ namespace Hermes.Core
 
         private bool TryDequeueWork()
         {
-            MessageEnvelope message = dequeueStrategy.Dequeue(address);
+            TransportMessage transportMessage = dequeueStrategy.Dequeue(Address.Local);
 
-            if (message == MessageEnvelope.Undefined)
+            if (transportMessage == TransportMessage.Undefined)
             {
                 return false;
             }
             
-            messageProcessor.ProcessEnvelope(message);
+            messageProcessor.ProcessEnvelope(transportMessage);
             return true;
         }
 

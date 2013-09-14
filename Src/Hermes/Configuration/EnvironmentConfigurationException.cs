@@ -7,6 +7,6 @@ namespace Hermes.Configuration
         public EnvironmentConfigurationException(string message)
             :base(message)
         {
-        }
+        }       
     }
 }

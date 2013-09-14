@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
+using Hermes.Configuration;
+
 namespace Hermes.Messaging
 {
     ///<summary>
@@ -11,7 +13,11 @@ namespace Hermes.Messaging
     {
         private const int queueIndex = 0;
         private const int machineIndex = 1;
-        private static bool ignoreMachineName = true;
+        private readonly string queueLowerCased;
+        private readonly string machineLowerCased;
+        private static readonly Address undefined;
+        private static Address local;
+        private static bool ignoreMachineName;
 
         [DataMember(Order = 1, EmitDefaultValue = false, IsRequired = false)]
         private readonly string queue;
@@ -30,14 +36,20 @@ namespace Hermes.Messaging
         public string Machine { get { return machine; } }
 
         /// <summary>
-        /// Undefined address.
+        /// Get the address of this endpoint.
         /// </summary>
-        public static readonly Address Undefined = new Address("__UNDEFINED__", String.Empty);
+        public static Address Local { get { return local; } }
 
         /// <summary>
-        /// Self address.
+        /// Undefined address.
         /// </summary>
-        public static readonly Address Self = new Address("__self", "localhost");
+        public static  Address Undefined { get { return undefined; } }
+
+        static Address()
+        {
+            undefined = new Address("__UNDEFINED__", String.Empty);
+            local = undefined;
+        }
 
         /// <summary>
         /// Instantiate a new Address for a known queue on a given machine.
@@ -47,9 +59,13 @@ namespace Hermes.Messaging
         public Address(string queueName, string machineName)
         {
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName", "Invalid queue name specified");
+
             queue = queueName;
+            queueLowerCased = queue.ToLower();
+
             machine = machineName ?? RuntimeEnvironment.MachineName;
             machine = Machine;
+            machineLowerCased = machine.ToLower();
         }
 
         /// <summary>
@@ -77,13 +93,22 @@ namespace Hermes.Messaging
             switch (address.Length)
             {
                 case 1:
-                    return new Address(address[0], RuntimeEnvironment.MachineName);
+                    return new Address(address[queueIndex], RuntimeEnvironment.MachineName);
                 case 2:
                     Mandate.ParameterNotNullOrEmpty(address[machineIndex], "destination", "Invalid machine name specified in destination address");
-                    return new Address(address[0], address[1]);
+                    return new Address(address[queueIndex], address[machineIndex]);
                 default:
                     throw new ArgumentException("Invalid destination address specified", "destination"); 
             }
+        }
+
+        /// <summary>
+        /// Sets the address of this endpoint.
+        /// </summary>
+        /// <param name="queue">The queue name.</param>
+        public static void InitializeLocalAddress(string queue)
+        {
+            local = Parse(queue);
         }
 
         /// <summary>
@@ -113,8 +138,18 @@ namespace Hermes.Messaging
         {
             unchecked
             {
-                return ((queue != null ? queue.GetHashCode() : 0) * 397) ^ (machine != null ? machine.GetHashCode() : 0);
+                return GetQueueHashCode() ^ GetMachineHashCode();
             }
+        }
+
+        private int GetMachineHashCode()
+        {
+            return (machineLowerCased != null ? machineLowerCased.ToLower().GetHashCode() : 0);
+        }
+
+        private int GetQueueHashCode()
+        {
+            return ((queueLowerCased != null ? queueLowerCased.GetHashCode() : 0) * 397);
         }
 
         /// <summary>

@@ -46,23 +46,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusCallback\BusAsyncResultEventArgs.cs" />
+    <Compile Include="BusCallback\Callback.cs" />
+    <Compile Include="BusCallback\BusAsyncResult.cs" />
+    <Compile Include="CallBackManager.cs" />
     <Compile Include="CoreConfig.cs" />
     <Compile Include="Deferment\DefermentProcessor.cs" />
-    <Compile Include="Deferment\IPersistTimeouts.cs" />
     <Compile Include="Deferment\ITimeoutProcessor.cs" />
-    <Compile Include="Deferment\TimeoutData.cs" />
     <Compile Include="Deferment\TimeoutProcessor.cs" />
-    <Compile Include="Bus.cs" />
+    <Compile Include="MessageBus.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="ErrorHandler.cs" />
-    <Compile Include="Headers.cs" />
+    <Compile Include="LocalBus.cs" />
+    <Compile Include="MessageContext.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="Router.cs" />
     <Compile Include="MessageTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Publisher.cs" />
+    <Compile Include="StorageDrivenPublisher.cs" />
     <Compile Include="Receiver.cs" />
     <Compile Include="SubscriptionManager.cs" />
+    <Compile Include="TransportMessageFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes\Hermes.csproj">

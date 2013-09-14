@@ -4,8 +4,6 @@ using System.Data;
 using System.Data.SqlClient;
 
 using Hermes.Configuration;
-using Hermes.Core.Deferment;
-using Hermes.Messaging;
 using Hermes.Serialization;
 
 namespace Hermes.Storage.SqlServer
@@ -14,6 +12,13 @@ namespace Hermes.Storage.SqlServer
     {       
         private readonly ISerializeObjects objectSerializer;
         private readonly string connectionString;
+
+        const int messageIdIndex = 0;
+        const int correlationIdIndex = 1;
+        const int destinationIndex = 2;
+        const int timeToLiveIndex = 3;
+        const int headersIndex = 4;
+        const int bodyIndex = 5;
 
         public SqlTimeoutStorage(ISerializeObjects objectSerializer)
         {
@@ -55,7 +60,7 @@ namespace Hermes.Storage.SqlServer
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", timoutData.MessageId);
-            command.Parameters.AddWithValue("@Destination", timoutData.Destination.ToString());
+            command.Parameters.AddWithValue("@Destination", timoutData.DestinationAddress);
             command.Parameters.AddWithValue("@Headers", objectSerializer.SerializeObject(timoutData.Headers));
             command.Parameters.AddWithValue("@Expires", timoutData.Expires);
             command.Parameters.AddWithValue("@Body", timoutData.Body);
@@ -92,14 +97,14 @@ namespace Hermes.Storage.SqlServer
         {
             if (dataReader.Read())
             {
-                return  new TimeoutData
+                return new TimeoutData
                 {
-                    MessageId = dataReader.GetGuid(0),
-                    CorrelationId = dataReader.IsDBNull(1) ? Guid.Empty : Guid.Parse(dataReader.GetString(1)),
-                    Destination = Address.Parse(dataReader.GetString(2)),
-                    Expires = dataReader.GetDateTime(3),
-                    Headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(4)),
-                    Body = dataReader.IsDBNull(5) ? null : dataReader.GetSqlBinary(5).Value
+                    MessageId = dataReader.GetGuid(messageIdIndex),
+                    CorrelationId = dataReader.IsDBNull(correlationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(correlationIdIndex)),
+                    DestinationAddress = dataReader.GetString(destinationIndex),
+                    Expires = dataReader.GetDateTime(timeToLiveIndex),
+                    Headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(headersIndex)),
+                    Body = dataReader.IsDBNull(bodyIndex) ? null : dataReader.GetSqlBinary(bodyIndex).Value
                 };
             }
 

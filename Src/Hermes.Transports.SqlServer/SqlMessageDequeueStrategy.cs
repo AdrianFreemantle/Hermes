@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 
 using Hermes.Configuration;
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Serialization;
 
@@ -13,6 +14,14 @@ namespace Hermes.Transports.SqlServer
     {
         private readonly string connectionString;
         private readonly ISerializeObjects objectSerializer;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SqlMessageDequeueStrategy));
+
+        const int messageIdIndex = 0;
+        const int correlationIdIndex = 1;
+        const int replyToAddressIndex = 2;
+        const int timeToLiveIndex = 3;
+        const int headersIndex = 4;
+        const int bodyIndex = 5;
 
         public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
@@ -20,18 +29,33 @@ namespace Hermes.Transports.SqlServer
             this.objectSerializer = objectSerializer;
         }
 
-        public MessageEnvelope Dequeue(Address address)
+        public TransportMessage Dequeue(Address address)
         {
-            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
-            using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address.Queue)))
+            try
             {
-                var message = FetchNextMessage(command);
-                transactionalConnection.Commit();
-                return message;
+                return TryDequeue(address);
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal("Error while attempting to dequeue message: {0}", ex.GetFullExceptionMessage());
+                return TransportMessage.Undefined;
             }
         }
 
-        MessageEnvelope FetchNextMessage(SqlCommand command)
+        private TransportMessage TryDequeue(Address address)
+        {
+            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
+            {
+                using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address.Queue)))
+                {
+                    var message = FetchNextMessage(command);
+                    transactionalConnection.Commit();
+                    return message;
+                }
+            }
+        }
+
+        TransportMessage FetchNextMessage(SqlCommand command)
         {
             using (var dataReader = command.ExecuteReader(CommandBehavior.SingleRow))
             {
@@ -41,32 +65,32 @@ namespace Hermes.Transports.SqlServer
 
                     if (timeTolive == TimeSpan.Zero)
                     {
-                        return MessageEnvelope.Undefined;
+                        return TransportMessage.Undefined;
                     }
 
-                    var messageId = dataReader.GetGuid(0);
-                    var correlationId = dataReader.IsDBNull(1) ? Guid.Empty : Guid.Parse(dataReader.GetString(1));
-                    var recoverable = dataReader.GetBoolean(2);
-                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(4));
-                    var body = dataReader.IsDBNull(5) ? null : dataReader.GetSqlBinary(5).Value;
+                    var messageId = dataReader.GetGuid(messageIdIndex);
+                    var correlationId = dataReader.IsDBNull(correlationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(correlationIdIndex));
+                    var replyToAddress = dataReader.GetString(replyToAddressIndex);
+                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(headersIndex));
+                    var body = dataReader.IsDBNull(bodyIndex) ? null : dataReader.GetSqlBinary(bodyIndex).Value;
 
-                    return new MessageEnvelope(messageId, correlationId, timeTolive, recoverable, headers, body);
+                    return new TransportMessage(messageId, correlationId, Address.Parse(replyToAddress), timeTolive, headers, body);
                 }
             }
 
-            return MessageEnvelope.Undefined;
+            return TransportMessage.Undefined;
         }
 
         private static TimeSpan GetTimeTolive(SqlDataReader dataReader)
         {
-            if (dataReader.IsDBNull(3))
+            if (dataReader.IsDBNull(timeToLiveIndex))
             {
                 return TimeSpan.MaxValue;
             }
 
-            DateTime expireDateTime = dataReader.GetDateTime(3);
+            DateTime expireDateTime = dataReader.GetDateTime(timeToLiveIndex);
 
-            if (dataReader.GetDateTime(3) < DateTime.UtcNow)
+            if (dataReader.GetDateTime(timeToLiveIndex) < DateTime.UtcNow)
             {
                 return TimeSpan.Zero;
             }

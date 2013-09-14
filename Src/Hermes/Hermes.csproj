@@ -46,15 +46,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompletionResult.cs" />
+    <Compile Include="ErrorMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ErrorMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Headers.cs" />
+    <Compile Include="ICallback.cs" />
     <Compile Include="Messaging\Address.cs" />
     <Compile Include="Backoff\BackOff.cs" />
     <Compile Include="Backoff\ExponentialBackOffStrategy.cs" />
     <Compile Include="Backoff\IBackOffStrategy.cs" />
     <Compile Include="Backoff\LinearBackOffStrategy.cs" />
+    <Compile Include="Messaging\HeaderValue.cs" />
+    <Compile Include="Messaging\ITransportMessageFactory.cs" />
+    <Compile Include="Messaging\CompletedMessageProcessingEventArgs.cs" />
+    <Compile Include="Messaging\FailedMessageProcessingEventArgs.cs" />
+    <Compile Include="Messaging\IMessageContext.cs" />
+    <Compile Include="Messaging\StartedMessageProcessingEventArgs.cs" />
     <Compile Include="Messaging\IHandleMessageErrors.cs" />
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="Configuration\IConfigureBus.cs" />
-    <Compile Include="Configuration\IConfigureEnvironment.cs" />
+    <Compile Include="Configuration\IConfigureEndpoint.cs" />
     <Compile Include="Configuration\EnvironmentConfigurationException.cs" />
     <Compile Include="ExceptionExtensions.cs" />
     <Compile Include="Messaging\IInMemoryBus.cs" />
@@ -66,44 +79,50 @@
     <Compile Include="Ioc\IContainer.cs" />
     <Compile Include="Ioc\ServiceLocator.cs" />
     <Compile Include="Ioc\ServiceProviderAdapter.cs" />
-    <Compile Include="Messaging\IRegisterMessageRoute.cs" />
-    <Compile Include="Messaging\IRouteMessageToEndpoint.cs" />
+    <Compile Include="Routing\IRegisterMessageRoute.cs" />
+    <Compile Include="Routing\IRouteMessageToEndpoint.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="Ioc\IContainerBuilder.cs" />
-    <Compile Include="Messaging\IStartableMessageBus.cs" />
+    <Compile Include="IStartableMessageBus.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />
     <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\LoggingExtensionMethods.cs" />
-    <Compile Include="Messaging\RouteAlreadyDefinedException.cs" />
+    <Compile Include="Messaging\ITimeoutProcessor.cs" />
+    <Compile Include="Routing\RouteAlreadyDefinedException.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="Messaging\IHandleMessage.cs" />
-    <Compile Include="Messaging\RouteNotDefinedException.cs" />
+    <Compile Include="Routing\RouteNotDefinedException.cs" />
     <Compile Include="Serialization\ISerializeMessages.cs" />
-    <Compile Include="Messaging\MessageEnvelope.cs" />
+    <Compile Include="Messaging\TransportMessage.cs" />
     <Compile Include="IdentityFactory.cs" />
     <Compile Include="Mandate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuntimeEnvironment.cs" />
+    <Compile Include="Configuration\RuntimeEnvironment.cs" />
     <Compile Include="Serialization\ISerializeObjects.cs" />
     <Compile Include="Serialization\MessageSerializationBinder.cs" />
     <Compile Include="Messaging\IDispatchMessagesToHandlers.cs" />
     <Compile Include="Messaging\IProcessMessages.cs" />
-    <Compile Include="Subscriptions\IStoreSubscriptions.cs" />
+    <Compile Include="Storage\IPersistTimeouts.cs" />
+    <Compile Include="Storage\IStoreSubscriptions.cs" />
+    <Compile Include="Storage\TimeoutData.cs" />
     <Compile Include="TransactionalSqlConnection.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
     <Compile Include="Transports\IMessageDequeueStrategy.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
-    <Compile Include="Transports\ITransportMessages.cs" />
+    <Compile Include="Messaging\ITransportMessages.cs" />
     <Compile Include="Transports\ICreateQueues.cs" />
-    <Compile Include="Transports\IDequeueMessages.cs" />
+    <Compile Include="Messaging\IReceiveMessages.cs" />
     <Compile Include="Transports\ISendMessages.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Endpoints\" />
+    <EmbeddedResource Include="ErrorMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

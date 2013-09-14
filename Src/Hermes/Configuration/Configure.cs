@@ -4,11 +4,12 @@ using System.Reflection;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Routing;
 using Hermes.Transports;
 
 namespace Hermes.Configuration
 {
-    public class Configure : IConfigureEnvironment, IConfigureBus
+    public class Configure : IConfigureEndpoint
     {
         private static readonly Configure Instance;
 
@@ -21,85 +22,79 @@ namespace Hermes.Configuration
         {
         }
 
-        public static IConfigureEnvironment Environment(IContainerBuilder containerBuilder)
-        {
-            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
-            Settings.Builder = containerBuilder;
-            return Instance;
-        }
 
-        IConfigureEnvironment IConfigureEnvironment.ConsoleWindowLogger()
+        IConfigureEndpoint IConfigureEndpoint.UseConsoleWindowLogger()
         {
             LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             return this;
         }
 
-        IConfigureEnvironment IConfigureEnvironment.Logger(Func<Type, ILog> buildLogger)
+        IConfigureEndpoint IConfigureEndpoint.Logger(Func<Type, ILog> buildLogger)
         {
             LogFactory.BuildLogger = buildLogger;
             return this;
         }
 
-        public static IConfigureBus Bus(Address thisEndpoint)
+        public static IConfigureEndpoint Endpoint(string endpointName, IContainerBuilder containerBuilder)
         {
-            if (Settings.Builder == null)
-            {
-                throw new EnvironmentConfigurationException("You must first configure the environment settings before attempting to configure the Bus");
-            }
+            Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
+            Mandate.ParameterNotNull(containerBuilder, "containerBuilder");
 
-            Settings.ThisEndpoint = thisEndpoint;
+            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
+            Settings.Builder = containerBuilder;
+            Settings.SetEndpointName(endpointName);
             return Instance;
         }
 
-        IConfigureBus IConfigureBus.NumberOfWorkers(int numberOfWorkers)
+        IConfigureEndpoint IConfigureEndpoint.NumberOfWorkers(int numberOfWorkers)
         {
             Settings.NumberOfWorkers = numberOfWorkers;
             return this;
         }
 
-        IConfigureBus IConfigureBus.ScanForHandlersIn(params Assembly[] assemblies)
+        IConfigureEndpoint IConfigureEndpoint.ScanForHandlersIn(params Assembly[] assemblies)
         {
             Settings.Builder.RegisterHandlers(assemblies);
             return this;
         }
 
-        IConfigureBus IConfigureBus.RegisterMessageRoute<TMessage>(Address endpointAddress)
+        IConfigureEndpoint IConfigureEndpoint.RegisterMessageRoute<TMessage>(Address endpointAddress)
         {
             var router = Settings.RootContainer.GetInstance<IRegisterMessageRoute>();
             router.RegisterRoute(typeof(TMessage), endpointAddress);
             return this;
         }
 
-        public IConfigureBus SubscribeToEvent<TMessage>()
+        public IConfigureEndpoint SubscribeToEvent<TMessage>()
         {
             Settings.Subscriptions.Subscribe<TMessage>();
             return this;
         }
 
-        public IConfigureBus UseDistributedTransaction()
+        public IConfigureEndpoint UseDistributedTransaction()
         {
             Settings.UseDistributedTransaction = true;
             return this;
         }
 
-        IConfigureBus IConfigureBus.FirstLevelRetry(int attempts, TimeSpan delay)
+        IConfigureEndpoint IConfigureEndpoint.FirstLevelRetryPolicy(int attempts, TimeSpan delay)
         {
             Settings.FirstLevelRetryAttempts = attempts;
             Settings.FirstLevelRetryDelay = delay;
             return this;
         }
 
-        IConfigureBus IConfigureBus.SecondLevelRetry(int attempts, TimeSpan delay)
+        IConfigureEndpoint IConfigureEndpoint.SecondLevelRetryPolicy(int attempts, TimeSpan delay)
         {
             Settings.SecondLevelRetryAttempts = attempts;
             Settings.SecondLevelRetryDelay = delay;
             return this;
         }
 
-        void IConfigureBus.Start()
+        void IConfigureEndpoint.Start()
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
-            queueCreator.CreateQueueIfNecessary(Settings.ThisEndpoint);
+            queueCreator.CreateQueueIfNecessary(Address.Local);
             queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
@@ -108,7 +103,7 @@ namespace Hermes.Configuration
             busStarter.Start();
         }
 
-        void IConfigureBus.Stop()
+        void IConfigureEndpoint.Stop()
         {
             var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
             busStarter.Stop();

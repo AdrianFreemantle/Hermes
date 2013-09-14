@@ -12,10 +12,10 @@ namespace Hermes.Transports
     public interface ISendMessages
     {
         /// <summary>
-        /// Sends the given <paramref name="message"/> to the <paramref name="address"/>.
+        /// Sends the given <paramref name="transportMessage"/> to the <paramref name="address"/>.
         /// </summary>
-        /// <param name="message"><see cref="TransportMessage"/> to send.</param>
+        /// <param name="transportMessage"><see cref="TransportMessage"/> to send.</param>
         /// <param name="address">Destination <see cref="Address"/>.</param>
-        void Send(MessageEnvelope message, Address address);
+        void Send(TransportMessage transportMessage, Address address);
     }
 }

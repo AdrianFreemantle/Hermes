@@ -3,13 +3,13 @@
     internal static class SqlCommands
     {
         public const string Send = 
-            @"INSERT INTO [queue].[{0}] ([Id],[CorrelationId],[Recoverable],[Expires],[Headers],[Body]) 
-            VALUES (@Id,@CorrelationId,@Recoverable,@Expires,@Headers,@Body)";
+            @"INSERT INTO [queue].[{0}] ([Id],[CorrelationId],[ReplyTo],[Expires],[Headers],[Body]) 
+            VALUES (@Id,@CorrelationId,@ReplyTo,@Expires,@Headers,@Body)";
 
         public const string Dequeue =
             @"WITH message AS (SELECT TOP(1) * FROM [queue].[{0}] WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC) 
             DELETE FROM message 
-            OUTPUT deleted.Id, deleted.CorrelationId, deleted.Recoverable, deleted.Expires, deleted.Headers, deleted.Body;";
+            OUTPUT deleted.Id, deleted.CorrelationId, deleted.ReplyTo, deleted.Expires, deleted.Headers, deleted.Body;";
 
         public const string CreateQueue =
             @"IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'queue')
@@ -22,7 +22,7 @@
                     CREATE TABLE [queue].[{0}](
 	                    [Id] [uniqueidentifier] NOT NULL,
 	                    [CorrelationId] [varchar](255) NULL,
-	                    [Recoverable] [bit] NOT NULL,
+                        [ReplyTo] [varchar](450) NULL,
 	                    [Expires] [datetime] NULL,
 	                    [Headers] [varchar](max) NOT NULL,
 	                    [Body] [varbinary](max) NULL,

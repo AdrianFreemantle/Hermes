@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Hermes.Messaging
 {
     public interface IMessageBus  
     {
-        void Send(ICollection<object> commands);
-        void Send(Address address, ICollection<object> commands);
-        void Send(Address address, Guid corrolationId, ICollection<object> commands);
+        ICallback Send(params object[] messages);
+        ICallback Send(Address address, params object[] messages);
+        ICallback Send(Address address, Guid corrolationId, params object[] messages);
+        ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages);
+        ICallback Send(Guid corrolationId, params object[] messages);
+        ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages);
 
-        void Send(object command);
-        void Send(Address address, object command);
-        void Send(Address address, Guid corrolationId, object command);
+        void Publish(params object[] messages);
 
-        void Defer(TimeSpan delay, ICollection<object> commands);
-        void Defer(TimeSpan delay, Guid corrolationId, ICollection<object> commands);
+        void Reply(params object[] messages);
+        void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;
 
-        void Defer(TimeSpan delay, object command);
-        void Defer(TimeSpan delay, Guid corrolationId, object command);
+        void Defer(TimeSpan delay, params object[] messages);
+        void Defer(TimeSpan delay, Guid corrolationId, params object[] messages);
 
-        void Publish(object @event);
-        void Publish(ICollection<object> events);
-
-        IInMemoryBus InMemory { get; }
+        IMessageContext CurrentMessageContext { get; }
     }
 }

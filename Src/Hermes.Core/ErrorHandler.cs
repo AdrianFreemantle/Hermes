@@ -19,7 +19,7 @@ namespace Hermes.Core
             this.messageSender = messageSender;
         }
 
-        public void Handle(MessageEnvelope envelope, Exception ex)
+        public void Handle(TransportMessage envelope, Exception ex)
         {
             int retryCount = GetRetryCount(envelope);
 
@@ -33,7 +33,7 @@ namespace Hermes.Core
             }
         }
 
-        private static int GetRetryCount(MessageEnvelope envelope)
+        private static int GetRetryCount(TransportMessage envelope)
         {
             if (envelope.Headers.ContainsKey(Headers.RetryCount))
             {
@@ -43,23 +43,29 @@ namespace Hermes.Core
             return 0;
         }
 
-        private void SendToRetryQueue(MessageEnvelope envelope, int retryCount)
+        private void SendToRetryQueue(TransportMessage envelope, int retryCount)
         {
             Logger.Warn("Sending message {0} to retry queue: attempt {1}", envelope.MessageId, retryCount);
             envelope.Headers[Headers.RetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
             envelope.Headers[Headers.TimeoutExpire] = DateTime.UtcNow.Add(Settings.SecondLevelRetryDelay).ToWireFormattedString();
-            envelope.Headers[Headers.RouteExpiredTimeoutTo] = Settings.ThisEndpoint.ToString();
+            envelope.Headers[Headers.RouteExpiredTimeoutTo] = Address.Local.ToString();
+
+            if (envelope.ReplyToAddress != Address.Undefined)
+            {
+                envelope.Headers[Headers.OriginalReplyToAddress] = envelope.ReplyToAddress.ToString();
+            }
+
             messageSender.Send(envelope, Settings.DefermentEndpoint);
         }
 
-        private void SendToErrorQueue(MessageEnvelope envelope, Exception ex)
+        private void SendToErrorQueue(TransportMessage envelope, Exception ex)
         {
             Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", envelope.MessageId, ex.GetFullExceptionMessage());
             envelope.Headers[Headers.FailureDetails] = ex.GetFullExceptionMessage();
             messageSender.Send(envelope, Settings.ErrorEndpoint);
         }
 
-        public void RemoveRetryHeaders(MessageEnvelope envelope)
+        public void RemoveRetryHeaders(TransportMessage envelope)
         {
             envelope.Headers.Remove(Headers.RetryCount);
             envelope.Headers.Remove(Headers.TimeoutExpire);
