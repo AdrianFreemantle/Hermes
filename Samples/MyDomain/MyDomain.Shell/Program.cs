@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading;
 
 using EventStore;
-
+using Hermes;
 using Hermes.Configuration;
 using Hermes.Core;
 using Hermes.Ioc;
@@ -24,11 +24,11 @@ namespace MyDomain.Shell
     class Program
     {
         private static ILog Logger;
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MyDomain;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         private static void Main(string[] args)
         {
-            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             Logger = LogFactory.BuildLogger(typeof(Program));
 
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
@@ -45,7 +45,7 @@ namespace MyDomain.Shell
                 .Bus(Address.Parse("MyDomain"))
                 .UsingJsonSerialization()
                 .UsingUnicastBus()
-                .UseDistributedTransaction()
+                //UseDistributedTransaction()
                 .UsingSqlTransport(ConnectionString)
                 .UsingSqlStorage(ConnectionString)
                 .RegisterMessageRoute<IntimateClaimEvent>(Settings.ThisEndpoint)
@@ -56,13 +56,11 @@ namespace MyDomain.Shell
                 .NumberOfWorkers(1)
                 .Start();
 
-            Settings.Builder.RegisterSingleton<IStoreEvents>(EventStore.WireupEventStore());
-     
-            var token = new CancellationTokenSource(TimeSpan.FromHours(1));
+            var token = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
             while (!token.IsCancellationRequested)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
 
             Console.WriteLine("Finished");

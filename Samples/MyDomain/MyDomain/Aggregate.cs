@@ -6,7 +6,8 @@ namespace MyDomain
     public abstract class Aggregate : IAggregate
     {
         public int Version { get; private set; }
-        public Guid Id { get; protected set; }
+        public Guid Identity { get; protected set; }
+        
         private readonly HashSet<object> uncommittedEvents = new HashSet<object>();
 
         void IAggregate.ClearUncommittedEvents()
@@ -33,7 +34,7 @@ namespace MyDomain
             }
         }
 
-        protected virtual void RaiseEvent(IEnumerable<object> events)
+        protected void RaiseEvent(IEnumerable<object> events)
         {
             foreach (var @event in events)
             {
@@ -47,7 +48,7 @@ namespace MyDomain
             SaveChange(@event);
         }
 
-        protected virtual void SaveChange(object @event)
+        internal void SaveChange(object @event)
         {
             Version++;
             uncommittedEvents.Add(@event);
@@ -62,7 +63,7 @@ namespace MyDomain
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return Identity.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -74,7 +75,7 @@ namespace MyDomain
         {
             if (null != other && other.GetType() == GetType())
             {
-                return other.Id.Equals(Id);
+                return other.Identity.Equals(Identity);
             }
 
             return false;

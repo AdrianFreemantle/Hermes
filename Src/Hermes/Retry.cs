@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Hermes
 {
+    [DebuggerStepThrough]
     public static class Retry
     {
         public static void Action(Action action, int retryAttempts, TimeSpan retryDelay)

@@ -15,8 +15,17 @@ namespace Hermes.Core
 
         public void DispatchToHandlers(IServiceLocator serviceLocator, object message)
         {
-            logger.Verbose("Dispatching message {0}", message.GetType());
-            InvokeHandlers(GetHandlers(serviceLocator, message));
+            var handlers = GetHandlers(serviceLocator, message).ToArray();
+
+            if (handlers.Any())
+            {
+                logger.Verbose("Dispatching message {0} to {1} handlers", message.GetType(), handlers.Length);
+                InvokeHandlers(handlers);                
+            }
+            else
+            {
+                logger.Warn("No handlers for for message {0}", message.GetType());
+            }
         }
       
         private static void InvokeHandlers(IEnumerable<Action> handlers)
