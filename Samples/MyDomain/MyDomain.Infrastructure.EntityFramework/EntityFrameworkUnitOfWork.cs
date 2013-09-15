@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace MyDomain.Infrastructure.EntityFramework
 {
-    public class EntityFrameworkUnitOfWork : IUnitOfWork, IDisposable
+    public class EntityFrameworkUnitOfWork : IUnitOfWork
     {
         private readonly IContextFactory contextFactory;
         private DbContext context;

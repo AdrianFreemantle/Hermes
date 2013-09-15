@@ -12,5 +12,11 @@ namespace MyDomain.Domain.Models
         {
             IntimatedDate = @event.IntimatedTime;
         }
+
+        public void When(ChangedIntimatedDate @event)
+        {
+            IntimatedDate = @event.IntimatedTime;
+        }
+
     }
 }

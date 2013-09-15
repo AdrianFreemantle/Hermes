@@ -50,6 +50,7 @@
     <Compile Include="BusCallback\Callback.cs" />
     <Compile Include="BusCallback\BusAsyncResult.cs" />
     <Compile Include="CallBackManager.cs" />
+    <Compile Include="TestError.cs" />
     <Compile Include="CoreConfig.cs" />
     <Compile Include="Deferment\DefermentProcessor.cs" />
     <Compile Include="Deferment\ITimeoutProcessor.cs" />

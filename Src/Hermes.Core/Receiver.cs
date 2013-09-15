@@ -98,13 +98,8 @@ namespace Hermes.Core
             {
                 return false;
             }
-            Retry.Action(() => messageProcessor.ProcessEnvelope(transportMessage), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+            messageProcessor.ProcessEnvelope(transportMessage);
             return true;
-        }
-
-        private void OnRetryError(Exception ex)
-        {
-            Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
         }
 
         private static void SlowDownPollingIfNoWorkAvailable(bool foundWork, BackOff backoff)

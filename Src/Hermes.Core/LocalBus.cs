@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Transactions;
+﻿using System.Collections.Generic;
 
-using Hermes.Configuration;
 using Hermes.Logging;
 using Hermes.Messaging;
 
@@ -14,13 +11,11 @@ namespace Hermes.Core
 {
     public class LocalBus : IInMemoryBus
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof(MessageBus));
-        private readonly IProcessMessages messageProcessor;
+        private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessageBus));
         readonly IDispatchMessagesToHandlers messageDispatcher;
 
-        public LocalBus(IProcessMessages messageProcessor, IDispatchMessagesToHandlers messageDispatcher)
+        public LocalBus(IDispatchMessagesToHandlers messageDispatcher)
         {
-            this.messageProcessor = messageProcessor;
             this.messageDispatcher = messageDispatcher;
         }
 
@@ -37,24 +32,5 @@ namespace Hermes.Core
                 messageDispatcher.DispatchToHandlers(serviceLocator, @event);
             }
         }
-
-        void IInMemoryBus.Execute(params object[] commands)
-        {
-            Retry.Action(() => Execute(commands), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
-        }
-
-        private void Execute(IEnumerable<object> commands)
-        {
-            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.RequiresNew))
-            {
-                messageProcessor.ProcessMessages(commands);
-                scope.Complete();
-            }
-        }
-
-        private void OnRetryError(Exception ex)
-        {
-            logger.Warn("Error while processing in memory message, attempting retry : {0}", ex.GetFullExceptionMessage());
-        } 
     }
 }

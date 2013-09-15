@@ -29,13 +29,10 @@ namespace MyDomain.Producer
 
         private static void Main(string[] args)
         {
-            var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
-            contextFactory.GetContext().Database.CreateIfNotExists();
-
-
             var configuration = Configure.Endpoint("Producer", new AutofacAdapter())
                 .UseJsonSerialization()
                 .UseUnicastBus()
+                .UseConsoleWindowLogger()
                 .UseDistributedTransaction()
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
@@ -43,41 +40,36 @@ namespace MyDomain.Producer
                 .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
                 .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"));
 
-            Settings.Builder.RegisterSingleton<IContextFactory>(contextFactory);
-            Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
             Logger = LogFactory.BuildLogger(typeof(Program));
 
             configuration.Start();
 
             var token = new CancellationTokenSource(TimeSpan.FromHours(10));
 
+            var claimEventId = Guid.NewGuid();
+
+            Settings.MessageBus.Send(new IntimateClaimEvent
+            {
+                Id = claimEventId,
+                MessageId = Guid.NewGuid()
+            });
+
 
             while (!token.IsCancellationRequested)
             {
-                Logger.Info("=================================================");
-                var claimEventId = Guid.NewGuid();
-
                 try
                 {
-                    var commands = new object[]
+                    var command = new RegisterClaim
                     {
-                        new IntimateClaimEvent
-                        {
-                            Id = claimEventId,
-                            MessageId = Guid.NewGuid()
-                        },
-                    //    new RegisterClaim
-                    //    {
-                    //        Amount = 10,
-                    //        ClaimEventId = claimEventId,
-                    //        ClaimId = Guid.NewGuid()
-                    //    }
+                        Amount = 10,
+                        ClaimEventId = claimEventId,
+                        ClaimId = Guid.NewGuid()
                     };
 
-                    Settings.MessageBus.Send(commands);
-                    System.Threading.Thread.Sleep(50);
+                    Logger.Info("Register Claim {0}", command.ClaimId);
+
+                    Settings.MessageBus.Send(command.ClaimId, command);
+                    Thread.Sleep(20);
                 }
                 catch (Exception ex)
                 {

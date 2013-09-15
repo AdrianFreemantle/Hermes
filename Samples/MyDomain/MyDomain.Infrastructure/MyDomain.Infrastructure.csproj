@@ -41,6 +41,9 @@
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.Core">
+      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

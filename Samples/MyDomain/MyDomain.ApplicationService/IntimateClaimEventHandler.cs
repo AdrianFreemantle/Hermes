@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
 
@@ -23,12 +21,9 @@ namespace MyDomain.ApplicationService
             Logger.Info("Handling IntimateClaim");
             var claimEvent = ClaimEvent.Intimate(command.Id);
 
-            TestError.Throw();
-
             repository.Save(claimEvent, claimEvent.Id, objects => { });
-                
-
-            TestError.Throw();
         }
-    }
+
+
+    }   
 }

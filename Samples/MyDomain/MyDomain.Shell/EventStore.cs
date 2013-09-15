@@ -1,9 +1,11 @@
-﻿using System.Transactions;
+﻿using System;
+using System.Transactions;
 using EventStore;
 using EventStore.Dispatcher;
 using EventStore.Persistence.SqlPersistence.SqlDialects;
 using Hermes;
 using Hermes.Configuration;
+using Hermes.Core;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -31,16 +33,19 @@ namespace MyDomain.Shell
 
         private static void DispatchCommit(Commit commit)
         {
-            TestError.Throw();
-            var eventUnitOfWork = ServiceLocator.Current.GetService<IEventsToPublishUnitOfWork>();
-
-            foreach (EventMessage @event in commit.Events)
+            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required, TimeSpan.FromSeconds(30)))
             {
-                Logger.Info("Dispatching event {0} from commit {1}", @event.GetType().Name, commit.CommitId);
-                eventUnitOfWork.AddEvent(@event.Body);
-            }
+                var bus = ServiceLocator.Current.GetService<IMessageBus>();
 
-            TestError.Throw();
+                foreach (EventMessage @event in commit.Events)
+                {
+                    Logger.Info("Dispatching event {0} from commit {1}", @event.GetType().Name, commit.CommitId);
+                    bus.Publish(@event.Body);
+                }
+
+                TestError.Throw();
+                scope.Complete();
+            }
         }
     }
 }

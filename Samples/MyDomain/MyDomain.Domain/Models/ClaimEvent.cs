@@ -21,9 +21,9 @@ namespace MyDomain.Domain.Models
             return claimEvent;
         }
 
-        public Claim RegisterClaim(decimal amount)
+        public Claim RegisterClaim(Guid claimId, decimal amount)
         {
-            return new Claim(amount, Id);
+            return new Claim(claimId, amount, Id);
         }
 
         protected override void ApplyEvent(object @event)

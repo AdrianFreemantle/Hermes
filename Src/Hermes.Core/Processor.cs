@@ -40,7 +40,7 @@ namespace Hermes.Core
 
         public void ProcessEnvelope(TransportMessage transportMessage)
         {
-            Logger.Verbose("Processing message {0}", transportMessage.MessageId);
+            Logger.Verbose("Processing transport message {0}", transportMessage.MessageId);
 
             object[] messages = ExtractMessages(transportMessage).ToArray();
             RaiseStartedProcessingMessageEvent(transportMessage, messages);
@@ -52,6 +52,7 @@ namespace Hermes.Core
             }
             catch (Exception ex)
             {
+                Logger.Error("Error while processing transport message {0} {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
                 RaiseMessageProcessingFailedEvent(ex);
                 errorProcessor.Handle(transportMessage, ex);
             }
@@ -79,21 +80,34 @@ namespace Hermes.Core
             {
                 StartedMessageProcessing(this, new StartedMessageProcessingEventArgs(transportMessage, messages));
             }
-        }        
+        }
+
+        private void OnRetryError(Exception ex)
+        {
+            if (ex is HermesTestingException)
+            {
+                Logger.Verbose("Attempting retry due to testing exception");
+                return;
+            }
+
+            Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
+        }
 
         private void TryProcessEnvelope(TransportMessage transportMessage, IEnumerable<object> messages)
         {
+            TestError.Throw();
+
             using (var scope = StartTransactionScope())
             {
-                ProcessMessages(messages);                
+                Retry.Action(() => ProcessMessages(messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+                errorProcessor.RemoveRetryHeaders(transportMessage);
+                messageSender.Send(transportMessage, Settings.AuditEndpoint);
+                Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
+                
+                TestError.Throw();
                 scope.Complete();
             }
-
-            errorProcessor.RemoveRetryHeaders(transportMessage);
-            messageSender.Send(transportMessage, Settings.AuditEndpoint);
-
-            Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
-        }       
+        }
 
         public void ProcessMessages(IEnumerable<object> messages)
         {
@@ -111,8 +125,9 @@ namespace Hermes.Core
                 DispatchToHandlers(messages, childContainer);
                 CommitUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Verbose("Rolling back units of work");
                 RollBackUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
                 throw;
             }
@@ -125,7 +140,7 @@ namespace Hermes.Core
         private static TransactionScope StartTransactionScope()
         {
             return Settings.UseDistributedTransaction 
-                ? TransactionScopeUtils.Begin(TransactionScopeOption.RequiresNew) 
+                ? TransactionScopeUtils.Begin(TransactionScopeOption.Required) 
                 : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
         }
 
@@ -133,12 +148,14 @@ namespace Hermes.Core
         {
             foreach (var body in messageBodies)
             {
-                messageDispatcher.DispatchToHandlers(serviceLocator, body);
+                messageDispatcher.DispatchToHandlers(serviceLocator, body);  
             }
         }
 
         private static void CommitUnitsOfWork(IEnumerable<IManageUnitOfWork> unitsOfWork)
         {
+            Logger.Verbose("Committing units of work");
+
             foreach (var unitOfWork in unitsOfWork.Reverse())
             {
                 unitOfWork.Commit();
