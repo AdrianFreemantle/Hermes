@@ -10,6 +10,12 @@ namespace MyDomain.ApplicationService
     public class RegisterClaimHandler : IHandleMessage<RegisterClaim>
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(RegisterClaimHandler));
+        private readonly IEventStoreRepository repository;
+
+        public RegisterClaimHandler(IEventStoreRepository repository)
+        {
+            this.repository = repository;
+        }
 
         public void Handle(RegisterClaim command)
         {
@@ -18,15 +24,8 @@ namespace MyDomain.ApplicationService
             TestError.Throw();
 
             var claim = new Claim(command.Amount, command.ClaimEventId);
-
-            IEnumerable<object> uncommittedEvents = ((IAggregate)claim).GetUncommittedEvents();
-            
-            foreach (var uncommittedEvent in uncommittedEvents)
-            {
-                DomainEvent.Current.Raise(uncommittedEvent);
-            }
-
-            ((IAggregate)claim).ClearUncommittedEvents();
+          
+            repository.Save(claim, claim.Id, objects => { });
 
             TestError.Throw();
         }

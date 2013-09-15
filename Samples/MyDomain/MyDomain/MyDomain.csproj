@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="ActivatorHelper.cs" />
     <Compile Include="Aggregate.cs" />
-    <Compile Include="Entity.cs" />
     <Compile Include="TestError.cs" />
     <Compile Include="IEventStoreRepository.cs" />
     <Compile Include="IMemento.cs" />

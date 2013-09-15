@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-
-using EventStore;
 
 using Hermes.Configuration;
 using Hermes.Core;
@@ -35,31 +29,29 @@ namespace MyDomain.Producer
 
         private static void Main(string[] args)
         {
-            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-            Logger = LogFactory.BuildLogger(typeof (Program));
-
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
             contextFactory.GetContext().Database.CreateIfNotExists();
 
-            Configure.Environment(new AutofacAdapter());
+
+            var configuration = Configure.Endpoint("Producer", new AutofacAdapter())
+                .UseJsonSerialization()
+                .UseUnicastBus()
+                .UseDistributedTransaction()
+                .UseSqlTransport(ConnectionString)
+                .UseSqlStorage(ConnectionString)
+                .ScanForHandlersIn(Assembly.GetExecutingAssembly())
+                .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
+                .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"));
 
             Settings.Builder.RegisterSingleton<IContextFactory>(contextFactory);
             Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
+            Logger = LogFactory.BuildLogger(typeof(Program));
 
-            Configure
-                .Bus(Address.Parse("Producer"))
-                .UsingJsonSerialization()
-                .UsingUnicastBus()
-                //.UseDistributedTransaction()
-                .UsingSqlTransport(ConnectionString)
-                .UsingSqlStorage(ConnectionString)
-                .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
-                .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"))
-                .Start();
+            configuration.Start();
 
-            var token = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            var token = new CancellationTokenSource(TimeSpan.FromHours(10));
 
 
             while (!token.IsCancellationRequested)
@@ -76,23 +68,23 @@ namespace MyDomain.Producer
                             Id = claimEventId,
                             MessageId = Guid.NewGuid()
                         },
-                        new RegisterClaim
-                        {
-                            Amount = 10,
-                            ClaimEventId = claimEventId,
-                            ClaimId = Guid.NewGuid()
-                        }
+                    //    new RegisterClaim
+                    //    {
+                    //        Amount = 10,
+                    //        ClaimEventId = claimEventId,
+                    //        ClaimId = Guid.NewGuid()
+                    //    }
                     };
 
                     Settings.MessageBus.Send(commands);
-
-                    //Console.ReadKey();
-                    Thread.Sleep(10);
+                    System.Threading.Thread.Sleep(50);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error {0}.", ex);
                 }
+
+                
             }
 
             Console.WriteLine("Finished");

@@ -8,12 +8,12 @@ namespace MyDomain
 
         public static void Throw()
         {
-            //var rand = Random.Next(1, 100);
+            var rand = Random.Next(1, 100);
 
-            //if (rand % 5 == 0)
-            //{
-            //    throw new Exception("=== Test Error ===");
-            //}
+            if (rand % 30 == 0)
+            {
+                throw new Exception("=== Test Error ===");
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 using Hermes.Logging;
 using Hermes.Messaging;
 

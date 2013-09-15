@@ -3,11 +3,10 @@ using System.Reflection;
 using System.Threading;
 
 using EventStore;
-using Hermes;
+
 using Hermes.Configuration;
 using Hermes.Core;
 using Hermes.Ioc;
-using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
@@ -23,40 +22,41 @@ namespace MyDomain.Shell
 {
     class Program
     {
-        private static ILog Logger;
         private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MyDomain;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         private static void Main(string[] args)
         {
-            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-            Logger = LogFactory.BuildLogger(typeof(Program));
-
             var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
             contextFactory.GetContext().Database.CreateIfNotExists();
 
-            Configure.Environment(new AutofacAdapter());
+            var configuration = Configure
+                .Endpoint("MyDomain", new AutofacAdapter())
+                //.UseConsoleWindowLogger()
+                .UseJsonSerialization()
+                .UseUnicastBus()
+                .UseDistributedTransaction()
+                .UseSqlTransport(ConnectionString)
+                .UseSqlStorage(ConnectionString)
+                .RegisterMessageRoute<IntimateClaimEvent>(Address.Local)
+                .RegisterMessageRoute<RegisterClaim>(Address.Local)
+                .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.ApplicationService")), Assembly.Load(new AssemblyName("MyDomain.Persistence.ReadModel")))
+                .SubscribeToEvent<ClaimEventIntimated>()
+                .SubscribeToEvent<ClaimRegistered>() 
+                .NumberOfWorkers(1);
 
+            IStoreEvents eventStore = EventStore.WireupEventStore();
+
+            Settings.Builder.RegisterSingleton<IStoreEvents>(eventStore);
             Settings.Builder.RegisterSingleton<IContextFactory>(contextFactory);
             Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
+            Settings.Builder.RegisterType<EventsToPublishUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
 
-            Configure
-                .Bus(Address.Parse("MyDomain"))
-                .UsingJsonSerialization()
-                .UsingUnicastBus()
-                //UseDistributedTransaction()
-                .UsingSqlTransport(ConnectionString)
-                .UsingSqlStorage(ConnectionString)
-                .RegisterMessageRoute<IntimateClaimEvent>(Settings.ThisEndpoint)
-                .RegisterMessageRoute<RegisterClaim>(Settings.ThisEndpoint)
-                .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.ApplicationService")), Assembly.Load(new AssemblyName("MyDomain.Persistence.ReadModel")))
-                .SubscribeToEvent<ClaimEventIntimated>()
-                .SubscribeToEvent<ClaimRegistered>() 
-                .NumberOfWorkers(1)
-                .Start();
 
-            var token = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            configuration.Start();
+
+            var token = new CancellationTokenSource(TimeSpan.FromHours(10));
 
             while (!token.IsCancellationRequested)
             {

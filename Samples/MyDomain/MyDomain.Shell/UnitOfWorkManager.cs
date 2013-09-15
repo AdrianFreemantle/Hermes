@@ -1,4 +1,7 @@
-﻿using Hermes;
+﻿using System.Collections.Generic;
+
+using Hermes;
+using Hermes.Configuration;
 
 namespace MyDomain.Shell
 {
@@ -19,6 +22,34 @@ namespace MyDomain.Shell
         public void Rollback()
         {
             unitOfWork.Rollback();
+        }
+    }
+
+    public interface IEventsToPublishUnitOfWork : IManageUnitOfWork
+    {
+        void AddEvent(object @event);
+    }
+
+    public class EventsToPublishUnitOfWork : IEventsToPublishUnitOfWork
+    {
+        private readonly HashSet<object> EventsToPublish = new HashSet<object>(); 
+        
+        public void AddEvent(object @event)
+        {
+            EventsToPublish.Add(@event);
+        }
+
+        public void Commit()
+        {
+            foreach (var @event in EventsToPublish)
+            {
+                Settings.MessageBus.Publish(@event);
+            }
+        }
+
+        public void Rollback()
+        {
+            //no operation
         }
     }
 }

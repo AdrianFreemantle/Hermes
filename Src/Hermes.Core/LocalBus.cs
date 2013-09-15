@@ -6,29 +6,35 @@ using Hermes.Configuration;
 using Hermes.Logging;
 using Hermes.Messaging;
 
+using Microsoft.Practices.ServiceLocation;
+
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
+
 namespace Hermes.Core
 {
     public class LocalBus : IInMemoryBus
     {
         private static readonly ILog logger = LogFactory.BuildLogger(typeof(MessageBus));
         private readonly IProcessMessages messageProcessor;
+        readonly IDispatchMessagesToHandlers messageDispatcher;
 
-        public LocalBus(IProcessMessages messageProcessor)
+        public LocalBus(IProcessMessages messageProcessor, IDispatchMessagesToHandlers messageDispatcher)
         {
             this.messageProcessor = messageProcessor;
+            this.messageDispatcher = messageDispatcher;
         }
 
         void IInMemoryBus.Raise(params object[] events)
         {
-            Retry.Action(() => Raise(events), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+            var serviceLocator = ServiceLocator.Current.GetService<IServiceLocator>();
+            Raise(events, serviceLocator);
         }
 
-        private void Raise(IEnumerable<object> events)
+        private void Raise(IEnumerable<object> events, IServiceLocator serviceLocator)
         {
-            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.RequiresNew))
+            foreach (var @event in events)
             {
-                messageProcessor.ProcessMessages(events);
-                scope.Complete();
+                messageDispatcher.DispatchToHandlers(serviceLocator, @event);
             }
         }
 

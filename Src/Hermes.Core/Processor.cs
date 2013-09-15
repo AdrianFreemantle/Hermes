@@ -47,7 +47,7 @@ namespace Hermes.Core
 
             try
             {
-                Retry.Action(() => TryProcessEnvelope(transportMessage, messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+                TryProcessEnvelope(transportMessage, messages);
                 RaiseMessageProcessingCompletedEvent(transportMessage, messages);
             }
             catch (Exception ex)
@@ -79,22 +79,18 @@ namespace Hermes.Core
             {
                 StartedMessageProcessing(this, new StartedMessageProcessingEventArgs(transportMessage, messages));
             }
-        }
-
-        private void OnRetryError(Exception ex)
-        {
-            Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
-        }
+        }        
 
         private void TryProcessEnvelope(TransportMessage transportMessage, IEnumerable<object> messages)
         {
             using (var scope = StartTransactionScope())
             {
-                ProcessMessages(messages);
-                errorProcessor.RemoveRetryHeaders(transportMessage);
-                messageSender.Send(transportMessage, Settings.AuditEndpoint);
+                ProcessMessages(messages);                
                 scope.Complete();
             }
+
+            errorProcessor.RemoveRetryHeaders(transportMessage);
+            messageSender.Send(transportMessage, Settings.AuditEndpoint);
 
             Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
         }       
@@ -143,7 +139,7 @@ namespace Hermes.Core
 
         private static void CommitUnitsOfWork(IEnumerable<IManageUnitOfWork> unitsOfWork)
         {
-            foreach (var unitOfWork  in unitsOfWork)
+            foreach (var unitOfWork in unitsOfWork.Reverse())
             {
                 unitOfWork.Commit();
             }

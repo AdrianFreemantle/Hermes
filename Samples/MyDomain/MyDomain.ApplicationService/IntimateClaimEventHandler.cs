@@ -10,7 +10,13 @@ namespace MyDomain.ApplicationService
 {
     public class IntimateClaimEventHandler : IHandleMessage<IntimateClaimEvent>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IntimateClaimEventHandler)); 
+        private readonly IEventStoreRepository repository;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IntimateClaimEventHandler));
+
+        public IntimateClaimEventHandler(IEventStoreRepository repository)
+        {
+            this.repository = repository;
+        }
 
         public void Handle(IntimateClaimEvent command)
         {
@@ -19,14 +25,8 @@ namespace MyDomain.ApplicationService
 
             TestError.Throw();
 
-            IEnumerable<object> uncommittedEvents = ((IAggregate)claimEvent).GetUncommittedEvents();
-
-            foreach (var uncommittedEvent in uncommittedEvents)
-            {
-                DomainEvent.Current.Raise(uncommittedEvent);
-            }
+            repository.Save(claimEvent, claimEvent.Id, objects => { });
                 
-            ((IAggregate)claimEvent).ClearUncommittedEvents();
 
             TestError.Throw();
         }
