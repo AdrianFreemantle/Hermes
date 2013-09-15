@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using EventStore;
 
+using Hermes.Core;
+using Hermes.Ioc;
+using Hermes.Messaging;
+
 namespace MyDomain.Infrastructure
 {
     public class EventStoreRepository : IEventStoreRepository, IDisposable
@@ -132,6 +136,19 @@ namespace MyDomain.Infrastructure
                 //}
 
             }
+        }
+
+        public void DispatchCommit(IAggregate aggregate)
+        {
+            TestError.Throw();
+            var localBus = ServiceLocator.Current.GetService<IInMemoryBus>();
+
+            foreach (var @event in aggregate.GetUncommittedEvents())
+            {
+                localBus.Raise(@event);
+            }
+
+            TestError.Throw();
         }
 
         private IEventStream PrepareStream(IAggregate aggregate, Dictionary<string, object> headers)

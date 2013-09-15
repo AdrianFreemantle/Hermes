@@ -1,6 +1,8 @@
-﻿namespace MyDomain
+﻿using System;
+
+namespace MyDomain
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable 
     {
         void Commit();
         void Rollback();

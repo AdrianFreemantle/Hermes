@@ -20,7 +20,7 @@ namespace MyDomain.Infrastructure.EntityFramework
             this.dbSet = dbSet;
         }
 
-        public TEntity Get(int id)
+        public TEntity Get(dynamic id)
         {
             return dbSet.Find(id);
         }

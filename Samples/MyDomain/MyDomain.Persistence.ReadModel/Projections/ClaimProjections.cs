@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
 
@@ -20,7 +20,7 @@ namespace MyDomain.Persistence.ReadModel.Projections
 
         public void Handle(ClaimRegistered @event)
         {
-            Logger.Info("Projecting ClaimRegistered event");
+            Logger.Info("Projecting Claim Registered event {0}", @event.ClaimId);
 
             TestError.Throw();
 

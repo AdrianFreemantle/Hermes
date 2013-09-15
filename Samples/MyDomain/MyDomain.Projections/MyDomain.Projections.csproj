@@ -4,13 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{85FC7791-8B86-4E92-91DB-87AAC4ED7434}</ProjectGuid>
+    <ProjectGuid>{970ADF69-0F8C-4410-A526-5A14FCA85078}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CoderBurger.Customer</RootNamespace>
-    <AssemblyName>CoderBurger.Customer</AssemblyName>
+    <RootNamespace>MyDomain.Projections</RootNamespace>
+    <AssemblyName>MyDomain.Projections</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,38 +37,38 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\Hermes.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\Hermes.Core.dll</HintPath>
+    <Reference Include="Hermes">
+      <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    <Reference Include="Hermes.Core">
+      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\Hermes.Serialization.Json.dll</HintPath>
+    <Reference Include="Hermes.ObjectBuilder.Autofac">
+      <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Transports.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\Hermes.Transports.SqlServer.dll</HintPath>
+    <Reference Include="Hermes.Serialization.Json">
+      <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Storage.SqlServer">
+      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Transports.SqlServer">
+      <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Stateless">
-      <HintPath>..\packages\stateless-4.0.2.3.1.1\lib\net40\Stateless.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,12 +84,36 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoderBurger.Messages\CoderBurger.Messages.csproj">
-      <Project>{8393C49A-9927-46E0-8A76-44A3E7DA5369}</Project>
-      <Name>CoderBurger.Messages</Name>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyDomain.Domain\MyDomain.Domain.csproj">
+      <Project>{354D4B4D-29E9-4D99-9401-EF1965008E7C}</Project>
+      <Name>MyDomain.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain.Infrastructure.EntityFramework\MyDomain.Infrastructure.EntityFramework.csproj">
+      <Project>{832693AA-4998-428A-86D4-E70AEE539034}</Project>
+      <Name>MyDomain.Infrastructure.EntityFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain.Infrastructure\MyDomain.Infrastructure.csproj">
+      <Project>{87969390-A405-441D-988C-89EA226810DE}</Project>
+      <Name>MyDomain.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain.Persistence.ReadModel\MyDomain.Persistence.ReadModel.csproj">
+      <Project>{6728D706-1BA6-4646-AA4D-1762AAB291D9}</Project>
+      <Name>MyDomain.Persistence.ReadModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain.Shell\MyDomain.Shell.csproj">
+      <Project>{B0030A0D-6305-4E68-9EA2-9DE1193AE14C}</Project>
+      <Name>MyDomain.Shell</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain\MyDomain.csproj">
+      <Project>{B541F426-D54C-4371-A3A5-D6FD72325275}</Project>
+      <Name>MyDomain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

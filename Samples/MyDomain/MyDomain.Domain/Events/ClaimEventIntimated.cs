@@ -12,4 +12,15 @@ namespace MyDomain.Domain.Events
             IntimatedTime = DateTime.Now;
         }
     }
+
+    public class ChangedIntimatedDate
+    {
+        public Guid Id { get; set; }
+        public DateTime IntimatedTime { get; set; }
+
+        public ChangedIntimatedDate()
+        {
+            IntimatedTime = DateTime.Now;
+        }
+    }
 }

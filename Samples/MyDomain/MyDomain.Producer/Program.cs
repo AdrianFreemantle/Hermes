@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-
-using EventStore;
 
 using Hermes.Configuration;
 using Hermes.Core;
@@ -35,64 +29,54 @@ namespace MyDomain.Producer
 
         private static void Main(string[] args)
         {
-            //LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-            Logger = LogFactory.BuildLogger(typeof (Program));
-
-            var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
-            contextFactory.GetContext().Database.CreateIfNotExists();
-
-            Configure.Environment(new AutofacAdapter());
-
-            Settings.Builder.RegisterSingleton<IContextFactory>(contextFactory);
-            Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
-
-            Configure
-                .Bus(Address.Parse("Producer"))
-                .UsingJsonSerialization()
-                .UsingUnicastBus()
-                //.UseDistributedTransaction()
-                .UsingSqlTransport(ConnectionString)
-                .UsingSqlStorage(ConnectionString)
+            var configuration = Configure.Endpoint("Producer", new AutofacAdapter())
+                .UseJsonSerialization()
+                .UseUnicastBus()
+                .UseConsoleWindowLogger()
+                .UseDistributedTransaction()
+                .UseSqlTransport(ConnectionString)
+                .UseSqlStorage(ConnectionString)
+                .ScanForHandlersIn(Assembly.GetExecutingAssembly())
                 .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
-                .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"))
-                .Start();
+                .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"));
 
-            var token = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            Logger = LogFactory.BuildLogger(typeof(Program));
+
+            configuration.Start();
+
+            var token = new CancellationTokenSource(TimeSpan.FromHours(10));
+
+            var claimEventId = Guid.NewGuid();
+
+            Settings.MessageBus.Send(new IntimateClaimEvent
+            {
+                Id = claimEventId,
+                MessageId = Guid.NewGuid()
+            });
 
 
             while (!token.IsCancellationRequested)
             {
-                Logger.Info("=================================================");
-                var claimEventId = Guid.NewGuid();
-
                 try
                 {
-                    var commands = new object[]
+                    var command = new RegisterClaim
                     {
-                        new IntimateClaimEvent
-                        {
-                            Id = claimEventId,
-                            MessageId = Guid.NewGuid()
-                        },
-                        new RegisterClaim
-                        {
-                            Amount = 10,
-                            ClaimEventId = claimEventId,
-                            ClaimId = Guid.NewGuid()
-                        }
+                        Amount = 10,
+                        ClaimEventId = claimEventId,
+                        ClaimId = Guid.NewGuid()
                     };
 
-                    Settings.MessageBus.Send(commands);
+                    Logger.Info("Register Claim {0}", command.ClaimId);
 
-                    //Console.ReadKey();
-                    Thread.Sleep(10);
+                    Settings.MessageBus.Send(command.ClaimId, command);
+                    Thread.Sleep(20);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error {0}.", ex);
                 }
+
+                
             }
 
             Console.WriteLine("Finished");

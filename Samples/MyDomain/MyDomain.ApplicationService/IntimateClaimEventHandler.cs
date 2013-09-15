@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
 
@@ -10,25 +8,22 @@ namespace MyDomain.ApplicationService
 {
     public class IntimateClaimEventHandler : IHandleMessage<IntimateClaimEvent>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IntimateClaimEventHandler)); 
+        private readonly IEventStoreRepository repository;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IntimateClaimEventHandler));
+
+        public IntimateClaimEventHandler(IEventStoreRepository repository)
+        {
+            this.repository = repository;
+        }
 
         public void Handle(IntimateClaimEvent command)
         {
             Logger.Info("Handling IntimateClaim");
             var claimEvent = ClaimEvent.Intimate(command.Id);
 
-            TestError.Throw();
-
-            IEnumerable<object> uncommittedEvents = ((IAggregate)claimEvent).GetUncommittedEvents();
-
-            foreach (var uncommittedEvent in uncommittedEvents)
-            {
-                DomainEvent.Current.Raise(uncommittedEvent);
-            }
-                
-            ((IAggregate)claimEvent).ClearUncommittedEvents();
-
-            TestError.Throw();
+            repository.Save(claimEvent, claimEvent.Id, objects => { });
         }
-    }
+
+
+    }   
 }

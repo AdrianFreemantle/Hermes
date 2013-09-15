@@ -98,7 +98,6 @@ namespace Hermes.Core
             {
                 return false;
             }
-            
             messageProcessor.ProcessEnvelope(transportMessage);
             return true;
         }

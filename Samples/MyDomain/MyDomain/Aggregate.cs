@@ -6,7 +6,7 @@ namespace MyDomain
     public abstract class Aggregate : IAggregate
     {
         public int Version { get; private set; }
-        public Guid Identity { get; protected set; }
+        public Guid Id { get; protected set; }
         
         private readonly HashSet<object> uncommittedEvents = new HashSet<object>();
 
@@ -63,7 +63,7 @@ namespace MyDomain
 
         public override int GetHashCode()
         {
-            return Identity.GetHashCode();
+            return Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -75,7 +75,7 @@ namespace MyDomain
         {
             if (null != other && other.GetType() == GetType())
             {
-                return other.Identity.Equals(Identity);
+                return other.Id.Equals(Id);
             }
 
             return false;

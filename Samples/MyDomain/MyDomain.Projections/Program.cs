@@ -2,23 +2,21 @@
 using System.Reflection;
 using System.Threading;
 
-using EventStore;
-
+using Hermes;
 using Hermes.Configuration;
 using Hermes.Core;
 using Hermes.Ioc;
-using Hermes.Messaging;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
-using MyDomain.ApplicationService;
+
 using MyDomain.Domain.Events;
 using MyDomain.Infrastructure;
 using MyDomain.Infrastructure.EntityFramework;
 using MyDomain.Persistence.ReadModel;
 
-namespace MyDomain.Shell
+namespace MyDomain.Projections
 {
     class Program
     {
@@ -26,15 +24,8 @@ namespace MyDomain.Shell
 
         private static void Main(string[] args)
         {
-            TestError.PercentageFailure = 2;
-
-            var contextFactory = new ContextFactory<MyDomainContext>("MyDomain");
-            var context = contextFactory.GetContext();
-            context.Database.CreateIfNotExists();
-            context.Dispose();
-
             var configuration = Configure
-                .Endpoint("MyDomain", new AutofacAdapter())
+                .Endpoint("Projections", new AutofacAdapter())
                 //.UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()
@@ -42,15 +33,16 @@ namespace MyDomain.Shell
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
-                .RegisterMessageRoute<IntimateClaimEvent>(Address.Local)
-                .RegisterMessageRoute<RegisterClaim>(Address.Local)
-                .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.ApplicationService")))
+                .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.Persistence.ReadModel")))
+                .SubscribeToEvent<ClaimEventIntimated>()
+                .SubscribeToEvent<ClaimRegistered>()
+                .SubscribeToEvent<ChangedIntimatedDate>()
                 .NumberOfWorkers(1);
 
-            IStoreEvents eventStore = EventStore.WireupEventStore();
-            Settings.Builder.RegisterSingleton<IStoreEvents>(eventStore);
-            Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
 
+            Settings.Builder.RegisterSingleton<IContextFactory>(new ContextFactory<MyDomainContext>("MyDomain"));
+            Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
+            Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
 
             configuration.Start();
 
@@ -63,6 +55,26 @@ namespace MyDomain.Shell
 
             Console.WriteLine("Finished");
             Console.ReadKey();
+        }
+    }
+
+    public class UnitOfWorkManager : IManageUnitOfWork
+    {
+        private readonly IUnitOfWork unitOfWork;
+
+        public UnitOfWorkManager(IUnitOfWork unitOfWork)
+        {
+            this.unitOfWork = unitOfWork;
+        }
+
+        public void Commit()
+        {
+            unitOfWork.Commit();
+        }
+
+        public void Rollback()
+        {
+            unitOfWork.Rollback();
         }
     }
 }

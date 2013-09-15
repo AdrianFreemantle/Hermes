@@ -33,6 +33,9 @@
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.Core">
+      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -46,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainEvent.cs" />
     <Compile Include="RegisterClaimHandler.cs" />
     <Compile Include="IntimateClaimEventHandler.cs" />
     <Compile Include="Commands\IntimateClaimEvent.cs" />

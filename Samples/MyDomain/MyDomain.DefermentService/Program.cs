@@ -24,14 +24,12 @@ namespace MyDomain.DefermentService
 
         private static void Initialize()
         {
-            Configure.Environment(new AutofacAdapter())
-                     .ConsoleWindowLogger();
-
-            Configure.Bus(Settings.DefermentEndpoint)
-                     .UsingJsonSerialization()
-                     .UsingDefermentBus()
-                     .UsingSqlTransport(ConnectionString)
-                     .UsingSqlStorage(ConnectionString)
+            Configure.Endpoint(Settings.DefermentEndpoint.ToString(), new AutofacAdapter())
+                     .UseConsoleWindowLogger()
+                     .UseJsonSerialization()
+                     .UseDefermentBus()
+                     .UseSqlTransport(ConnectionString)
+                     .UseSqlStorage(ConnectionString)
                      .Start();
 
             var timeoutProcessor = Settings.RootContainer.GetInstance<ITimeoutProcessor>();
