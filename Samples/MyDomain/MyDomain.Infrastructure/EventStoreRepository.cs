@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using EventStore;
 
 using Hermes.Core;
@@ -9,7 +10,14 @@ using Hermes.Messaging;
 
 namespace MyDomain.Infrastructure
 {
-    public class EventStoreRepository : IEventStoreRepository, IDisposable
+    public interface IEventStoreRepository : IDisposable
+    {
+        TAggregate GetById<TAggregate>(Guid id) where TAggregate : class, IAggregate;
+        TAggregate GetById<TAggregate>(Guid id, int versionToLoad) where TAggregate : class, IAggregate;
+        void Save(IAggregate aggregate, Guid commitId, Action<IDictionary<string, object>> updateHeaders);
+    }
+
+    public class EventStoreRepository : IEventStoreRepository
     {
         private const string AggregateTypeHeader = "AggregateType";
         private readonly IDictionary<Guid, Snapshot> snapshots = new Dictionary<Guid, Snapshot>();
@@ -62,9 +70,9 @@ namespace MyDomain.Infrastructure
 
         private static void ApplyEventsToAggregate(int versionToLoad, IEventStream stream, IAggregate aggregate)
         {
-            if (versionToLoad == 0 || aggregate.Version < versionToLoad)
+            if (versionToLoad == 0 || aggregate.GetVersion() < versionToLoad)
             {
-                aggregate.LoadFromHistory(stream.CommittedEvents.Select(x => x.Body));
+                aggregate.LoadFromHistory(stream.CommittedEvents.Select(x => x.Body as DomainEvent));
             }
         }
 
@@ -72,7 +80,7 @@ namespace MyDomain.Infrastructure
         {
             IMemento memento = snapshot == null ? null : snapshot.Payload as IMemento;
 
-            var aggregate = ActivatorHelper.CreateInstance<TAggregate>(stream.StreamId);
+            var aggregate = ActivatorHelper.CreateInstanceUsingNonPublicConstructor<TAggregate>(stream.StreamId);
             aggregate.RestoreSnapshot(memento);
             return aggregate;
         }
@@ -121,7 +129,7 @@ namespace MyDomain.Infrastructure
                 }
                 catch (ConcurrencyException)
                 {
-                    streams.Remove(aggregate.Id);
+                    streams.Remove((Guid)aggregate.Identity.GetId());
                     throw;
                 }
                 //catch (Exception)
@@ -138,26 +146,13 @@ namespace MyDomain.Infrastructure
             }
         }
 
-        public void DispatchCommit(IAggregate aggregate)
-        {
-            TestError.Throw();
-            var localBus = ServiceLocator.Current.GetService<IInMemoryBus>();
-
-            foreach (var @event in aggregate.GetUncommittedEvents())
-            {
-                localBus.Raise(@event);
-            }
-
-            TestError.Throw();
-        }
-
         private IEventStream PrepareStream(IAggregate aggregate, Dictionary<string, object> headers)
         {
             IEventStream stream;
 
-            if (!streams.TryGetValue(aggregate.Id, out stream))
+            if (!streams.TryGetValue((Guid)aggregate.Identity.GetId(), out stream))
             {
-                streams[aggregate.Id] = stream = eventStore.CreateStream(aggregate.Id);
+                streams[(Guid)aggregate.Identity.GetId()] = stream = eventStore.CreateStream((Guid)aggregate.Identity.GetId());
             }
 
             foreach (var item in headers)
@@ -180,6 +175,55 @@ namespace MyDomain.Infrastructure
                 updateHeaders(headers);
 
             return headers;
+        }
+    }
+
+    public static class ActivatorHelper
+    {
+        const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
+
+        public static T CreateInstance<T>(params object[] parameters) where T : class
+        {
+            if (parameters.Length == 0)
+                return Activator.CreateInstance(typeof(T)) as T;
+
+            return Activator.CreateInstance(typeof(T), parameters) as T;
+        }
+
+        public static T CreateInstanceUsingNonPublicConstructor<T>(params object[] parameters) where T : class
+        {
+            Type[] types = parameters.ToList().ConvertAll(input => input.GetType()).ToArray();
+
+            var constructor = typeof(T).GetConstructor(Flags, null, types, null);
+
+            return constructor.Invoke(parameters) as T;
+        }
+
+        public static List<TBase> CreateInstancesImplimentingBase<TBase>(string assemblyName) where TBase : class
+        {
+            var assembly = Assembly.Load(assemblyName);
+            var concreteSubTypes = GetConcreteSubTypes<TBase>(assembly);
+            return CreateInstancesImplimentingBase<TBase>(concreteSubTypes);
+        }
+
+        public static List<TBase> CreateInstancesImplimentingBase<TBase>() where TBase : class
+        {
+            var assembly = Assembly.GetAssembly(typeof(TBase));
+            var concreteSubTypes = GetConcreteSubTypes<TBase>(assembly);
+            return CreateInstancesImplimentingBase<TBase>(concreteSubTypes);
+        }
+
+        public static List<TBase> CreateInstancesImplimentingBase<TBase>(IEnumerable<Type> concreteTypes) where TBase : class
+        {
+            return concreteTypes.Select(type => Activator.CreateInstance(type) as TBase).ToList();
+        }
+
+        public static IEnumerable<Type> GetConcreteSubTypes<TBase>(Assembly sourceAssembly) where TBase : class
+        {
+            var assignableFromTypes = sourceAssembly.GetTypes().Where(type => type.IsAssignableFrom(typeof(TBase)));
+            var implimentingInterfaceTypes = sourceAssembly.GetTypes().Where(type => type.GetInterfaces().Contains(typeof(TBase)));
+
+            return assignableFromTypes.Union(implimentingInterfaceTypes).Where(type => !type.IsAbstract && type.IsClass).ToList();
         }
     }
 }

@@ -41,29 +41,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EventStore">
-      <HintPath>..\MyDomain.Shell\bin\Debug\EventStore.dll</HintPath>
-    </Reference>
     <Reference Include="Hermes">
-      <HintPath>..\MyDomain.Persistence.ReadModel\bin\Debug\Hermes.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Core">
-      <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Core.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Storage.SqlServer">
-      <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\MyDomain.Shell\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="NEventStore">
+      <HintPath>..\packages\NEventStore.4.1.0.8\lib\net40\NEventStore.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>

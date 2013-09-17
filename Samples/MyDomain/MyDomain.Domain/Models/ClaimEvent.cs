@@ -3,32 +3,28 @@ using MyDomain.Domain.Events;
 
 namespace MyDomain.Domain.Models
 {
-    public class ClaimEvent : Aggregate
+    public class ClaimEvent : RestorableTypedAggregate<ClaimEventState>
     {
-        private readonly ClaimEventState state;
-
-        protected ClaimEvent(Guid id)
+        protected ClaimEvent(Guid id) 
+            : base(new ClaimEventId(id))
         {
-            Id = id;
-            state = new ClaimEventState();
         }
 
         public static ClaimEvent Intimate(Guid id)
         {
             var claimEvent = new ClaimEvent(id);
-
-            claimEvent.RaiseEvent(new ClaimEventIntimated { Id = id });
+            claimEvent.RaiseEvent(new ClaimEventIntimated());
             return claimEvent;
         }
 
-        public Claim RegisterClaim(Guid claimId, decimal amount)
+        public void Open()
         {
-            return new Claim(claimId, amount, Id);
+            RaiseEvent(new ClaimEventOpened());
         }
 
-        protected override void ApplyEvent(object @event)
+        public void Close()
         {
-            state.When((dynamic)@event);
+            RaiseEvent(new ClaimEventClosed());
         }
     }
 }

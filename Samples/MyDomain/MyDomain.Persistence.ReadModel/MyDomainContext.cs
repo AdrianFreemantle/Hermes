@@ -7,7 +7,6 @@ namespace MyDomain.Persistence.ReadModel
     public class MyDomainContext : DbContext 
     {
         public DbSet<ClaimEvent> ClaimEvents { get; set; }
-        public DbSet<Claim> Claims { get; set; }
 
         public MyDomainContext()
         {

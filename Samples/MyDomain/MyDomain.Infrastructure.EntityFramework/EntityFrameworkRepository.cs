@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 
 namespace MyDomain.Infrastructure.EntityFramework
-{
+{  
     class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly IDbSet<TEntity> dbSet;

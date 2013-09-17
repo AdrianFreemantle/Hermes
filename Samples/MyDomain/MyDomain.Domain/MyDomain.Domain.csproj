@@ -42,12 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Claim.cs" />
+    <Compile Include="Events\ClaimEventClosed.cs" />
+    <Compile Include="Events\ClaimEventOpened.cs" />
     <Compile Include="Models\ClaimEvent.cs" />
+    <Compile Include="Models\ClaimEventId.cs" />
     <Compile Include="Models\ClaimEventState.cs" />
     <Compile Include="Events\ClaimEventIntimated.cs" />
-    <Compile Include="Models\ClaimState.cs" />
-    <Compile Include="Events\ClaimRegistered.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
