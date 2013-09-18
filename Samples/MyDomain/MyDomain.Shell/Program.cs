@@ -50,7 +50,7 @@ namespace MyDomain.Shell
             IStoreEvents eventStore = EventStore.WireupEventStore();
             Settings.Builder.RegisterSingleton<IStoreEvents>(eventStore);
             Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
-
+l
             configuration.Start();
 
             var token = new CancellationTokenSource(TimeSpan.FromHours(10));
