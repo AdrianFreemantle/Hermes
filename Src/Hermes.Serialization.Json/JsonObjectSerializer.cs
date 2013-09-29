@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization.Formatters;
 
 using Newtonsoft.Json;
 
@@ -9,14 +10,24 @@ namespace Hermes.Serialization.Json
     /// </summary>
     public class JsonObjectSerializer : ISerializeObjects
     {
+        static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Populate,
+            DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+        };
+
         public T DeserializeObject<T>(string value)
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonConvert.DeserializeObject<T>(value, SerializerSettings);
         }
 
         public object DeserializeObject(string value, Type type)
         {
-            return JsonConvert.DeserializeObject(value, type);
+            return JsonConvert.DeserializeObject(value, type, SerializerSettings);
         }
 
         public string SerializeObject(object value)
@@ -27,6 +38,6 @@ namespace Hermes.Serialization.Json
         public string GetContentType()
         {
             return "application/json";
-        }
+        } 
     }
 }

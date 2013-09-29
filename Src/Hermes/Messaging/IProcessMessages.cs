@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Hermes.Messaging
 {
     public interface IProcessMessages
     {
-        void ProcessEnvelope(TransportMessage transportMessage);
-        void ProcessMessages(IEnumerable<object> messageBodies);
+        void ProcessTransportMessage(TransportMessage transportMessage);
 
         event EventHandler<StartedMessageProcessingEventArgs> StartedMessageProcessing;
         event EventHandler<CompletedMessageProcessingEventArgs> CompletedMessageProcessing;

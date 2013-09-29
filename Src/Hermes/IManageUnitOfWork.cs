@@ -2,9 +2,8 @@
 
 namespace Hermes
 {
-    public interface IManageUnitOfWork
+    public interface IManageUnitOfWork : IDisposable
     {
-        //void Register(Action callback);
         void Commit();
         void Rollback();
     }

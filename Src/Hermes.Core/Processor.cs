@@ -38,7 +38,7 @@ namespace Hermes.Core
             this.errorProcessor = errorProcessor;
         }
 
-        public void ProcessEnvelope(TransportMessage transportMessage)
+        public void ProcessTransportMessage(TransportMessage transportMessage)
         {
             Logger.Verbose("Processing transport message {0}", transportMessage.MessageId);
 
@@ -109,7 +109,7 @@ namespace Hermes.Core
             }
         }
 
-        public void ProcessMessages(IEnumerable<object> messages)
+        private void ProcessMessages(IEnumerable<object> messages)
         {
             using (var childContainer = container.BeginLifetimeScope())
             {

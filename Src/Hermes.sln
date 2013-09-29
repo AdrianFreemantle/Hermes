@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ObjectBuilder.Autofa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Storage.SqlServer", "Hermes.Storage.SqlServer\Hermes.Storage.SqlServer.csproj", "{5A6334D2-3410-47E3-B9A3-98A77108D58E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.EntityFramework", "Hermes.EntityFramework\Hermes.EntityFramework.csproj", "{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{5A6334D2-3410-47E3-B9A3-98A77108D58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A6334D2-3410-47E3-B9A3-98A77108D58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A6334D2-3410-47E3-B9A3-98A77108D58E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

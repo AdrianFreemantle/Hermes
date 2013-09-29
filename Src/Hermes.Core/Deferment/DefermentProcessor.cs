@@ -22,7 +22,7 @@ namespace Hermes.Core.Deferment
             this.timeoutStore = timeoutStore;
         }
 
-        public void ProcessEnvelope(TransportMessage transportMessage)
+        public void ProcessTransportMessage(TransportMessage transportMessage)
         {
             Logger.Debug("Defering message: {0}", transportMessage.MessageId);
             timeoutStore.Add(new TimeoutData(transportMessage));

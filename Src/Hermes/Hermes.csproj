@@ -96,6 +96,8 @@
     <Compile Include="Retry.cs" />
     <Compile Include="Messaging\IHandleMessage.cs" />
     <Compile Include="Routing\RouteNotDefinedException.cs" />
+    <Compile Include="Saga\IContainSagaData.cs" />
+    <Compile Include="Saga\ISagaPersister.cs" />
     <Compile Include="Serialization\ISerializeMessages.cs" />
     <Compile Include="Messaging\TransportMessage.cs" />
     <Compile Include="IdentityFactory.cs" />

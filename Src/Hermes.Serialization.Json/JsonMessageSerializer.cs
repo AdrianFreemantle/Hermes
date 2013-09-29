@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace Hermes.Serialization.Json
 {
