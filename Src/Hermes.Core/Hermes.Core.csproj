@@ -50,7 +50,8 @@
     <Compile Include="BusCallback\Callback.cs" />
     <Compile Include="BusCallback\BusAsyncResult.cs" />
     <Compile Include="CallBackManager.cs" />
-    <Compile Include="Saga\Class1.cs" />
+    <Compile Include="Saga\Saga.cs" />
+    <Compile Include="Saga\ISaga.cs" />
     <Compile Include="TestError.cs" />
     <Compile Include="CoreConfig.cs" />
     <Compile Include="Deferment\DefermentProcessor.cs" />
