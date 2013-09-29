@@ -6,5 +6,6 @@ namespace MyDomain.Persistence.ReadModel.Models
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
+        public bool Open { get; set; }
     }
 }

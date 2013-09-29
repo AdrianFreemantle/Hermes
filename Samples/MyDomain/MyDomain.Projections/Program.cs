@@ -35,8 +35,8 @@ namespace MyDomain.Projections
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.Persistence.ReadModel")))
                 .SubscribeToEvent<ClaimEventIntimated>()
-                .SubscribeToEvent<ClaimRegistered>()
-                .SubscribeToEvent<ChangedIntimatedDate>()
+                .SubscribeToEvent<ClaimEventClosed>()
+                .SubscribeToEvent<ClaimEventOpened>()
                 .NumberOfWorkers(1);
 
 

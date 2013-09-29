@@ -1,10 +1,10 @@
 ﻿using System;
+using MyDomain.Domain.Models;
 
-namespace MyDomain.ApplicationService
+namespace MyDomain.ApplicationService.Commands
 {
-    public class IntimateClaimEvent
+    public class IntimateClaimEvent : Command
     {
-        public Guid Id { get; set; }
-        public Guid MessageId { get; set; }
+        public Guid ClaimEventId { get; set; }
     }
 }

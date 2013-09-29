@@ -49,11 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RegisterClaimHandler.cs" />
-    <Compile Include="IntimateClaimEventHandler.cs" />
+    <Compile Include="ClaimEventHandler.cs" />
+    <Compile Include="Commands\CloseClaimEvent.cs" />
     <Compile Include="Commands\IntimateClaimEvent.cs" />
+    <Compile Include="Commands\OpenClaimEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Commands\RegisterClaim.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyDomain.Domain\MyDomain.Domain.csproj">

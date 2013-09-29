@@ -13,6 +13,7 @@ using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
 
 using MyDomain.ApplicationService;
+using MyDomain.ApplicationService.Commands;
 using MyDomain.Infrastructure;
 using MyDomain.Infrastructure.EntityFramework;
 using MyDomain.Persistence.ReadModel;
@@ -37,8 +38,7 @@ namespace MyDomain.Producer
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
                 .ScanForHandlersIn(Assembly.GetExecutingAssembly())
-                .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"))
-                .RegisterMessageRoute<RegisterClaim>(Address.Parse("MyDomain"));
+                .RegisterMessageRoute<IntimateClaimEvent>(Address.Parse("MyDomain"));
 
             Logger = LogFactory.BuildLogger(typeof(Program));
 
@@ -48,27 +48,21 @@ namespace MyDomain.Producer
 
             var claimEventId = Guid.NewGuid();
 
-            Settings.MessageBus.Send(new IntimateClaimEvent
-            {
-                Id = claimEventId,
-                MessageId = Guid.NewGuid()
-            });
+            //Settings.MessageBus.Send(new IntimateClaimEvent
+            //{
+            //    ClaimEventId = claimEventId,
+            //    MessageId = Guid.NewGuid()
+            //});
 
 
             while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    var command = new RegisterClaim
-                    {
-                        Amount = 10,
-                        ClaimEventId = claimEventId,
-                        ClaimId = Guid.NewGuid()
-                    };
 
-                    Logger.Info("Register Claim {0}", command.ClaimId);
+                    //Logger.Info("Register Claim {0}", command.ClaimId);
 
-                    Settings.MessageBus.Send(command.ClaimId, command);
+                    //Settings.MessageBus.Send(command.ClaimId, command);
                     Thread.Sleep(20);
                 }
                 catch (Exception ex)

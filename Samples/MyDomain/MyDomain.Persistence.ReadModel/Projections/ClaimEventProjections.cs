@@ -1,13 +1,18 @@
-﻿using Hermes.Core;
+﻿using System;
+using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
 
 using MyDomain.Domain.Events;
+using MyDomain.Infrastructure;
 using MyDomain.Persistence.ReadModel.Models;
 
 namespace MyDomain.Persistence.ReadModel.Projections
 {
-    public class ClaimEventProjections : IHandleMessage<ClaimEventIntimated>, IHandleMessage<ChangedIntimatedDate>
+    public class ClaimEventProjections 
+        : IHandleMessage<ClaimEventIntimated>
+        , IHandleMessage<ClaimEventOpened>
+        , IHandleMessage<ClaimEventClosed>
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(ClaimEventProjections)); 
 
@@ -26,21 +31,34 @@ namespace MyDomain.Persistence.ReadModel.Projections
 
             repository.Add(new ClaimEvent
             {
-                Id = @event.Id,
-                CreatedDate = @event.IntimatedTime
+                Id = (Guid)@event.AggregateId.GetId(),
+                CreatedDate = @event.IntimatedTime,
+                Open = true
             });
 
             TestError.Throw();
         }
 
-        public void Handle(ChangedIntimatedDate @event)
+        public void Handle(ClaimEventOpened message)
         {
-            Logger.Info("Projecting ChangedIntimatedDate event");
+            Logger.Info("Projecting ClaimEventOpened event");
 
             TestError.Throw();
 
-            var claimEvent = repository.Get(@event.Id);
-            claimEvent.CreatedDate = @event.IntimatedTime;
+            ClaimEvent claimEvent = repository.Get(message.AggregateId.GetId());
+            claimEvent.Open = true;
+
+            TestError.Throw();
+        }
+
+        public void Handle(ClaimEventClosed message)
+        {
+            Logger.Info("Projecting ClaimEventClosed event");
+
+            TestError.Throw();
+
+            ClaimEvent claimEvent = repository.Get(message.AggregateId.GetId());
+            claimEvent.Open = false;
 
             TestError.Throw();
         }

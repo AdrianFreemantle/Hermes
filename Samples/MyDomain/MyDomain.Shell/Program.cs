@@ -13,6 +13,7 @@ using Hermes.Serialization.Json;
 using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
 using MyDomain.ApplicationService;
+using MyDomain.ApplicationService.Commands;
 using MyDomain.Domain.Events;
 using MyDomain.Infrastructure;
 using MyDomain.Infrastructure.EntityFramework;
@@ -43,14 +44,12 @@ namespace MyDomain.Shell
                 .UseSqlStorage(ConnectionString)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .RegisterMessageRoute<IntimateClaimEvent>(Address.Local)
-                .RegisterMessageRoute<RegisterClaim>(Address.Local)
                 .ScanForHandlersIn(Assembly.Load(new AssemblyName("MyDomain.ApplicationService")))
                 .NumberOfWorkers(1);
 
             IStoreEvents eventStore = EventStore.WireupEventStore();
             Settings.Builder.RegisterSingleton<IStoreEvents>(eventStore);
             Settings.Builder.RegisterType<EventStoreRepository>(DependencyLifecycle.InstancePerLifetimeScope);
-
 
             configuration.Start();
 

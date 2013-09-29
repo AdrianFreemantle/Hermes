@@ -58,17 +58,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ClaimEvent.cs" />
     <Compile Include="MyDomainContext.cs" />
     <Compile Include="Projections\ClaimEventProjections.cs" />
-    <Compile Include="Projections\ClaimProjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyDomain.Domain\MyDomain.Domain.csproj">
       <Project>{354D4B4D-29E9-4D99-9401-EF1965008E7C}</Project>
       <Name>MyDomain.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyDomain.Infrastructure\MyDomain.Infrastructure.csproj">
+      <Project>{87969390-A405-441D-988C-89EA226810DE}</Project>
+      <Name>MyDomain.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyDomain\MyDomain.csproj">
       <Project>{B541F426-D54C-4371-A3A5-D6FD72325275}</Project>
