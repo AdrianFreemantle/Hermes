@@ -28,7 +28,5 @@ namespace Hermes.Saga
         /// registered callbacks will be fired correctly.
         /// </summary>
         Guid OriginalMessageId { get; set; }
-
-        int Status { get; set; }
     }
 }

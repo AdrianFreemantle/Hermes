@@ -8,7 +8,8 @@ namespace Hermes.EntityFramework.SagaPersistence
     {
         public static IConfigureEndpoint UseEntityFrameworkSagaPersister(this IConfigureEndpoint config)
         {
-            
+
+            return config;
         }
     }
 

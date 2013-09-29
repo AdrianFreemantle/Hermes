@@ -5,11 +5,6 @@ using Hermes.Saga;
 
 namespace Hermes.Core.Saga
 {
-    public interface ISaga<T> where T : class, IContainSagaData
-    {
-        T State { get; set; }
-    }
-
     public abstract class Saga<T> : ISaga<T> where T : class, IContainSagaData, new()
     {
         private readonly IPersistSagas sagaPersistence;
@@ -23,17 +18,21 @@ namespace Hermes.Core.Saga
 
         public T State { get; set; }
 
-        protected void BeginSaga(Guid id)
+        protected virtual void Begin()
         {
-            var state = sagaPersistence.Get<T>(id);
+            Begin(Bus.CurrentMessageContext.CorrelationId);
+        }
+
+        protected virtual void Begin(Guid id)
+        {
+            var state = sagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
 
             if (state == null)
             {
                 State = new T
                 {
-                    Id = Bus.CurrentMessageContext.CorrelationId,
+                    Id = id,
                     OriginalMessageId = Bus.CurrentMessageContext.MessageId,
-                    Status = 0,
                     Originator = Bus.CurrentMessageContext.ReplyToAddress.ToString()
                 };
 
@@ -45,9 +44,24 @@ namespace Hermes.Core.Saga
             }
         }
 
-        protected void CompleteSaga()
+        protected virtual void Save()
         {
-            
+            sagaPersistence.Update(State);
+        }
+
+        protected virtual void Continue()
+        {
+            Continue(Bus.CurrentMessageContext.CorrelationId);
+        }
+
+        protected virtual void Continue(Guid sagaId)
+        {
+            State = sagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
+        }
+
+        protected virtual void Complete()
+        {
+            sagaPersistence.Complete(State);
         }
     }
 }
