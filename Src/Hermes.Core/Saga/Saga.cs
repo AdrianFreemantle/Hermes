@@ -56,12 +56,12 @@ namespace Hermes.Core.Saga
 
         protected virtual void Continue(Guid sagaId)
         {
-            State = sagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
+            State = sagaPersistence.Get<T>(sagaId);
         }
 
-        protected virtual void Complete()
+        protected virtual void Complete(Guid sagaId)
         {
-            sagaPersistence.Complete(State);
+            sagaPersistence.Complete(sagaId);
         }
     }
 }

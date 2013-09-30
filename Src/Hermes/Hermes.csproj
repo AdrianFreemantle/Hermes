@@ -97,6 +97,7 @@
     <Compile Include="Messaging\IHandleMessage.cs" />
     <Compile Include="Routing\RouteNotDefinedException.cs" />
     <Compile Include="Saga\IContainSagaData.cs" />
+    <Compile Include="Saga\ISaga.cs" />
     <Compile Include="Saga\ISagaPersister.cs" />
     <Compile Include="Serialization\ISerializeMessages.cs" />
     <Compile Include="Messaging\TransportMessage.cs" />

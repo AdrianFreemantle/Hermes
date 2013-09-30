@@ -129,15 +129,17 @@ namespace Hermes.Core
 
         private void TryProcessMessages(IEnumerable<object> messages, IContainer childContainer)
         {
+            var unitsOfWork = childContainer.GetAllInstances<IManageUnitOfWork>().ToArray();
+
             try
             {                
                 DispatchToHandlers(messages, childContainer);
-                CommitUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
+                CommitUnitsOfWork(unitsOfWork);
             }
-            catch (Exception ex)
+            catch 
             {
                 Logger.Verbose("Rolling back units of work");
-                RollBackUnitsOfWork(childContainer.GetAllInstances<IManageUnitOfWork>());
+                RollBackUnitsOfWork(unitsOfWork);
                 throw;
             }
             finally

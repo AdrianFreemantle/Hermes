@@ -60,9 +60,6 @@
     <Compile Include="Domain\TypedAggregate.cs" />
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\Message.cs" />
-    <Compile Include="Persistance\IEntityQuery.cs" />
-    <Compile Include="Persistance\IRepository.cs" />
-    <Compile Include="Persistance\IUnitOfWork.cs" />
     <Compile Include="Mandate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

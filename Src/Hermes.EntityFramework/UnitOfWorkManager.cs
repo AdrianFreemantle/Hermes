@@ -4,22 +4,22 @@ namespace Hermes.EntityFramework
 {
     public class UnitOfWorkManager : IManageUnitOfWork
     {
-        protected readonly IUnitOfWork unitOfWork;
+        protected readonly IUnitOfWork UnitOfWork;
         private bool disposed;
 
         public UnitOfWorkManager(EntityFrameworkUnitOfWork unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
+            UnitOfWork = unitOfWork;
         }
 
         public void Commit()
         {
-            unitOfWork.Commit();
+            UnitOfWork.Commit();
         }
 
         public void Rollback()
         {
-            unitOfWork.Rollback();
+            UnitOfWork.Rollback();
         }
 
         ~UnitOfWorkManager()
@@ -42,7 +42,7 @@ namespace Hermes.EntityFramework
 
             if (disposing)
             {
-                unitOfWork.Dispose();
+                UnitOfWork.Dispose();
             }
 
             disposed = true;

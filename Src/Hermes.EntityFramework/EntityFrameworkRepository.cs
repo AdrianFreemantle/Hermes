@@ -7,32 +7,32 @@ using System.Linq.Expressions;
 
 namespace Hermes.EntityFramework
 {
-    class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly IDbSet<TEntity> dbSet;
+        protected readonly IDbSet<TEntity> DbSet;
 
-        public Expression Expression { get { return dbSet.Expression; } }
-        public Type ElementType { get { return dbSet.ElementType; } }
-        public IQueryProvider Provider { get { return dbSet.Provider; } }
+        public Expression Expression { get { return DbSet.Expression; } }
+        public Type ElementType { get { return DbSet.ElementType; } }
+        public IQueryProvider Provider { get { return DbSet.Provider; } }
 
         internal EntityFrameworkRepository(IDbSet<TEntity> dbSet)
         {
-            this.dbSet = dbSet;
+            this.DbSet = dbSet;
         }
 
         public TEntity Get(dynamic id)
         {
-            return dbSet.Find(id);
+            return DbSet.Find(id);
         }
 
         public void Add(TEntity newEntity)
         {
-            dbSet.Add(newEntity);
+            DbSet.Add(newEntity);
         }
 
         public void Remove(TEntity entity)
         {
-            dbSet.Remove(entity);
+            DbSet.Remove(entity);
         }
 
         public IEnumerator<TEntity> GetEnumerator()

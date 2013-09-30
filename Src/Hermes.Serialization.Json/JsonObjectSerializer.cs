@@ -15,7 +15,7 @@ namespace Hermes.Serialization.Json
             TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            MissingMemberHandling = MissingMemberHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Error,
             DefaultValueHandling = DefaultValueHandling.Populate,
             DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
         };

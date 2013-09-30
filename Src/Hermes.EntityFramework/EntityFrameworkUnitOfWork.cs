@@ -6,29 +6,44 @@ namespace Hermes.EntityFramework
     public class EntityFrameworkUnitOfWork : IUnitOfWork 
     {
         private readonly IContextFactory contextFactory;
-        protected DbContext context;
+        protected DbContext Context;
         private bool disposed;
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
             this.contextFactory = contextFactory;
-            context = contextFactory.GetContext();
         }
 
         public void Commit()
         {
-            context.SaveChanges();
+            if (Context == null)
+            {
+                return;
+            }
+
+            Context.SaveChanges();           
+            Rollback();
         }
 
         public void Rollback()
         {
-            context.Dispose();
-            context = contextFactory.GetContext();
+            if (Context == null)
+            {
+                return;
+            }
+
+            Context.Dispose();
+            Context = null;
         }
 
         public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
-            return new EntityFrameworkRepository<TEntity>(context.Set<TEntity>());
+            if (Context == null)
+            {
+                Context = contextFactory.GetContext();                    
+            }
+
+            return new EntityFrameworkRepository<TEntity>(Context.Set<TEntity>());
         }
 
         ~EntityFrameworkUnitOfWork()
@@ -49,9 +64,9 @@ namespace Hermes.EntityFramework
                 return;
             }
 
-            if (disposing)
+            if (disposing && Context != null)
             {
-                context.Dispose();
+                Context.Dispose();
             }
 
             disposed = true;

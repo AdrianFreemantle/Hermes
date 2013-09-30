@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Threading;
 using Clientele.DocumentTracking.ApplicationService;
 using Clientele.DocumentTracking.DataModel;
-using Clientele.Infrastructure;
 using Hermes.Configuration;
 using Hermes.Core;
+using Hermes.EntityFramework.SagaPersistence;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.ObjectBuilder.Autofac;
@@ -24,7 +24,7 @@ namespace Clientele.DocumentTracking.Endpoint
         {
             CreateDatabaseIfNotExisting();
 
-            TestError.PercentageFailure = 4;
+            //TestError.PercentageFailure = 4;
 
             var endpoint = Configure
                 .Endpoint("DocumentTracking", new AutofacAdapter())
@@ -34,6 +34,7 @@ namespace Clientele.DocumentTracking.Endpoint
                 .UseDistributedTransaction()
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
+                .UseEntityFrameworkSagaPersister<DocumentTrackingContext>("DocumentTracking")
                 .SecondLevelRetryPolicy(5, TimeSpan.FromSeconds(10))
                 .FirstLevelRetryPolicy(0, TimeSpan.FromMilliseconds(0))
                 .ScanForHandlersIn(Assembly.Load(new AssemblyName("Clientele.DocumentTracking.OcrService")))
@@ -45,10 +46,6 @@ namespace Clientele.DocumentTracking.Endpoint
                 .NumberOfWorkers(1);
 
             ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
-
-            Settings.Builder.RegisterSingleton<IContextFactory>(new ContextFactory<DocumentTrackingContext>("DocumentTracking"));
-            Settings.Builder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<DocumentTrackingService>(DependencyLifecycle.InstancePerLifetimeScope);
 
             endpoint.Start();

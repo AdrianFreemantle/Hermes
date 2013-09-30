@@ -272,10 +272,6 @@
       <Project>{E076ED6C-C9DF-4AC3-9BB8-F4D376CE1053}</Project>
       <Name>Clientele.DocumentTracking.DataModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Clientele.Infrastructure\Clientele.Infrastructure.csproj">
-      <Project>{25C28EF3-C5AB-45D4-A3B3-A5BB372B64BE}</Project>
-      <Name>Clientele.Infrastructure</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

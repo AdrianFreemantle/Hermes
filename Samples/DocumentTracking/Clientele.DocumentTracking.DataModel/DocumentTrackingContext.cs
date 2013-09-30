@@ -3,6 +3,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 using Clientele.DocumentTracking.DataModel.Model;
 using Clientele.DocumentTracking.DataModel.ModelConfiguration;
+using Hermes.EntityFramework.SagaPersistence;
 
 namespace Clientele.DocumentTracking.DataModel
 {
@@ -24,6 +25,7 @@ namespace Clientele.DocumentTracking.DataModel
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Configurations.Add(new DocumentConfiguration());
+            modelBuilder.Configurations.Add(new SagaEntityConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

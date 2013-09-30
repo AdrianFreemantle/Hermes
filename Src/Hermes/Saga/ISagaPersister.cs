@@ -24,7 +24,6 @@ namespace Hermes.Saga
         /// Sets a saga as completed and removes it from the active saga list
         /// in the persistence store.
         /// </summary>
-        /// <param name="saga">The saga to complete.</param>
-        void Complete<T>(T saga) where T : class, IContainSagaData;
+        void Complete(Guid sagaId);
     }
 }

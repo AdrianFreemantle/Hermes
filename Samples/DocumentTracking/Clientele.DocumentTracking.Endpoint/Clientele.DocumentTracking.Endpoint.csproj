@@ -46,6 +46,9 @@
     <Reference Include="Hermes.Core">
       <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.EntityFramework">
+      <HintPath>..\..\..\bin\Debug\Hermes.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
       <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
@@ -98,10 +101,6 @@
     <ProjectReference Include="..\Clientele.DocumentTracking.OcrService\Clientele.DocumentTracking.OcrService.csproj">
       <Project>{a65a6b85-9c9d-4429-93df-f9195b1ab81d}</Project>
       <Name>Clientele.DocumentTracking.OcrService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Clientele.Infrastructure\Clientele.Infrastructure.csproj">
-      <Project>{25C28EF3-C5AB-45D4-A3B3-A5BB372B64BE}</Project>
-      <Name>Clientele.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clientele.Ocr.Contracts\Clientele.Ocr.Contracts.csproj">
       <Project>{ac92b3eb-4116-4886-9370-9af469482b65}</Project>

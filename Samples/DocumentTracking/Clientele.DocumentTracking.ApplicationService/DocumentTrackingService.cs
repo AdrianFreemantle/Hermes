@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Clientele.Core.Persistance;
 using Clientele.DocumentTracking.ApplicationService.Commands;
 using Clientele.DocumentTracking.DataModel.Model;
+using Hermes.EntityFramework;
 using Hermes.Logging;
 
 namespace Clientele.DocumentTracking.ApplicationService

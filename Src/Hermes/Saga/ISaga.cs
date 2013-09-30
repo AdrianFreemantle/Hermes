@@ -1,6 +1,4 @@
-﻿using Hermes.Saga;
-
-namespace Hermes.Core.Saga
+﻿namespace Hermes.Saga
 {
     public interface ISaga<T> where T : class, IContainSagaData
     {

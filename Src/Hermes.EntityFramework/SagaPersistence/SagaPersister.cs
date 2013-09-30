@@ -44,13 +44,19 @@ namespace Hermes.EntityFramework.SagaPersistence
             var repository = unitOfWork.GetRepository<SagaEntity>();
             var entity = repository.Get(sagaId);
 
-            return entity == null ? null : Deserialize<T>(entity.State);
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return Deserialize<T>(entity.State);
         }
 
-        public void Complete<T>(T saga) where T : class, IContainSagaData
+        public void Complete(Guid sagaId)
         {
-            var repository = unitOfWork.GetRepository<T>();
-            repository.Remove(saga);
+            var repository = unitOfWork.GetRepository<SagaEntity>();
+            var entity = repository.Get(sagaId);
+            repository.Remove(entity);
         }
 
         protected virtual T Deserialize<T>(byte[] data)

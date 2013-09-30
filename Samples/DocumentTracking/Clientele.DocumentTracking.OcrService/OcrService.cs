@@ -1,12 +1,74 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Clientele.DocumentTracking.ApplicationService;
 using Clientele.DocumentTracking.ApplicationService.Commands;
 using Clientele.Ocr.Contracts.Events;
+using Hermes.Core.Saga;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Saga;
 
 namespace Clientele.DocumentTracking.OcrService
 {
+    public abstract class SagaData : IContainSagaData
+    {
+        public Guid Id { get; set; }
+        public string Originator { get; set; }
+        public Guid OriginalMessageId { get; set; }
+    }
+
+    public class DocumentWorkflowState : SagaData
+    {
+        public DateTime LastAction { get; set; }
+        public String Blah { get; set; }
+    }
+
+    public class DocumentTrackingSaga : Saga<DocumentWorkflowState>
+        , IHandleMessage<ExportCompleted> 
+        , IHandleMessage<ExportFailed>
+        , IHandleMessage<RecognitionDone>
+        , IHandleMessage<RecognitionFailed>
+        , IHandleMessage<VerificationDone>
+    {
+        public DocumentTrackingSaga(IPersistSagas sagaPersistence, IMessageBus bus) 
+            : base(sagaPersistence, bus)
+        {
+        }
+
+        public void Handle(ExportCompleted message)
+        {
+            Complete(message.DocumentId);
+        }
+
+        public void Handle(ExportFailed message)
+        {
+            Continue(message.DocumentId);
+            State.LastAction = DateTime.Now;
+            Save();
+        }
+
+        public void Handle(RecognitionDone message)
+        {
+            Begin(message.DocumentId);
+            State.LastAction = DateTime.Now;
+            Save();
+        }
+
+        public void Handle(RecognitionFailed message)
+        {
+            Begin(message.DocumentId);
+            State.LastAction = DateTime.Now;
+            Save();
+        }
+
+        public void Handle(VerificationDone message)
+        {
+            Continue(message.DocumentId);
+            State.LastAction = DateTime.Now;
+            Save();
+        }
+    }
+
     public class OcrService 
         : IHandleMessage<ExportCompleted> 
         , IHandleMessage<ExportFailed>
