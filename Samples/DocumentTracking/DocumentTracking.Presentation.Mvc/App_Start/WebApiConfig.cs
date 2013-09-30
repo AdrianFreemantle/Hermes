@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
 
-namespace DocumentTracking.Presentation.Mvc
+namespace DocumentTracking.Presentation.Mvc.App_Start
 {
     public static class WebApiConfig
     {

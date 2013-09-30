@@ -99,10 +99,19 @@ namespace Hermes.Core
 
             using (var scope = StartTransactionScope())
             {
-                Retry.Action(() => ProcessMessages(messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
-                errorProcessor.RemoveRetryHeaders(transportMessage);
-                messageSender.Send(transportMessage, Settings.AuditEndpoint);
-                Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
+                try
+                {
+                    Retry.Action(() => ProcessMessages(messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+                    errorProcessor.RemoveRetryHeaders(transportMessage);
+                    messageSender.Send(transportMessage, Settings.AuditEndpoint);
+                    Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error while processing transport message {0} {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
+                    RaiseMessageProcessingFailedEvent(ex);
+                    errorProcessor.Handle(transportMessage, ex);
+                }
                 
                 TestError.Throw();
                 scope.Complete();

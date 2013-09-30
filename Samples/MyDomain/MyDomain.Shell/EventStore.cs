@@ -1,14 +1,11 @@
-﻿using System;
-using System.Transactions;
-using EventStore;
-using EventStore.Dispatcher;
-using EventStore.Persistence.SqlPersistence.SqlDialects;
-using Hermes;
-using Hermes.Configuration;
+﻿using System.Transactions;
 using Hermes.Core;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
+using NEventStore;
+using NEventStore.Dispatcher;
+using NEventStore.Persistence.SqlPersistence.SqlDialects;
 
 namespace MyDomain.Shell
 {
@@ -24,7 +21,6 @@ namespace MyDomain.Shell
                          .WithDialect(new MsSqlDialect())
                          .InitializeStorageEngine()
                          .EnlistInAmbientTransaction()
-                         .UsingJsonSerialization()
                          .LogToOutputWindow()
                          .UsingSynchronousDispatchScheduler()
                          .DispatchTo(new DelegateMessageDispatcher(DispatchCommit))
@@ -33,7 +29,7 @@ namespace MyDomain.Shell
 
         private static void DispatchCommit(Commit commit)
         {
-            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required, TimeSpan.FromSeconds(30)))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required))
             {
                 var bus = ServiceLocator.Current.GetService<IMessageBus>();
 
@@ -43,8 +39,8 @@ namespace MyDomain.Shell
                     bus.Publish(@event.Body);
                 }
 
-                TestError.Throw();
                 scope.Complete();
+                TestError.Throw();
             }
         }
     }
