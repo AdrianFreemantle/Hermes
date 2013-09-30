@@ -5,12 +5,12 @@ namespace MyDomain.Domain.Models
 {
     public class ClaimEvent : RestorableTypedAggregate<ClaimEventState>
     {
-        protected ClaimEvent(Guid id) 
+        protected ClaimEvent(string id) 
             : base(new ClaimEventId(id))
         {
         }
 
-        public static ClaimEvent Intimate(Guid id)
+        public static ClaimEvent Intimate(string id)
         {
             var claimEvent = new ClaimEvent(id);
             claimEvent.RaiseEvent(new ClaimEventIntimated());

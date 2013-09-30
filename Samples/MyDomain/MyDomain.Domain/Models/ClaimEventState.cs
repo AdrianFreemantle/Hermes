@@ -1,5 +1,4 @@
 ﻿using System;
-using MyDomain.Domain;
 using MyDomain.Domain.Events;
 
 namespace MyDomain.Domain.Models

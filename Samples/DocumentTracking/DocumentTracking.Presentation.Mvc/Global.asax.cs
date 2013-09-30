@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using DocumentTracking.Presentation.Mvc.App_Start;
 using DocumentTracking.Presentation.Mvc.Startup;
 
 namespace DocumentTracking.Presentation.Mvc

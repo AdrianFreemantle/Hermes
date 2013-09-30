@@ -1,6 +1,4 @@
-﻿using System;
-using Hermes.Core;
-using Hermes.Logging;
+﻿using Hermes.Logging;
 using Hermes.Messaging;
 using MyDomain.ApplicationService.Commands;
 using MyDomain.Domain.Models;
@@ -9,9 +7,9 @@ using MyDomain.Infrastructure;
 namespace MyDomain.ApplicationService
 {
     public class ClaimEventHandler 
-        : IHandleMessage<IntimateClaimEvent>
-        , IHandleMessage<CloseClaimEvent>
-        , IHandleMessage<OpenClaimEvent>
+        : IHandleMessage<IntimateClaim>
+        , IHandleMessage<CloseClaim>
+        , IHandleMessage<OpenClaim>
     {
         private readonly IEventStoreRepository repository;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(ClaimEventHandler));
@@ -21,7 +19,7 @@ namespace MyDomain.ApplicationService
             this.repository = repository;
         }
 
-        public void Handle(IntimateClaimEvent command)
+        public void Handle(IntimateClaim command)
         {
             Logger.Info("Handling IntimateClaim");
             var claimEvent = ClaimEvent.Intimate(command.ClaimEventId);
@@ -29,7 +27,7 @@ namespace MyDomain.ApplicationService
             repository.Save(claimEvent, command.CommandId, objects => { });
         }
 
-        public void Handle(CloseClaimEvent command)
+        public void Handle(CloseClaim command)
         {
             Logger.Info("Handling CloseClaimEvent");
             var claimEvent = repository.GetById<ClaimEvent>(command.ClaimEventId);
@@ -38,11 +36,11 @@ namespace MyDomain.ApplicationService
             repository.Save(claimEvent, command.CommandId, objects => { });
         }
 
-        public void Handle(OpenClaimEvent command)
+        public void Handle(OpenClaim command)
         {
             Logger.Info("Handling OpenClaimEvent");
             var claimEvent = repository.GetById<ClaimEvent>(command.ClaimEventId);
-            claimEvent.Close();
+            claimEvent.Open();
 
             repository.Save(claimEvent, command.CommandId, objects => { });
         }

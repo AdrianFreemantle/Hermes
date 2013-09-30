@@ -50,9 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClaimEventHandler.cs" />
-    <Compile Include="Commands\CloseClaimEvent.cs" />
-    <Compile Include="Commands\IntimateClaimEvent.cs" />
-    <Compile Include="Commands\OpenClaimEvent.cs" />
+    <Compile Include="Commands\CloseClaim.cs" />
+    <Compile Include="Commands\IntimateClaim.cs" />
+    <Compile Include="Commands\OpenClaim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

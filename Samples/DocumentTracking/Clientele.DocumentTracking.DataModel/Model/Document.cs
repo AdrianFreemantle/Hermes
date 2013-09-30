@@ -11,5 +11,12 @@ namespace Clientele.DocumentTracking.DataModel.Model
         public string PolicyNumber { get; set; }
 
         public ICollection<DocumentActivity> ActivityHistory { get; set; }
+
+        public Document()
+        {
+            ActivityHistory = new HashSet<DocumentActivity>();
+            IfaNumber = string.Empty;
+            PolicyNumber = string.Empty;
+        }
     }
 }

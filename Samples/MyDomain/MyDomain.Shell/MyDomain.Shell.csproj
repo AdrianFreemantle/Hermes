@@ -40,12 +40,6 @@
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EventStore">
-      <HintPath>..\packages\EventStore.3.2.0.28\lib\net40\EventStore.dll</HintPath>
-    </Reference>
-    <Reference Include="EventStore.Serialization.Json">
-      <HintPath>..\packages\EventStore.Serialization.Json.3.2.0.28\lib\net40\EventStore.Serialization.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
@@ -67,7 +61,11 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="NEventStore">
+      <HintPath>..\packages\NEventStore.4.1.0.8\lib\net40\NEventStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -85,7 +83,6 @@
     <Compile Include="EventStore.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitOfWorkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

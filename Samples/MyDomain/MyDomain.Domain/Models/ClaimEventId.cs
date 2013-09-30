@@ -4,7 +4,7 @@ namespace MyDomain.Domain.Models
 {
     public class ClaimEventId : Identity
     {
-        public ClaimEventId(Guid id) 
+        public ClaimEventId(string id) 
             : base(id)
         {
         }

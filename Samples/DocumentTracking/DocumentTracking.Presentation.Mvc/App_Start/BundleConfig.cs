@@ -1,7 +1,6 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
-namespace DocumentTracking.Presentation.Mvc
+namespace DocumentTracking.Presentation.Mvc.App_Start
 {
     public class BundleConfig
     {
