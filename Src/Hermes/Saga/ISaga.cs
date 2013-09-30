@@ -1,7 +1,10 @@
-﻿namespace Hermes.Saga
+﻿using Hermes.Messaging;
+
+namespace Hermes.Saga
 {
-    public interface ISaga<T> where T : class, IContainSagaData
+    public interface ISaga<out T> where T : class, IContainSagaData
     {
-        T State { get; set; }
+        IPersistSagas SagaPersistence { get; set; }
+        IMessageBus Bus { get; set; }
     }
 }

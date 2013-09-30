@@ -64,7 +64,9 @@ namespace Hermes.ObjectBuilder.Autofac
             var builder = new ContainerBuilder();
 
             builder.RegisterAssemblyTypes(assemblies.ToArray())
-                   .AsClosedTypesOf(typeof(IHandleMessage<>)).InstancePerLifetimeScope();
+                   .AsClosedTypesOf(typeof(IHandleMessage<>))
+                   .InstancePerLifetimeScope()
+                   .PropertiesAutowired();
 
             builder.Update(lifetimeScope.ComponentRegistry);
         }

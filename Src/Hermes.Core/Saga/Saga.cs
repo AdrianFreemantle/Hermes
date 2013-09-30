@@ -5,38 +5,42 @@ using Hermes.Saga;
 
 namespace Hermes.Core.Saga
 {
-    public abstract class Saga<T> : ISaga<T> where T : class, IContainSagaData, new()
+    public abstract class Saga
     {
-        private readonly IPersistSagas sagaPersistence;
-        protected readonly IMessageBus Bus;
+        protected internal abstract void Save();
+    }
 
-        protected Saga(IPersistSagas sagaPersistence, IMessageBus bus)
-        {
-            this.sagaPersistence = sagaPersistence;
-            Bus = bus;
-        }
-
-        public T State { get; set; }
-
-        protected virtual void Begin()
-        {
-            Begin(Bus.CurrentMessageContext.CorrelationId);
-        }
+    public abstract class Saga<T> : Saga, ISaga<T> where T : class, IContainSagaData, new()
+    {
+        public IPersistSagas SagaPersistence { get; set; }
+        public IMessageBus Bus { get; set; }
+        public T State { get; protected set; }
+        protected internal bool IsComplete { get; protected set; }
 
         protected virtual void Begin(Guid id)
         {
-            var state = sagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
+            State = new T
+            {
+                Id = id,
+                OriginalMessageId = Bus.CurrentMessageContext.MessageId,
+                Originator = Bus.CurrentMessageContext.ReplyToAddress.ToString()
+            };
+
+            SagaPersistence.Create(State);
+        }
+
+        protected virtual void Continue(Guid sagaId)
+        {
+            State = SagaPersistence.Get<T>(sagaId);
+        }
+
+        protected virtual void BeginOrContinue(Guid id)
+        {
+            var state = SagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
 
             if (state == null)
             {
-                State = new T
-                {
-                    Id = id,
-                    OriginalMessageId = Bus.CurrentMessageContext.MessageId,
-                    Originator = Bus.CurrentMessageContext.ReplyToAddress.ToString()
-                };
-
-                sagaPersistence.Create(State);
+                Begin(id);
             }
             else
             {
@@ -44,24 +48,21 @@ namespace Hermes.Core.Saga
             }
         }
 
-        protected virtual void Save()
+        protected internal override void Save()
         {
-            sagaPersistence.Update(State);
-        }
+            if (IsComplete)
+            {
+                SagaPersistence.Complete(State.Id);
+            }
+            else
+            {
+                SagaPersistence.Update(State);
+            }
+        }        
 
-        protected virtual void Continue()
+        protected virtual void CompleteSaga()
         {
-            Continue(Bus.CurrentMessageContext.CorrelationId);
-        }
-
-        protected virtual void Continue(Guid sagaId)
-        {
-            State = sagaPersistence.Get<T>(sagaId);
-        }
-
-        protected virtual void Complete(Guid sagaId)
-        {
-            sagaPersistence.Complete(sagaId);
+            IsComplete = true;
         }
     }
 }

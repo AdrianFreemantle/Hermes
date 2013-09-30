@@ -20,29 +20,41 @@ namespace Hermes.Core
             if (handlers.Any())
             {
                 logger.Verbose("Dispatching message {0} to {1} handlers", message.GetType(), handlers.Length);
-                InvokeHandlers(handlers);                
+                InvokeHandlers(handlers, message);
+                TrySaveSaga(handlers);
             }
             else
             {
                 logger.Warn("No handlers for for message {0}", message.GetType());
             }
         }
-      
-        private static void InvokeHandlers(IEnumerable<Action> handlers)
+
+        private static void TrySaveSaga(IEnumerable<object> handlers)
         {
             foreach (var handler in handlers)
             {
-                handler.Invoke();
+                var saga = handler as Saga.Saga;
+
+                if (saga != null)
+                {
+                    saga.Save();
+                }
             }
         }
 
-        public IEnumerable<Action> GetHandlers(IServiceLocator serviceLocator, object message)
+        private static void InvokeHandlers(IEnumerable<object> handlers, object message)
+        {
+            foreach (var action in handlers.Select(h => CreateHandlerAction(message, h)))
+            {
+                action.Invoke();
+            }
+        }
+
+        private IEnumerable<object> GetHandlers(IServiceLocator serviceLocator, object message)
         {
             Type handlerGenericType = typeof(IHandleMessage<>);
             Type handlerType = handlerGenericType.MakeGenericType(new[] { message.GetType() });
-            var handlers = serviceLocator.GetAllInstances(handlerType);
-
-            return handlers.Select(h => CreateHandlerAction(message, h));
+            return serviceLocator.GetAllInstances(handlerType).ToArray();
         }
 
         private static Action CreateHandlerAction(object message, object handler)

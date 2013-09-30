@@ -1,4 +1,6 @@
-﻿namespace Hermes.Transports
+﻿using System;
+
+namespace Hermes.Transports
 {
     public interface IPublishMessages
     {
