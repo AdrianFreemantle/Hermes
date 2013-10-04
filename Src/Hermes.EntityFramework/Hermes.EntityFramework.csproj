@@ -55,10 +55,10 @@
     <Compile Include="IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SagaPersistence\EntityFrameworkSagaPersistenceConfiguration.cs" />
-    <Compile Include="SagaPersistence\SagaEntity.cs" />
-    <Compile Include="SagaPersistence\SagaEntityConfiguration.cs" />
-    <Compile Include="SagaPersistence\SagaPersister.cs" />
+    <Compile Include="SagaPersistence\EntityFrameworkPersistenceConfiguration.cs" />
+    <Compile Include="SagaPersistence\ProcessManagerEntity.cs" />
+    <Compile Include="SagaPersistence\ProcessManagerEntityConfiguration.cs" />
+    <Compile Include="SagaPersistence\ProcessManagerPersister.cs" />
     <Compile Include="UnitOfWorkManager.cs" />
   </ItemGroup>
   <ItemGroup>

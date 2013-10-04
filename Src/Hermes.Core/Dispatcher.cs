@@ -33,7 +33,7 @@ namespace Hermes.Core
         {
             foreach (var handler in handlers)
             {
-                var saga = handler as Saga.Saga;
+                var saga = handler as Saga.ProcessManager;
 
                 if (saga != null)
                 {

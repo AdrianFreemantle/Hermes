@@ -6,24 +6,24 @@ using Hermes.Serialization;
 
 namespace Hermes.EntityFramework.SagaPersistence
 {
-    public class SagaPersister : IPersistSagas
+    public class ProcessManagerPersister : IPersistProcessManagers
     {
         private readonly Encoding encoding = Encoding.UTF8;
 
         private readonly IUnitOfWork unitOfWork;
         private readonly ISerializeObjects serializer;
 
-        public SagaPersister(IUnitOfWork unitOfWork, ISerializeObjects serializer)
+        public ProcessManagerPersister(IUnitOfWork unitOfWork, ISerializeObjects serializer)
         {
             this.unitOfWork = unitOfWork;
             this.serializer = serializer;
         }
 
-        public void Create<T>(T saga) where T : class, IContainSagaData
+        public void Create<T>(T saga) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<SagaEntity>();
+            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
 
-            var entity = new SagaEntity
+            var entity = new ProcessManagerEntity
             {
                 Id = saga.Id,
                 State = Serialize(saga)
@@ -32,16 +32,16 @@ namespace Hermes.EntityFramework.SagaPersistence
             repository.Add(entity);
         }
 
-        public void Update<T>(T saga) where T : class, IContainSagaData
+        public void Update<T>(T saga) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<SagaEntity>();
-            SagaEntity entity = repository.Get(saga.Id);
+            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
+            ProcessManagerEntity entity = repository.Get(saga.Id);
             entity.State = Serialize(saga);
         }
 
-        public T Get<T>(Guid sagaId) where T : class, IContainSagaData
+        public T Get<T>(Guid sagaId) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<SagaEntity>();
+            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
             var entity = repository.Get(sagaId);
 
             if (entity == null)
@@ -54,7 +54,7 @@ namespace Hermes.EntityFramework.SagaPersistence
 
         public void Complete(Guid sagaId)
         {
-            var repository = unitOfWork.GetRepository<SagaEntity>();
+            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
             var entity = repository.Get(sagaId);
             repository.Remove(entity);
         }

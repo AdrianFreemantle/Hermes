@@ -3,9 +3,9 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace Hermes.EntityFramework.SagaPersistence
 {
-    public class SagaEntityConfiguration : EntityTypeConfiguration<SagaEntity>
+    public class ProcessManagerEntityConfiguration : EntityTypeConfiguration<ProcessManagerEntity>
     {
-        public SagaEntityConfiguration()
+        public ProcessManagerEntityConfiguration()
         {
             ToTable("SagaData");
             HasKey(entity => entity.Id);

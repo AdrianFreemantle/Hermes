@@ -5,14 +5,14 @@ using Hermes.Saga;
 
 namespace Hermes.Core.Saga
 {
-    public abstract class Saga
+    public abstract class ProcessManager
     {
         protected internal abstract void Save();
     }
 
-    public abstract class Saga<T> : Saga, ISaga<T> where T : class, IContainSagaData, new()
+    public abstract class ProcessManager<T> : ProcessManager, IProcessManager<T> where T : class, IContainProcessManagerData, new()
     {
-        public IPersistSagas SagaPersistence { get; set; }
+        public IPersistProcessManagers ProcessManagerPersistence { get; set; }
         public IMessageBus Bus { get; set; }
         public T State { get; protected set; }
         protected internal bool IsComplete { get; protected set; }
@@ -26,17 +26,17 @@ namespace Hermes.Core.Saga
                 Originator = Bus.CurrentMessageContext.ReplyToAddress.ToString()
             };
 
-            SagaPersistence.Create(State);
+            ProcessManagerPersistence.Create(State);
         }
 
         protected virtual void Continue(Guid sagaId)
         {
-            State = SagaPersistence.Get<T>(sagaId);
+            State = ProcessManagerPersistence.Get<T>(sagaId);
         }
 
         protected virtual void BeginOrContinue(Guid id)
         {
-            var state = SagaPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
+            var state = ProcessManagerPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
 
             if (state == null)
             {
@@ -52,11 +52,11 @@ namespace Hermes.Core.Saga
         {
             if (IsComplete)
             {
-                SagaPersistence.Complete(State.Id);
+                ProcessManagerPersistence.Complete(State.Id);
             }
             else
             {
-                SagaPersistence.Update(State);
+                ProcessManagerPersistence.Update(State);
             }
         }        
 

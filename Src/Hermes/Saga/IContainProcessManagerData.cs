@@ -4,7 +4,7 @@ using Hermes.Messaging;
 
 namespace Hermes.Saga
 {
-    public interface IContainSagaData
+    public interface IContainProcessManagerData
     {
         /// <summary>
         /// Gets/sets the Id of the process. Do NOT generate this value in your code.

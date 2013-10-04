@@ -16,12 +16,12 @@ namespace Hermes.Transports.SqlServer
         private readonly ISerializeObjects objectSerializer;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SqlMessageDequeueStrategy));
 
-        const int messageIdIndex = 0;
-        const int correlationIdIndex = 1;
-        const int replyToAddressIndex = 2;
-        const int timeToLiveIndex = 3;
-        const int headersIndex = 4;
-        const int bodyIndex = 5;
+        const int MessageIdIndex = 0;
+        const int CorrelationIdIndex = 1;
+        const int ReplyToAddressIndex = 2;
+        const int TimeToLiveIndex = 3;
+        const int HeadersIndex = 4;
+        const int BodyIndex = 5;
 
         public SqlMessageDequeueStrategy(ISerializeObjects objectSerializer)
         {
@@ -68,11 +68,11 @@ namespace Hermes.Transports.SqlServer
                         return TransportMessage.Undefined;
                     }
 
-                    var messageId = dataReader.GetGuid(messageIdIndex);
-                    var correlationId = dataReader.IsDBNull(correlationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(correlationIdIndex));
-                    var replyToAddress = dataReader.GetString(replyToAddressIndex);
-                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(headersIndex));
-                    var body = dataReader.IsDBNull(bodyIndex) ? null : dataReader.GetSqlBinary(bodyIndex).Value;
+                    var messageId = dataReader.GetGuid(MessageIdIndex);
+                    var correlationId = dataReader.IsDBNull(CorrelationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(CorrelationIdIndex));
+                    var replyToAddress = dataReader.GetString(ReplyToAddressIndex);
+                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(HeadersIndex));
+                    var body = dataReader.IsDBNull(BodyIndex) ? null : dataReader.GetSqlBinary(BodyIndex).Value;
 
                     return new TransportMessage(messageId, correlationId, Address.Parse(replyToAddress), timeTolive, headers, body);
                 }
@@ -83,14 +83,14 @@ namespace Hermes.Transports.SqlServer
 
         private static TimeSpan GetTimeTolive(SqlDataReader dataReader)
         {
-            if (dataReader.IsDBNull(timeToLiveIndex))
+            if (dataReader.IsDBNull(TimeToLiveIndex))
             {
                 return TimeSpan.MaxValue;
             }
 
-            DateTime expireDateTime = dataReader.GetDateTime(timeToLiveIndex);
+            DateTime expireDateTime = dataReader.GetDateTime(TimeToLiveIndex);
 
-            if (dataReader.GetDateTime(timeToLiveIndex) < DateTime.UtcNow)
+            if (dataReader.GetDateTime(TimeToLiveIndex) < DateTime.UtcNow)
             {
                 return TimeSpan.Zero;
             }

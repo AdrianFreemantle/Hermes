@@ -11,7 +11,7 @@ namespace Hermes.Core
         /// <summary>
         /// Map of message IDs to Async Results - useful for cleanup in case of timeouts.
         /// </summary>
-        protected readonly IDictionary<Guid, BusAsyncResult> messageIdToAsyncResultLookup = new Dictionary<Guid, BusAsyncResult>();
+        protected readonly IDictionary<Guid, BusAsyncResult> MessageIdToAsyncResultLookup = new Dictionary<Guid, BusAsyncResult>();
 
         public void HandleCorrelatedMessage(TransportMessage message, IReadOnlyCollection<object> messages)
         {
@@ -20,10 +20,10 @@ namespace Hermes.Core
 
             BusAsyncResult busAsyncResult;
 
-            lock (messageIdToAsyncResultLookup)
+            lock (MessageIdToAsyncResultLookup)
             {
-                messageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
-                messageIdToAsyncResultLookup.Remove(message.CorrelationId);
+                MessageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
+                MessageIdToAsyncResultLookup.Remove(message.CorrelationId);
             }
 
             if (busAsyncResult == null)
@@ -45,9 +45,9 @@ namespace Hermes.Core
 
             result.Registered += delegate(object sender, BusAsyncResultEventArgs args)
             {
-                lock (messageIdToAsyncResultLookup)
+                lock (MessageIdToAsyncResultLookup)
                 {
-                    messageIdToAsyncResultLookup[args.MessageId] = args.Result;
+                    MessageIdToAsyncResultLookup[args.MessageId] = args.Result;
                 }
             };
 

@@ -15,6 +15,16 @@ using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Core
 {
+    public interface IDeduplicateMessages
+    {
+        
+    }
+
+    public interface IStoreMessages
+    {
+        
+    }
+
     public class Processor : IProcessMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Processor));
