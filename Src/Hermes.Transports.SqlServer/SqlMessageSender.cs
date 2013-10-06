@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -24,12 +25,30 @@ namespace Hermes.Transports.SqlServer
         {
             using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
             {
-                using (var command = BuildSendCommand(transactionalConnection, transportMessage, address))
+                Send(transportMessage, address, transactionalConnection);
+
+                transactionalConnection.Commit();
+            }
+        }        
+
+        public void Send(IEnumerable<OutgoingMessage> messages)
+        {
+            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
+            {
+                foreach (var outgoingMessage in messages)
                 {
-                    command.ExecuteNonQuery();
+                    Send(outgoingMessage.TransportMessage, outgoingMessage.Address);
                 }
 
                 transactionalConnection.Commit();
+            }
+        }
+
+        private void Send(TransportMessage transportMessage, Address address, TransactionalSqlConnection transactionalConnection)
+        {
+            using (var command = BuildSendCommand(transactionalConnection, transportMessage, address))
+            {
+                command.ExecuteNonQuery();
             }
         }
 

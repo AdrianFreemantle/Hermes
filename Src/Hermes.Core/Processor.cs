@@ -9,22 +9,11 @@ using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Serialization;
-using Hermes.Transports;
 using Microsoft.Practices.ServiceLocation;
 using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Core
 {
-    public interface IDeduplicateMessages
-    {
-        
-    }
-
-    public interface IStoreMessages
-    {
-        
-    }
-
     public class Processor : IProcessMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Processor));
@@ -32,75 +21,34 @@ namespace Hermes.Core
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
         private readonly IContainer container;
-        private readonly ISendMessages messageSender;
-        private readonly IHandleMessageErrors errorProcessor;
 
         public event EventHandler<StartedMessageProcessingEventArgs> StartedMessageProcessing;
         public event EventHandler<CompletedMessageProcessingEventArgs> CompletedMessageProcessing;
         public event EventHandler<FailedMessageProcessingEventArgs> FailedMessageProcessing;
 
-        public Processor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container, ISendMessages messageSender, IHandleMessageErrors errorProcessor)
+        public Processor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IContainer container)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;
             this.container = container;
-            this.messageSender = messageSender;
-            this.errorProcessor = errorProcessor;
         }
 
         public void ProcessTransportMessage(TransportMessage transportMessage)
         {
             Logger.Verbose("Processing transport message {0}", transportMessage.MessageId);
-
-            object[] messages = ExtractMessages(transportMessage).ToArray();
-            RaiseStartedProcessingMessageEvent(transportMessage, messages);
-
+           
             try
             {
+                object[] messages = ExtractMessages(transportMessage).ToArray();
+                RaiseStartedProcessingMessageEvent(transportMessage, messages);
                 TryProcessEnvelope(transportMessage, messages);
                 RaiseMessageProcessingCompletedEvent(transportMessage, messages);
             }
             catch (Exception ex)
             {
                 Logger.Error("Error while processing transport message {0} {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
-                RaiseMessageProcessingFailedEvent(ex);
-                errorProcessor.Handle(transportMessage, ex);
+                RaiseMessageProcessingFailedEvent(ex, transportMessage);
             }
-        }
-
-        private void RaiseMessageProcessingFailedEvent(Exception ex)
-        {
-            if (FailedMessageProcessing != null)
-            {
-                FailedMessageProcessing(this, new FailedMessageProcessingEventArgs(ex));
-            }
-        }
-
-        private void RaiseMessageProcessingCompletedEvent(TransportMessage transportMessage, object[] messages)
-        {
-            if (CompletedMessageProcessing != null)
-            {
-                CompletedMessageProcessing(this, new CompletedMessageProcessingEventArgs(transportMessage, messages));
-            }
-        }
-
-        private void RaiseStartedProcessingMessageEvent(TransportMessage transportMessage, object[] messages)
-        {
-            if (StartedMessageProcessing != null)
-            {
-                StartedMessageProcessing(this, new StartedMessageProcessingEventArgs(transportMessage, messages));
-            }
-        }
-
-        private void OnRetryError(Exception ex)
-        {
-            if (ex is HermesTestingException)
-            {
-                Logger.Verbose("Attempting retry due to testing exception");
-                return;
-            }
-
-            Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
         }
 
         private void TryProcessEnvelope(TransportMessage transportMessage, IEnumerable<object> messages)
@@ -112,15 +60,12 @@ namespace Hermes.Core
                 try
                 {
                     Retry.Action(() => ProcessMessages(messages), OnRetryError, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
-                    errorProcessor.RemoveRetryHeaders(transportMessage);
-                    messageSender.Send(transportMessage, Settings.AuditEndpoint);
                     Logger.Verbose("Processing completed for transportMessage {0}", transportMessage.MessageId);
                 }
                 catch (Exception ex)
                 {
                     Logger.Error("Error while processing transport message {0} {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
-                    RaiseMessageProcessingFailedEvent(ex);
-                    errorProcessor.Handle(transportMessage, ex);
+                    RaiseMessageProcessingFailedEvent(ex, transportMessage);
                 }
                 
                 TestError.Throw();
@@ -140,11 +85,13 @@ namespace Hermes.Core
         private void TryProcessMessages(IEnumerable<object> messages, IContainer childContainer)
         {
             var unitsOfWork = childContainer.GetAllInstances<IManageUnitOfWork>().ToArray();
+            var outgoingMessages = childContainer.GetInstance<IManageOutgoingMessages>();
 
             try
             {                
                 DispatchToHandlers(messages, childContainer);
                 CommitUnitsOfWork(unitsOfWork);
+                outgoingMessages.Send();
             }
             catch 
             {
@@ -190,6 +137,17 @@ namespace Hermes.Core
                 unitOfWork.Rollback();
             }
         }
+
+        private void OnRetryError(Exception ex)
+        {
+            if (ex is HermesTestingException)
+            {
+                Logger.Verbose("Attempting retry due to testing exception");
+                return;
+            }
+
+            Logger.Warn("Error while processing message, attempting retry : {0}", ex.GetFullExceptionMessage());
+        }
   
         private IEnumerable<object> ExtractMessages(TransportMessage transportMessage)
         {
@@ -215,5 +173,31 @@ namespace Hermes.Core
                 throw new SerializationException("Could not deserialize message.", ex);
             }
         }
+
+
+        private void RaiseMessageProcessingFailedEvent(Exception ex, TransportMessage transportMessage)
+        {
+            if (FailedMessageProcessing != null)
+            {
+                FailedMessageProcessing(this, new FailedMessageProcessingEventArgs(ex, transportMessage));
+            }
+        }
+
+        private void RaiseMessageProcessingCompletedEvent(TransportMessage transportMessage, object[] messages)
+        {
+            if (CompletedMessageProcessing != null)
+            {
+                CompletedMessageProcessing(this, new CompletedMessageProcessingEventArgs(transportMessage, messages));
+            }
+        }
+
+        private void RaiseStartedProcessingMessageEvent(TransportMessage transportMessage, object[] messages)
+        {
+            if (StartedMessageProcessing != null)
+            {
+                StartedMessageProcessing(this, new StartedMessageProcessingEventArgs(transportMessage, messages));
+            }
+        }
+
     }
 }

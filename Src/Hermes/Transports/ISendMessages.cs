@@ -1,4 +1,6 @@
-﻿using Hermes.Messaging;
+﻿using System.Collections.Generic;
+
+using Hermes.Messaging;
 
 namespace Hermes.Transports
 {
@@ -17,5 +19,7 @@ namespace Hermes.Transports
         /// <param name="transportMessage"><see cref="TransportMessage"/> to send.</param>
         /// <param name="address">Destination <see cref="Address"/>.</param>
         void Send(TransportMessage transportMessage, Address address);
+
+        void Send(IEnumerable<OutgoingMessage> messages);
     }
 }

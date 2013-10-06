@@ -13,12 +13,17 @@ namespace Hermes.Core
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
+
+            if (!Settings.IsSendOnlyEndpoint)
+            {
+                Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
+                Settings.Builder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.SingleInstance);
+                Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
+            }
             
             return config;
         }
@@ -30,7 +35,6 @@ namespace Hermes.Core
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);

@@ -10,7 +10,6 @@ namespace Hermes.Saga
         /// <param name="state">The saga entity to save.</param>
         void Create<T>(T state) where T : class, IContainProcessManagerData;
 
-
         void Update<T>(T state) where T : class, IContainProcessManagerData;
 
         /// <summary>

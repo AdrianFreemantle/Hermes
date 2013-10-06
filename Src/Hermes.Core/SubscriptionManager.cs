@@ -1,5 +1,4 @@
 ﻿using System;
-using Hermes.Configuration;
 using Hermes.Messaging;
 using Hermes.Storage;
 

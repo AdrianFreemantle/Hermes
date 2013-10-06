@@ -35,6 +35,19 @@ namespace Hermes.Configuration
             return this;
         }
 
+        public static IConfigureEndpoint SendOnlyEndpoint(string endpointName, IContainerBuilder containerBuilder)
+        {
+            Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
+            Mandate.ParameterNotNull(containerBuilder, "containerBuilder");
+
+            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
+            Settings.Builder = containerBuilder;
+            Settings.SetEndpointName(endpointName);
+            Settings.IsSendOnlyEndpoint = true;
+            return Instance;
+        }
+
+
         public static IConfigureEndpoint Endpoint(string endpointName, IContainerBuilder containerBuilder)
         {
             Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
@@ -95,7 +108,6 @@ namespace Hermes.Configuration
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
-            queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
 

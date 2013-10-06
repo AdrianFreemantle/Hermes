@@ -92,11 +92,6 @@ namespace Hermes.Configuration
             get { return errorAddress; }
         }
 
-        public static Address AuditEndpoint
-        {
-            get { return auditAddress; }
-        }
-
         public static IMessageBus MessageBus
         {
             get { return builder.Container.GetInstance<IMessageBus>(); }
@@ -107,10 +102,11 @@ namespace Hermes.Configuration
             get { return builder.Container.GetInstance<IManageSubscriptions>(); }
         }
 
+        public static bool IsSendOnlyEndpoint { get; internal set; }
+
         internal static void SetEndpointName(string endpointName)
         {
             Address.InitializeLocalAddress(endpointName);
-            auditAddress = Address.Local.SubScope("Audit");
             errorAddress = Address.Local.SubScope("Error");            
         }
  

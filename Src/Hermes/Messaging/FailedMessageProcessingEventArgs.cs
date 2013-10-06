@@ -4,16 +4,13 @@ namespace Hermes.Messaging
 {
     public class FailedMessageProcessingEventArgs : EventArgs
     {
-        readonly Exception exception;
+        public Exception Exception { get; private set; }
+        public TransportMessage Message { get; private set; }
 
-        public Exception Exception
+        public FailedMessageProcessingEventArgs(Exception exception, TransportMessage message)
         {
-            get { return exception; }
-        }
-
-        public FailedMessageProcessingEventArgs(Exception exception)
-        {
-            this.exception = exception;
+            Exception = exception;
+            Message = message;
         }
     }
 }

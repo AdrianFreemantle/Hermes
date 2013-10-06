@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
+using Hermes.Configuration;
+using Hermes.Ioc;
 using Hermes.Messaging;
 using Hermes.Storage;
 using Hermes.Transports;
@@ -36,12 +39,22 @@ namespace Hermes.Core
                 return false;
             }
 
-            var transportMessage = messageFactory.BuildTransportMessage(messages);
+            var outgoingMessages = new List<OutgoingMessage>();
 
             foreach (var subscriber in subscribers)
             {
-                transportMessage.ChangeMessageId(IdentityFactory.NewComb());
-                messageSender.Send(transportMessage, subscriber);
+                var transportMessage = messageFactory.BuildTransportMessage(messages);
+                outgoingMessages.Add(new OutgoingMessage(transportMessage, subscriber));
+            }
+
+            if (Settings.IsSendOnlyEndpoint)
+            {
+                messageSender.Send(outgoingMessages);
+            }
+            else
+            {
+                var outgoingMessageManager = ServiceLocator.Current.GetService<IManageOutgoingMessages>();
+                outgoingMessageManager.Add(outgoingMessages);
             }
 
             return true;

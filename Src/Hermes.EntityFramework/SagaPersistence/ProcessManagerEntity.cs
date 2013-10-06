@@ -8,15 +8,4 @@ namespace Hermes.EntityFramework.SagaPersistence
         public Byte[] TimeStamp { get; set; }
         public byte[] State { get; set; }
     }
-
-    public class DeduplicationEntity
-    {
-        public Guid Id { get; set; }
-        public DateTime CreatedTimestamp { get; set; }
-
-        public DeduplicationEntity()
-        {
-            CreatedTimestamp = DateTime.Now;
-        }
-    }
 }

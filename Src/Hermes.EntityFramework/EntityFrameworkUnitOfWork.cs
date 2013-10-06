@@ -22,7 +22,7 @@ namespace Hermes.EntityFramework
             }
 
             Context.SaveChanges();           
-            Rollback();
+            Context.Database.Connection.Close();
         }
 
         public void Rollback()
