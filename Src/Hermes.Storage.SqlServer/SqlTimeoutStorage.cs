@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-using Hermes.Configuration;
+using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Storage;
 using Hermes.Serialization;
 
 namespace Hermes.Storage.SqlServer

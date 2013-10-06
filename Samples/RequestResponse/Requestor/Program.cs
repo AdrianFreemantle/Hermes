@@ -4,10 +4,9 @@ using System.Reflection;
 using System.Threading;
 
 using Hermes;
-using Hermes.Configuration;
-using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Storage.SqlServer;
@@ -21,14 +20,14 @@ namespace Requestor
     {
         private static readonly Random Rand = new Random();
         private static ILog Logger;
-        private const string ConnectionString = @"data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01;";
+        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
 
         private static void Main(string[] args)
         {
             ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
 
             Configure
-                .Endpoint("Requestor", new AutofacAdapter())
+                .ClientEndpoint("Requestor", new AutofacAdapter())
                 .UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()
@@ -48,7 +47,7 @@ namespace Requestor
             while (!token.IsCancellationRequested)
             {
                 Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
-                Thread.Sleep(1000);
+                Console.ReadKey();
             }
 
             Console.WriteLine("Finished");
@@ -75,5 +74,13 @@ namespace Requestor
                 Logger.Error("Error result returned");
             }
         }
-    }    
+    }
+    
+    public class Handler : IHandleMessage<AdditionResult>
+    {
+        public void Handle(AdditionResult message)
+        {
+            Console.WriteLine("Result is {0}", message.Result);
+        }
+    }
 }

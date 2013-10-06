@@ -54,7 +54,7 @@ namespace Hermes.ObjectBuilder.Autofac
             return new AutofacAdapter(lifetimeScope.BeginLifetimeScope());
         }
 
-        void IContainerBuilder.RegisterHandlers(IEnumerable<Assembly> assemblies)
+        void IContainerBuilder.RegisterMessageHandlers(IEnumerable<Assembly> assemblies)
         {
             if (assemblies == null)
             {

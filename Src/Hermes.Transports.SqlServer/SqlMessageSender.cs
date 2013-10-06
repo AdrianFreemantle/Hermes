@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-using Hermes.Configuration;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
 using Hermes.Serialization;
 
 namespace Hermes.Transports.SqlServer
@@ -37,7 +38,7 @@ namespace Hermes.Transports.SqlServer
             {
                 foreach (var outgoingMessage in messages)
                 {
-                    Send(outgoingMessage.TransportMessage, outgoingMessage.Address);
+                    Send(outgoingMessage.TransportMessage, outgoingMessage.Address, transactionalConnection);
                 }
 
                 transactionalConnection.Commit();

@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Transactions;
 
-using Hermes.Configuration;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Storage;
 
 namespace Hermes.Storage.SqlServer
 {
     public class SqlSubscriptionStorage : IStoreSubscriptions
     {
-        private readonly string connectionString;        
+        private readonly string connectionString;
 
         public SqlSubscriptionStorage()
         {
@@ -82,7 +84,7 @@ namespace Hermes.Storage.SqlServer
             }
         }
 
-        public IEnumerable<Address> GetSubscriberAddressesForMessage(IEnumerable<Type> messageTypes)
+        public IEnumerable<Address> GetSubscribersForMessageTypes(IEnumerable<Type> messageTypes)
         {
             var subscribers = new List<Address>();
 
@@ -108,6 +110,6 @@ namespace Hermes.Storage.SqlServer
             }
 
             return subscribers.Distinct();
-        }       
+        }
     }
 }

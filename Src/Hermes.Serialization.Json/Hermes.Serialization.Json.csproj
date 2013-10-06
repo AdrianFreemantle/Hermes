@@ -54,6 +54,10 @@
     <Compile Include="XContainerConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">
+      <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
+      <Name>Hermes.Messaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes\Hermes.csproj">
       <Project>{2266cc77-210b-48db-8fa9-29c4cb432c1a}</Project>
       <Name>Hermes</Name>

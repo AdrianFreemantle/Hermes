@@ -57,6 +57,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">
+      <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
+      <Name>Hermes.Messaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes\Hermes.csproj">
       <Project>{2266CC77-210B-48DB-8FA9-29C4CB432C1A}</Project>
       <Name>Hermes</Name>

@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Hermes.Configuration;
-using Hermes.Core;
+
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Storage.SqlServer;
@@ -21,14 +21,14 @@ namespace Respondor
 {
     class Program
     {
-        private const string ConnectionString = @"data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01;";
+        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
 
         private static void Main(string[] args)
         {
             ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
 
             Configure
-                .Endpoint("Respondor", new AutofacAdapter())
+                .ServerEndpoint("Respondor", new AutofacAdapter())
                 .UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()

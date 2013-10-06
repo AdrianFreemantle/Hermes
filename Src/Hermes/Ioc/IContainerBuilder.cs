@@ -9,6 +9,6 @@ namespace Hermes.Ioc
         IContainer Container { get; }
         void RegisterType<T>(DependencyLifecycle dependencyLifecycle);
         void RegisterSingleton<T>(object instance);
-        void RegisterHandlers(IEnumerable<Assembly> assemblies);
+        void RegisterMessageHandlers(IEnumerable<Assembly> assemblies);
     }
 }

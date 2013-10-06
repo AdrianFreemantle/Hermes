@@ -1,8 +1,6 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-
-using Hermes.Configuration;
-using Hermes.Messaging;
+﻿using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
 
 namespace Hermes.Transports.SqlServer
 {
@@ -17,15 +15,21 @@ namespace Hermes.Transports.SqlServer
 
         public void CreateQueueIfNecessary(Address address)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = TransactionalSqlConnection.Begin(connectionString))
             {
-                connection.Open();
+                var command = connection.BuildCommand(string.Format(SqlCommands.CreateQueue, address));
+                command.ExecuteNonQuery();
+                connection.Commit();
+            }
+        }
 
-                using (var command = new SqlCommand(string.Format(SqlCommands.CreateQueue, address.Queue), connection))
-                {
-                    command.CommandType = CommandType.Text; 
-                    command.ExecuteNonQuery();
-                }
+        public void Purge(Address address)
+        {
+            using (var connection = TransactionalSqlConnection.Begin(connectionString))
+            {
+                var command = connection.BuildCommand(string.Format(SqlCommands.PurgeQueue, address));
+                command.ExecuteNonQuery();
+                connection.Commit();
             }
         }
     }

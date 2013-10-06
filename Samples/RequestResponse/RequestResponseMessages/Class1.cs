@@ -1,12 +1,15 @@
-﻿namespace RequestResponseMessages
+﻿
+using Hermes;
+
+namespace RequestResponseMessages
 {
-    public class AddNumbers
+    public class AddNumbers : Command
     {
         public int X { get; set; }
         public int Y { get; set; }
     }
 
-    public class AdditionResult
+    public class AdditionResult : IMessage
     {
         public int Result { get; set; }
     }

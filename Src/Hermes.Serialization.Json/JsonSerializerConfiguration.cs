@@ -1,5 +1,5 @@
-﻿using Hermes.Configuration;
-using Hermes.Ioc;
+﻿using Hermes.Ioc;
+using Hermes.Messaging.Configuration;
 
 namespace Hermes.Serialization.Json
 {

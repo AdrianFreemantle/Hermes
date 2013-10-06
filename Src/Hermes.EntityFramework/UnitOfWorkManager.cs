@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Hermes.Messaging;
+
 namespace Hermes.EntityFramework
 {
     public class UnitOfWorkManager : IManageUnitOfWork

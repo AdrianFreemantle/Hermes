@@ -1,6 +1,6 @@
-﻿using Hermes.Configuration;
-using Hermes.Ioc;
+﻿using Hermes.Ioc;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 
 namespace Hermes.Transports.SqlServer
 {
@@ -10,7 +10,10 @@ namespace Hermes.Transports.SqlServer
 
         public static IConfigureEndpoint UseSqlTransport(this IConfigureEndpoint config, string connectionString)
         {
-            Address.IgnoreMachineName();
+            if (!Settings.IsClientEndpoint)
+            {
+                Address.IgnoreMachineName();
+            }
 
             Settings.Builder.RegisterType<SqlMessageDequeueStrategy>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<SqlMessageSender>(DependencyLifecycle.SingleInstance);

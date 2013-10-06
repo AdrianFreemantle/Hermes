@@ -14,13 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DA7D00
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Core", "Hermes.Core\Hermes.Core.csproj", "{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Messaging", "Hermes.Messaging\Hermes.Messaging.csproj", "{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ObjectBuilder.Autofac", "Hermes.ObjectBuilder.Autofac\Hermes.ObjectBuilder.Autofac.csproj", "{DB529F69-F0FE-4B40-BC7F-46850A7B400B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Storage.SqlServer", "Hermes.Storage.SqlServer\Hermes.Storage.SqlServer.csproj", "{5A6334D2-3410-47E3-B9A3-98A77108D58E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.EntityFramework", "Hermes.EntityFramework\Hermes.EntityFramework.csproj", "{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Domain", "Hermes.Domain\Hermes.Domain.csproj", "{0AAB1D40-4A95-4893-8127-694AEED84258}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,10 @@ Global
 		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AAB1D40-4A95-4893-8127-694AEED84258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AAB1D40-4A95-4893-8127-694AEED84258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AAB1D40-4A95-4893-8127-694AEED84258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AAB1D40-4A95-4893-8127-694AEED84258}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
