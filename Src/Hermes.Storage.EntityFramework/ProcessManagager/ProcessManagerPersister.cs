@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
-
+using Hermes.EntityFramework;
 using Hermes.Messaging.Saga;
 using Hermes.Serialization;
 
-namespace Hermes.EntityFramework.ProcessManagagerPersistence
+namespace Hermes.Storage.EntityFramework.ProcessManagager
 {
     public class ProcessManagerPersister : IPersistProcessManagers
     {

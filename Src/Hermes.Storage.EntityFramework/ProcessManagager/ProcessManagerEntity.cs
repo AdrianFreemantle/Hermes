@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.EntityFramework.ProcessManagagerPersistence
+namespace Hermes.Storage.EntityFramework.ProcessManagager
 {
     public class ProcessManagerEntity
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Hermes.Domain
+namespace Hermes
 {
     public static class ObjectFactory
     {

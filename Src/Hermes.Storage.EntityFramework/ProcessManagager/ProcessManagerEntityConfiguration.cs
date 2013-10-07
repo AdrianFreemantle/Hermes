@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
+using Hermes.EntityFramework;
 
-namespace Hermes.EntityFramework.ProcessManagagerPersistence
+namespace Hermes.Storage.EntityFramework.ProcessManagager
 {
     public class ProcessManagerEntityConfiguration : EntityTypeConfiguration<ProcessManagerEntity>
     {

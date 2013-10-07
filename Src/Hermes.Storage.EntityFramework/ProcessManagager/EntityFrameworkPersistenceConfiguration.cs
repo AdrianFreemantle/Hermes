@@ -1,13 +1,13 @@
 ﻿using System.Data.Entity;
-
+using Hermes.EntityFramework;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 
-namespace Hermes.EntityFramework.ProcessManagagerPersistence
+namespace Hermes.Storage.EntityFramework.ProcessManagager
 {
     public static class EntityFrameworkPersistenceConfiguration
     {
-        public static IConfigureEndpoint UseEntityFrameworkSagaPersister<TContext>(this IConfigureEndpoint config, string connectionStringName)
+        public static IConfigureEndpoint UseEntityFrameworkProcessManagagerStorage<TContext>(this IConfigureEndpoint config, string connectionStringName)
             where TContext : DbContext, new()
         {
             Settings.Builder.RegisterSingleton<IContextFactory>(new ContextFactory<TContext>(connectionStringName));
