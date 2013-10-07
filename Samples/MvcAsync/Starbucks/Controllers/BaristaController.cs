@@ -7,7 +7,6 @@ namespace Starbucks.Controllers
 {
     public class BaristaController : Controller
     {
-        [AsyncTimeout(100)]
         [HandleError(ExceptionType = typeof(TimeoutException), View = "Error")]
         public async Task<ActionResult> BuyCoffeeAsync()
         {

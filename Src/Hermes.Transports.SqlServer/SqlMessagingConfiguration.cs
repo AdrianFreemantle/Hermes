@@ -10,9 +10,11 @@ namespace Hermes.Transports.SqlServer
 
         public static IConfigureEndpoint UseSqlTransport(this IConfigureEndpoint config, string connectionString)
         {
-            if (!Settings.IsClientEndpoint)
+            Address.IgnoreMachineName();
+
+            if (Settings.IsClientEndpoint)
             {
-                Address.IgnoreMachineName();
+                Address.InitializeLocalAddress(Address.Local.Queue + "." + Address.Local.Machine);
             }
 
             Settings.Builder.RegisterType<SqlMessageDequeueStrategy>(DependencyLifecycle.SingleInstance);

@@ -74,7 +74,7 @@
     <Compile Include="IManageSubscriptions.cs" />
     <Compile Include="IMessageBus.cs" />
     <Compile Include="IMessageContext.cs" />
-    <Compile Include="IProcessIncommingMessages.cs" />
+    <Compile Include="IProcessIncomingMessages.cs" />
     <Compile Include="IReceiveMessages.cs" />
     <Compile Include="ITimeoutProcessor.cs" />
     <Compile Include="ITransportMessageFactory.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="LocalBus.cs" />
     <Compile Include="MessageContext.cs" />
-    <Compile Include="IncommingMessageProcessor.cs" />
+    <Compile Include="IncomingMessageProcessor.cs" />
     <Compile Include="Router.cs" />
     <Compile Include="MessageTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,9 +10,9 @@ using Hermes.Serialization;
 
 namespace Hermes.Messaging
 {
-    public class IncommingMessageProcessor : IProcessIncommingMessages
+    public class IncomingMessageProcessor : IProcessIncomingMessages
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncommingMessageProcessor));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
 
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
@@ -22,7 +22,7 @@ namespace Hermes.Messaging
         private TransportMessage transportMessage;
         private object[] messages;
 
-        public IncommingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, ICallBackManager callBackManager, IEnumerable<IManageUnitOfWork> unitsOfWork)
+        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, ICallBackManager callBackManager, IEnumerable<IManageUnitOfWork> unitsOfWork)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;

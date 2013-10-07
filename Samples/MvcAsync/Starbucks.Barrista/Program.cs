@@ -5,10 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-using Hermes.Configuration;
-using Hermes.Core;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using Hermes.Storage.SqlServer;
@@ -20,7 +19,7 @@ namespace Starbucks.Barrista
 {
     class Program
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        private const string ConnectionString = @"Data Source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;User ID=CG_T_USR_SYNAFreemantle;Password=vimes Sep01";
 
         static void Main(string[] args)
         {
@@ -35,7 +34,7 @@ namespace Starbucks.Barrista
         private static void ConfigureHermes()
         {
             Configure
-                .Endpoint("Barrista", new AutofacAdapter())
+                .ServerEndpoint("Barrista", new AutofacAdapter())
                 .UseConsoleWindowLogger()
                 .UseJsonSerialization()
                 .UseUnicastBus()

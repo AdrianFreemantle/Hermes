@@ -20,6 +20,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,8 +53,8 @@
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Core">
-      <HintPath>..\..\..\bin\Debug\Hermes.Core.dll</HintPath>
+    <Reference Include="Hermes.Messaging">
+      <HintPath>..\..\..\bin\Debug\Hermes.Messaging.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
       <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
@@ -297,6 +299,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

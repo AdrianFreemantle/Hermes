@@ -2,7 +2,7 @@
 
 namespace Hermes.Messaging
 {
-    public interface IProcessIncommingMessages
+    public interface IProcessIncomingMessages
     {
         void ProcessTransportMessage(TransportMessage transportMessage);
 

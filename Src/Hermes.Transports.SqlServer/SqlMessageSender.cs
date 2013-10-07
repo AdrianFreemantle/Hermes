@@ -55,7 +55,7 @@ namespace Hermes.Transports.SqlServer
 
         private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, TransportMessage transportMessage, Address address)
         {
-            var command = connection.BuildCommand(String.Format(SqlCommands.Send, address.Queue));
+            var command = connection.BuildCommand(String.Format(SqlCommands.Send, address));
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", transportMessage.MessageId);

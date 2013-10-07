@@ -20,7 +20,7 @@ namespace Requestor
     {
         private static readonly Random Rand = new Random();
         private static ILog Logger;
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
+        private const string ConnectionString = @"Data Source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;User ID=CG_T_USR_SYNAFreemantle;Password=vimes Sep01";
 
         private static void Main(string[] args)
         {

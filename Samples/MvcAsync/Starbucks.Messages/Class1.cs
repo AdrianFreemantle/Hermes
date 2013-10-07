@@ -1,6 +1,8 @@
-﻿namespace Starbucks.Messages
+﻿using Hermes;
+
+namespace Starbucks.Messages
 {
-    public class BuyCoffee
+    public class BuyCoffee : Command
     {
     }
 

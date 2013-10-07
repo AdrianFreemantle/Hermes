@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-
-
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
@@ -21,7 +15,7 @@ namespace Respondor
 {
     class Program
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
+        private const string ConnectionString = @"Data Source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;User ID=CG_T_USR_SYNAFreemantle;Password=vimes Sep01";
 
         private static void Main(string[] args)
         {

@@ -4,7 +4,7 @@ using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
 {
-    public class OutgoingMessagesUnitOfWork : IProcessOutgoingMessages
+    public class OutgoingMessagesUnitOfWork : IProcessOutgoingMessages, IManageUnitOfWork
     {
         readonly List<OutgoingMessage> outgoingMessages = new List<OutgoingMessage>();
         private readonly ISendMessages messageSender;
@@ -27,6 +27,21 @@ namespace Hermes.Messaging
         public void Add(IEnumerable<OutgoingMessage> messages)
         {
             outgoingMessages.AddRange(messages);
+        }
+
+        public void Dispose()
+        {
+            outgoingMessages.Clear();
+        }
+
+        public void Commit()
+        {
+            //no-op as we send outgoing messages outside of the client process transaction scope
+        }
+
+        public void Rollback()
+        {
+            outgoingMessages.Clear();
         }
     }
 }

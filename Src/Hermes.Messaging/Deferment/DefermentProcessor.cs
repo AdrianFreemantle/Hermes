@@ -3,7 +3,7 @@ using Hermes.Messaging.Storage;
 
 namespace Hermes.Messaging.Deferment
 {
-    public class DefermentProcessor : IProcessIncommingMessages
+    public class DefermentProcessor : IProcessIncomingMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(DefermentProcessor)); 
 

@@ -17,13 +17,13 @@ namespace Hermes.Messaging
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<IncommingMessageProcessor>(DependencyLifecycle.InstancePerLifetimeScope);
+            Settings.Builder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerLifetimeScope);
+            Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
 
             if (!Settings.IsClientEndpoint)
             {
                 Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
                 Settings.Builder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
-                Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             }
             
             return config;

@@ -9,7 +9,7 @@ namespace Hermes.Messaging
 {
     public class ErrorHandler : IHandleMessageErrors
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncommingMessageProcessor));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
         
         private readonly ISendMessages messageSender;
 

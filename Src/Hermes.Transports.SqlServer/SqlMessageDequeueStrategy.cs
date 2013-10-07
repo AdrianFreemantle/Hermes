@@ -47,7 +47,7 @@ namespace Hermes.Transports.SqlServer
         {
             using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
             {
-                using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address.Queue)))
+                using (var command = transactionalConnection.BuildCommand(String.Format(SqlCommands.Dequeue, address)))
                 {
                     var message = FetchNextMessage(command);
                     transactionalConnection.Commit();

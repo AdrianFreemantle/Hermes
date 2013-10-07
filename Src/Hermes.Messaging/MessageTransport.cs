@@ -7,6 +7,8 @@ using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
+using Microsoft.Practices.ServiceLocation;
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging
 {
@@ -58,30 +60,15 @@ namespace Hermes.Messaging
 
         private void OnMessageReceived(TransportMessage transportMessage)
         {
-            using (var scope = StartTransactionScope())
-            {
-                currentMessageBeingProcessed.Value = transportMessage;
-                ProcessIncommingMessage(transportMessage);
-                currentMessageBeingProcessed.Value = TransportMessage.Undefined;
-                scope.Complete();
-            }
-        }
-
-        private void ProcessIncommingMessage(TransportMessage transportMessage)
-        {
-            using (var childContainer = container.BeginLifetimeScope())
+            using (IContainer childContainer = container.BeginLifetimeScope())
             {
                 try
                 {
                     ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                    var processor = childContainer.GetInstance<IncommingMessageProcessor>();
-                    processor.ProcessTransportMessage(transportMessage);
-
-                    if (!Settings.IsClientEndpoint)
-                    {
-                        var outgoingMessages = childContainer.GetInstance<IProcessOutgoingMessages>();
-                        outgoingMessages.Send();
-                    }
+                    var processor = childContainer.GetInstance<IncomingMessageProcessor>();
+                    currentMessageBeingProcessed.Value = transportMessage;
+                    ProcessIncommingMessage(transportMessage, processor, childContainer);
+                    currentMessageBeingProcessed.Value = TransportMessage.Undefined;
                 }
                 catch (Exception ex)
                 {
@@ -89,12 +76,26 @@ namespace Hermes.Messaging
                 }
                 finally
                 {
-                    ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
+                    ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
             }
-
         }
 
+        private void ProcessIncommingMessage(TransportMessage transportMessage, IncomingMessageProcessor processor, IServiceLocator serviceProvider)
+        {
+            using (var scope = StartTransactionScope())
+            {
+                processor.ProcessTransportMessage(transportMessage);
+                scope.Complete();
+            }
+
+            if (!Settings.IsClientEndpoint)
+            {
+                var outgoingMessages = serviceProvider.GetInstance<IProcessOutgoingMessages>();
+                outgoingMessages.Send();
+            }
+        }
+       
         private static TransactionScope StartTransactionScope()
         {
             return Settings.UseDistributedTransaction

@@ -8,12 +8,12 @@ namespace Hermes.Messaging
     public class LocalBus : IInMemoryBus
     {
         private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessageBus));
-        private readonly IProcessIncommingMessages incommingMessageProcessor;
+        private readonly IProcessIncomingMessages incomingMessageProcessor;
         private readonly ITransportMessageFactory transportMessageFactory;
 
-        public LocalBus(IProcessIncommingMessages incommingMessageProcessor, ITransportMessageFactory transportMessageFactory)
+        public LocalBus(IProcessIncomingMessages incomingMessageProcessor, ITransportMessageFactory transportMessageFactory)
         {
-            this.incommingMessageProcessor = incommingMessageProcessor;
+            this.incomingMessageProcessor = incomingMessageProcessor;
             this.transportMessageFactory = transportMessageFactory;
             this.transportMessageFactory = transportMessageFactory;
         }
@@ -21,13 +21,13 @@ namespace Hermes.Messaging
         public void Execute(Guid corrolationId, params ICommand[] messages)
         {
             var transportMessage = transportMessageFactory.BuildTransportMessage(corrolationId, TimeSpan.MaxValue, messages);
-            incommingMessageProcessor.ProcessTransportMessage(transportMessage);
+            incomingMessageProcessor.ProcessTransportMessage(transportMessage);
         }
 
         public void Execute(params ICommand[] messages)
         {
             var transportMessage = transportMessageFactory.BuildTransportMessage(messages);
-            incommingMessageProcessor.ProcessTransportMessage(transportMessage);
+            incomingMessageProcessor.ProcessTransportMessage(transportMessage);
         }
 
         void IInMemoryBus.Raise(params IEvent[] events)
