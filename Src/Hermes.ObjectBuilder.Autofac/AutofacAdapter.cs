@@ -15,7 +15,7 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.ObjectBuilder.Autofac
 {
-    public class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, Ioc.IContainer
+    public sealed class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, Ioc.IContainer
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AutofacAdapter));
 
@@ -191,7 +191,7 @@ namespace Hermes.ObjectBuilder.Autofac
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposed)
             {

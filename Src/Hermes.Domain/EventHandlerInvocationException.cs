@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Hermes.Domain
 {
+    [Serializable]
     public class EventHandlerInvocationException : Exception
     {
         public EventHandlerInvocationException(EntityBase entity, DomainEvent @event, TargetInvocationException ex)

@@ -2,6 +2,7 @@
 
 namespace Hermes.Domain
 {
+    [Serializable]
     public class EventHandlerNotFoundException : Exception
     {
         public EventHandlerNotFoundException(EntityBase entity, DomainEvent @event)

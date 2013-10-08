@@ -42,6 +42,7 @@ namespace Hermes
             return BuildCommand(sql, CommandType.Text, parameters);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public SqlCommand BuildCommand(string sql, CommandType commandType, params SqlParameter[] parameters)
         {
             var command = new SqlCommand(sql, connection, transaction) {CommandType = commandType};

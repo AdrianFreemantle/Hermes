@@ -15,11 +15,6 @@ namespace Hermes.Domain
         {
             Identity = identity;
             eventHandlers = new Dictionary<Type, Action<object>>();
-            ScanForEventHandlers();
-        }
-
-        private void ScanForEventHandlers()
-        {
             GetEventHandlers();
         }
 
@@ -125,7 +120,7 @@ namespace Hermes.Domain
         }
 
         [DebuggerStepThrough]
-        protected virtual void GetEventHandlers()
+        private void GetEventHandlers()
         {
             Type EventBaseType = typeof(DomainEvent);
 
