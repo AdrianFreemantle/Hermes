@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Hermes.Domain
 {
-    [Serializable]
+    [DataContract]
     public abstract class Memento : IMemento
     {
-        IHaveIdentity IMemento.Identity { get; set; }
+        [DataMember(Name = "Identity")]
+        public IHaveIdentity Identity { get; set; }
     }
 }

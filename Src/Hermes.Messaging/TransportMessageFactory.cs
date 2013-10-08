@@ -32,7 +32,7 @@ namespace Hermes.Messaging
 
         public TransportMessage BuildTransportMessage(Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers)
         {
-            var messageBody = SerializeMessages(messages);
+            var messageBody = messageSerializer.Serialize(messages);
             return new TransportMessage(SequentialGuid.New(), correlationId, Address.Local, timeToLive, headers, messageBody);
         }
 
@@ -55,19 +55,6 @@ namespace Hermes.Messaging
             }
 
             return controlHeaders;
-        }
-
-        private byte[] SerializeMessages(object[] messages)
-        {
-            byte[] messageBody;
-
-            using (var stream = new MemoryStream())
-            {
-                messageSerializer.Serialize(messages, stream);
-                stream.Flush();
-                messageBody = stream.ToArray();
-            }
-            return messageBody;
-        }        
+        }     
     }
 }

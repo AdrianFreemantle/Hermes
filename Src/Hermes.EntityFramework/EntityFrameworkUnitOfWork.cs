@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace Hermes.EntityFramework
 {
-    public class EntityFrameworkUnitOfWork : IUnitOfWork, ILookupTableRepository
+    public class EntityFrameworkUnitOfWork : IUnitOfWork
     {
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
@@ -29,17 +29,7 @@ namespace Hermes.EntityFramework
 
         public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
-            return new EntityFrameworkRepository<TEntity>(Context.Set<TEntity>());
-        }
-
-        public TLookup Get<TLookup>(Enum id) where TLookup : ILookupTable
-        {
-            return Get<TLookup>((int)(dynamic)id);
-        }
-
-        public TLookup Get<TLookup>(int id) where TLookup : ILookupTable
-        {
-            return Context.Fetch<TLookup>(id);
+            return new EntityFrameworkRepository<TEntity>(Context);
         }
 
         ~EntityFrameworkUnitOfWork()

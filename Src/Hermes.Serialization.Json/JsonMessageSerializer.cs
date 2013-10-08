@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
@@ -8,7 +9,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Hermes.Serialization.Json
 {
-  public class JsonMessageSerializer : ISerializeMessages
+    public class JsonMessageSerializer : ISerializeMessages
     {
         private readonly Encoding encoding = Encoding.UTF8;
 
@@ -75,5 +76,32 @@ namespace Hermes.Serialization.Json
             var streamReader = new StreamReader(stream, encoding);
             return new JsonTextReader(streamReader);
         }
+
+        public virtual object[] Deserialize(byte[] body)
+        {
+            if (body == null || body.Length == 0)
+            {
+                return new object[0];
+            }
+
+            using (var stream = new MemoryStream(body))
+            {
+                return Deserialize(stream);
+            }
+        }
+
+        public virtual byte[] Serialize(object[] messages)
+        {
+            byte[] messageBody;
+
+            using (var stream = new MemoryStream())
+            {
+                Serialize(messages, stream);
+                stream.Flush();
+                messageBody = stream.ToArray();
+            }
+
+            return messageBody;
+        }   
     }
 }

@@ -8,6 +8,7 @@
         public const string RouteExpiredTimeoutTo = "Hermes.Timeout.RouteExpiredTimeoutTo";
         public const string OriginalReplyToAddress = "Hermes.Timeout.ReplyToAddress;";
         public const string ControlMessageHeader = "Hermes.ControlMessage";
-        public const string ReturnMessageErrorCodeHeader = "Hermes.ReturnMessageErrorCode";
+        public const string ReturnErrorCode = "Hermes.ReturnErrorCode";
+        public const string ReturnErrorMessage = "Hermes.ReturnErrorMessage";
     }
 }

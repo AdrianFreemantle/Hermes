@@ -1,19 +1,34 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Hermes.Domain
 {
+    [Serializable]
     [DataContract]
     public abstract class Identity<T> : IEquatable<Identity<T>>, IHaveIdentity
     {
         // ReSharper disable StaticFieldInGenericType
         private static readonly Type[] SupportTypes = {typeof(int), typeof(long), typeof(uint), typeof(ulong), typeof(Guid), typeof(string)};
         // ReSharper restore StaticFieldInGenericType
-        
+
         [DataMember]
-        protected T Id { get; private set; }
+        private readonly T id;
+
+        protected T Id
+        {
+            get { return (T)id; }
+        }
+
+        protected Identity()
+        {
+        }
+
+        protected Identity(T id)
+        {
+            VerifyIdentityType(id);
+            this.id = id;
+        }
 
         public virtual string GetTag()
         {
@@ -22,13 +37,7 @@ namespace Hermes.Domain
             return typeName.EndsWith("Id") 
                 ? typeName.Substring(0, typeName.Length - 2) 
                 : typeName;
-        }
-               
-        protected Identity(T id)
-        {           
-            VerifyIdentityType(id);
-            Id = id;
-        }
+        }                        
 
         public dynamic GetId()
         {

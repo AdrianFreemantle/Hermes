@@ -15,12 +15,37 @@ namespace Hermes.EntityFramework
         public Type ElementType { get { return DbSet.ElementType; } }
         public IQueryProvider Provider { get { return DbSet.Provider; } }
 
-        internal EntityFrameworkRepository(IDbSet<TEntity> dbSet)
+        internal EntityFrameworkRepository(DbContext context)
         {
-            this.DbSet = dbSet;
+            DbSet = context.Set<TEntity>();
         }
 
-        public TEntity Get(dynamic id)
+        public TEntity Get(int id)
+        {
+            return DbSet.Find(id);
+        }
+
+        public TEntity Get(long id)
+        {
+            return DbSet.Find(id);
+        }
+
+        public TEntity Get(uint id)
+        {
+            return DbSet.Find(id);
+        }
+
+        public TEntity Get(ulong id)
+        {
+            return DbSet.Find(id);
+        }
+
+        public TEntity Get(Guid id)
+        {
+            return DbSet.Find(id);
+        }
+
+        public TEntity Get(string id)
         {
             return DbSet.Find(id);
         }

@@ -27,6 +27,10 @@ namespace Hermes.EntityFramework
             }
         }
 
+        protected EnumWrapper()
+        {
+        }
+
         protected EnumWrapper(TEnum value)
         {
             SetIdValue(value);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -8,25 +7,6 @@ using System.Linq;
 
 namespace Hermes.EntityFramework
 {
-    public interface ICurrentUser
-    {
-        string UserName { get; }
-        bool IsAuthenticated { get; }
-    }
-
-    internal class NullUser : ICurrentUser
-    {
-        public string UserName
-        {
-            get { return string.Empty; }
-        }
-
-        public bool IsAuthenticated
-        {
-            get { return false; }
-        }
-    }
-
     public abstract class FrameworkContext : DbContext
     {
         public ICurrentUser CurrentUser { get; set; }
@@ -50,7 +30,7 @@ namespace Hermes.EntityFramework
 
         public virtual int SaveLookupTableChanges(params Type[] lookupTypes)
         {
-            OnlySaveLookupsOfType(lookupTypes);
+            SaveLookups(lookupTypes);
             UpdateEntityAuditData();
             return base.SaveChanges();
         }
@@ -58,7 +38,7 @@ namespace Hermes.EntityFramework
         public override int SaveChanges()
         {
             ValidateIds();
-            OnlySaveLookupsOfType();
+            SaveLookups();
             UpdateEntityAuditData();
 
             try
@@ -71,13 +51,13 @@ namespace Hermes.EntityFramework
             }
         }
 
-        protected virtual void OnlySaveLookupsOfType(params Type[] lookupTypesToSave)
+        protected virtual void SaveLookups(params Type[] lookupTypesToSave)
         {
             var currentLookupItems = ChangeTracker.Entries<ILookupTable>().ToList();
 
             foreach (var entry in currentLookupItems)
             {
-                if (lookupTypesToSave.Any(type => type.IsInstanceOfType(entry.Entity)))
+                if (lookupTypesToSave != null && lookupTypesToSave.Any(type => type.IsInstanceOfType(entry.Entity)))
                 {
                     continue;
                 }
@@ -88,7 +68,7 @@ namespace Hermes.EntityFramework
 
         protected virtual void UpdateEntityAuditData()
         {
-            var changedEntities = ChangeTracker.Entries<IPersistanceAudit>().ToList();
+            var changedEntities = ChangeTracker.Entries<IPersistenceAudit>().ToList();
 
             foreach (var entry in changedEntities)
             {
@@ -97,7 +77,7 @@ namespace Hermes.EntityFramework
             }
         }
 
-        protected virtual void AdjustUsers(DbEntityEntry<IPersistanceAudit> entity)
+        protected virtual void AdjustUsers(DbEntityEntry<IPersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
                 entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.UserName;
@@ -106,7 +86,7 @@ namespace Hermes.EntityFramework
                 entity.Entity.ModifiedBy = CurrentUser.UserName;
         }
 
-        protected virtual void AdjustTimestamps(DbEntityEntry<IPersistanceAudit> entity)
+        protected virtual void AdjustTimestamps(DbEntityEntry<IPersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
                 entity.Entity.CreatedTimestamp = entity.Entity.ModifiedTimestamp = DateTime.Now;
@@ -139,61 +119,13 @@ namespace Hermes.EntityFramework
         private object GetPrimaryKeyValue(DbEntityEntry entry)
         {
             var objectStateEntry = ((IObjectContextAdapter)this).ObjectContext.ObjectStateManager.GetObjectStateEntry(entry.Entity);
-            return objectStateEntry.EntityKey.EntityKeyValues[0].Value;
-        }
-    }
 
-    public interface IPersistanceAudit
-    {
-        string ModifiedBy { get; set; }
-        string CreatedBy { get; set; }
-        DateTime ModifiedTimestamp { get; set; }
-        DateTime CreatedTimestamp { get; set; }
-    }
+            if (objectStateEntry.EntityKey.EntityKeyValues != null && objectStateEntry.EntityKey.EntityKeyValues.Any())
+            {
+                return objectStateEntry.EntityKey.EntityKeyValues[0].Value;
+            }
 
-    [Serializable]
-    public class ConcurrencyException : Exception
-    {
-        /// <summary>
-        /// Initializes a new instance of the ConcurrencyException class.
-        /// </summary>
-        /// <param name="message">The message that describes the error.</param>
-        /// <param name="concurrencyException"></param>
-        public ConcurrencyException(string message, DbUpdateConcurrencyException concurrencyException)
-            : base(message, concurrencyException)
-        {
-        }
-
-        public ConcurrencyException(DbUpdateConcurrencyException concurrencyException)
-            : base(GetMessage(concurrencyException), concurrencyException)
-        {
-        }
-
-        static string GetMessage(DbUpdateConcurrencyException concurrencyException)
-        {
-            List<DbEntityEntry> entries = concurrencyException.Entries.ToList();
-            string entities = String.Join(", ", entries.ConvertAll(GetEntityName));
-            return "A concurrency exception occured in the following entities : " + entities;
-        }
-
-        private static string GetEntityName(DbEntityEntry input)
-        {
-            var type = input.Entity.GetType();
-
-            if (type.FullName.StartsWith("System.Data.Entity.DynamicProxies") && type.BaseType != null)
-                return type.BaseType.Name;
-
-            return type.FullName;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the ConcurrencyException class.
-        /// </summary>
-        /// <param name="message">The message that describes the error.</param>
-        /// <param name="innerException">The message that is the cause of the current exception.</param>
-        public ConcurrencyException(string message, Exception innerException)
-            : base(message, innerException)
-        {
+            return null;
         }
     }
 }

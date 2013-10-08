@@ -37,7 +37,7 @@ namespace Hermes.Messaging.BusCallback
         /// </summary>
         /// <param name="errorCode"></param>
         /// <param name="messages"></param>
-        public void Complete(int errorCode, IReadOnlyCollection<object> messages)
+        public void Complete(int errorCode, object[] messages)
         {
             result.ErrorCode = errorCode;
             result.Messages = messages;

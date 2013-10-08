@@ -8,7 +8,6 @@ namespace Hermes.Messaging
     {
         public static IConfigureEndpoint UseUnicastBus(this IConfigureEndpoint config)
         {
-            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
@@ -17,8 +16,11 @@ namespace Hermes.Messaging
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerLifetimeScope);
             Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
+
+            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerLifetimeScope);
+            Settings.Builder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerLifetimeScope);
+
 
             if (!Settings.IsClientEndpoint)
             {
@@ -31,7 +33,6 @@ namespace Hermes.Messaging
 
         public static IConfigureEndpoint UseDefermentBus(this IConfigureEndpoint config) 
         {
-            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<DefermentProcessor>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
@@ -41,6 +42,8 @@ namespace Hermes.Messaging
             Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
+
+            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerLifetimeScope);
 
             return config;
         }

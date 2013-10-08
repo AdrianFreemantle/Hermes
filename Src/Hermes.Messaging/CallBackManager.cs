@@ -5,14 +5,14 @@ using Hermes.Messaging.BusCallback;
 
 namespace Hermes.Messaging
 {
-    public class CallBackManager : ICallBackManager
+    public class CallBackManager : IManageCallbacks
     {
         /// <summary>
         /// Map of message IDs to Async Results - useful for cleanup in case of timeouts.
         /// </summary>
         protected readonly IDictionary<Guid, BusAsyncResult> MessageIdToAsyncResultLookup = new Dictionary<Guid, BusAsyncResult>();
 
-        public void HandleCallback(TransportMessage message, IReadOnlyCollection<object> messages)
+        public void HandleCallback(TransportMessage message, object[] messages)
         {
             if (message.CorrelationId == Guid.Empty)
                 return;
@@ -28,12 +28,26 @@ namespace Hermes.Messaging
             if (busAsyncResult == null)
                 return;
 
-            var statusCode = 0;
+            if (message.IsControlMessage())
+            {
+                if (message.Headers.ContainsKey(Headers.ReturnErrorCode))
+                {
+                    HandleErrorMessage(busAsyncResult, message);
+                    return;
+                }
 
-            if (message.IsControlMessage() && message.Headers.ContainsKey(Headers.ReturnMessageErrorCodeHeader))
-                statusCode = int.Parse(message.Headers[Headers.ReturnMessageErrorCodeHeader]);
+                busAsyncResult.Complete(0, messages);
+                return;
+            }
 
-            busAsyncResult.Complete(statusCode, messages);
+            busAsyncResult.Complete(0, messages);
+        }
+
+        private void HandleErrorMessage(BusAsyncResult busAsyncResult, TransportMessage message)
+        {
+            int statusCode = int.Parse(message.Headers[Headers.ReturnErrorCode]);
+            string statusMessage = message.Headers[Headers.ReturnErrorMessage];
+            busAsyncResult.Complete(statusCode, new object[] {statusMessage});
         }
 
         public ICallback SetupCallback(Guid messageId)

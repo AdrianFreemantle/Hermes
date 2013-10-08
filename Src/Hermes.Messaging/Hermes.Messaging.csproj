@@ -59,7 +59,7 @@
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Headers.cs" />
     <Compile Include="ICallback.cs" />
-    <Compile Include="ICallBackManager.cs" />
+    <Compile Include="IManageCallbacks.cs" />
     <Compile Include="IManageUnitOfWork.cs" />
     <Compile Include="IProcessOutgoingMessages.cs" />
     <Compile Include="IStartableMessageBus.cs" />

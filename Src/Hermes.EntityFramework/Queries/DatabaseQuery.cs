@@ -4,13 +4,17 @@ using System.Linq;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class DatabaseQuery : IDatabaseQuery, IDataQuery
+    public class DatabaseQuery : ISqlQuery, IEntityQuery
     {
         private readonly DbContext context;
  
         public DatabaseQuery(IContextFactory contextFactory)
         {
             context = contextFactory.GetContext();
+
+            context.Configuration.AutoDetectChangesEnabled = false;
+            context.Configuration.LazyLoadingEnabled = false;
+            context.Configuration.ProxyCreationEnabled = false;
         }
 
         public IEnumerable<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters) 
@@ -21,6 +25,6 @@ namespace Hermes.EntityFramework.Queries
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class
         {
             return context.Set<TEntity>();
-        }
+        }        
     }
 }

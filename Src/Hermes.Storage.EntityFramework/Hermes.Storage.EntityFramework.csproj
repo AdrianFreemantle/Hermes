@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,7 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProcessManagager\EntityFrameworkPersistenceConfiguration.cs" />
+    <Compile Include="KeyValueStore\KeyValueEntity.cs" />
+    <Compile Include="KeyValueStore\KeyValueEntityConfiguration.cs" />
+    <Compile Include="KeyValueStore\KeyValueStorePersister.cs" />
+    <Compile Include="EntityFrameworkPersistenceConfiguration.cs" />
     <Compile Include="ProcessManagager\ProcessManagerEntity.cs" />
     <Compile Include="ProcessManagager\ProcessManagerEntityConfiguration.cs" />
     <Compile Include="ProcessManagager\ProcessManagerPersister.cs" />
@@ -54,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes.EntityFramework\Hermes.EntityFramework.csproj">
-      <Project>{6FD32DC4-BA2B-4B5E-9666-7C6ED5AAE09A}</Project>
+      <Project>{6fd32dc4-ba2b-4b5e-9666-7c6ed5aae09a}</Project>
       <Name>Hermes.EntityFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">

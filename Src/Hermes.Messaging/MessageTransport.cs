@@ -20,7 +20,7 @@ namespace Hermes.Messaging
         private readonly IReceiveMessages messageReceiver;
         private readonly ITransportMessageFactory transportMessageFactory;
         private readonly IHandleMessageErrors errorProcessor;
-        private readonly ICallBackManager callBackManager;
+        private readonly IManageCallbacks callBackManager;
         private readonly IContainer container;
         
         private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();
@@ -33,7 +33,7 @@ namespace Hermes.Messaging
             }
         }
 
-        public MessageTransport(ISendMessages messageSender, IReceiveMessages messageReceiver, ITransportMessageFactory transportMessageFactory, IHandleMessageErrors errorProcessor, ICallBackManager callBackManager, IContainer container)
+        public MessageTransport(ISendMessages messageSender, IReceiveMessages messageReceiver, ITransportMessageFactory transportMessageFactory, IHandleMessageErrors errorProcessor, IManageCallbacks callBackManager, IContainer container)
         {
             this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;

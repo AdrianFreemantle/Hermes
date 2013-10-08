@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public interface IDataQuery
+    public interface IEntityQuery
     {
         IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class;
     }

@@ -16,13 +16,13 @@ namespace Hermes.Messaging
 
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
-        private readonly ICallBackManager callBackManager;
+        private readonly IManageCallbacks callBackManager;
         private readonly ICollection<IManageUnitOfWork> unitsOfWork;
 
         private TransportMessage transportMessage;
         private object[] messages;
 
-        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, ICallBackManager callBackManager, IEnumerable<IManageUnitOfWork> unitsOfWork)
+        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IManageCallbacks callBackManager, IEnumerable<IManageUnitOfWork> unitsOfWork)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;
@@ -35,7 +35,7 @@ namespace Hermes.Messaging
             Logger.Verbose("Processing transport message {0}", incommingTransportMessage.MessageId);
 
             transportMessage = incommingTransportMessage;
-            ExtractMessages();
+            messages = messageSerializer.Deserialize(incommingTransportMessage.Body);
 
             callBackManager.HandleCallback(transportMessage, messages);
 
@@ -86,27 +86,6 @@ namespace Hermes.Messaging
             foreach (var unitOfWork in unitsOfWork)
             {
                 unitOfWork.Rollback();
-            }
-        }
-  
-        private void ExtractMessages()
-        {
-            if (transportMessage.Body == null || transportMessage.Body.Length == 0)
-            {
-                messages = new object[0];
-                return;
-            }
-
-            try
-            {
-                using (var stream = new MemoryStream(transportMessage.Body))
-                {
-                    messages = messageSerializer.Deserialize(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new SerializationException("Could not deserialize message.", ex);
             }
         }
     }

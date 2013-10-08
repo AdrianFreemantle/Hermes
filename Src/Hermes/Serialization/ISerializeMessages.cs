@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace Hermes.Serialization
 {
@@ -22,5 +20,9 @@ namespace Hermes.Serialization
         /// <param name="stream">Stream that contains messages.</param>
         /// <returns>Deserialized messages.</returns>
         object[] Deserialize(Stream stream);
+
+        object[] Deserialize(byte[] body);
+
+        byte[] Serialize(object[] messages);
     }
 }

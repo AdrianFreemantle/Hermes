@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
     <Compile Include="DomainEvent.cs" />
+    <Compile Include="DomainException.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityBase.cs" />
     <Compile Include="EventDoesNotMutateStateAttribute.cs" />

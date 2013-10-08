@@ -68,6 +68,21 @@ namespace Hermes.Domain
             return (TEntity)entity;
         }
 
+        protected TEntity Get<TEntity>(Func<TEntity, bool> predicate) where TEntity : IEntity
+        {
+            return GetAll<TEntity>().SingleOrDefault(predicate);
+        }
+
+        protected ICollection<TEntity> GetAll<TEntity>() where TEntity : IEntity
+        {
+            return Entities.Where(e => e is TEntity).Cast<TEntity>().ToArray();
+        }
+
+        protected ICollection<TEntity> GetAll<TEntity>(Func<TEntity, bool> predicate) where TEntity : IEntity
+        {
+            return GetAll<TEntity>().Where(predicate).ToArray();
+        }
+
         protected override void RaiseEvent(DomainEvent @event)
         {
             SaveEvent(@event);

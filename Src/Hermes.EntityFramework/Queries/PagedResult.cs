@@ -7,7 +7,7 @@ namespace Hermes.EntityFramework.Queries
         /// <summary>
         /// The actual results from a query
         /// </summary>
-        public IList<T> Results { get; private set; }
+        public IReadOnlyList<T> Results { get; private set; }
 
         /// <summary>
         /// The current page number for this query result
@@ -34,12 +34,7 @@ namespace Hermes.EntityFramework.Queries
         /// </summary>
         public int TotalResultCount { get; private set; }
 
-        public PagedResult()
-        {
-            
-        }
-
-        public PagedResult(IList<T> results, int currentPage, int pageSize, int totalCount)
+        public PagedResult(List<T> results, int currentPage, int pageSize, int totalCount)
         {
             Mandate.ParameterNotNull(results, "results");
  
