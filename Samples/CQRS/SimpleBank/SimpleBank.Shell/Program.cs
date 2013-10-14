@@ -19,7 +19,8 @@ namespace SimpleBank.Shell
 {
     class Program
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
+        //private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
+        private const string ConnectionString = "data source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;Persist Security Info=True;User ID=CG_T_USR_SYNAFreemantle;password=vimes Sep01";
         static ILog Logger;
 
         private static void Main(string[] args)

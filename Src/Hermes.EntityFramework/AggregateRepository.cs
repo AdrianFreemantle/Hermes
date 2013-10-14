@@ -1,11 +1,8 @@
 ﻿using System.Linq;
-
-using Hermes;
 using Hermes.Domain;
-using Hermes.EntityFramework;
 using Hermes.Messaging;
 
-namespace SimpleBank.ApplicationService
+namespace Hermes.EntityFramework
 {
     public class AggregateRepository : IAggregateRepository
     {

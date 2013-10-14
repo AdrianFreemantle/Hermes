@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Hermes.Domain;
+using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
 
@@ -37,7 +38,7 @@ namespace SimpleBank.ApplicationService
             }
             catch (DomainRuleException ex)
             {
-                HandleDomainRuleViolation(message.PortfolioId, ex);
+                HandleException(message.PortfolioId, ex);
             }
         }
 
@@ -53,11 +54,11 @@ namespace SimpleBank.ApplicationService
             }
             catch (DomainRuleException ex)
             {
-                HandleDomainRuleViolation(id, ex);
+                HandleException(id, ex);
             }
         }
 
-        private void HandleDomainRuleViolation(PortfolioId id, DomainRuleException ex)
+        private void HandleException(PortfolioId id, DomainRuleException ex)
         {
             bus.Return(ReturnCodes.DomainRuleError, ex.Message);
             Logger.Error("Domain rule violation while processing message {0} on {1} : {2}", bus.CurrentMessageContext.MessageId, id, ex.Message);

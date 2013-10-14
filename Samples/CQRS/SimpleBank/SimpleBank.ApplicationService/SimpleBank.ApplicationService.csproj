@@ -84,9 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateRepository.cs" />
     <Compile Include="AccountService.cs" />
-    <Compile Include="IAggregateRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Projections\PortfolioProjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

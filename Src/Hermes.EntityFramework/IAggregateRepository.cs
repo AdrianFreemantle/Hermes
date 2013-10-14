@@ -1,8 +1,8 @@
 ﻿using Hermes.Domain;
 
-namespace SimpleBank.ApplicationService
+namespace Hermes.EntityFramework
 {
-    public interface IAggregateRepository 
+    public interface IAggregateRepository
     {
         TAggregate Get<TAggregate>(IHaveIdentity id) where TAggregate : class, IAggregate;
         void Add(IAggregate aggregate);
