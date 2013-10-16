@@ -6,7 +6,7 @@ namespace Hermes.Domain
 {
     [Serializable]
     [DataContract]
-    public abstract class Identity<T> : IEquatable<Identity<T>>, IHaveIdentity
+    public abstract class Identity<T> : IEquatable<Identity<T>>, IIdentity
     {
         // ReSharper disable StaticFieldInGenericType
         private static readonly Type[] SupportTypes = {typeof(int), typeof(long), typeof(uint), typeof(ulong), typeof(Guid), typeof(string)};

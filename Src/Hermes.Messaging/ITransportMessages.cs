@@ -26,5 +26,7 @@ namespace Hermes.Messaging
         ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages);
         ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers);
         void SendControlMessage(Address recipient, Guid correlationId, params HeaderValue[] headerValues);
+
+        void OnMessageReceived(TransportMessage transportMessage);
     }
 }

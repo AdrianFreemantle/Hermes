@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Domain", "Hermes.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Storage.EntityFramework", "Hermes.Storage.EntityFramework\Hermes.Storage.EntityFramework.csproj", "{299719B2-B7F5-4F51-A8D2-A462579348E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ServiceHost", "Hermes.ServiceHost\Hermes.ServiceHost.csproj", "{925AAF48-6C3C-4606-9FC6-49A5175C1B26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{299719B2-B7F5-4F51-A8D2-A462579348E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{299719B2-B7F5-4F51-A8D2-A462579348E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{299719B2-B7F5-4F51-A8D2-A462579348E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

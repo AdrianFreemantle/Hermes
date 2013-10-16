@@ -4,6 +4,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 
+using Hermes.Messaging;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

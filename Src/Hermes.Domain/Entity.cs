@@ -4,7 +4,7 @@
     {
         protected Aggregate Parent;
 
-        protected Entity(Aggregate parent, IHaveIdentity identity)
+        protected Entity(Aggregate parent, IIdentity identity)
             : base(identity)
         {
             SetParent(parent);

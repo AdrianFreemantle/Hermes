@@ -4,6 +4,6 @@
     {
         SingleInstance,
         InstancePerDependency,
-        InstancePerLifetimeScope
+        InstancePerUnitOfWork
     }
 }

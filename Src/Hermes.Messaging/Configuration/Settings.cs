@@ -11,11 +11,10 @@ namespace Hermes.Messaging.Configuration
     public static class Settings
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
-
-        private static IContainerBuilder builder;
+        
         private static Address errorAddress = Address.Undefined;
         private static Address defermentEndpoint = Address.Parse("Deferment");
-
+        private static IContainer rootContainer;
         private static int firstLevelRetryAttempts = 3;
         private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
         private static int secondLevelRetryAttempts = 3;
@@ -31,28 +30,17 @@ namespace Hermes.Messaging.Configuration
 
         public static bool UseDistributedTransaction { get; internal set; }
 
-        public static IContainerBuilder Builder
-        {
-            get
-            {
-                if (builder == null)
-                    throw new InvalidOperationException("Please add a call to Configure.DefaultBuilder() or any of the other supported builders to set one up");
-
-                return builder;
-            }
-
-            internal set { builder = value; }
-        } 
-
         public static IContainer RootContainer
         {
             get
             {
-                if (builder == null)
-                    throw new InvalidOperationException("Please add a call to Configure.DefaultBuilder() or any of the other supported builders to set one up");
+                if (rootContainer == null)
+                    throw new InvalidOperationException("IoC container has not been built.");
 
-                return builder.Container;
-            } 
+                return rootContainer;
+            }
+
+            internal set { rootContainer = value; }
         }
 
         public static int SecondLevelRetryAttempts
@@ -92,12 +80,12 @@ namespace Hermes.Messaging.Configuration
 
         public static IMessageBus MessageBus
         {
-            get { return builder.Container.GetInstance<IMessageBus>(); }
+            get { return RootContainer.GetInstance<IMessageBus>(); }
         }
 
         public static IManageSubscriptions Subscriptions
         {
-            get { return builder.Container.GetInstance<IManageSubscriptions>(); }
+            get { return RootContainer.GetInstance<IManageSubscriptions>(); }
         }
 
         public static bool IsClientEndpoint { get; internal set; }
@@ -126,6 +114,10 @@ namespace Hermes.Messaging.Configuration
             }
 
             settings.Add(settingKey, value);
-        }              
+        }
+
+        internal static Func<Type, bool> IsMessageType { get; set; }
+        internal static Func<Type, bool> IsCommandType { get; set; }
+        internal static Func<Type, bool> IsEventType { get; set; }
     }
 }

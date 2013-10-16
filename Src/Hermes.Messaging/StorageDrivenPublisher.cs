@@ -22,18 +22,14 @@ namespace Hermes.Messaging
             this.messageFactory = messageFactory;
         }
 
-        public bool Publish(params IEvent[] messages)
+        public bool Publish(params object[] messages)
         {
             return Publish(Guid.Empty, messages);
         }
 
-        public bool Publish(Guid correlationId, params IEvent[] messages)
+        public bool Publish(Guid correlationId, params object[] messages)
         {
-            if (messages == null || messages.Length == 0)
-                throw new InvalidOperationException("Cannot publish an empty set of messages.");
-
-            if (subscriptionStorage == null)
-                throw new InvalidOperationException("Cannot publish on this endpoint - no subscription storage has been configured.");
+            GuardPublisher(messages);
 
             Type[] messageTypes = messages.Select(o => o.GetType()).ToArray();
             Address[] subscribers = subscriptionStorage.GetSubscribersForMessageTypes(messageTypes).ToArray();
@@ -43,14 +39,14 @@ namespace Hermes.Messaging
                 return false;
             }
 
-            var outgoingMessages = new List<OutgoingMessage>();
+            var outgoingMessages = BuildOutgoingMessages(correlationId, messages, subscribers);
+            PublishMessages(outgoingMessages);
 
-            foreach (var subscriber in subscribers)
-            {
-                var transportMessage = messageFactory.BuildTransportMessage(correlationId, messages);
-                outgoingMessages.Add(new OutgoingMessage(transportMessage, subscriber));
-            }
+            return true;
+        }
 
+        private void PublishMessages(IEnumerable<OutgoingMessage> outgoingMessages)
+        {
             if (Settings.IsClientEndpoint)
             {
                 messageSender.Send(outgoingMessages);
@@ -60,8 +56,33 @@ namespace Hermes.Messaging
                 var outgoingMessageManager = ServiceLocator.Current.GetService<IProcessOutgoingMessages>();
                 outgoingMessageManager.Add(outgoingMessages);
             }
+        }
 
-            return true;
+        private IEnumerable<OutgoingMessage> BuildOutgoingMessages(Guid correlationId, object[] messages, IEnumerable<Address> subscribers)
+        {
+            var outgoingMessages = new List<OutgoingMessage>();
+
+            foreach (var subscriber in subscribers)
+            {
+                var transportMessage = messageFactory.BuildTransportMessage(correlationId, messages);
+                outgoingMessages.Add(new OutgoingMessage(transportMessage, subscriber));
+            }
+
+            return outgoingMessages;
+        }
+
+        private void GuardPublisher(object[] messages)
+        {
+            if (messages == null || messages.Length == 0)
+            {
+                throw new InvalidOperationException("Cannot publish an empty set of messages.");
+            }
+
+            if (subscriptionStorage == null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot publish on this endpoint - no subscription storage has been configured.");
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Hermes.Ioc;
-using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Storage.SqlServer
@@ -10,10 +9,18 @@ namespace Hermes.Storage.SqlServer
 
         public static IConfigureEndpoint UseSqlStorage(this IConfigureEndpoint config, string connectionString)
         {
-            Settings.Builder.RegisterType<SqlSubscriptionStorage>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlTimeoutStorage>(DependencyLifecycle.SingleInstance);
             Settings.AddSetting(StorageConnectionStringKey, connectionString);
+            config.RegisterDependancies(new SqlStorageDependancyRegistrar());
             return config;
+        }
+
+        private class SqlStorageDependancyRegistrar : IRegisterDependancies
+        {
+            public void Register(IContainerBuilder containerBuilder)
+            {
+                containerBuilder.RegisterType<SqlSubscriptionStorage>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<SqlTimeoutStorage>(DependencyLifecycle.SingleInstance);
+            }
         }
     }
 }

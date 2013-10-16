@@ -4,22 +4,22 @@ namespace Hermes.Messaging
 {
     public interface IMessageBus  
     {
-        ICallback Send(params ICommand[] messages);
-        ICallback Send(Address address, params ICommand[] messages);
-        ICallback Send(Address address, Guid corrolationId, params ICommand[] messages);
-        ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params ICommand[] messages);
-        ICallback Send(Guid corrolationId, params ICommand[] messages);
-        ICallback Send(Guid corrolationId, TimeSpan timeToLive, params ICommand[] messages);
+        ICallback Send(params object[] messages);
+        ICallback Send(Address address, params object[] messages);
+        ICallback Send(Address address, Guid corrolationId, params object[] messages);
+        ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages);
+        ICallback Send(Guid corrolationId, params object[] messages);
+        ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages);
 
-        void Publish(params IEvent[] messages);
-        void Publish(Guid correlationId, params IEvent[] messages);
+        void Publish(params object[] messages);
+        void Publish(Guid correlationId, params object[] messages);
 
-        void Reply(params IMessage[] messages);
+        void Reply(params object[] messages);
         void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;
         void Return<TEnum>(TEnum errorCode, string errorMessage) where TEnum : struct, IComparable, IFormattable, IConvertible;
 
-        void Defer(TimeSpan delay, params ICommand[] messages);
-        void Defer(TimeSpan delay, Guid corrolationId, params ICommand[] messages);
+        void Defer(TimeSpan delay, params object[] messages);
+        void Defer(TimeSpan delay, Guid corrolationId, params object[] messages);
 
         IMessageContext CurrentMessageContext { get; }
     }

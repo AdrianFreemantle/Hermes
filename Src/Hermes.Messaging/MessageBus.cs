@@ -9,7 +9,7 @@ using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
 {
-    public class MessageBus : IMessageBus, IStartableMessageBus, IDisposable
+    public class MessageBus : IMessageBus, IAmStartable, IDisposable
     {
         private static readonly ILog logger = LogFactory.BuildLogger(typeof(MessageBus)); 
 
@@ -44,12 +44,12 @@ namespace Hermes.Messaging
             Stop();
         }
 
-        public void Defer(TimeSpan delay, params ICommand[] messages)
+        public void Defer(TimeSpan delay, params object[] messages)
         {
             Defer(delay, Guid.Empty, messages);
         }
 
-        public void Defer(TimeSpan delay, Guid correlationId, params ICommand[] messages)
+        public void Defer(TimeSpan delay, Guid correlationId, params object[] messages)
         {
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
@@ -66,34 +66,34 @@ namespace Hermes.Messaging
             messageTransport.SendMessage(Settings.DefermentEndpoint, correlationId, delay, messages, headers); 
         }
 
-        public ICallback Send(params ICommand[] messages)
+        public ICallback Send(params object[] messages)
         {
             Address destination = GetDestination(messages);
             return Send(destination, messages);
         }
 
-        public ICallback Send(Address address, params ICommand[] messages)
+        public ICallback Send(Address address, params object[] messages)
         {
             return Send(address, Guid.Empty, messages);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, params ICommand[] messages)
+        public ICallback Send(Address address, Guid corrolationId, params object[] messages)
         {
             return SendMessages(address, corrolationId, TimeSpan.MaxValue, messages);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params ICommand[] messages)
+        public ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages)
         {
             return SendMessages(address, corrolationId, timeToLive, messages);
         }
 
-        public ICallback Send(Guid corrolationId, params ICommand[] messages)
+        public ICallback Send(Guid corrolationId, params object[] messages)
         {
             Address destination = GetDestination(messages);
             return SendMessages(destination, corrolationId, TimeSpan.MaxValue, messages);
         }
 
-        public ICallback Send(Guid corrolationId, TimeSpan timeToLive, params ICommand[] messages)
+        public ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages)
         {
             Address destination = GetDestination(messages);
             return SendMessages(destination, corrolationId, timeToLive, messages);
@@ -107,7 +107,7 @@ namespace Hermes.Messaging
             return messageTransport.SendMessage(address, corrolationId, timeToLive, messages);
         }
 
-        public void Reply(params IMessage[] messages)
+        public void Reply(params object[] messages)
         {
             var currentMessage = messageTransport.CurrentTransportMessage;
 
@@ -139,14 +139,14 @@ namespace Hermes.Messaging
             var errorMessageHeader = HeaderValue.FromString(Headers.ReturnErrorMessage, errorMessage);
 
             messageTransport.SendControlMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, errorCodeHeader, errorMessageHeader);
-        }      
+        }
 
-        public void Publish(params IEvent[] messages)
+        public void Publish(params object[] messages)
         {
             messagePublisher.Publish(messages);
         }
 
-        public void Publish(Guid correlationId, params IEvent[] messages)
+        public void Publish(Guid correlationId, params object[] messages)
         {
             messagePublisher.Publish(correlationId, messages);
         }       

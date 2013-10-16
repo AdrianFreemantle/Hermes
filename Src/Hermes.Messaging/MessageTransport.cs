@@ -58,7 +58,7 @@ namespace Hermes.Messaging
             messageReceiver.Stop();
         }
 
-        private void OnMessageReceived(TransportMessage transportMessage)
+        public void OnMessageReceived(TransportMessage transportMessage)
         {
             using (IContainer childContainer = container.BeginLifetimeScope())
             {

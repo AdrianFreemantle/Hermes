@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization.Formatters;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Hermes.Serialization.Json
 {
@@ -15,14 +17,19 @@ namespace Hermes.Serialization.Json
             TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            MissingMemberHandling = MissingMemberHandling.Error,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Populate,
-            DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+            Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.RoundtripKind }, new XContainerConverter() }
         };
 
         public T DeserializeObject<T>(string value)
         {
             return JsonConvert.DeserializeObject<T>(value, SerializerSettings);
+        }
+
+        public object DeserializeObject<T>(string value, Type type)
+        {
+            return JsonConvert.DeserializeObject(value, type, SerializerSettings);
         }
 
         public object DeserializeObject(string value, Type type)

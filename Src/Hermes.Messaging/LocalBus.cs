@@ -1,36 +1,38 @@
 ﻿using System;
 
 using Hermes.Ioc;
-using Hermes.Logging;
 
 namespace Hermes.Messaging
 {
     public class LocalBus : IInMemoryBus
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessageBus));
-        private readonly IProcessIncomingMessages incomingMessageProcessor;
+        private readonly ITransportMessages messageTransport;
         private readonly ITransportMessageFactory transportMessageFactory;
 
-        public LocalBus(IProcessIncomingMessages incomingMessageProcessor, ITransportMessageFactory transportMessageFactory)
+        public LocalBus(ITransportMessages messageTransport, ITransportMessageFactory transportMessageFactory)
         {
-            this.incomingMessageProcessor = incomingMessageProcessor;
+            this.messageTransport = messageTransport;
             this.transportMessageFactory = transportMessageFactory;
             this.transportMessageFactory = transportMessageFactory;
         }
 
-        public void Execute(Guid corrolationId, params ICommand[] messages)
+        public void Execute(Guid corrolationId, params object[] messages)
         {
+            if (messageTransport.CurrentTransportMessage != TransportMessage.Undefined)
+            {
+                throw new InvalidOperationException("Only one comand may be processed at a time. Either group all required commands together in a single Execute call or send additional commands via the message bus.");
+            }
+
             var transportMessage = transportMessageFactory.BuildTransportMessage(corrolationId, TimeSpan.MaxValue, messages);
-            incomingMessageProcessor.ProcessTransportMessage(transportMessage);
+            messageTransport.OnMessageReceived(transportMessage);
         }
 
-        public void Execute(params ICommand[] messages)
+        public void Execute(params object[] messages)
         {
-            var transportMessage = transportMessageFactory.BuildTransportMessage(messages);
-            incomingMessageProcessor.ProcessTransportMessage(transportMessage);
+            Execute(Guid.Empty, messages);
         }
 
-        void IInMemoryBus.Raise(params IEvent[] events)
+        void IInMemoryBus.Raise(params object[] events)
         {
             var dispatcher = ServiceLocator.Current.GetService<IDispatchMessagesToHandlers>();
 

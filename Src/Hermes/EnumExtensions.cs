@@ -56,15 +56,19 @@ namespace Hermes
 
         private static string GetFieldDescription(FieldInfo field)
         {
-            string name = field.Name;
             var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
 
-            if (!ReferenceEquals(null, attr))
+            if (ReferenceEquals(null, attr))
             {
-                name = attr.Description;
+                return SplitCamelCase(field.Name);
             }
 
-            return name;
+            return attr.Description;
+        }
+
+        static string SplitCamelCase(string input)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(input, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim();
         }
 
         private static bool FieldHasIgnoreForSelectListAttribute(FieldInfo field)

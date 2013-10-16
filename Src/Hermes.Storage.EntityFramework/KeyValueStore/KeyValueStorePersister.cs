@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,9 +13,9 @@ namespace Hermes.Storage.EntityFramework.KeyValueStore
         private readonly Encoding encoding = Encoding.UTF8;
 
         private readonly IUnitOfWork unitOfWork;
-        private readonly ISerializeMessages serializer;
+        private readonly ISerializeObjects serializer;
 
-        public KeyValueStorePersister(IUnitOfWork unitOfWork, ISerializeMessages serializer)
+        public KeyValueStorePersister(IUnitOfWork unitOfWork, ISerializeObjects serializer)
         {
             this.unitOfWork = unitOfWork;
             this.serializer = serializer;
@@ -28,6 +29,9 @@ namespace Hermes.Storage.EntityFramework.KeyValueStore
 
         public void Add(dynamic key, object value)
         {
+            Mandate.ParameterNotNull(key, "Please provide a non-null key");
+            Mandate.ParameterNotNull(value, "Please provide a non null value to store.");
+
             string id = ToHash(key);
 
             var repository = unitOfWork.GetRepository<KeyValueEntity>();
@@ -36,7 +40,8 @@ namespace Hermes.Storage.EntityFramework.KeyValueStore
             {
                 Id = id,
                 Key = key.ToString(),
-                Value = serializer.Serialize(new[] {value})
+                ValueType = value.GetType().AssemblyQualifiedName,
+                Value = Serialize(value)
             };
 
             repository.Add(entity);
@@ -44,14 +49,18 @@ namespace Hermes.Storage.EntityFramework.KeyValueStore
 
         public void Update(dynamic key, object value)
         {
+            Mandate.ParameterNotNull(key, "Please provide a non-null key");
+            Mandate.ParameterNotNull(value, "Please provide a non-null value to update.");
+
             string id = ToHash(key);
 
             var repository = unitOfWork.GetRepository<KeyValueEntity>();
             KeyValueEntity entity = repository.Get(id);
-            entity.Value = serializer.Serialize(new[] {value});
+            entity.Value = Serialize(value);
+            entity.ValueType = value.GetType().AssemblyQualifiedName;
         }
 
-        public object Get(dynamic key) 
+        public object Get(dynamic key)
         {
             string id = ToHash(key);
 
@@ -63,7 +72,24 @@ namespace Hermes.Storage.EntityFramework.KeyValueStore
                 return null;
             }
 
-            return serializer.Deserialize(entity.Value)[0];
+            return Deserialize(entity.Value, Type.GetType(entity.ValueType));
+        }
+
+        public object Deserialize(byte[] body, Type objectType)
+        {
+            if (body == null || body.Length == 0)
+            {
+                return new object();
+            }
+
+            var serialized = encoding.GetString(body);
+            return serializer.DeserializeObject(serialized, objectType);
+        }
+
+        public byte[] Serialize(object value)
+        {
+            var serialized = serializer.SerializeObject(value);
+            return encoding.GetBytes(serialized);
         }
     }
 }

@@ -51,6 +51,8 @@
     <Compile Include="BusCallback\Callback.cs" />
     <Compile Include="BusCallback\BusAsyncResult.cs" />
     <Compile Include="CallBackManager.cs" />
+    <Compile Include="ClientEndpoint.cs" />
+    <Compile Include="CompletionResult.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="Configuration\EnvironmentConfigurationException.cs" />
@@ -62,7 +64,6 @@
     <Compile Include="IManageCallbacks.cs" />
     <Compile Include="IManageUnitOfWork.cs" />
     <Compile Include="IProcessOutgoingMessages.cs" />
-    <Compile Include="IStartableMessageBus.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="CompletedMessageProcessingEventArgs.cs" />
     <Compile Include="FailedMessageProcessingEventArgs.cs" />
@@ -76,9 +77,11 @@
     <Compile Include="IMessageContext.cs" />
     <Compile Include="IProcessIncomingMessages.cs" />
     <Compile Include="IReceiveMessages.cs" />
+    <Compile Include="ISerializeMessages.cs" />
     <Compile Include="ITimeoutProcessor.cs" />
     <Compile Include="ITransportMessageFactory.cs" />
     <Compile Include="ITransportMessages.cs" />
+    <Compile Include="MessageSerializationBinder.cs" />
     <Compile Include="OutgoingMessage.cs" />
     <Compile Include="StartedMessageProcessingEventArgs.cs" />
     <Compile Include="TransportMessage.cs" />
@@ -113,9 +116,10 @@
     <Compile Include="SubscriptionManager.cs" />
     <Compile Include="TransportMessageFactory.cs" />
     <Compile Include="Transports\ICreateQueues.cs" />
-    <Compile Include="Transports\IMessageDequeueStrategy.cs" />
+    <Compile Include="Transports\IDequeueMessages.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ISendMessages.cs" />
+    <Compile Include="WorkerEndpoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes\Hermes.csproj">

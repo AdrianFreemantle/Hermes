@@ -8,10 +8,10 @@ namespace Hermes.Domain
 {
     public abstract class EntityBase : IEntity
     {
-        public IHaveIdentity Identity { get; set; }
+        public IIdentity Identity { get; set; }
         private readonly Dictionary<Type, Action<object>> eventHandlers;
 
-        protected EntityBase(IHaveIdentity identity)
+        protected EntityBase(IIdentity identity)
         {
             Identity = identity;
             eventHandlers = new Dictionary<Type, Action<object>>();

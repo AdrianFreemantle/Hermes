@@ -7,10 +7,6 @@ using Hermes;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-using Hermes.ObjectBuilder.Autofac;
-using Hermes.Serialization.Json;
-using Hermes.Storage.SqlServer;
-using Hermes.Transports.SqlServer;
 
 using RequestResponseMessages;
 
@@ -20,34 +16,22 @@ namespace Requestor
     {
         private static readonly Random Rand = new Random();
         private static ILog Logger;
-        private const string ConnectionString = @"Data Source=CG-T-SQL-03V;Initial Catalog=CG_T_DB_MSGBRKR;User ID=CG_T_USR_SYNAFreemantle;Password=vimes Sep01";
 
         private static void Main(string[] args)
         {
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
+            Logger = LogFactory.BuildLogger(typeof(Program));
 
-            Configure
-                .ClientEndpoint("Requestor", new AutofacAdapter())
-                .UseConsoleWindowLogger()
-                .UseJsonSerialization()
-                .UseUnicastBus()
-                .UseDistributedTransaction()
-                .UseSqlTransport(ConnectionString)
-                .UseSqlStorage(ConnectionString)
-                .RegisterMessageRoute<AddNumbers>(Address.Parse("Respondor"))
-                .ScanForHandlersIn(Assembly.GetExecutingAssembly())
-                .Start();
-
-            Logger = LogFactory.BuildLogger(typeof(Program));        
-            var token = new CancellationTokenSource(TimeSpan.FromHours(2));
-
-            Console.WriteLine("Press any key to send a request");
-            Console.ReadKey();
-
-            while (!token.IsCancellationRequested)
+            using (var requestor = new RequestorEndpoint())
             {
-                Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
-                Console.ReadKey();
+                requestor.Start();
+
+                Console.WriteLine("Press any key to send a request - x to exit");
+
+                while (Console.ReadKey().KeyChar != 'x')
+                {
+                    Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
+                    Console.WriteLine("Press any key to send a request - x to exit");
+                }
             }
 
             Console.WriteLine("Finished");
@@ -73,14 +57,6 @@ namespace Requestor
             {
                 Logger.Error("Error result returned");
             }
-        }
-    }
-    
-    public class Handler : IHandleMessage<AdditionResult>
-    {
-        public void Handle(AdditionResult message)
-        {
-            Console.WriteLine("Result is {0}", message.Result);
         }
     }
 }

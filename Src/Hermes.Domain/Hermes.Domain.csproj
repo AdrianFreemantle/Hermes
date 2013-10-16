@@ -52,7 +52,7 @@
     <Compile Include="IAmRestorable.cs" />
     <Compile Include="Identity.cs" />
     <Compile Include="IEntity.cs" />
-    <Compile Include="IHaveIdentity.cs" />
+    <Compile Include="IIdentity.cs" />
     <Compile Include="IMemento.cs" />
     <Compile Include="Memento.cs" />
     <Compile Include="NullIdentity.cs" />

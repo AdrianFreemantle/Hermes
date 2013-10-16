@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using Hermes.Ioc;
@@ -8,9 +10,10 @@ using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Configuration
 {
-    public class Configure : IConfigureEndpoint
+    public class Configure : IConfigureEndpoint, IConfigureWorker
     {
         private static readonly Configure Instance;
+        private static IContainerBuilder containerBuilder;        
 
         static Configure()
         {
@@ -19,58 +22,69 @@ namespace Hermes.Messaging.Configuration
 
         private Configure()
         {
-        }
-
-
-        IConfigureEndpoint IConfigureEndpoint.UseConsoleWindowLogger()
-        {
             LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-            return this;
+            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Verbose;
         }
 
-        IConfigureEndpoint IConfigureEndpoint.Logger(Func<Type, ILog> buildLogger)
+        internal static Configure ClientEndpoint(string endpointName, IContainerBuilder builder)
         {
-            LogFactory.BuildLogger = buildLogger;
-            return this;
-        }
-
-        public static IConfigureEndpoint ClientEndpoint(string endpointName, IContainerBuilder containerBuilder)
-        {
-            Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
-            Mandate.ParameterNotNull(containerBuilder, "containerBuilder");
-
-            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
-            Settings.Builder = containerBuilder;
-            Settings.SetEndpointName(endpointName);
             Settings.IsClientEndpoint = true;
+            ConfigureEndpoint(endpointName, builder);
             return Instance;
         }
 
+        internal static Configure WorkerEndpoint(string endpointName, IContainerBuilder builder)
+        {
+            ConfigureEndpoint(endpointName, builder);            
+            return Instance;
+        }
 
-        public static IConfigureEndpoint ServerEndpoint(string endpointName, IContainerBuilder containerBuilder)
+        private static void ConfigureEndpoint(string endpointName, IContainerBuilder builder)
         {
             Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
-            Mandate.ParameterNotNull(containerBuilder, "containerBuilder");
+            Mandate.ParameterNotNull(builder, "builder");
 
-            containerBuilder.RegisterSingleton<IContainerBuilder>(containerBuilder);
-            Settings.Builder = containerBuilder;
+            containerBuilder = builder;
+            containerBuilder.RegisterSingleton(containerBuilder);
+            UnicastBusDependancyRegistrar.Register(containerBuilder);
+
+            using (var scanner = new AssemblyScanner())
+            {
+                containerBuilder.RegisterMessageHandlers(scanner.Assemblies);
+            }
+
             Settings.SetEndpointName(endpointName);
-            return Instance;
+            Settings.RootContainer = containerBuilder.BuildContainer();
         }
 
-        IConfigureEndpoint IConfigureEndpoint.NumberOfWorkers(int numberOfWorkers)
+        public IConfigureEndpoint DefineMessageAs(Func<Type, bool> isMessageRule)
+        {
+            Settings.IsMessageType = isMessageRule;
+            return this;
+        }
+
+        public IConfigureEndpoint DefineCommandAs(Func<Type, bool> isCommandRule)
+        {
+            Settings.IsCommandType = isCommandRule;
+            return this;
+        }
+
+        public IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule)
+        {
+            Settings.IsEventType = isEventRule;
+            return this;
+        }
+
+        internal static Func<Type, bool> IsCommandType { get; set; }
+        internal static Func<Type, bool> IsEventType { get; set; }
+
+        public IConfigureEndpoint NumberOfWorkers(int numberOfWorkers)
         {
             Settings.NumberOfWorkers = numberOfWorkers;
             return this;
         }
 
-        IConfigureEndpoint IConfigureEndpoint.ScanForHandlersIn(params Assembly[] assemblies)
-        {
-            Settings.Builder.RegisterMessageHandlers(assemblies);
-            return this;
-        }
-
-        IConfigureEndpoint IConfigureEndpoint.RegisterMessageRoute<TMessage>(Address endpointAddress)
+        public IConfigureEndpoint RegisterMessageRoute<TMessage>(Address endpointAddress)
         {
             var router = Settings.RootContainer.GetInstance<IRegisterMessageRoute>();
             router.RegisterRoute(typeof(TMessage), endpointAddress);
@@ -83,27 +97,33 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        public IConfigureEndpoint UseDistributedTransaction()
+        IConfigureWorker IConfigureWorker.UseDistributedTransaction()
         {
             Settings.UseDistributedTransaction = true;
             return this;
         }
 
-        IConfigureEndpoint IConfigureEndpoint.FirstLevelRetryPolicy(int attempts, TimeSpan delay)
-        {
-            Settings.FirstLevelRetryAttempts = attempts;
-            Settings.FirstLevelRetryDelay = delay;
-            return this;
-        }
-
-        IConfigureEndpoint IConfigureEndpoint.SecondLevelRetryPolicy(int attempts, TimeSpan delay)
+        IConfigureWorker IConfigureWorker.SecondLevelRetryPolicy(int attempts, TimeSpan delay)
         {
             Settings.SecondLevelRetryAttempts = attempts;
             Settings.SecondLevelRetryDelay = delay;
             return this;
         }
 
-        void IConfigureEndpoint.Start()
+        public IConfigureEndpoint FirstLevelRetryPolicy(int attempts, TimeSpan delay)
+        {
+            Settings.FirstLevelRetryAttempts = attempts;
+            Settings.FirstLevelRetryDelay = delay;
+            return this;
+        }
+
+        public IConfigureEndpoint RegisterDependancies(IRegisterDependancies registerationHolder)
+        {
+            registerationHolder.Register(containerBuilder);
+            return this;
+        }
+
+        internal void Start()
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
@@ -118,14 +138,32 @@ namespace Hermes.Messaging.Configuration
                 queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
             }
 
-            var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
+            var busStarter = Settings.RootContainer.GetInstance<IAmStartable>();
             busStarter.Start();
         }
 
-        void IConfigureEndpoint.Stop()
+        internal void Stop()
         {
-            var busStarter = Settings.RootContainer.GetInstance<IStartableMessageBus>();
+            var busStarter = Settings.RootContainer.GetInstance<IAmStartable>();
             busStarter.Stop();
         }
+
+        public IConfigureEndpoint DefiningMessagesAs(Func<Type, bool> definesMessageType)
+        {
+            Settings.IsMessageType = definesMessageType;
+            return this;
+        }
+
+        public IConfigureEndpoint DefiningCommandsAs(Func<Type, bool> definesCommandType)
+        {
+            Settings.IsCommandType = definesCommandType;
+            return this;
+        }
+
+        public IConfigureEndpoint DefiningEventsAs(Func<Type, bool> definesEventType)
+        {
+            Settings.IsEventType = definesEventType;
+            return this;
+        }      
     }
 }

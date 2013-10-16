@@ -9,41 +9,29 @@ namespace Hermes
     {
         const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 
-        public static T CreateInstance<T>(params object[] parameters) where T : class
+        public static object CreateInstance(Type type, params object[] parameters)
         {
-            Type[] types = parameters.Length == 0 
-                ? new Type[0] 
+            Type[] types = parameters.Length == 0
+                ? new Type[0]
                 : parameters.ToList().ConvertAll(input => input.GetType()).ToArray();
 
-            var constructor = typeof(T).GetConstructor(Flags, null, types, null);
-            return constructor.Invoke(parameters) as T;
+            var constructor = type.GetConstructor(Flags, null, types, null);
+            return constructor.Invoke(parameters);
         }
 
-        public static List<TBase> CreateInstancesImplimentingBase<TBase>(string assemblyName) where TBase : class
+        public static T CreateInstance<T>(params object[] parameters) where T : class
         {
-            var assembly = Assembly.Load(assemblyName);
-            var concreteSubTypes = GetConcreteSubTypes<TBase>(assembly);
-            return CreateInstancesImplimentingBase<TBase>(concreteSubTypes);
+            return CreateInstance(typeof (T), parameters) as T;
         }
 
-        public static List<TBase> CreateInstancesImplimentingBase<TBase>() where TBase : class
+        public static bool HasDefaultConstructor<T>()
         {
-            var assembly = Assembly.GetAssembly(typeof(TBase));
-            var concreteSubTypes = GetConcreteSubTypes<TBase>(assembly);
-            return CreateInstancesImplimentingBase<TBase>(concreteSubTypes);
+            return HasDefaultConstructor(typeof (T));
         }
 
-        public static List<TBase> CreateInstancesImplimentingBase<TBase>(IEnumerable<Type> concreteTypes) where TBase : class
+        public static bool HasDefaultConstructor(Type type)
         {
-            return concreteTypes.Select(type => Activator.CreateInstance(type) as TBase).ToList();
-        }
-
-        public static IEnumerable<Type> GetConcreteSubTypes<TBase>(Assembly sourceAssembly) where TBase : class
-        {
-            var assignableFromTypes = sourceAssembly.GetTypes().Where(type => type.IsAssignableFrom(typeof(TBase)));
-            var implimentingInterfaceTypes = sourceAssembly.GetTypes().Where(type => type.GetInterfaces().Contains(typeof(TBase)));
-
-            return assignableFromTypes.Union(implimentingInterfaceTypes).Where(type => !type.IsAbstract && type.IsClass).ToList();
+            return type.GetConstructor(Type.EmptyTypes) != null;
         }
     }
 }

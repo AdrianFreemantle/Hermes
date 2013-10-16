@@ -34,7 +34,7 @@ namespace Hermes
             ParameterNotNull(value, paramName);
 
             if (String.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("A non empty string is required", paramName);
+                throw new ArgumentException(String.Format("A non empty string is required for parameter {0}", paramName), paramName);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Hermes
         {
             if (value.Equals(default(T)))
             {
-                throw new ArgumentException("A non-default value is required.", paramName);
+                throw new ArgumentException(String.Format("A non-default value is required for parameter {0}", paramName), paramName);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Hermes
         {
             // ReSharper disable PossibleMultipleEnumeration
             ParameterNotNull(sequence, paramName);
-            ParameterCondition(sequence.Any(), paramName, "May not be empty.");
+            ParameterCondition(sequence.Any(), paramName, String.Format("Paramter {0} may not be empty.", paramName));
             // ReSharper restore PossibleMultipleEnumeration
         }
 

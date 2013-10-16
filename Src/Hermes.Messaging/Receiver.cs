@@ -15,10 +15,10 @@ namespace Hermes.Messaging
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Receiver));
 
         private CancellationTokenSource tokenSource;
-        private readonly IMessageDequeueStrategy dequeueStrategy;
+        private readonly IDequeueMessages dequeueStrategy;
         private Action<TransportMessage> messageReceived;
 
-        public Receiver(IMessageDequeueStrategy dequeueStrategy)
+        public Receiver(IDequeueMessages dequeueStrategy)
         {
             this.dequeueStrategy = dequeueStrategy;
         }

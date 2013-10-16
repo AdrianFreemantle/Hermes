@@ -2,7 +2,7 @@
 
 namespace Hermes.Domain
 {
-    public class NullIdentity : IHaveIdentity
+    public class NullIdentity : IIdentity
     {
         private const string NullId = "Null ID";
 

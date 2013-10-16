@@ -11,18 +11,26 @@ namespace Hermes.Transports.SqlServer
         public static IConfigureEndpoint UseSqlTransport(this IConfigureEndpoint config, string connectionString)
         {
             Address.IgnoreMachineName();
+            Settings.AddSetting(MessagingConnectionStringKey, connectionString);
 
             if (Settings.IsClientEndpoint)
             {
                 Address.InitializeLocalAddress(Address.Local.Queue + "." + Address.Local.Machine);
             }
 
-            Settings.Builder.RegisterType<SqlMessageDequeueStrategy>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlMessageSender>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
+            config.RegisterDependancies(new SqlMessagingDependancyRegistrar());
 
-            Settings.AddSetting(MessagingConnectionStringKey, connectionString);
             return config;
+        }
+
+        private class SqlMessagingDependancyRegistrar : IRegisterDependancies
+        {
+            public void Register(IContainerBuilder containerBuilder)
+            {
+                containerBuilder.RegisterType<SqlMessageDequeStrategy>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<SqlMessageSender>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
+            }
         }
     }
 }

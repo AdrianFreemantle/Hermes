@@ -7,11 +7,20 @@ namespace Hermes.Serialization.Json
     {
         public static IConfigureEndpoint UseJsonSerialization(this IConfigureEndpoint config)
         {
-            Settings.Builder.RegisterType<JsonObjectSerializer>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
-
+            config.RegisterDependancies(new JsonSerializerDependancyRegistrar());
             return config;
         }
+
+        private class JsonSerializerDependancyRegistrar : IRegisterDependancies
+        {
+            public void Register(IContainerBuilder containerBuilder)
+            {
+                containerBuilder.RegisterType<JsonObjectSerializer>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
+            }
+        }
     }
+
+    
 }

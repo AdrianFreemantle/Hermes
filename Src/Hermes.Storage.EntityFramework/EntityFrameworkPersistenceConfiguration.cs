@@ -9,16 +9,32 @@ namespace Hermes.Storage.EntityFramework
     {
         public static IConfigureEndpoint UseEntityFrameworkProcessManagagerStorage(this IConfigureEndpoint config)
         {
-            Settings.Builder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerLifetimeScope);
+            config.RegisterDependancies(new ProcessManagagerStorageDependancyRegistrar());
 
             return config;
         }
 
         public static IConfigureEndpoint UseEntityFrameworkKeyValueStorage(this IConfigureEndpoint config)
         {
-            Settings.Builder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerLifetimeScope);
+            config.RegisterDependancies(new KeyValueStorageDependancyRegistrar());
 
             return config;
+        }
+
+        private class ProcessManagagerStorageDependancyRegistrar : IRegisterDependancies
+        {
+            public void Register(IContainerBuilder containerBuilder)
+            {
+                containerBuilder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerUnitOfWork);
+            }
+        }
+
+        private class KeyValueStorageDependancyRegistrar : IRegisterDependancies
+        {
+            public void Register(IContainerBuilder containerBuilder)
+            {
+                containerBuilder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
+            }
         }
     }
 }

@@ -13,16 +13,16 @@ using Hermes.Messaging;
 
 using Microsoft.Practices.ServiceLocation;
 
+using IContainer = Hermes.Ioc.IContainer;
+
 namespace Hermes.ObjectBuilder.Autofac
 {
-    public sealed class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, Ioc.IContainer
+    public sealed class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, IContainer
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AutofacAdapter));
 
         private readonly ILifetimeScope lifetimeScope;
         private bool disposed;
-
-        public Ioc.IContainer Container { get { return this; } }
 
         public AutofacAdapter()
             :this(null)
@@ -34,7 +34,7 @@ namespace Hermes.ObjectBuilder.Autofac
             if (container == null)
             {
                 lifetimeScope = new ContainerBuilder().Build();
-                ((IContainerBuilder)this).RegisterType<AutofacAdapter>(DependencyLifecycle.InstancePerLifetimeScope);
+                ((IContainerBuilder)this).RegisterType<AutofacAdapter>(DependencyLifecycle.InstancePerUnitOfWork);
             }
             else
             {
@@ -49,7 +49,12 @@ namespace Hermes.ObjectBuilder.Autofac
             Dispose(false);
         }
 
-        public Ioc.IContainer BeginLifetimeScope()
+        public IContainer BuildContainer()
+        {
+            return this;
+        }
+
+        public IContainer BeginLifetimeScope()
         {
             return new AutofacAdapter(lifetimeScope.BeginLifetimeScope());
         }
@@ -71,27 +76,39 @@ namespace Hermes.ObjectBuilder.Autofac
             builder.Update(lifetimeScope.ComponentRegistry);
         }
 
-        void IContainerBuilder.RegisterSingleton<T>(object instance)
+        void IContainerBuilder.RegisterSingleton(object instance) 
         {
+            if (IsComponentAlreadyRegistered(instance.GetType()))
+            {
+                return;
+            }
+
+            var services = GetAllServices(instance.GetType());
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(instance).As<T>().PropertiesAutowired();
+
+            builder.RegisterInstance(instance).As(services).PropertiesAutowired();
+            builder.Update(lifetimeScope.ComponentRegistry);
+        }  
+     
+        void IContainerBuilder.RegisterType(Type type, DependencyLifecycle dependencyLifecycle)
+        {
+            if (IsComponentAlreadyRegistered(type))
+            {
+                return;
+            }
+
+            var services = GetAllServices(type);
+
+            var builder = new ContainerBuilder();
+            var registration = builder.RegisterType(type).As(services).PropertiesAutowired();
+
+            ConfigureLifetimeScope(dependencyLifecycle, registration);
             builder.Update(lifetimeScope.ComponentRegistry);
         }
 
         void IContainerBuilder.RegisterType<T>(DependencyLifecycle dependencyLifecycle)
         {
-            if (IsComponentAlreadyRegistered(typeof (T)))
-            {
-                return;
-            }
-
-            var services = GetAllServices(typeof(T));
-            
-            var builder = new ContainerBuilder();
-            var registration = builder.RegisterType<T>().As(services).PropertiesAutowired();
-            
-            ConfigureLifetimeScope(dependencyLifecycle, registration);
-            builder.Update(lifetimeScope.ComponentRegistry);
+            ((IContainerBuilder)this).RegisterType(typeof (T), dependencyLifecycle);
         }
 
         private static void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> registration)
@@ -104,7 +121,7 @@ namespace Hermes.ObjectBuilder.Autofac
                 case DependencyLifecycle.InstancePerDependency:
                     registration.InstancePerDependency();
                     break;
-                case DependencyLifecycle.InstancePerLifetimeScope:
+                case DependencyLifecycle.InstancePerUnitOfWork:
                     registration.InstancePerLifetimeScope();
                     break;
                 default:

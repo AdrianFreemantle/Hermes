@@ -2,6 +2,6 @@
 {
     public interface IMemento
     {
-        IHaveIdentity Identity { get; set; }
+        IIdentity Identity { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Hermes.Domain
         private readonly HashSet<DomainEvent> changes = new HashSet<DomainEvent>();
         protected readonly HashSet<IEntity> Entities = new HashSet<IEntity>();
 
-        protected Aggregate(IHaveIdentity identity) 
+        protected Aggregate(IIdentity identity) 
             : base(identity)
         {
         }
@@ -56,7 +56,7 @@ namespace Hermes.Domain
             Entities.Add(entity);
         }
 
-        protected TEntity Get<TEntity>(IHaveIdentity entityId) where TEntity : IEntity
+        protected TEntity Get<TEntity>(IIdentity entityId) where TEntity : IEntity
         {
             var entity = Entities.SingleOrDefault(e => e.Identity.Equals(entityId));
 

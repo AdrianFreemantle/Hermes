@@ -6,9 +6,10 @@ namespace Hermes.Ioc
 {
     public interface IContainerBuilder : IDisposable
     {
-        IContainer Container { get; }
+        IContainer BuildContainer();
         void RegisterType<T>(DependencyLifecycle dependencyLifecycle);
-        void RegisterSingleton<T>(object instance);
+        void RegisterType(Type type, DependencyLifecycle dependencyLifecycle);
+        void RegisterSingleton(object instance);
         void RegisterMessageHandlers(IEnumerable<Assembly> assemblies);
     }
 }

@@ -4,48 +4,46 @@ using Hermes.Messaging.Deferment;
 
 namespace Hermes.Messaging
 {
-    public static class CoreConfig
+    internal static class UnicastBusDependancyRegistrar
     {
-        public static IConfigureEndpoint UseUnicastBus(this IConfigureEndpoint config)
+        public static void Register(IContainerBuilder containerBuilder)
         {
-            Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
 
-            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerLifetimeScope);
-            Settings.Builder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerLifetimeScope);
-
+            containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerUnitOfWork);
 
             if (!Settings.IsClientEndpoint)
             {
-                Settings.Builder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
-                Settings.Builder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.InstancePerLifetimeScope);
+                containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
             }
-            
-            return config;
         }
+    }
 
-        public static IConfigureEndpoint UseDefermentBus(this IConfigureEndpoint config) 
+    internal static class DefermentBusDependancyRegistrar
+    {
+        public static void Register(IContainerBuilder containerBuilder)
         {
-            Settings.Builder.RegisterType<DefermentProcessor>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
-            Settings.Builder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<DefermentProcessor>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageTransport>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
 
-            Settings.Builder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerLifetimeScope);
-
-            return config;
+            containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }
