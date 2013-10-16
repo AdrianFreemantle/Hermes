@@ -1,11 +1,8 @@
 ﻿using System.Linq;
-
-using Hermes;
 using Hermes.Domain;
-using Hermes.EntityFramework;
 using Hermes.Messaging;
 
-namespace SimpleBank.ApplicationService
+namespace Hermes.EntityFramework
 {
     public class AggregateRepository : IAggregateRepository
     {
@@ -20,7 +17,7 @@ namespace SimpleBank.ApplicationService
             this.inMemoryBus = inMemoryBus;
         }
 
-        public TAggregate Get<TAggregate>(IHaveIdentity id) where TAggregate : class, IAggregate
+        public TAggregate Get<TAggregate>(IIdentity id) where TAggregate : class, IAggregate
         {
             var memento = keyValueStore.Get(id) as IMemento;
             var aggregate = ObjectFactory.CreateInstance<TAggregate>(id);
@@ -44,7 +41,7 @@ namespace SimpleBank.ApplicationService
 
         private void PublishEvents(IAggregate aggregate)
         {
-            var events = aggregate.GetUncommittedEvents().Select(e => e as IEvent).ToArray();
+            var events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
             inMemoryBus.Raise(events);
             messageBus.Publish(events);
             aggregate.ClearUncommittedEvents();

@@ -35,31 +35,40 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes">
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Domain">
+    <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.EntityFramework">
+    <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Messaging">
+    <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Messaging.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac">
+    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json">
+    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Storage.EntityFramework">
+    <Reference Include="Hermes.Storage.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Storage.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Storage.SqlServer">
+    <Reference Include="Hermes.Storage.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Transports.SqlServer">
+    <Reference Include="Hermes.Transports.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateRepository.cs" />
+    <Compile Include="IAggregateRepository.cs" />
     <Compile Include="IKeyValueStore.cs" />
     <Compile Include="ConcurrencyException.cs" />
     <Compile Include="DbContextExtensions.cs" />
@@ -77,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hermes.Domain\Hermes.Domain.csproj">
+      <Project>{0AAB1D40-4A95-4893-8127-694AEED84258}</Project>
+      <Name>Hermes.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">
       <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
       <Name>Hermes.Messaging</Name>
