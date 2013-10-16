@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.ProcessManagement;
 
 using Microsoft.Practices.ServiceLocation;
@@ -21,7 +22,9 @@ namespace Hermes.Messaging
 
         public void DispatchToHandlers(object message)
         {
-            var handlers = GetHandlers(message).ToArray();
+            object[] handlers = GetHandlers(message).ToArray();
+
+            ValidateMessageHandlers(message, handlers);
 
             if (handlers.Any())
             {
@@ -32,6 +35,14 @@ namespace Hermes.Messaging
             else
             {
                 logger.Warn("No handlers for for message {0}", message.GetType());
+            }
+        }
+
+        private static void ValidateMessageHandlers(object message, IEnumerable<object> handlers)
+        {
+            if (Settings.IsCommandType != null && Settings.IsCommandType(message.GetType()) && handlers.Count() != 1)
+            {
+                throw new InvalidOperationException("A command must have one and only one handler allocated to it.");
             }
         }
 

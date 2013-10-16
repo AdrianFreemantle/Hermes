@@ -81,6 +81,7 @@
     <Compile Include="ITimeoutProcessor.cs" />
     <Compile Include="ITransportMessageFactory.cs" />
     <Compile Include="ITransportMessages.cs" />
+    <Compile Include="MessageRuleValidation.cs" />
     <Compile Include="MessageSerializationBinder.cs" />
     <Compile Include="OutgoingMessage.cs" />
     <Compile Include="StartedMessageProcessingEventArgs.cs" />

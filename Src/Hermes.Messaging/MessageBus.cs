@@ -68,7 +68,7 @@ namespace Hermes.Messaging
 
         public ICallback Send(params object[] messages)
         {
-            Address destination = GetDestination(messages);
+            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
             return Send(destination, messages);
         }
 
@@ -89,21 +89,19 @@ namespace Hermes.Messaging
 
         public ICallback Send(Guid corrolationId, params object[] messages)
         {
-            Address destination = GetDestination(messages);
+            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
             return SendMessages(destination, corrolationId, TimeSpan.MaxValue, messages);
         }
 
         public ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages)
         {
-            Address destination = GetDestination(messages);
+            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
             return SendMessages(destination, corrolationId, timeToLive, messages);
         }
 
         private ICallback SendMessages(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages)
         {
-            if (messages == null || messages.Length == 0)
-                throw new InvalidOperationException("Cannot send an empty set of messages.");
-
+            MessageRuleValidation.ValidateSendMessages(messages);
             return messageTransport.SendMessage(address, corrolationId, timeToLive, messages);
         }
 
@@ -117,6 +115,7 @@ namespace Hermes.Messaging
             if (currentMessage.ReplyToAddress == Address.Undefined)
                 throw new InvalidOperationException("Reply was called but the current message does not have a reply to address.");
 
+            MessageRuleValidation.ValidateReplyMessages(messages);
             messageTransport.SendMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, TimeSpan.MaxValue, messages);
         }
 
@@ -143,21 +142,15 @@ namespace Hermes.Messaging
 
         public void Publish(params object[] messages)
         {
+            MessageRuleValidation.ValidatePublishMessages(messages);
             messagePublisher.Publish(messages);
         }
 
         public void Publish(Guid correlationId, params object[] messages)
         {
+            MessageRuleValidation.ValidatePublishMessages(messages);
             messagePublisher.Publish(correlationId, messages);
         }       
-
-        private Address GetDestination(params object[] messages)
-        {
-            if (messages == null || messages.Length == 0)
-                throw new InvalidOperationException("Cannot send an empty set of messages.");
-
-            return messageRouter.GetDestinationFor(messages.First().GetType());
-        }
-    }   
+    }
 }
 
