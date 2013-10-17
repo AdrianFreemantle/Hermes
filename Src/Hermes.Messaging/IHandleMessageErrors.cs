@@ -4,7 +4,7 @@ namespace Hermes.Messaging
 {
     public interface IHandleMessageErrors
     {
-        void Handle(TransportMessage envelope, Exception ex);
+        void Handle(TransportMessage transportMessage, Exception ex);
         void RemoveRetryHeaders(TransportMessage envelope);
     }
 }

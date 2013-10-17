@@ -46,7 +46,9 @@ namespace Hermes.Messaging.Configuration
 
             containerBuilder = builder;
             containerBuilder.RegisterSingleton(containerBuilder);
-            UnicastBusDependancyRegistrar.Register(containerBuilder);
+
+            var busRegistrar = new UnicastBusDependancyRegistrar();
+            busRegistrar.Register(containerBuilder);
 
             using (var scanner = new AssemblyScanner())
             {
@@ -135,17 +137,25 @@ namespace Hermes.Messaging.Configuration
             else
             {
                 queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
-                queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
+                //queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
             }
 
-            var busStarter = Settings.RootContainer.GetInstance<IAmStartable>();
-            busStarter.Start();
+            var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
+
+            foreach (var startableObject in startableObjects)
+            {
+                startableObject.Start();
+            }
         }
 
         internal void Stop()
         {
-            var busStarter = Settings.RootContainer.GetInstance<IAmStartable>();
-            busStarter.Stop();
+            var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
+
+            foreach (var startableObject in startableObjects)
+            {
+                startableObject.Stop();
+            }
         }
 
         public IConfigureEndpoint DefiningMessagesAs(Func<Type, bool> definesMessageType)

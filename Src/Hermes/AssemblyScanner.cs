@@ -26,7 +26,7 @@ namespace Hermes
         private void Scan()
         {
             var baseDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            logger.Verbose("Scanning assembly files in location {0}", baseDirectory.FullName);
+            logger.Debug("Scanning assembly files in location {0}", baseDirectory.FullName);
 
             var assemblyFiles = baseDirectory.GetFiles("*.dll", SearchOption.AllDirectories)
                 .Union(baseDirectory.GetFiles("*.exe", SearchOption.AllDirectories));
@@ -35,7 +35,7 @@ namespace Hermes
             {
                 try
                 {
-                    logger.Verbose("Scanning file {0}", assemblyFile);
+                    logger.Debug("Scanning file {0}", assemblyFile);
                     Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
                     assembly.GetTypes();
                     assemblies.Add(assembly);

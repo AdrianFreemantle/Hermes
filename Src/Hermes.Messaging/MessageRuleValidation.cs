@@ -6,7 +6,7 @@ namespace Hermes.Messaging
 {
     public static class MessageRuleValidation
     {
-        public static void ValidateSendMessages(params object[] messages)
+        public static void ValidateIsCommandType(params object[] messages)
         {
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
@@ -27,7 +27,7 @@ namespace Hermes.Messaging
             }
         }
 
-        public static void ValidatePublishMessages(params object[] messages)
+        public static void ValidateIsEventType(params object[] messages)
         {
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
@@ -48,7 +48,7 @@ namespace Hermes.Messaging
             }
         }
 
-        public static void ValidateReplyMessages(params object[] messages)
+        public static void ValidateIsMessageType(params object[] messages)
         {
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");

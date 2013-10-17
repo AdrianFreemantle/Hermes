@@ -4,8 +4,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A2A51776-B3D9-45B6-96B3-3BBF701D63CA}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{FEB155A1-B761-4C6E-81AC-9E8D19172E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Starbucks.Barrista</RootNamespace>
     <AssemblyName>Starbucks.Barrista</AssemblyName>
@@ -15,7 +15,6 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,10 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.1.3\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Domain">
+      <HintPath>..\..\..\bin\Debug\Hermes.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Messaging">
       <HintPath>..\..\..\bin\Debug\Hermes.Messaging.dll</HintPath>
@@ -49,17 +50,20 @@
     <Reference Include="Hermes.Serialization.Json">
       <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.ServiceHost">
+      <HintPath>..\..\..\bin\Debug\Hermes.ServiceHost.exe</HintPath>
+    </Reference>
     <Reference Include="Hermes.Storage.SqlServer">
       <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
       <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,11 +74,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Barrista.cs" />
+    <Compile Include="BarristaEndpoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

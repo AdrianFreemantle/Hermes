@@ -78,7 +78,6 @@
     <Compile Include="IProcessIncomingMessages.cs" />
     <Compile Include="IReceiveMessages.cs" />
     <Compile Include="ISerializeMessages.cs" />
-    <Compile Include="ITimeoutProcessor.cs" />
     <Compile Include="ITransportMessageFactory.cs" />
     <Compile Include="ITransportMessages.cs" />
     <Compile Include="MessageRuleValidation.cs" />
@@ -99,9 +98,7 @@
     <Compile Include="Storage\IStoreSubscriptions.cs" />
     <Compile Include="Storage\TimeoutData.cs" />
     <Compile Include="TestError.cs" />
-    <Compile Include="CoreConfig.cs" />
-    <Compile Include="Deferment\DefermentProcessor.cs" />
-    <Compile Include="Deferment\ITimeoutProcessor.cs" />
+    <Compile Include="MessageBusConfiguration.cs" />
     <Compile Include="Deferment\TimeoutProcessor.cs" />
     <Compile Include="MessageBus.cs" />
     <Compile Include="Dispatcher.cs" />

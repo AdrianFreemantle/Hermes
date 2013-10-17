@@ -4,7 +4,6 @@ using System.Threading;
 
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
-using Hermes.Messaging.Routing;
 
 namespace Hermes.Messaging
 {

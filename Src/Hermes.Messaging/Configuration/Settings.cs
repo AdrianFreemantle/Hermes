@@ -13,12 +13,11 @@ namespace Hermes.Messaging.Configuration
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
         
         private static Address errorAddress = Address.Undefined;
-        private static Address defermentEndpoint = Address.Parse("Deferment");
         private static IContainer rootContainer;
-        private static int firstLevelRetryAttempts = 3;
+        private static int firstLevelRetryAttempts = 0;
         private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
-        private static int secondLevelRetryAttempts = 3;
-        private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(15);
+        private static int secondLevelRetryAttempts = 0;
+        private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
 
         private static int numberOfWorkers = 1;
 
@@ -65,12 +64,6 @@ namespace Hermes.Messaging.Configuration
         {
             get { return firstLevelRetryDelay; }
             internal set { firstLevelRetryDelay = value; }
-        }
-
-        public static Address DefermentEndpoint
-        {
-            get { return defermentEndpoint; }
-            internal set { defermentEndpoint = value; }
         }
 
         public static Address ErrorEndpoint

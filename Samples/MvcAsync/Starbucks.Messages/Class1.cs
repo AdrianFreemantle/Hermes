@@ -2,7 +2,7 @@
 
 namespace Starbucks.Messages
 {
-    public class BuyCoffee : Command
+    public class BuyCoffee : ICommand
     {
     }
 
@@ -10,5 +10,10 @@ namespace Starbucks.Messages
     {
         Success = 0,
         Error = 1
+    }
+
+    public interface ICommand
+    {
+
     }
 }

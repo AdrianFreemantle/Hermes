@@ -21,6 +21,4 @@ namespace Hermes.Serialization.Json
             }
         }
     }
-
-    
 }

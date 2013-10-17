@@ -5,6 +5,7 @@ using System.Linq;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Routing;
+using Hermes.Messaging.Storage;
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
@@ -16,6 +17,7 @@ namespace Hermes.Messaging
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPublishMessages messagePublisher;
+        private readonly IPersistTimeouts timeoutPersistence;
 
         public IMessageContext CurrentMessageContext
         {
@@ -45,12 +47,17 @@ namespace Hermes.Messaging
         }
 
         public void Defer(TimeSpan delay, params object[] messages)
-        {
+        {           
             Defer(delay, Guid.Empty, messages);
         }
 
         public void Defer(TimeSpan delay, Guid correlationId, params object[] messages)
         {
+            if (Settings.IsClientEndpoint)
+            {
+                throw new NotSupportedException("Client endpoints may not defer messages.");
+            }
+
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
 
@@ -63,7 +70,8 @@ namespace Hermes.Messaging
                 {Headers.RouteExpiredTimeoutTo, destination}
             };
 
-            messageTransport.SendMessage(Settings.DefermentEndpoint, correlationId, delay, messages, headers); 
+            MessageRuleValidation.ValidateIsCommandType(messages);
+            timeoutPersistence.Add(correlationId, delay, messages, headers); 
         }
 
         public ICallback Send(params object[] messages)
@@ -101,7 +109,7 @@ namespace Hermes.Messaging
 
         private ICallback SendMessages(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages)
         {
-            MessageRuleValidation.ValidateSendMessages(messages);
+            MessageRuleValidation.ValidateIsCommandType(messages);
             return messageTransport.SendMessage(address, corrolationId, timeToLive, messages);
         }
 
@@ -115,7 +123,7 @@ namespace Hermes.Messaging
             if (currentMessage.ReplyToAddress == Address.Undefined)
                 throw new InvalidOperationException("Reply was called but the current message does not have a reply to address.");
 
-            MessageRuleValidation.ValidateReplyMessages(messages);
+            MessageRuleValidation.ValidateIsMessageType(messages);
             messageTransport.SendMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, TimeSpan.MaxValue, messages);
         }
 
@@ -142,13 +150,13 @@ namespace Hermes.Messaging
 
         public void Publish(params object[] messages)
         {
-            MessageRuleValidation.ValidatePublishMessages(messages);
+            MessageRuleValidation.ValidateIsEventType(messages);
             messagePublisher.Publish(messages);
         }
 
         public void Publish(Guid correlationId, params object[] messages)
         {
-            MessageRuleValidation.ValidatePublishMessages(messages);
+            MessageRuleValidation.ValidateIsEventType(messages);
             messagePublisher.Publish(correlationId, messages);
         }       
     }

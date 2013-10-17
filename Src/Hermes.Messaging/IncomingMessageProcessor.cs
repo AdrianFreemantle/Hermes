@@ -39,7 +39,12 @@ namespace Hermes.Messaging
 
             callBackManager.HandleCallback(transportMessage, messages);
 
-            Retry.Action(TryProcessMessages, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+            Retry.Action(TryProcessMessages, OnRetry, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+        }
+
+        private void OnRetry(Exception ex)
+        {
+            Logger.Warn("Attempting first level retry for message {0} : {1}", transportMessage.MessageId, ex.Message);
         }
 
         private void TryProcessMessages()

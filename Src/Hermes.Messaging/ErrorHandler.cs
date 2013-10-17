@@ -3,6 +3,7 @@ using System.Globalization;
 
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Storage;
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
@@ -10,25 +11,27 @@ namespace Hermes.Messaging
     public class ErrorHandler : IHandleMessageErrors
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
+        private readonly IPersistTimeouts timeoutStore;
         
         private readonly ISendMessages messageSender;
 
-        public ErrorHandler(ISendMessages messageSender)
+        public ErrorHandler(IPersistTimeouts timeoutStore, ISendMessages messageSender)
         {
+            this.timeoutStore = timeoutStore;
             this.messageSender = messageSender;
         }
 
-        public void Handle(TransportMessage envelope, Exception ex)
+        public void Handle(TransportMessage transportMessage, Exception ex)
         {
-            int retryCount = GetRetryCount(envelope);
+            int retryCount = GetRetryCount(transportMessage);
 
             if (++retryCount > Settings.SecondLevelRetryAttempts)
             {
-                SendToErrorQueue(envelope, ex);
+                SendToErrorQueue(transportMessage, ex);
             }
             else
             {
-                SendToRetryQueue(envelope, retryCount);
+                SendToRetryQueue(transportMessage, retryCount);
             }
         }
 
@@ -42,26 +45,27 @@ namespace Hermes.Messaging
             return 0;
         }
 
-        private void SendToRetryQueue(TransportMessage envelope, int retryCount)
+        private void SendToRetryQueue(TransportMessage transportMessage, int retryCount)
         {
-            Logger.Warn("Sending message {0} to retry queue: attempt {1}", envelope.MessageId, retryCount);
-            envelope.Headers[Headers.RetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
-            envelope.Headers[Headers.TimeoutExpire] = DateTime.UtcNow.Add(Settings.SecondLevelRetryDelay).ToWireFormattedString();
-            envelope.Headers[Headers.RouteExpiredTimeoutTo] = Address.Local.ToString();
+            Logger.Warn("Sending message {0} to retry queue: attempt {1}", transportMessage.MessageId, retryCount);
+            transportMessage.Headers[Headers.RetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
+            transportMessage.Headers[Headers.TimeoutExpire] = DateTime.UtcNow.Add(Settings.SecondLevelRetryDelay).ToWireFormattedString();
+            transportMessage.Headers[Headers.RouteExpiredTimeoutTo] = Address.Local.ToString();
 
-            if (envelope.ReplyToAddress != Address.Undefined)
+            if (transportMessage.ReplyToAddress != Address.Undefined)
             {
-                envelope.Headers[Headers.OriginalReplyToAddress] = envelope.ReplyToAddress.ToString();
+                transportMessage.Headers[Headers.OriginalReplyToAddress] = transportMessage.ReplyToAddress.ToString();
             }
 
-            messageSender.Send(envelope, Settings.DefermentEndpoint);
+            Logger.Warn("Defering error message: {0}", transportMessage.MessageId);
+            timeoutStore.Add(new TimeoutData(transportMessage));
         }
 
-        private void SendToErrorQueue(TransportMessage envelope, Exception ex)
+        private void SendToErrorQueue(TransportMessage transportMessage, Exception ex)
         {
-            Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", envelope.MessageId, ex.GetFullExceptionMessage());
-            envelope.Headers[Headers.FailureDetails] = ex.GetFullExceptionMessage();
-            messageSender.Send(envelope, Settings.ErrorEndpoint);
+            Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
+            transportMessage.Headers[Headers.FailureDetails] = ex.GetFullExceptionMessage();
+            messageSender.Send(transportMessage, Settings.ErrorEndpoint);
         }
 
         public void RemoveRetryHeaders(TransportMessage envelope)

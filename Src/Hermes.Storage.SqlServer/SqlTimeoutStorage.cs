@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-
+using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Storage;
 using Hermes.Serialization;
@@ -11,6 +11,7 @@ namespace Hermes.Storage.SqlServer
 {
     public class SqlTimeoutStorage : IPersistTimeouts
     {       
+        private readonly ITransportMessageFactory transportMessageFactory;
         private readonly ISerializeObjects objectSerializer;
         private readonly string connectionString;
 
@@ -21,14 +22,15 @@ namespace Hermes.Storage.SqlServer
         const int headersIndex = 4;
         const int bodyIndex = 5;
 
-        public SqlTimeoutStorage(ISerializeObjects objectSerializer)
+        public SqlTimeoutStorage(ISerializeObjects objectSerializer, ITransportMessageFactory transportMessageFactory)
         {
             this.objectSerializer = objectSerializer;
+            this.transportMessageFactory = transportMessageFactory;
             connectionString = Settings.GetSetting<string>(SqlStorageConfiguration.StorageConnectionStringKey);
             CreateTableIfNecessary();
         }
 
-        public void CreateTableIfNecessary()
+        private void CreateTableIfNecessary()
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -53,6 +55,12 @@ namespace Hermes.Storage.SqlServer
 
                 connection.Commit();
             }
+        }
+
+        public void Add(Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers)
+        {
+            var message = transportMessageFactory.BuildTransportMessage(correlationId, timeToLive, messages, headers);
+            Add(new TimeoutData(message));
         }
 
         private SqlCommand BuildAddCommand(TransactionalSqlConnection connection, TimeoutData timoutData)

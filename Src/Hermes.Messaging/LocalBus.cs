@@ -23,20 +23,20 @@ namespace Hermes.Messaging
                 throw new InvalidOperationException("Only one comand may be processed at a time. Either group all required commands together in a single Execute call or send additional commands via the message bus.");
             }
 
-            MessageRuleValidation.ValidateSendMessages(messages);
+            MessageRuleValidation.ValidateIsCommandType(messages);
             var transportMessage = transportMessageFactory.BuildTransportMessage(corrolationId, TimeSpan.MaxValue, messages);
             messageTransport.OnMessageReceived(transportMessage);
         }
 
         public void Execute(params object[] messages)
         {
-            MessageRuleValidation.ValidateSendMessages(messages);
+            MessageRuleValidation.ValidateIsCommandType(messages);
             Execute(Guid.Empty, messages);
         }
 
         void IInMemoryBus.Raise(params object[] events)
         {
-            MessageRuleValidation.ValidatePublishMessages(events);
+            MessageRuleValidation.ValidateIsEventType(events);
             var dispatcher = ServiceLocator.Current.GetService<IDispatchMessagesToHandlers>();
 
             foreach (var @event in events)
