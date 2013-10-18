@@ -12,6 +12,8 @@ namespace Hermes.Messaging
         private readonly Configure configuration;
         private bool disposed;
 
+        public IMessageBus MessageBus { get { return Settings.RootContainer.GetInstance<IMessageBus>(); } }
+
         protected ClientEndpoint()
         {
             var containerBuilder = new TContainerBuilder();

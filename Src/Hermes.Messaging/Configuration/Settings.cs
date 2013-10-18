@@ -14,12 +14,16 @@ namespace Hermes.Messaging.Configuration
         
         private static Address errorAddress = Address.Undefined;
         private static IContainer rootContainer;
-        private static int firstLevelRetryAttempts = 0;
         private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
-        private static int secondLevelRetryAttempts = 0;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
 
         private static int numberOfWorkers = 1;
+
+        static Settings()
+        {
+            SecondLevelRetryAttempts = 0;
+            FirstLevelRetryAttempts = 0;
+        }
 
         public static int NumberOfWorkers
         {
@@ -42,11 +46,7 @@ namespace Hermes.Messaging.Configuration
             internal set { rootContainer = value; }
         }
 
-        public static int SecondLevelRetryAttempts
-        {
-            get { return secondLevelRetryAttempts; }
-            internal set { secondLevelRetryAttempts = value; }
-        }
+        internal static int SecondLevelRetryAttempts { get; set; }
 
         public static TimeSpan SecondLevelRetryDelay
         {
@@ -54,11 +54,7 @@ namespace Hermes.Messaging.Configuration
             internal set { secondLevelRetryDelay = value; }
         }
 
-        public static int FirstLevelRetryAttempts
-        {
-            get { return firstLevelRetryAttempts; }
-            internal set { firstLevelRetryAttempts = value; }
-        }
+        public static int FirstLevelRetryAttempts { get; internal set; }
 
         public static TimeSpan FirstLevelRetryDelay
         {
@@ -69,11 +65,6 @@ namespace Hermes.Messaging.Configuration
         public static Address ErrorEndpoint
         {
             get { return errorAddress; }
-        }
-
-        public static IMessageBus MessageBus
-        {
-            get { return RootContainer.GetInstance<IMessageBus>(); }
         }
 
         public static IManageSubscriptions Subscriptions

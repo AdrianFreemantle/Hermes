@@ -1,12 +1,15 @@
 ﻿using System;
+using Hermes;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Starbucks.Messages;
 
 namespace Starbucks.Barrista
 {
-    public class Barrista : IHandleMessage<BuyCoffee>
+    public class Barrista : IHandleMessage<OrderCoffee>
     {
+        static readonly Random rand = new Random(DateTime.Now.Second);
+
         private readonly IMessageBus bus;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Barrista));
 
@@ -15,25 +18,28 @@ namespace Starbucks.Barrista
             this.bus = bus;
         }
 
-        public void Handle(BuyCoffee message)
+        public void Handle(OrderCoffee message)
         {
-            Logger.Info("Barista is attempting to prepare your order");
-            System.Threading.Thread.Sleep(2000);
+            Logger.Info("Barista is attempting to prepare order");
 
-            if (DateTime.Now.Ticks % 2 == 0)
-            {
-                throw new Exception("Blah");     
-            }
-            
-            if (DateTime.Now.Ticks % 5 == 0)
+            var secondsToSleep = 4;
+
+            System.Threading.Thread.Sleep(secondsToSleep * 1000);
+
+            if (DateTime.Now.Ticks % 654564564564655456 == 0)
             {
                 Logger.Info("Out of coffee!");
-                bus.Return(ErrorCodes.Error);
+                bus.Return(ErrorCodes.OutOfCoffee);
             }
             else
             {
-                Logger.Info("Barista is completed your order");
-                bus.Return(ErrorCodes.Success);         
+                Logger.Info("Barista has completed order");
+
+                bus.Reply(new OrderReady
+                {
+                    Coffee = message.Coffee.GetDescription(),
+                    OrderNumber = message.OrderNumber
+                });
             }
         }
     }

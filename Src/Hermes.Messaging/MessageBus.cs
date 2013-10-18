@@ -129,11 +129,6 @@ namespace Hermes.Messaging
 
         public void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible
         {
-            Return(errorCode, string.Empty);
-        }
-
-        public void Return<TEnum>(TEnum errorCode, string errorMessage) where TEnum : struct, IComparable, IFormattable, IConvertible
-        {
             var currentMessage = messageTransport.CurrentTransportMessage;
 
             if (currentMessage == null || currentMessage == TransportMessage.Undefined)
@@ -143,9 +138,8 @@ namespace Hermes.Messaging
                 throw new InvalidOperationException("Return was called with undefined reply-to-address field.");
 
             var errorCodeHeader = HeaderValue.FromEnum(Headers.ReturnErrorCode, errorCode);
-            var errorMessageHeader = HeaderValue.FromString(Headers.ReturnErrorMessage, errorMessage);
 
-            messageTransport.SendControlMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, errorCodeHeader, errorMessageHeader);
+            messageTransport.SendControlMessage(currentMessage.ReplyToAddress, currentMessage.CorrelationId, errorCodeHeader);
         }
 
         public void Publish(params object[] messages)

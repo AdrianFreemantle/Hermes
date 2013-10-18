@@ -16,7 +16,6 @@ namespace Hermes.Messaging
 
         void Reply(params object[] messages);
         void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;
-        void Return<TEnum>(TEnum errorCode, string errorMessage) where TEnum : struct, IComparable, IFormattable, IConvertible;
 
         void Defer(TimeSpan delay, params object[] messages);
         void Defer(TimeSpan delay, Guid corrolationId, params object[] messages);

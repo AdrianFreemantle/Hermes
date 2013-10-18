@@ -20,12 +20,18 @@ namespace Starbucks
                 .UseSqlTransport(ConnectionString)
                 .UseSqlStorage(ConnectionString)
                 .DefineCommandAs(IsCommand)
-                .RegisterMessageRoute<BuyCoffee>(Address.Parse("Starbucks.Barrista"));
+                .DefineMessageAs(IsMessage)
+                .RegisterMessageRoute<OrderCoffee>(Address.Parse("Starbucks.Barrista"));
         }
 
         private static bool IsCommand(Type type)
         {
             return typeof(ICommand).IsAssignableFrom(type) && type.Namespace.StartsWith("Starbucks");
+        }
+
+        private static bool IsMessage(Type type)
+        {
+            return typeof(IMessage).IsAssignableFrom(type) && type.Namespace.StartsWith("Starbucks");
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Starbucks
 
             var endpoint = new RequestorEndpoint();
             endpoint.Start();
-            Bus = Settings.MessageBus;
+            Bus = endpoint.MessageBus;
         }
     }
 }

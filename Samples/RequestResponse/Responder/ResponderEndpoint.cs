@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
@@ -18,13 +18,14 @@ namespace Responder
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
-                .UseDistributedTransaction()
                 .UseJsonSerialization()
                 .FirstLevelRetryPolicy(3, TimeSpan.FromSeconds(1))
                 .UseSqlTransport(ConnectionString)
                 .DefineMessageAs(IsMessage)
                 .UseSqlStorage(ConnectionString)                
                 .RegisterMessageRoute<AdditionResult>(Address.Parse("Requestor"));
+
+            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
         }
 
         private static bool IsMessage(Type type)

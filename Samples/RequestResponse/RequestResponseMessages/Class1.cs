@@ -21,7 +21,7 @@ namespace RequestResponseMessages
 
     public class AdditionResult : IMessage
     {
-        public int Result { get; set; }
+        public int CalcuationResult { get; set; }
     }
 
     public enum ErrorCodes

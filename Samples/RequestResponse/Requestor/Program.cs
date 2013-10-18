@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-
-using Hermes;
+using System.Threading.Tasks;
 using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
-
 using RequestResponseMessages;
 
 namespace Requestor
@@ -15,48 +11,39 @@ namespace Requestor
     class Program
     {
         private static readonly Random Rand = new Random();
-        private static ILog Logger;
+        private static ILog logger;
 
         private static void Main(string[] args)
         {
-            Logger = LogFactory.BuildLogger(typeof(Program));
-
             using (var requestor = new RequestorEndpoint())
             {
+                logger = LogFactory.BuildLogger(typeof(Program));
                 requestor.Start();
-
-                Console.WriteLine("Press any key to send a request - x to exit");
-
-                while (Console.ReadKey().KeyChar != 'x')
-                {
-                    Settings.MessageBus.Send(Guid.NewGuid(), NewCalculation()).Register(Completed);
-                    Console.WriteLine("Press any key to send a request - x to exit");
-                }
+                SendRequests(requestor.MessageBus);
             }
-
-            Console.WriteLine("Finished");
-            Console.ReadKey();
         }
 
-        public static AddNumbers NewCalculation()
+        private static void SendRequests(IMessageBus messageBus)
         {
-            var x = Rand.Next(0, 10);
-            var y = Rand.Next(0, 10);
-            Logger.Info("Adding numbers {0} and {1}", x, y);
-            return new AddNumbers { X = x, Y = y };
-        }
+            while (true)
+            {
+                var x = Rand.Next(0, 10);
+                var y = Rand.Next(0, 10);
 
-        public static void Completed(CompletionResult cr)
+                logger.Info("Adding numbers {0} and {1}", x, y);
+                messageBus.Send(new AddNumbers { X = x, Y = y }).Register().Wait();// wait for response
+                Thread.Sleep(50); //small sleep gives the handler a chance to print its result before we send the next command
+            }
+        }
+    }
+
+    public class ResultHandler : IHandleMessage<AdditionResult>
+    {
+        readonly ILog logger = LogFactory.BuildLogger(typeof(ResultHandler));
+
+        public void Handle(AdditionResult message)
         {
-            if (cr.ErrorCode == 0)
-            {
-                var additionResult = (AdditionResult)cr.Messages.FirstOrDefault();
-                Logger.Info("Result is {0}", additionResult.Result);
-            }
-            else
-            {
-                Logger.Error("Error result returned");
-            }
+            logger.Info("Result is {0}", message.CalcuationResult);
         }
     }
 }

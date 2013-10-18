@@ -9,6 +9,5 @@
         public const string OriginalReplyToAddress = "Hermes.Timeout.ReplyToAddress;";
         public const string ControlMessageHeader = "Hermes.ControlMessage";
         public const string ReturnErrorCode = "Hermes.ReturnErrorCode";
-        public const string ReturnErrorMessage = "Hermes.ReturnErrorMessage";
     }
 }

@@ -28,26 +28,17 @@ namespace Hermes.Messaging
             if (busAsyncResult == null)
                 return;
 
+            int statusCode = 0;
+
             if (message.IsControlMessage())
             {
                 if (message.Headers.ContainsKey(Headers.ReturnErrorCode))
                 {
-                    HandleErrorMessage(busAsyncResult, message);
-                    return;
+                    statusCode = int.Parse(message.Headers[Headers.ReturnErrorCode]);
                 }
-
-                busAsyncResult.Complete(0, messages);
-                return;
             }
 
-            busAsyncResult.Complete(0, messages);
-        }
-
-        private void HandleErrorMessage(BusAsyncResult busAsyncResult, TransportMessage message)
-        {
-            int statusCode = int.Parse(message.Headers[Headers.ReturnErrorCode]);
-            string statusMessage = message.Headers[Headers.ReturnErrorMessage];
-            busAsyncResult.Complete(statusCode, new object[] {statusMessage});
+            busAsyncResult.Complete(statusCode, messages);
         }
 
         public ICallback SetupCallback(Guid messageId)

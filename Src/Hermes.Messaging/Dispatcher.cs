@@ -34,6 +34,11 @@ namespace Hermes.Messaging
             }
             else
             {
+                if(Settings.IsCommandType(message.GetType()))
+                {
+                    throw new InvalidOperationException(String.Format("No handlers could be found for command {0}", message.GetType()));
+                }
+
                 logger.Warn("No handlers for for message {0}", message.GetType());
             }
         }

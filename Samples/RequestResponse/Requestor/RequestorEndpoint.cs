@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
@@ -16,7 +16,7 @@ namespace Requestor
         private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
 
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
-        {
+        {            
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport(ConnectionString)
@@ -24,6 +24,8 @@ namespace Requestor
                 .DefineCommandAs(IsCommand)
                 .DefineMessageAs(IsMessage)
                 .RegisterMessageRoute<AddNumbers>(Address.Parse("Responder"));
+
+            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
         }
 
         private static bool IsCommand(Type type)
