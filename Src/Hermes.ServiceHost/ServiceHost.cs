@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,13 +11,13 @@ namespace Hermes.ServiceHost
     {
         static readonly ILog Logger = LogFactory.BuildLogger(typeof(ServiceHost));
 
-        private readonly Type[] serviceTypes;
+        private readonly Type serviceType;
         private readonly object syncLock = new object();
-        private CancellationTokenSource tokenSource;
+        private CancellationTokenSource tokenSource;        
 
-        public ServiceHost(Type[] serviceTypes)
+        public ServiceHost(Type serviceType)
         {
-            this.serviceTypes = serviceTypes;
+            this.serviceType = serviceType;
         }
 
         public void Start()
@@ -33,32 +34,29 @@ namespace Hermes.ServiceHost
             }
         }
 
-        public void Stop()
-        {
-            lock (syncLock)
-            {
-                Logger.Verbose("Sending termination signal to services.");
-                tokenSource.Cancel();
-            }
-        }
-
         private void RunServices()
         {
             tokenSource = new CancellationTokenSource();
 
             try
             {
-                foreach (var serviceType in serviceTypes)
-                {
-                    Logger.Verbose("Starting service {0}", serviceType.FullName);
-                    var service = (IService)ObjectFactory.CreateInstance(serviceType);
-                    Task.Factory.StartNew(() => service.Run(tokenSource.Token), tokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-                }
+                Logger.Verbose("Starting service {0}", serviceType.FullName);
+                var service = (IService)ObjectFactory.CreateInstance(serviceType);
+                Task.Factory.StartNew(() => service.Run(tokenSource.Token), tokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
             }
             catch
             {
                 tokenSource.Cancel();
                 throw;
+            }
+        }
+
+        public void Stop()
+        {
+            lock (syncLock)
+            {
+                Logger.Verbose("Sending termination signal to services.");
+                tokenSource.Cancel();
             }
         }
     }

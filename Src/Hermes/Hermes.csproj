@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivatorHelper.cs" />
+    <Compile Include="ObjectFactory.cs" />
     <Compile Include="AssemblyScanner.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="IgnoreForSelectListAttribute.cs" />
