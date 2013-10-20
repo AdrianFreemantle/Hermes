@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 using Topshelf;
@@ -18,16 +20,13 @@ namespace Hermes.ServiceHost
 
         public static Host BuildHost()
         {
-            hostableService = ScanForHostableServices();
-            ValidateServiceTypeImplementsDefaultConstructor(hostableService);
-
-            ServiceHostConfig.Create(EndpointFile);
+            GetHostableService();
 
             return Topshelf.HostFactory.New(configurator =>
             {
-                configurator.SetServiceName(ServiceHostConfig.Settings.ServiceName);
-                configurator.SetDisplayName(ServiceHostConfig.Settings.DisplayName);
-                configurator.SetDescription(ServiceHostConfig.Settings.Description);
+                configurator.SetServiceName(hostableService.Assembly.GetVersionFormattedName());
+                configurator.SetDisplayName(hostableService.Assembly.GetVersionFormattedName());
+                configurator.SetDescription(GetDescription());
                 configurator.RunAsPrompt();
 
                 configurator.Service<ServiceHost>(s =>
@@ -39,50 +38,51 @@ namespace Hermes.ServiceHost
             });
         }
 
-        private static Type ScanForHostableServices()
+        private static string GetDescription()
+        {
+            var descriptionAttribute = hostableService
+                .Assembly
+                .GetCustomAttributes(typeof (AssemblyDescriptionAttribute), false)
+                .OfType<AssemblyDescriptionAttribute>()
+                .FirstOrDefault();
+
+            return descriptionAttribute != null ? descriptionAttribute.Description : hostableService.Assembly.GetVersionFormattedName();
+        }
+
+        private static void GetHostableService()
         {
             Type[] serviceTypes = FindAllServiceTypes();
 
-            ValidateThatAtLeastOneServiceIsPresent(serviceTypes);
             ValidateThatOnlyOneServiceIsPresent(serviceTypes);
-
-            return serviceTypes.First();
+            ValidateServiceTypeImplementsDefaultConstructor(serviceTypes.First());
+            hostableService = serviceTypes.First();
         }
 
         private static Type[] FindAllServiceTypes()
         {
-            Type[] serviceTypes;
             using (var scanner = new AssemblyScanner())
             {
-                serviceTypes = scanner.GetConcreteTypesOf<IService>().ToArray();
-            }
-            return serviceTypes;
-        }
-
-        private static void ValidateThatAtLeastOneServiceIsPresent(Type[] serviceTypes)
-        {
-            if (serviceTypes == null || !serviceTypes.Any())
-            {
-                throw new TypeLoadException("Unable to locate any concrete implementations of IService.");
+                return scanner.GetConcreteTypesOf<IService>().ToArray();
             }
         }
 
         private static void ValidateThatOnlyOneServiceIsPresent(Type[] serviceTypes)
-        {
+        {      
+            if (!serviceTypes.Any())
+            {
+                throw new TypeLoadException("Unable to locate any concrete implementations of IService");
+            }
+
             if (serviceTypes.Count() != 1)
             {
-                var services = new StringBuilder();
-                services.AppendLine();
+                var services = new StringBuilder("Only one service is allowed per service host. The following services were detected:\n");
 
                 foreach (var serviceType in serviceTypes)
                 {
                     services.AppendLine(serviceType.FullName);
                 }
 
-                throw new InvalidOperationException(
-                    String.Format(
-                        "Only one service or endpoint is allowed per service host. The following services were detected: {0}",
-                        services));
+                throw new InvalidOperationException(services.ToString());
             }
         }
 
