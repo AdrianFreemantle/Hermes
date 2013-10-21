@@ -26,7 +26,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlMessageDequeStrategy(ISerializeObjects objectSerializer)
         {
-            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
             this.objectSerializer = objectSerializer;
         }
 

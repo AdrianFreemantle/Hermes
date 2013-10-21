@@ -11,5 +11,6 @@ namespace Hermes.Ioc
         void RegisterType(Type type, DependencyLifecycle dependencyLifecycle);
         void RegisterSingleton(object instance);
         void RegisterMessageHandlers(IEnumerable<Assembly> assemblies);
+        void RegisterModule(IRegisterDependencies module);
     }
 }

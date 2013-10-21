@@ -27,6 +27,8 @@ namespace Hermes.Messaging
         /// <returns>A Task that can be used with async/await operations.</returns>
         Task<T> Register<T>(Func<CompletionResult, T> completion);
 
+        Task<T> Register<T>(Func<CompletionResult, T> completion, TimeSpan timeout);
+
         /// <summary>
         /// Registers an action to be invoked when a response arrives to the message sent.
         /// Returns a Task that can be used with async/await operations.
@@ -42,6 +44,8 @@ namespace Hermes.Messaging
         /// <param name="state">State that will be passed to the callback method.</param>
         /// <returns>An IAsyncResult useful for integration with ASP.NET async tasks.</returns>
         IAsyncResult Register(AsyncCallback callback, object state);
+
+        IAsyncResult Register(AsyncCallback callback, object state, TimeSpan timeout);
 
         /// <summary>
         /// Registers a callback to be invoked when a response arrives to the message sent.

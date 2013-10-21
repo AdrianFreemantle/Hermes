@@ -1,4 +1,5 @@
-﻿using Hermes.Ioc;
+﻿using System.Configuration;
+using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Storage.SqlServer
@@ -7,14 +8,21 @@ namespace Hermes.Storage.SqlServer
     {
         public const string StorageConnectionStringKey = "Hermes.Storage.SqlServer.ConnectionString";
 
-        public static IConfigureEndpoint UseSqlStorage(this IConfigureEndpoint config, string connectionString)
+        public static IConfigureEndpoint UseSqlStorage(this IConfigureEndpoint config)
         {
-            Settings.AddSetting(StorageConnectionStringKey, connectionString);
-            config.RegisterDependancies(new SqlStorageDependancyRegistrar());
-            return config;
+            return UseSqlStorage(config, "SqlStorage");
         }
 
-        private class SqlStorageDependancyRegistrar : IRegisterDependancies
+        public static IConfigureEndpoint UseSqlStorage(this IConfigureEndpoint config, string connectionStringName)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            
+            Settings.AddSetting(StorageConnectionStringKey, connectionString);
+            config.RegisterDependencies(new SqlStorageDependencyRegistrar());
+            return config;
+        }        
+
+        private class SqlStorageDependencyRegistrar : IRegisterDependencies
         {
             public void Register(IContainerBuilder containerBuilder)
             {

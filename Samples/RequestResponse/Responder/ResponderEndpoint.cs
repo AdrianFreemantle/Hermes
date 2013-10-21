@@ -13,16 +13,14 @@ namespace Responder
 {
     public class ResponderEndpoint : WorkerEndpoint<AutofacAdapter>
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
-
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
                 .UseJsonSerialization()
                 .FirstLevelRetryPolicy(3, TimeSpan.FromSeconds(1))
-                .UseSqlTransport(ConnectionString)
+                .UseSqlTransport()
+                .UseSqlStorage()                
                 .DefineMessageAs(IsMessage)
-                .UseSqlStorage(ConnectionString)                
                 .RegisterMessageRoute<AdditionResult>(Address.Parse("Requestor"));
 
             ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;

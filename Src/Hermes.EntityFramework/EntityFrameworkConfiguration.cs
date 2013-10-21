@@ -11,29 +11,29 @@ namespace Hermes.EntityFramework
         public static IConfigureEndpoint ConfigureEntityFramework<TContext>(this IConfigureEndpoint config, string connectionStringName = null)
             where TContext : DbContext, new()
         {
-            config.RegisterDependancies(new EntityFrameworkConfigurationRegistrar<TContext>(connectionStringName));
+            config.RegisterDependencies(new EntityFrameworkConfigurationRegistrar<TContext>(connectionStringName));
             return config;
+        }        
+    }
+
+    public sealed class EntityFrameworkConfigurationRegistrar<TContext>
+            : IRegisterDependencies where TContext : DbContext, new()
+    {
+        private readonly string connectionStringName;
+
+        public EntityFrameworkConfigurationRegistrar(string connectionStringName)
+        {
+            this.connectionStringName = connectionStringName;
         }
 
-        private class EntityFrameworkConfigurationRegistrar<TContext> 
-            : IRegisterDependancies where TContext : DbContext, new()
+        public void Register(IContainerBuilder containerBuilder)
         {
-            private readonly string connectionStringName;
+            containerBuilder.RegisterSingleton(new ContextFactory<TContext>(connectionStringName));
 
-            public EntityFrameworkConfigurationRegistrar(string connectionStringName)
-            {
-                this.connectionStringName = connectionStringName;
-            }
-
-            public void Register(IContainerBuilder containerBuilder)
-            {
-                containerBuilder.RegisterSingleton(new ContextFactory<TContext>(connectionStringName));
-                
-                containerBuilder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
-                containerBuilder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerUnitOfWork);
-                containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
-                containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
-            }
+            containerBuilder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Hermes.Messaging.BusCallback;
 
 namespace Hermes.Messaging
@@ -52,10 +52,26 @@ namespace Hermes.Messaging
                 lock (MessageIdToAsyncResultLookup)
                 {
                     MessageIdToAsyncResultLookup[args.MessageId] = args.Result;
+                    args.Result.OnTimeout += Result_OnTimeout;
                 }
             };
 
             return result;
+        }
+
+        void Result_OnTimeout(object sender, EventArgs e)
+        {
+            lock (MessageIdToAsyncResultLookup)
+            {
+                KeyValuePair<Guid, BusAsyncResult> keyValue = MessageIdToAsyncResultLookup.SingleOrDefault(pair => ReferenceEquals(pair.Value, sender));
+
+                if (!keyValue.Equals(new KeyValuePair<Guid, BusAsyncResult>()))
+                {
+                    MessageIdToAsyncResultLookup.Remove(keyValue);
+                }
+
+                ((BusAsyncResult)sender).OnTimeout -= Result_OnTimeout;
+            }
         }
     }
 }

@@ -17,11 +17,11 @@ using IContainer = Hermes.Ioc.IContainer;
 
 namespace Hermes.ObjectBuilder.Autofac
 {
-    public sealed class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, IContainer
+    public class AutofacAdapter : ServiceLocatorImplBase, IContainerBuilder, IContainer
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AutofacAdapter));
 
-        private readonly ILifetimeScope lifetimeScope;
+        protected readonly ILifetimeScope LifetimeScope;
         private bool disposed;
 
         public AutofacAdapter()
@@ -33,15 +33,15 @@ namespace Hermes.ObjectBuilder.Autofac
         {
             if (container == null)
             {
-                lifetimeScope = new ContainerBuilder().Build();
+                LifetimeScope = new ContainerBuilder().Build();
                 ((IContainerBuilder)this).RegisterType<AutofacAdapter>(DependencyLifecycle.InstancePerUnitOfWork);
             }
             else
             {
-                lifetimeScope = container;
+                LifetimeScope = container;
             }
 
-            Logger.Debug("Starting new container {0}", lifetimeScope.GetHashCode());
+            Logger.Debug("Starting new container {0}", LifetimeScope.GetHashCode());
         }
 
         ~AutofacAdapter()
@@ -56,10 +56,10 @@ namespace Hermes.ObjectBuilder.Autofac
 
         public IContainer BeginLifetimeScope()
         {
-            return new AutofacAdapter(lifetimeScope.BeginLifetimeScope());
+            return new AutofacAdapter(LifetimeScope.BeginLifetimeScope());
         }
 
-        void IContainerBuilder.RegisterMessageHandlers(IEnumerable<Assembly> assemblies)
+        public void RegisterMessageHandlers(IEnumerable<Assembly> assemblies)
         {
             if (assemblies == null)
             {
@@ -73,10 +73,15 @@ namespace Hermes.ObjectBuilder.Autofac
                    .InstancePerLifetimeScope()
                    .PropertiesAutowired();
 
-            builder.Update(lifetimeScope.ComponentRegistry);
+            builder.Update(LifetimeScope.ComponentRegistry);
         }
 
-        void IContainerBuilder.RegisterSingleton(object instance) 
+        public void RegisterModule(IRegisterDependencies module)
+        {
+            module.Register(this);
+        }
+
+        public void RegisterSingleton(object instance) 
         {
             if (IsComponentAlreadyRegistered(instance.GetType()))
             {
@@ -87,10 +92,10 @@ namespace Hermes.ObjectBuilder.Autofac
             var builder = new ContainerBuilder();
 
             builder.RegisterInstance(instance).As(services).PropertiesAutowired();
-            builder.Update(lifetimeScope.ComponentRegistry);
-        }  
-     
-        void IContainerBuilder.RegisterType(Type type, DependencyLifecycle dependencyLifecycle)
+            builder.Update(LifetimeScope.ComponentRegistry);
+        }
+
+        public void RegisterType(Type type, DependencyLifecycle dependencyLifecycle)
         {
             if (IsComponentAlreadyRegistered(type))
             {
@@ -103,15 +108,15 @@ namespace Hermes.ObjectBuilder.Autofac
             var registration = builder.RegisterType(type).As(services).PropertiesAutowired();
 
             ConfigureLifetimeScope(dependencyLifecycle, registration);
-            builder.Update(lifetimeScope.ComponentRegistry);
+            builder.Update(LifetimeScope.ComponentRegistry);
         }
 
-        void IContainerBuilder.RegisterType<T>(DependencyLifecycle dependencyLifecycle)
+        public void RegisterType<T>(DependencyLifecycle dependencyLifecycle)
         {
             ((IContainerBuilder)this).RegisterType(typeof (T), dependencyLifecycle);
         }
 
-        private static void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> registration)
+        protected virtual void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> registration)
         {
             switch (dependencyLifecycle)
             {
@@ -150,7 +155,7 @@ namespace Hermes.ObjectBuilder.Autofac
 
         private bool IsComponentAlreadyRegistered(Type concreteComponent)
         {
-            return lifetimeScope.ComponentRegistry.Registrations.FirstOrDefault(x => x.Activator.LimitType == concreteComponent) != null;
+            return LifetimeScope.ComponentRegistry.Registrations.FirstOrDefault(x => x.Activator.LimitType == concreteComponent) != null;
         }
 
         protected override object DoGetInstance(Type serviceType, string key)
@@ -163,8 +168,8 @@ namespace Hermes.ObjectBuilder.Autofac
             LogServiceType(serviceType);
 
             return key != null
-                ? lifetimeScope.ResolveNamed(key, serviceType)
-                : lifetimeScope.Resolve(serviceType);
+                ? LifetimeScope.ResolveNamed(key, serviceType)
+                : LifetimeScope.Resolve(serviceType);
         }
 
         private static string GetGenericParametersString(Type serviceType)
@@ -183,7 +188,7 @@ namespace Hermes.ObjectBuilder.Autofac
             LogServiceType(serviceType);
 
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-            object instance = lifetimeScope.Resolve(enumerableType);
+            object instance = LifetimeScope.Resolve(enumerableType);
 
             return ((IEnumerable)instance).Cast<object>();
         }
@@ -215,10 +220,10 @@ namespace Hermes.ObjectBuilder.Autofac
                 return;
             }
 
-            if (disposing && lifetimeScope != null)
+            if (disposing && LifetimeScope != null)
             {
                 Logger.Debug("Disposing container {0}", GetHashCode());
-                lifetimeScope.Dispose();
+                LifetimeScope.Dispose();
             }
 
             disposed = true;
@@ -226,7 +231,7 @@ namespace Hermes.ObjectBuilder.Autofac
    
         public override int GetHashCode()
         {
-            return lifetimeScope.GetHashCode();
+            return LifetimeScope.GetHashCode();
         }
     }
 }

@@ -7,11 +7,11 @@ namespace Hermes.Serialization.Json
     {
         public static IConfigureEndpoint UseJsonSerialization(this IConfigureEndpoint config)
         {
-            config.RegisterDependancies(new JsonSerializerDependancyRegistrar());
+            config.RegisterDependencies(new JsonSerializerDependencyRegistrar());
             return config;
         }
 
-        private class JsonSerializerDependancyRegistrar : IRegisterDependancies
+        private class JsonSerializerDependencyRegistrar : IRegisterDependencies
         {
             public void Register(IContainerBuilder containerBuilder)
             {

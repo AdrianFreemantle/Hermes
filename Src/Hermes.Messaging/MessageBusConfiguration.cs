@@ -4,7 +4,7 @@ using Hermes.Messaging.Deferment;
 
 namespace Hermes.Messaging
 {
-    internal class UnicastBusDependancyRegistrar : IRegisterDependancies
+    internal class UnicastBusDependencyRegistrar : IRegisterDependencies
     {
         public void Register(IContainerBuilder containerBuilder)
         {

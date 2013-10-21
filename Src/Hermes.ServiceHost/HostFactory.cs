@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,14 +14,11 @@ namespace Hermes.ServiceHost
     {
         private static Type hostableService;
 
-        public static string EndpointFile
-        {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, hostableService.Assembly.ManifestModule.Name); }
-        }
-
         public static Host BuildHost()
         {
             GetHostableService();
+
+            RedirectAppDomainConfigFile();
 
             return Topshelf.HostFactory.New(configurator =>
             {
@@ -36,6 +34,12 @@ namespace Hermes.ServiceHost
                     s.WhenStopped(tc => tc.Stop());
                 });
             });
+        }
+
+        private static void RedirectAppDomainConfigFile()
+        {
+            var endpointFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, hostableService.Assembly.ManifestModule.Name);
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", endpointFile + ".config");
         }
 
         private static string GetDescription()

@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using Autofac.Integration.Mvc;
+using Hermes.EntityFramework;
+using Hermes.Ioc;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
-using Hermes.Storage.SqlServer;
+using Starbucks.App_Start;
+using Starbucks.Persistence;
 
 namespace Starbucks
 {
@@ -18,20 +17,35 @@ namespace Starbucks
 
     public class MvcApplication : HttpApplication
     {
-        public static IMessageBus Bus { get; private set; }
+        private static RequestorEndpoint endpoint;
+
+        //public static IMessageBus Bus
+        //{
+        //    get { return endpoint.MessageBus; }
+        //}
 
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            endpoint = new RequestorEndpoint();
 
-            var endpoint = new RequestorEndpoint();
+            var autofacAdapter = new MvcAutofacAdapter();
+            autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
+            autofacAdapter.RegisterSingleton(endpoint.MessageBus);
+
             endpoint.Start();
-            Bus = endpoint.MessageBus;
+            autofacAdapter.BuildContainer();
+
+            DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());
+        }
+
+        protected void Application_End()
+        {
+            endpoint.Dispose();
         }
     }
 }

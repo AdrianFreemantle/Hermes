@@ -9,19 +9,19 @@ namespace Hermes.Storage.EntityFramework
     {
         public static IConfigureEndpoint UseEntityFrameworkProcessManagagerStorage(this IConfigureEndpoint config)
         {
-            config.RegisterDependancies(new ProcessManagagerStorageDependancyRegistrar());
+            config.RegisterDependencies(new ProcessManagagerStorageDependencyRegistrar());
 
             return config;
         }
 
         public static IConfigureEndpoint UseEntityFrameworkKeyValueStorage(this IConfigureEndpoint config)
         {
-            config.RegisterDependancies(new KeyValueStorageDependancyRegistrar());
+            config.RegisterDependencies(new KeyValueStorageDependencyRegistrar());
 
             return config;
         }
 
-        private class ProcessManagagerStorageDependancyRegistrar : IRegisterDependancies
+        private class ProcessManagagerStorageDependencyRegistrar : IRegisterDependencies
         {
             public void Register(IContainerBuilder containerBuilder)
             {
@@ -29,7 +29,7 @@ namespace Hermes.Storage.EntityFramework
             }
         }
 
-        private class KeyValueStorageDependancyRegistrar : IRegisterDependancies
+        private class KeyValueStorageDependencyRegistrar : IRegisterDependencies
         {
             public void Register(IContainerBuilder containerBuilder)
             {

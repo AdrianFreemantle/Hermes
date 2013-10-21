@@ -14,19 +14,17 @@ namespace Starbucks.Barrista
 {
     public class BarristaEndpoint : WorkerEndpoint<AutofacAdapter>
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
-
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
                 .SecondLevelRetryPolicy(3, TimeSpan.FromSeconds(10))
                 .FirstLevelRetryPolicy(1, TimeSpan.FromMilliseconds(10))
                 .UseJsonSerialization()
-                .UseSqlTransport(ConnectionString)
-                .UseSqlStorage(ConnectionString)
+                .UseSqlTransport()
+                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineMessageAs(IsMessage)
-                .NumberOfWorkers(4);
+                .NumberOfWorkers(5);
         }
 
         private static bool IsCommand(Type type)

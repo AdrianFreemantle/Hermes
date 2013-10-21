@@ -22,11 +22,11 @@ namespace Starbucks.Barrista
         {
             Logger.Info("Barista is attempting to prepare order");
 
-            var secondsToSleep = 4;
+            var secondsToSleep = rand.Next(1, 4);
 
             System.Threading.Thread.Sleep(secondsToSleep * 1000);
 
-            if (DateTime.Now.Ticks % 654564564564655456 == 0)
+            if (DateTime.Now.Ticks % 132 == 0)
             {
                 Logger.Info("Out of coffee!");
                 bus.Return(ErrorCodes.OutOfCoffee);

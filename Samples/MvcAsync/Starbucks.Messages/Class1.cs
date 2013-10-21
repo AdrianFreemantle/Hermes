@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Starbucks.Messages
 {
@@ -22,7 +23,9 @@ namespace Starbucks.Messages
 
     public enum ErrorCodes
     {
+        Timeout = -1,
         Success = 0,
+        [Description("Out of coffee")]
         OutOfCoffee = 1
     }
 

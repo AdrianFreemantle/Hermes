@@ -47,7 +47,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder = builder;
             containerBuilder.RegisterSingleton(containerBuilder);
 
-            var busRegistrar = new UnicastBusDependancyRegistrar();
+            var busRegistrar = new UnicastBusDependencyRegistrar();
             busRegistrar.Register(containerBuilder);
 
             using (var scanner = new AssemblyScanner())
@@ -119,7 +119,7 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        public IConfigureEndpoint RegisterDependancies(IRegisterDependancies registerationHolder)
+        public IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder)
         {
             registerationHolder.Register(containerBuilder);
             return this;

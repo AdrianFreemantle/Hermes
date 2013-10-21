@@ -24,7 +24,7 @@ namespace Hermes.Messaging
         {
             object[] handlers = GetHandlers(message).ToArray();
 
-            ValidateMessageHandlers(message, handlers);
+            ValidateCommandMessageHandlers(message, handlers);
 
             if (handlers.Any())
             {
@@ -32,18 +32,13 @@ namespace Hermes.Messaging
                 InvokeHandlers(handlers, message);
                 TrySaveSaga(handlers);
             }
-            else
+            else if (!Settings.IsClientEndpoint)
             {
-                if(Settings.IsCommandType(message.GetType()))
-                {
-                    throw new InvalidOperationException(String.Format("No handlers could be found for command {0}", message.GetType()));
-                }
-
-                logger.Warn("No handlers for for message {0}", message.GetType());
+                throw new InvalidOperationException(String.Format("No handlers could be found for command {0}", message.GetType()));
             }
         }
 
-        private static void ValidateMessageHandlers(object message, IEnumerable<object> handlers)
+        private static void ValidateCommandMessageHandlers(object message, IEnumerable<object> handlers)
         {
             if (Settings.IsCommandType != null && Settings.IsCommandType(message.GetType()) && handlers.Count() != 1)
             {

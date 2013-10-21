@@ -10,7 +10,7 @@ namespace Hermes.Transports.SqlServer
 
         public SqlQueueCreator()
         {
-            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
         }
 
         public void CreateQueueIfNecessary(Address address)

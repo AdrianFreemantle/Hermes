@@ -11,14 +11,12 @@ namespace Starbucks
 {
     public class RequestorEndpoint : ClientEndpoint<AutofacAdapter>
     {
-        private const string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=MessageBroker;Integrated Security=True";
-
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
             configuration
                 .UseJsonSerialization()
-                .UseSqlTransport(ConnectionString)
-                .UseSqlStorage(ConnectionString)
+                .UseSqlTransport()
+                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineMessageAs(IsMessage)
                 .RegisterMessageRoute<OrderCoffee>(Address.Parse("Starbucks.Barrista"));

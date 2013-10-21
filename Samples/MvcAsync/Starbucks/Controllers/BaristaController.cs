@@ -2,16 +2,22 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Starbucks.Messages;
 using Hermes.Messaging;
-using Hermes;
+using Starbucks.Messages;
 
 namespace Starbucks.Controllers
 {
     public class BaristaController : Controller
     {
+        private readonly IMessageBus messageBus;
+
+        public BaristaController(IMessageBus messageBus)
+        {
+            this.messageBus = messageBus;
+        }
+
         [HandleError(ExceptionType = typeof(TimeoutException), View = "Error")]
-        public async Task<ActionResult> BuyCoffeeAsync()
+        public async Task<ActionResult> BuyCoffee()
         {
             var myOrder = new OrderCoffee
             {
@@ -19,22 +25,20 @@ namespace Starbucks.Controllers
                 OrderNumber = Guid.NewGuid()
             };
 
-            using (var myOrderCallback = MvcApplication.Bus.Send(Guid.NewGuid(), myOrder).Register<OrderReady>(GetResult<OrderReady>))
-            {
-                if (await Task.WhenAny(myOrderCallback, Task.Delay(TimeSpan.FromSeconds(2))) == myOrderCallback)
-                {
-                    return View("BuyCoffee", myOrderCallback.Result);
-                }
-            }
+            Task<OrderReady> myOrderCallback = messageBus.Send(Guid.NewGuid(), myOrder).Register(this.GetResult<OrderReady>, TimeSpan.FromSeconds(4));
+            await myOrderCallback;
 
-            throw new TimeoutException("blah");
+            return View("BuyCoffee", myOrderCallback.Result);
         }
+    }
 
-        private static T GetResult<T>(CompletionResult e)
+    public static class CompletionResultExtension
+    {
+        public static T GetResult<T>(this Controller controller, CompletionResult e)
         {
             if ((ErrorCodes)e.ErrorCode != ErrorCodes.Success)
             {
-                throw new Exception(String.Format("Message failed with error: {0}", ((ErrorCodes)e.ErrorCode).GetDescription()));
+                throw new RequestFailedException((ErrorCodes)e.ErrorCode);
             }
 
             return (T)e.Messages.FirstOrDefault();

@@ -61,6 +61,9 @@
     <Reference Include="Hermes">
       <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.EntityFramework">
+      <HintPath>..\..\..\bin\Debug\Hermes.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Hermes.Messaging">
       <HintPath>..\..\..\bin\Debug\Hermes.Messaging.dll</HintPath>
     </Reference>
@@ -163,6 +166,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaristaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="MvcAutofacAdapter.cs" />
+    <Compile Include="RequestFailedException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -283,6 +288,10 @@
     <ProjectReference Include="..\Starbucks.Messages\Starbucks.Messages.csproj">
       <Project>{5FA6B92B-04D8-417B-8FF2-1F632E78A77D}</Project>
       <Name>Starbucks.Messages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Starbucks.Persistence\Starbucks.Persistence.csproj">
+      <Project>{5F5295AA-97AF-4F08-B442-A22E98965BE9}</Project>
+      <Name>Starbucks.Persistence</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

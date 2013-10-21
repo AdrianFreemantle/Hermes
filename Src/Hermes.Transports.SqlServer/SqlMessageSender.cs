@@ -19,7 +19,7 @@ namespace Hermes.Transports.SqlServer
         public SqlMessageSender(ISerializeObjects objectSerializer)
         {
             this.objectSerializer = objectSerializer;
-            connectionString = Settings.GetSetting<string>(SqlMessagingConfiguration.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
         }
 
         public void Send(TransportMessage transportMessage, Address address)

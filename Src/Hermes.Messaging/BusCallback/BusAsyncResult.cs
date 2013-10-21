@@ -1,33 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
 using Hermes.Logging;
+using Timer = System.Timers.Timer;
 
 namespace Hermes.Messaging.BusCallback
 {
+    public delegate void BusAsyncResultTimeoutHandler(object sender, EventArgs e);
+
     public class BusAsyncResult : IAsyncResult
-    {
+    {               
         private readonly static ILog log = LogFactory.BuildLogger(typeof(BusAsyncResult));
 
         private readonly AsyncCallback callback;
         private readonly CompletionResult result;
         private volatile bool completed;
         private readonly ManualResetEvent sync;
-        private readonly DateTime registeredTime;
-        public TimeSpan TimeSinceRegistered { get { return DateTime.UtcNow - registeredTime; } }
+        private Timer timeoutTimer;
+        private bool hasTimedOut;
+
+        public event BusAsyncResultTimeoutHandler OnTimeout;
+
+        [Obsolete]
+        public BusAsyncResult(AsyncCallback callback, object state)
+            : this(callback, state, TimeSpan.MaxValue)
+        {
+        }
 
         /// <summary>
         /// Creates a new object storing the given callback and state.
         /// </summary>
         /// <param name="callback"></param>
         /// <param name="state"></param>
-        public BusAsyncResult(AsyncCallback callback, object state)
+        public BusAsyncResult(AsyncCallback callback, object state, TimeSpan timeout)
         {
-            registeredTime = DateTime.UtcNow;
             this.callback = callback;
             result = new CompletionResult {State = state};
+
             sync = new ManualResetEvent(false);
+
+            if (timeout != TimeSpan.MaxValue)
+            {
+                timeoutTimer = new Timer(timeout.TotalMilliseconds);
+                timeoutTimer.AutoReset = false;
+                timeoutTimer.Elapsed += timeoutTimer_Elapsed;
+                timeoutTimer.Start();
+            }
+        }
+
+        void timeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            lock (sync)
+            {
+                if (completed)
+                    return;
+
+                hasTimedOut = true;
+                result.ErrorCode = -1;
+                result.Messages = new object[0];
+                TriggerTimeoutEvent();
+                CompleteCallback();
+            }
+        }
+
+        private void TriggerTimeoutEvent()
+        {
+            if (OnTimeout == null)
+                return;
+
+            try
+            {
+                OnTimeout(this, new EventArgs());
+            }
+            catch (Exception e)
+            {
+                OnTimeout = null;
+                log.Error(callback.ToString(), e);
+            }
         }
 
         /// <summary>
@@ -39,21 +88,33 @@ namespace Hermes.Messaging.BusCallback
         /// <param name="messages"></param>
         public void Complete(int errorCode, object[] messages)
         {
-            result.ErrorCode = errorCode;
-            result.Messages = messages;
-            completed = true;
+            lock (sync)
+            {
+                if (hasTimedOut)
+                    return;
 
-            if (this.callback != null)
+                result.ErrorCode = errorCode;
+                result.Messages = messages;
+                completed = true;
+                CompleteCallback();
+            }
+        }
+
+        private void CompleteCallback()
+        {
+            if (callback != null)
+            {
                 try
                 {
-                    this.callback(this);
+                    callback(this);
                 }
                 catch (Exception e)
                 {
-                    log.Error(this.callback.ToString(), e);
+                    log.Error(callback.ToString(), e);
                 }
+            }
 
-            this.sync.Set();
+            sync.Set();
         }
 
         #region IAsyncResult Members
@@ -63,7 +124,15 @@ namespace Hermes.Messaging.BusCallback
         /// </summary>
         public object AsyncState
         {
-            get { return this.result; }
+            get
+            {
+                if (hasTimedOut)
+                {
+                    throw new TimeoutException("The server took too long to respond.");
+                }
+
+                return this.result;
+            }
         }
 
         /// <summary>

@@ -47,7 +47,7 @@ namespace Hermes.Messaging
 
         public void WorkerAction(object obj)
         {
-            var backoff = new BackOff(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(1000));
+            var backoff = new BackOff(TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1000));
             var cancellationToken = (CancellationToken)obj;
 
             while (!cancellationToken.IsCancellationRequested)

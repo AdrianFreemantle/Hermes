@@ -83,7 +83,13 @@ namespace Hermes.Messaging.BusCallback
 
         Task<T> ICallback.Register<T>(Func<CompletionResult, T> completion)
         {
-            var asyncResult = ((ICallback)this).Register(null, null);
+            return ((ICallback)this).Register(completion, TimeSpan.MaxValue);
+        }
+
+        Task<T> ICallback.Register<T>(Func<CompletionResult, T> completion, TimeSpan timeout)
+        {
+            var asyncResult = ((ICallback)this).Register(null, null, timeout);
+
             var task = Task<T>.Factory.FromAsync(asyncResult, x => completion((CompletionResult)x.AsyncState),
                 TaskCreationOptions.None, TaskScheduler.Default);
 
@@ -101,12 +107,17 @@ namespace Hermes.Messaging.BusCallback
 
         IAsyncResult ICallback.Register(AsyncCallback callback, object state)
         {
-            var result = new BusAsyncResult(callback, state);
+            return ((ICallback)this).Register(callback, state, TimeSpan.MaxValue);
+        }
+
+        IAsyncResult ICallback.Register(AsyncCallback callback, object state, TimeSpan timeout)
+        {
+            var result = new BusAsyncResult(callback, state, timeout);
 
             if (Registered != null)
                 Registered(this, new BusAsyncResultEventArgs { Result = result, MessageId = messageId });
 
-            return result;
+            return result;    
         }
 
         void ICallback.Register<T>(Action<T> callback)
