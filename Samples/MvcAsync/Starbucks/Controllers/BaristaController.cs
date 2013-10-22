@@ -7,7 +7,7 @@ using Hermes.Messaging;
 using Starbucks.BaristaServiceProxy;
 using Starbucks.Messages;
 using Starbucks.Models;
-using Starbucks.OrderStatusQueryProxy;
+using Starbucks.OrderQueryServiceProxy;
 
 namespace Starbucks.Controllers
 {
@@ -61,7 +61,7 @@ namespace Starbucks.Controllers
 
         public async Task<string> Query()
         {
-            var proxy = new QueryServiceClient();
+            var proxy = new OrderQueryServiceClient();
             OrderStatusQueryResult result = await proxy.QueryAsync(new OrderStatusQuery { OrderNumber = Guid.NewGuid() });
             return result.Status;
         }

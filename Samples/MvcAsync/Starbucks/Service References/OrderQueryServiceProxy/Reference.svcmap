@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="33a0c4e8-f6bd-48d5-9f16-f2c7116ad761" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:51110/OrderQueryService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="OrderQueryService.xsd" MetadataType="Schema" ID="ceded364-8b42-4199-bbc9-5c56f1981905" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?xsd=xsd1" />
+    <MetadataFile FileName="OrderQueryService.wsdl" MetadataType="Wsdl" ID="e3f6683d-e194-4815-8493-068fc6b8743a" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="OrderQueryService1.xsd" MetadataType="Schema" ID="5dbef418-4fba-404d-bf6a-32e71fe80dda" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?xsd=xsd0" />
+    <MetadataFile FileName="OrderQueryService.disco" MetadataType="Disco" ID="cfed2a01-e0a7-4bdb-a949-30afdba671bf" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?disco" />
+    <MetadataFile FileName="OrderQueryService2.xsd" MetadataType="Schema" ID="c50d50ee-9ece-4e80-99d3-3b711c24fd86" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?xsd=xsd2" />
+    <MetadataFile FileName="OrderQueryService1.wsdl" MetadataType="Wsdl" ID="ab6d8e39-bcee-4b9d-902f-8485f6133e53" SourceId="1" SourceUrl="http://localhost:51110/OrderQueryService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -178,7 +178,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Service References\OrderStatusQueryProxy\Reference.cs">
+    <Compile Include="Service References\OrderQueryServiceProxy\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -257,18 +257,17 @@
     <Content Include="Scripts\knockout-2.1.0.debug.js" />
     <Content Include="Scripts\knockout-2.1.0.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
-    <Content Include="Service References\BaristaServiceProxy\BaristaService.disco" />
-    <Content Include="Service References\BaristaServiceProxy\configuration91.svcinfo" />
-    <Content Include="Service References\BaristaServiceProxy\configuration.svcinfo" />
-    <Content Include="Service References\BaristaServiceProxy\Reference.svcmap">
+    <None Include="Service References\BaristaServiceProxy\BaristaService.disco" />
+    <None Include="Service References\BaristaServiceProxy\configuration91.svcinfo" />
+    <None Include="Service References\BaristaServiceProxy\configuration.svcinfo" />
+    <None Include="Service References\BaristaServiceProxy\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
-    <Content Include="Service References\OrderStatusQueryProxy\OrderQueryService.wsdl" />
-    <Content Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.disco" />
-    <Content Include="Service References\OrderStatusQueryProxy\configuration91.svcinfo" />
-    <Content Include="Service References\OrderStatusQueryProxy\configuration.svcinfo" />
-    <Content Include="Service References\OrderStatusQueryProxy\Reference.svcmap">
+    </None>
+    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService.disco" />
+    <Content Include="Service References\OrderQueryServiceProxy\configuration91.svcinfo" />
+    <Content Include="Service References\OrderQueryServiceProxy\configuration.svcinfo" />
+    <Content Include="Service References\OrderQueryServiceProxy\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </Content>
@@ -305,28 +304,29 @@
     <Content Include="Views\Barista\BuyCoffee.cshtml" />
     <Content Include="Views\Shared\Timeout.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Service References\BaristaServiceProxy\BaristaService.wsdl" />
+    <None Include="Service References\BaristaServiceProxy\BaristaService.wsdl" />
     <None Include="Service References\BaristaServiceProxy\BaristaService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Service References\BaristaServiceProxy\BaristaService1.wsdl" />
+    <None Include="Service References\BaristaServiceProxy\BaristaService1.wsdl" />
     <None Include="Service References\BaristaServiceProxy\BaristaService1.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\BaristaServiceProxy\BaristaService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.wsdl" />
-    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.xsd">
+    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService.wsdl" />
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService1.xsd">
+    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService1.wsdl" />
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService2.xsd">
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Service References\OrderStatusQueryProxy\Starbucks.OrderStatusQueryProxy.OrderStatusQueryResult.datasource">
+    <Content Include="Service References\OrderQueryServiceProxy\Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
   </ItemGroup>
@@ -344,7 +344,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\BaristaServiceProxy\" />
-    <WCFMetadataStorage Include="Service References\OrderStatusQueryProxy\" />
+    <WCFMetadataStorage Include="Service References\OrderQueryServiceProxy\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
