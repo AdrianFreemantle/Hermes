@@ -1,5 +1,8 @@
-﻿namespace Hermes.Messaging
+﻿using System;
+
+namespace Hermes.Messaging
 {
+    [Serializable]
     public class CompletionResult
     {
         public int ErrorCode { get; set; }

@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbucks", "Starbucks\Starbucks.csproj", "{A01DFC21-FE29-4594-8DC5-7F7F7DED651D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF} = {EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbucks.Messages", "Starbucks.Messages\Starbucks.Messages.csproj", "{5FA6B92B-04D8-417B-8FF2-1F632E78A77D}"
 EndProject
@@ -14,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{62F0A0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbucks.Barrista", "Starbucks.Barrista\Starbucks.Barrista.csproj", "{FEB155A1-B761-4C6E-81AC-9E8D19172E70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbucks.Persistence", "Starbucks.Persistence\Starbucks.Persistence.csproj", "{5F5295AA-97AF-4F08-B442-A22E98965BE9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbucks.Barrista.Wcf", "Starbucks.Barrista.Wcf\Starbucks.Barrista.Wcf.csproj", "{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +37,10 @@ Global
 		{FEB155A1-B761-4C6E-81AC-9E8D19172E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB155A1-B761-4C6E-81AC-9E8D19172E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB155A1-B761-4C6E-81AC-9E8D19172E70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F5295AA-97AF-4F08-B442-A22E98965BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F5295AA-97AF-4F08-B442-A22E98965BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F5295AA-97AF-4F08-B442-A22E98965BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F5295AA-97AF-4F08-B442-A22E98965BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFBE8E5A-7199-4A97-BC70-A8E3CFDB69FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

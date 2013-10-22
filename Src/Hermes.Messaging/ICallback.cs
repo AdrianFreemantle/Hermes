@@ -11,12 +11,16 @@ namespace Hermes.Messaging
         /// </summary>
         Task<int> Register();
 
+        Task<int> Register(TimeSpan timeout);
+
         /// <summary>
         /// Registers a callback to be invoked when a response arrives to the message sent.
         /// The return code is cast to the given enumerated type - T.
         /// </summary>
         /// <typeparam name="T">An enumeration type or an integer.</typeparam>
         Task<T> Register<T>();
+
+        Task<T> Register<T>(TimeSpan timeout);
 
         /// <summary>
         /// Registers a function to be invoked when a response arrives to the message sent.

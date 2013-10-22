@@ -53,7 +53,7 @@
     <Compile Include="BusCallback\Callback.cs" />
     <Compile Include="BusCallback\BusAsyncResult.cs" />
     <Compile Include="CallBackManager.cs" />
-    <Compile Include="Wcf\Class1.cs" />
+    <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="ClientEndpoint.cs" />
     <Compile Include="CompletionResult.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
@@ -123,6 +123,9 @@
     <Compile Include="Transports\IDequeueMessages.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ISendMessages.cs" />
+    <Compile Include="Wcf\ICommandService.cs" />
+    <Compile Include="Wcf\IQueryService.cs" />
+    <Compile Include="Wcf\QueryService.cs" />
     <Compile Include="WorkerEndpoint.cs" />
   </ItemGroup>
   <ItemGroup>

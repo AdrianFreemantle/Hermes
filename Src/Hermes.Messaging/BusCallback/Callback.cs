@@ -53,7 +53,12 @@ namespace Hermes.Messaging.BusCallback
 
         Task<int> ICallback.Register()
         {
-            var asyncResult = ((ICallback)this).Register(null, null);
+            return ((ICallback)this).Register(TimeSpan.MaxValue);
+        }
+
+        Task<int> ICallback.Register(TimeSpan timeout)
+        {
+            var asyncResult = ((ICallback)this).Register(null, null, timeout);
             var task = Task<int>.Factory.FromAsync(asyncResult, x =>
             {
                 var cr = ((CompletionResult)x.AsyncState);
@@ -62,15 +67,20 @@ namespace Hermes.Messaging.BusCallback
             }, TaskCreationOptions.None, TaskScheduler.Default);
 
             return task;
-        }
+        }               
 
         Task<T> ICallback.Register<T>()
+        {
+            return ((ICallback)this).Register<T>(TimeSpan.MaxValue); 
+        }
+
+        Task<T> ICallback.Register<T>(TimeSpan timeout)
         {
             if (!typeof(T).IsEnum)
                 throw new InvalidOperationException(
                     "Register<T> can only be used with enumerations, use Register() to return an integer instead");
 
-            var asyncResult = ((ICallback)this).Register(null, null);
+            var asyncResult = ((ICallback)this).Register(null, null, timeout);
             var task = Task<T>.Factory.FromAsync(asyncResult, x =>
             {
                 var cr = ((CompletionResult)x.AsyncState);

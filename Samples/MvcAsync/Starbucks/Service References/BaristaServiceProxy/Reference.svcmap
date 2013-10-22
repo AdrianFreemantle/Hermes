@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="4e52a142-5fd8-4f27-bba8-d36235f666c4" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:51110/BaristaService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="BaristaService.disco" MetadataType="Disco" ID="6dd92e99-654a-4585-9527-a50a4fc95ca8" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?disco" />
+    <MetadataFile FileName="BaristaService.xsd" MetadataType="Schema" ID="2bdc45a6-f5ce-4dda-beb4-cb847f354e12" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?xsd=xsd2" />
+    <MetadataFile FileName="BaristaService1.xsd" MetadataType="Schema" ID="d981aa16-cc22-40fe-ac1c-63dc5451fdf3" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?xsd=xsd1" />
+    <MetadataFile FileName="BaristaService2.xsd" MetadataType="Schema" ID="e5b50a14-830d-44b9-bc01-3f937be30dc9" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?xsd=xsd0" />
+    <MetadataFile FileName="BaristaService.wsdl" MetadataType="Wsdl" ID="d0d43b7d-b821-471f-9145-89577f5a9440" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="BaristaService1.wsdl" MetadataType="Wsdl" ID="71ec4d21-9bb0-4d4a-b614-08e2ed7ee9d3" SourceId="1" SourceUrl="http://localhost:51110/BaristaService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

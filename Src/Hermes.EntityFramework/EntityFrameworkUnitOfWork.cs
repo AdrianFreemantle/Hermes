@@ -11,24 +11,34 @@ namespace Hermes.EntityFramework
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
-            this.contextFactory = contextFactory;
-            Context = contextFactory.GetContext();
+            this.contextFactory = contextFactory;            
         }
 
         public void Commit()
         {
-            Context.SaveChanges();           
-            Context.Database.Connection.Close();
+            if (Context != null)
+            {
+                Context.SaveChanges();
+                Context.Database.Connection.Close();
+            }
         }
 
         public void Rollback()
         {
-            Context.Dispose();
-            Context = contextFactory.GetContext();
+            if (Context != null)
+            {
+                Context.Dispose();
+                Context = null;
+            }
         }
 
         public EntityFrameworkRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
+            if (Context != null)
+            {
+                Context = contextFactory.GetContext();
+            }
+
             return new EntityFrameworkRepository<TEntity>(Context);
         }
 

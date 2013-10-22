@@ -73,9 +73,6 @@
     <Reference Include="Hermes.Serialization.Json">
       <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Storage.SqlServer">
-      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Hermes.Transports.SqlServer">
       <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
     </Reference>
@@ -90,6 +87,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -166,6 +165,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaristaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Models\OrderReadyViewModel.cs" />
     <Compile Include="MvcAutofacAdapter.cs" />
     <Compile Include="RequestFailedException.cs" />
     <Compile Include="Global.asax.cs">
@@ -173,6 +173,16 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestorEndpoint.cs" />
+    <Compile Include="Service References\BaristaServiceProxy\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\OrderStatusQueryProxy\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -231,6 +241,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Properties\DataSources\Starbucks.Messages.OrderStatusQueryResult.datasource" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
@@ -246,6 +257,21 @@
     <Content Include="Scripts\knockout-2.1.0.debug.js" />
     <Content Include="Scripts\knockout-2.1.0.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
+    <Content Include="Service References\BaristaServiceProxy\BaristaService.disco" />
+    <Content Include="Service References\BaristaServiceProxy\configuration91.svcinfo" />
+    <Content Include="Service References\BaristaServiceProxy\configuration.svcinfo" />
+    <Content Include="Service References\BaristaServiceProxy\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Service References\OrderStatusQueryProxy\OrderQueryService.wsdl" />
+    <Content Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.disco" />
+    <Content Include="Service References\OrderStatusQueryProxy\configuration91.svcinfo" />
+    <Content Include="Service References\OrderStatusQueryProxy\configuration.svcinfo" />
+    <Content Include="Service References\OrderStatusQueryProxy\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -279,20 +305,46 @@
     <Content Include="Views\Barista\BuyCoffee.cshtml" />
     <Content Include="Views\Shared\Timeout.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Service References\BaristaServiceProxy\BaristaService.wsdl" />
+    <None Include="Service References\BaristaServiceProxy\BaristaService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\BaristaServiceProxy\BaristaService1.wsdl" />
+    <None Include="Service References\BaristaServiceProxy\BaristaService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\BaristaServiceProxy\BaristaService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.wsdl" />
+    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OrderStatusQueryProxy\OrderStatusQueryService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\OrderStatusQueryProxy\Starbucks.OrderStatusQueryProxy.OrderStatusQueryResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Starbucks.Messages\Starbucks.Messages.csproj">
       <Project>{5FA6B92B-04D8-417B-8FF2-1F632E78A77D}</Project>
       <Name>Starbucks.Messages</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Starbucks.Persistence\Starbucks.Persistence.csproj">
-      <Project>{5F5295AA-97AF-4F08-B442-A22E98965BE9}</Project>
-      <Name>Starbucks.Persistence</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\BaristaServiceProxy\" />
+    <WCFMetadataStorage Include="Service References\OrderStatusQueryProxy\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -3,7 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Hermes.Messaging;
+
+using Starbucks.BaristaServiceProxy;
 using Starbucks.Messages;
+using Starbucks.Models;
+using Starbucks.OrderStatusQueryProxy;
 
 namespace Starbucks.Controllers
 {
@@ -26,20 +30,41 @@ namespace Starbucks.Controllers
                 OrderNumber = Guid.NewGuid()
             };
 
-            Task<OrderReady> myOrderCallback = messageBus.Send(Guid.NewGuid(), myOrder).Register(GetResult, TimeSpan.FromSeconds(4));
-            await myOrderCallback;
+            ErrorCodes result = await messageBus.Send(Guid.NewGuid(), myOrder).Register<ErrorCodes>(TimeSpan.FromSeconds(5));
 
-            return View("BuyCoffee", myOrderCallback.Result);
-        }
-
-        private OrderReady GetResult(CompletionResult completionResult)
-        {
-            if (completionResult.ErrorCode != (int)ErrorCodes.Success)
+            if (result != ErrorCodes.Success)
             {
-                throw new RequestFailedException((ErrorCodes)completionResult.ErrorCode);
+                throw new RequestFailedException(result);
             }
 
-            return (OrderReady)completionResult.Messages.FirstOrDefault();
+            return View("BuyCoffee", new OrderReadyViewModel(myOrder));
         }
+
+        public async Task<ActionResult> BuyCoffeeWcf()
+        {
+            var myOrder = new OrderCoffee
+            {
+                Coffee = Coffee.Espresso,
+                OrderNumber = Guid.NewGuid()
+            };
+
+            var proxy = new CommandServiceClient();
+            ErrorCodes result = (ErrorCodes)await proxy.ExecuteAsync(myOrder);
+
+            if (result != ErrorCodes.Success)
+            {
+                throw new RequestFailedException(result);
+            }
+
+            return View("BuyCoffee", new OrderReadyViewModel(myOrder));
+        }
+
+        public async Task<string> Query()
+        {
+            var proxy = new QueryServiceClient();
+            OrderStatusQueryResult result = await proxy.QueryAsync(new OrderStatusQuery { OrderNumber = Guid.NewGuid() });
+            return result.Status;
+        }
+       
     }
 }

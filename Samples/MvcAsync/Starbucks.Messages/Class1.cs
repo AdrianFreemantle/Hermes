@@ -9,12 +9,6 @@ namespace Starbucks.Messages
         public Coffee Coffee { get; set; }
     }
 
-    public class OrderReady : IMessage
-    {
-        public Guid OrderNumber { get; set; }
-        public string Coffee { get; set; }
-    }
-
     public enum Coffee
     {
         Filter,
@@ -32,9 +26,4 @@ namespace Starbucks.Messages
     public interface ICommand
     {
     }
-
-    public interface IMessage
-    {
-    }
-
 }

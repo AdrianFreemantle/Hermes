@@ -33,12 +33,7 @@ namespace Starbucks.Barrista
             else
             {
                 Logger.Info("Barista has completed order");
-
-                bus.Reply(new OrderReady
-                {
-                    Coffee = message.Coffee.GetDescription(),
-                    OrderNumber = message.OrderNumber
-                });
+                bus.Return(ErrorCodes.Success);
             }
         }
     }

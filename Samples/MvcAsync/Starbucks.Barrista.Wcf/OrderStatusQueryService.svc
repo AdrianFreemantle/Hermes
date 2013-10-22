@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Starbucks.Barrista.Wcf.OrderStatusQueryService" CodeBehind="OrderStatusQueryService.svc.cs" %>

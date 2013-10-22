@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Starbucks.Messages" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Starbucks.Messages" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:51110/BaristaService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="OrderCoffee">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Coffee" type="tns:Coffee" />
+      <xs:element minOccurs="0" name="OrderNumber" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OrderCoffee" nillable="true" type="tns:OrderCoffee" />
+  <xs:simpleType name="Coffee">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Filter" />
+      <xs:enumeration value="Espresso" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Coffee" nillable="true" type="tns:Coffee" />
+</xs:schema>

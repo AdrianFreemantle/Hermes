@@ -3,12 +3,8 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Autofac.Integration.Mvc;
-using Hermes.EntityFramework;
-using Hermes.Ioc;
-using Hermes.Messaging;
+
 using Starbucks.App_Start;
-using Starbucks.Persistence;
 
 namespace Starbucks
 {
@@ -41,7 +37,7 @@ namespace Starbucks
         private static void ConfigureMvcAutofac()
         {
             var autofacAdapter = new MvcAutofacAdapter();
-            autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
+            //autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
             autofacAdapter.RegisterSingleton(endpoint.MessageBus);
             autofacAdapter.BuildContainer();
             DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());

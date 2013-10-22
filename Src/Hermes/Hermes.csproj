@@ -47,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="IAnswerQuery.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
+    <Compile Include="IReturn.cs" />
     <Compile Include="ObjectFactory.cs" />
     <Compile Include="AssemblyScanner.cs" />
     <Compile Include="EnumExtensions.cs" />
