@@ -19,11 +19,6 @@ namespace Starbucks
     {
         private static RequestorEndpoint endpoint;
 
-        //public static IMessageBus Bus
-        //{
-        //    get { return endpoint.MessageBus; }
-        //}
-
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -31,21 +26,25 @@ namespace Starbucks
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            
             endpoint = new RequestorEndpoint();
-
-            var autofacAdapter = new MvcAutofacAdapter();
-            autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
-            autofacAdapter.RegisterSingleton(endpoint.MessageBus);
-
             endpoint.Start();
-            autofacAdapter.BuildContainer();
 
-            DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());
+            ConfigureMvcAutofac();
         }
 
         protected void Application_End()
         {
             endpoint.Dispose();
+        }
+
+        private static void ConfigureMvcAutofac()
+        {
+            var autofacAdapter = new MvcAutofacAdapter();
+            autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
+            autofacAdapter.RegisterSingleton(endpoint.MessageBus);
+            autofacAdapter.BuildContainer();
+            DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());
         }
     }
 }

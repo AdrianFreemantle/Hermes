@@ -2,6 +2,8 @@
 using System.Data.Entity;
 using System.Linq;
 
+using Hermes.Persistence;
+
 namespace Hermes.EntityFramework
 {
     public static class DbContextExtensions

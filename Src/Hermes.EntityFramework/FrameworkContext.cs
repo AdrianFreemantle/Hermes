@@ -5,6 +5,8 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 
+using Hermes.Persistence;
+
 namespace Hermes.EntityFramework
 {
     public abstract class FrameworkContext : DbContext

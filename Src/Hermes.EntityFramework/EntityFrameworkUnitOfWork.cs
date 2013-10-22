@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace Hermes.EntityFramework
 {
-    public class EntityFrameworkUnitOfWork : IUnitOfWork
+    public class EntityFrameworkUnitOfWork : IEntityUnitOfWork
     {
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
@@ -27,7 +27,7 @@ namespace Hermes.EntityFramework
             Context = contextFactory.GetContext();
         }
 
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        public EntityFrameworkRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
             return new EntityFrameworkRepository<TEntity>(Context);
         }

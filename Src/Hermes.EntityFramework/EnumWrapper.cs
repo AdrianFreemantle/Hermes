@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Hermes.Persistence;
+
 namespace Hermes.EntityFramework
 {
     /// <summary>

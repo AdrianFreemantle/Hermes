@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
 using Hermes.Messaging.Transports;
+using Hermes.Persistence;
 
 namespace Hermes.Messaging
 {
-    public class OutgoingMessagesUnitOfWork : IProcessOutgoingMessages, IManageUnitOfWork
+    public class OutgoingMessagesUnitOfWork : IProcessOutgoingMessages, IUnitOfWork
     {
         readonly List<OutgoingMessage> outgoingMessages = new List<OutgoingMessage>();
         private readonly ISendMessages messageSender;

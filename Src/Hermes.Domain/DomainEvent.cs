@@ -3,7 +3,7 @@
 namespace Hermes.Domain
 {
     [Serializable]
-    public abstract class DomainEvent 
+    public abstract class DomainEvent
     {
         public Guid EventId { get; private set; }
         public DateTime OccurredAt { get; private set; }

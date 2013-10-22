@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Autofac;
+using Autofac.Builder;
 using Autofac.Integration.Mvc;
 using Hermes.Ioc;
 using Hermes.ObjectBuilder.Autofac;
@@ -31,7 +32,7 @@ namespace Starbucks
             return new AutofacDependencyResolver(LifetimeScope);
         }
 
-        protected override void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, Autofac.Builder.IRegistrationBuilder<T, Autofac.Builder.ConcreteReflectionActivatorData, Autofac.Builder.SingleRegistrationStyle> registration)
+        protected override void ConfigureLifetimeScope<T>(DependencyLifecycle dependencyLifecycle, IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> registration)
         {
             switch (dependencyLifecycle)
             {

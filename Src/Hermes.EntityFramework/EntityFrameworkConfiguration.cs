@@ -1,5 +1,7 @@
 ﻿using System.Data.Entity;
 
+using Hermes.EntityFramework.KeyValueStore;
+using Hermes.EntityFramework.ProcessManagager;
 using Hermes.EntityFramework.Queries;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
@@ -31,9 +33,10 @@ namespace Hermes.EntityFramework
             containerBuilder.RegisterSingleton(new ContextFactory<TContext>(connectionStringName));
 
             containerBuilder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<UnitOfWorkManager>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

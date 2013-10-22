@@ -5,9 +5,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 
+using Hermes.Persistence;
+
 namespace Hermes.EntityFramework
 {
-    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity>, IQueryable<TEntity> where TEntity : class
     {
         protected readonly IDbSet<TEntity> DbSet;
 

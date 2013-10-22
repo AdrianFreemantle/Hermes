@@ -49,6 +49,7 @@
     <Compile Include="EventHandlerInvocationException.cs" />
     <Compile Include="EventHandlerNotFoundException.cs" />
     <Compile Include="IAggregate.cs" />
+    <Compile Include="IAggregateRepository.cs" />
     <Compile Include="IAmRestorable.cs" />
     <Compile Include="Identity.cs" />
     <Compile Include="IEntity.cs" />

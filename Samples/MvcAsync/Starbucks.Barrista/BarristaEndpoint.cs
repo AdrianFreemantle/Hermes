@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading;
-using Hermes;
-using Hermes.Logging;
+
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using Hermes.Storage.SqlServer;
 using Hermes.Transports.SqlServer;
 using Starbucks.Messages;
 

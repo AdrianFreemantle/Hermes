@@ -76,6 +76,10 @@
     <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\LoggingExtensionMethods.cs" />
+    <Compile Include="Persistence\IKeyValueStore.cs" />
+    <Compile Include="Persistence\ILookupTable.cs" />
+    <Compile Include="Persistence\IRepository.cs" />
+    <Compile Include="Persistence\IUnitOfWork.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="SequentialGuid.cs" />
     <Compile Include="Mandate.cs" />

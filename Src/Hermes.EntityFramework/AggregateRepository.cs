@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Hermes.Domain;
 using Hermes.Messaging;
+using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {

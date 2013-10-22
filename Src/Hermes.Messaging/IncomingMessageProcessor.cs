@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
+using Hermes.Persistence;
 using Hermes.Serialization;
 
 namespace Hermes.Messaging
@@ -17,12 +18,12 @@ namespace Hermes.Messaging
         private readonly ISerializeMessages messageSerializer;
         private readonly IDispatchMessagesToHandlers messageDispatcher;
         private readonly IManageCallbacks callBackManager;
-        private readonly ICollection<IManageUnitOfWork> unitsOfWork;
+        private readonly ICollection<IUnitOfWork> unitsOfWork;
 
         private TransportMessage transportMessage;
         private object[] messages;
 
-        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IManageCallbacks callBackManager, IEnumerable<IManageUnitOfWork> unitsOfWork)
+        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IManageCallbacks callBackManager, IEnumerable<IUnitOfWork> unitsOfWork)
         {
             this.messageSerializer = messageSerializer;
             this.messageDispatcher = messageDispatcher;
