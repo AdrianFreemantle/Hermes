@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -17,9 +16,10 @@ namespace Hermes.EntityFramework.Queries
             context.Configuration.ProxyCreationEnabled = false;
         }
 
-        public IEnumerable<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters) 
+        public SqlQueryResult<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters)
         {
-            return context.Database.SqlQuery<TDto>(sqlQuery, parameters);
+            var result = context.Database.SqlQuery<TDto>(sqlQuery, parameters);
+            return new SqlQueryResult<TDto>(result);
         }
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class

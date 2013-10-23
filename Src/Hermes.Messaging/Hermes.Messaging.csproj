@@ -123,8 +123,6 @@
     <Compile Include="Transports\IDequeueMessages.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ISendMessages.cs" />
-    <Compile Include="Wcf\ICommandService.cs" />
-    <Compile Include="Wcf\IQueryService.cs" />
     <Compile Include="Wcf\QueryService.cs" />
     <Compile Include="WorkerEndpoint.cs" />
   </ItemGroup>

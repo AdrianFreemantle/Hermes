@@ -9,6 +9,6 @@ namespace Starbucks.Barrista.Wcf
     public interface IOrderQueryService
     {
         [OperationContract]
-        Task<OrderStatusQueryResult> Query(OrderStatusQuery query);
+        Task<OrderStatusQueryResult> Get(OrderStatusQuery query);
     }
 }

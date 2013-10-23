@@ -7,16 +7,16 @@
       <xsd:import schemaLocation="http://localhost:51110/BaristaService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Starbucks.Messages" />
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="CommandService_Execute_InputMessage">
-    <wsdl:part name="parameters" element="tns:Execute" />
+  <wsdl:message name="BaristaService_Put_InputMessage">
+    <wsdl:part name="parameters" element="tns:Put" />
   </wsdl:message>
-  <wsdl:message name="CommandService_Execute_OutputMessage">
-    <wsdl:part name="parameters" element="tns:ExecuteResponse" />
+  <wsdl:message name="BaristaService_Put_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PutResponse" />
   </wsdl:message>
-  <wsdl:portType name="CommandService">
-    <wsdl:operation name="Execute">
-      <wsdl:input wsaw:Action="Hermes.Messaging.Wcf/CommandService/Execute" message="tns:CommandService_Execute_InputMessage" />
-      <wsdl:output wsaw:Action="Hermes.Messaging.Wcf/CommandService/ExecuteResponse" message="tns:CommandService_Execute_OutputMessage" />
+  <wsdl:portType name="BaristaService">
+    <wsdl:operation name="Put">
+      <wsdl:input wsaw:Action="Hermes.Messaging.Wcf/BaristaService/Put" message="tns:BaristaService_Put_InputMessage" />
+      <wsdl:output wsaw:Action="Hermes.Messaging.Wcf/BaristaService/PutResponse" message="tns:BaristaService_Put_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>

@@ -7,16 +7,16 @@
       <xsd:import schemaLocation="http://localhost:51110/OrderQueryService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Starbucks.Barrista.Wcf.Queries" />
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="OrderQueryService_Query_InputMessage">
-    <wsdl:part name="parameters" element="tns:Query" />
+  <wsdl:message name="OrderQueryService_Get_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get" />
   </wsdl:message>
-  <wsdl:message name="OrderQueryService_Query_OutputMessage">
-    <wsdl:part name="parameters" element="tns:QueryResponse" />
+  <wsdl:message name="OrderQueryService_Get_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetResponse" />
   </wsdl:message>
   <wsdl:portType name="OrderQueryService">
-    <wsdl:operation name="Query">
-      <wsdl:input wsaw:Action="Hermes.Messaging.Wcf/OrderQueryService/Query" message="tns:OrderQueryService_Query_InputMessage" />
-      <wsdl:output wsaw:Action="Hermes.Messaging.Wcf/OrderQueryService/QueryResponse" message="tns:OrderQueryService_Query_OutputMessage" />
+    <wsdl:operation name="Get">
+      <wsdl:input wsaw:Action="Hermes.Messaging.Wcf/OrderQueryService/Get" message="tns:OrderQueryService_Get_InputMessage" />
+      <wsdl:output wsaw:Action="Hermes.Messaging.Wcf/OrderQueryService/GetResponse" message="tns:OrderQueryService_Get_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>

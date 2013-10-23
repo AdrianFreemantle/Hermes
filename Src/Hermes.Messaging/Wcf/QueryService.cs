@@ -8,7 +8,7 @@ namespace Hermes.Messaging.Wcf
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public abstract class QueryService
     {
-        public virtual Task<TResult> Query<TQuery, TResult>(TQuery query) where TQuery : IReturn<TResult>
+        public virtual Task<TResult> Get<TQuery, TResult>(TQuery query) where TQuery : IReturn<TResult>
         {
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {

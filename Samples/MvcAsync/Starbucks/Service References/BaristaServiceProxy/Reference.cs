@@ -12,49 +12,49 @@ namespace Starbucks.BaristaServiceProxy {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="Hermes.Messaging.Wcf", ConfigurationName="BaristaServiceProxy.CommandService")]
-    public interface CommandService {
+    [System.ServiceModel.ServiceContractAttribute(Namespace="Hermes.Messaging.Wcf", ConfigurationName="BaristaServiceProxy.BaristaService")]
+    public interface BaristaService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/CommandService/Execute", ReplyAction="Hermes.Messaging.Wcf/CommandService/ExecuteResponse")]
-        int Execute(Starbucks.Messages.OrderCoffee command);
+        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/BaristaService/Put", ReplyAction="Hermes.Messaging.Wcf/BaristaService/PutResponse")]
+        int Put(Starbucks.Messages.OrderCoffee command);
         
-        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/CommandService/Execute", ReplyAction="Hermes.Messaging.Wcf/CommandService/ExecuteResponse")]
-        System.Threading.Tasks.Task<int> ExecuteAsync(Starbucks.Messages.OrderCoffee command);
+        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/BaristaService/Put", ReplyAction="Hermes.Messaging.Wcf/BaristaService/PutResponse")]
+        System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.OrderCoffee command);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface CommandServiceChannel : Starbucks.BaristaServiceProxy.CommandService, System.ServiceModel.IClientChannel {
+    public interface BaristaServiceChannel : Starbucks.BaristaServiceProxy.BaristaService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class CommandServiceClient : System.ServiceModel.ClientBase<Starbucks.BaristaServiceProxy.CommandService>, Starbucks.BaristaServiceProxy.CommandService {
+    public partial class BaristaServiceClient : System.ServiceModel.ClientBase<Starbucks.BaristaServiceProxy.BaristaService>, Starbucks.BaristaServiceProxy.BaristaService {
         
-        public CommandServiceClient() {
+        public BaristaServiceClient() {
         }
         
-        public CommandServiceClient(string endpointConfigurationName) : 
+        public BaristaServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public CommandServiceClient(string endpointConfigurationName, string remoteAddress) : 
+        public BaristaServiceClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public CommandServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public BaristaServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public CommandServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public BaristaServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
-        public int Execute(Starbucks.Messages.OrderCoffee command) {
-            return base.Channel.Execute(command);
+        public int Put(Starbucks.Messages.OrderCoffee command) {
+            return base.Channel.Put(command);
         }
         
-        public System.Threading.Tasks.Task<int> ExecuteAsync(Starbucks.Messages.OrderCoffee command) {
-            return base.Channel.ExecuteAsync(command);
+        public System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.OrderCoffee command) {
+            return base.Channel.PutAsync(command);
         }
     }
 }

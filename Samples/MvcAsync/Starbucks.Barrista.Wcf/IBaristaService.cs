@@ -9,6 +9,6 @@ namespace Starbucks.Barrista.Wcf
     public interface IBaristaService
     {
         [OperationContract]
-        Task<int> Execute(OrderCoffee command);
+        Task<int> Put(OrderCoffee command);
     }
 }

@@ -9,9 +9,9 @@ namespace Starbucks.Barrista.Wcf
 {
     public class OrderQueryService : QueryService, IOrderQueryService
     {
-        public async Task<OrderStatusQueryResult> Query(OrderStatusQuery query)
+        public async Task<OrderStatusQueryResult> Get(OrderStatusQuery query)
         {
-            return await base.Query<OrderStatusQuery, OrderStatusQueryResult>(query);
+            return await base.Get<OrderStatusQuery, OrderStatusQueryResult>(query);
         }
     }
 }

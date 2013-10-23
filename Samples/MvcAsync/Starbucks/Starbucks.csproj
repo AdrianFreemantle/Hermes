@@ -264,13 +264,13 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService.disco" />
-    <Content Include="Service References\OrderQueryServiceProxy\configuration91.svcinfo" />
-    <Content Include="Service References\OrderQueryServiceProxy\configuration.svcinfo" />
-    <Content Include="Service References\OrderQueryServiceProxy\Reference.svcmap">
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService.disco" />
+    <None Include="Service References\OrderQueryServiceProxy\configuration91.svcinfo" />
+    <None Include="Service References\OrderQueryServiceProxy\configuration.svcinfo" />
+    <None Include="Service References\OrderQueryServiceProxy\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
+    </None>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -315,11 +315,11 @@
     <None Include="Service References\BaristaServiceProxy\BaristaService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService.wsdl" />
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService.wsdl" />
     <None Include="Service References\OrderQueryServiceProxy\OrderQueryService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Service References\OrderQueryServiceProxy\OrderQueryService1.wsdl" />
+    <None Include="Service References\OrderQueryServiceProxy\OrderQueryService1.wsdl" />
     <None Include="Service References\OrderQueryServiceProxy\OrderQueryService1.xsd">
       <SubType>Designer</SubType>
     </None>

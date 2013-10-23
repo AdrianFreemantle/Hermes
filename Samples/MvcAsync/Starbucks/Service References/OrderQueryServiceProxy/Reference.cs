@@ -107,11 +107,11 @@ namespace Starbucks.OrderQueryServiceProxy {
     [System.ServiceModel.ServiceContractAttribute(Namespace="Hermes.Messaging.Wcf", ConfigurationName="OrderQueryServiceProxy.OrderQueryService")]
     public interface OrderQueryService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/OrderQueryService/Query", ReplyAction="Hermes.Messaging.Wcf/OrderQueryService/QueryResponse")]
-        Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult Query([System.ServiceModel.MessageParameterAttribute(Name="query")] Starbucks.OrderQueryServiceProxy.OrderStatusQuery query1);
+        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/OrderQueryService/Get", ReplyAction="Hermes.Messaging.Wcf/OrderQueryService/GetResponse")]
+        Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult Get(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query);
         
-        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/OrderQueryService/Query", ReplyAction="Hermes.Messaging.Wcf/OrderQueryService/QueryResponse")]
-        System.Threading.Tasks.Task<Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult> QueryAsync(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query);
+        [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/OrderQueryService/Get", ReplyAction="Hermes.Messaging.Wcf/OrderQueryService/GetResponse")]
+        System.Threading.Tasks.Task<Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult> GetAsync(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -141,12 +141,12 @@ namespace Starbucks.OrderQueryServiceProxy {
                 base(binding, remoteAddress) {
         }
         
-        public Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult Query(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query1) {
-            return base.Channel.Query(query1);
+        public Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult Get(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query) {
+            return base.Channel.Get(query);
         }
         
-        public System.Threading.Tasks.Task<Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult> QueryAsync(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query) {
-            return base.Channel.QueryAsync(query);
+        public System.Threading.Tasks.Task<Starbucks.OrderQueryServiceProxy.OrderStatusQueryResult> GetAsync(Starbucks.OrderQueryServiceProxy.OrderStatusQuery query) {
+            return base.Channel.GetAsync(query);
         }
     }
 }

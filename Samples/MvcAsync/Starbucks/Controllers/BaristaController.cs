@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Hermes.Messaging;
-
 using Starbucks.BaristaServiceProxy;
 using Starbucks.Messages;
 using Starbucks.Models;
@@ -48,8 +47,8 @@ namespace Starbucks.Controllers
                 OrderNumber = Guid.NewGuid()
             };
 
-            var proxy = new CommandServiceClient();
-            ErrorCodes result = (ErrorCodes)await proxy.ExecuteAsync(myOrder);
+            var proxy = new BaristaServiceClient();
+            ErrorCodes result = (ErrorCodes)await proxy.PutAsync(myOrder);
 
             if (result != ErrorCodes.Success)
             {
@@ -62,7 +61,7 @@ namespace Starbucks.Controllers
         public async Task<string> Query()
         {
             var proxy = new OrderQueryServiceClient();
-            OrderStatusQueryResult result = await proxy.QueryAsync(new OrderStatusQuery { OrderNumber = Guid.NewGuid() });
+            OrderStatusQueryResult result = await proxy.GetAsync(new OrderStatusQuery { OrderNumber = Guid.NewGuid() });
             return result.Status;
         }
        

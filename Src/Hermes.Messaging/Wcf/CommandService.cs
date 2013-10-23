@@ -15,7 +15,7 @@ namespace Hermes.Messaging.Wcf
             messageBus = Settings.RootContainer.GetInstance<IMessageBus>();
         }
 
-        public virtual async Task<int> Execute<TCommand>(TCommand command)
+        public virtual async Task<int> Put<TCommand>(TCommand command)
         {
             Task<int> myOrderCallback = messageBus.Send(command).Register(c => c.ErrorCode);
             return await myOrderCallback;

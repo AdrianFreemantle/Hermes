@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="Hermes.Messaging.Wcf" elementFormDefault="qualified" targetNamespace="Hermes.Messaging.Wcf" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:51110/OrderQueryService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Starbucks.Barrista.Wcf.Queries" />
-  <xs:element name="Query">
+  <xs:element name="Get">
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Starbucks.Barrista.Wcf.Queries" minOccurs="0" name="query" nillable="true" type="q1:OrderStatusQuery" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="QueryResponse">
+  <xs:element name="GetResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Starbucks.Barrista.Wcf.Queries" minOccurs="0" name="QueryResult" nillable="true" type="q2:OrderStatusQueryResult" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Starbucks.Barrista.Wcf.Queries" minOccurs="0" name="GetResult" nillable="true" type="q2:OrderStatusQueryResult" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
