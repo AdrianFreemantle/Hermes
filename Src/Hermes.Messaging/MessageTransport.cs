@@ -70,10 +70,6 @@ namespace Hermes.Messaging
                     ProcessIncommingMessage(transportMessage, processor, childContainer);
                     currentMessageBeingProcessed.Value = TransportMessage.Undefined;
                 }
-                catch (Exception ex)
-                {
-                    errorProcessor.Handle(transportMessage, ex);
-                }
                 finally
                 {
                     ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
@@ -85,14 +81,16 @@ namespace Hermes.Messaging
         {
             using (var scope = StartTransactionScope())
             {
-                processor.ProcessTransportMessage(transportMessage);
-                scope.Complete();
-            }
+                try
+                {
+                    processor.ProcessTransportMessage(transportMessage);
+                }
+                catch (Exception ex)
+                {
+                    errorProcessor.Handle(transportMessage, ex);
+                }
 
-            if (!Settings.IsClientEndpoint)
-            {
-                var outgoingMessages = serviceProvider.GetInstance<IProcessOutgoingMessages>();
-                outgoingMessages.Send();
+                scope.Complete();
             }
         }
        

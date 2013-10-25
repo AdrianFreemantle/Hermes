@@ -37,7 +37,7 @@ namespace Hermes.Messaging
 
         public void Commit()
         {
-            //no-op as we send outgoing messages outside of the client process transaction scope
+            messageSender.Send(outgoingMessages);
         }
 
         public void Rollback()

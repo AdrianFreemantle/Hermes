@@ -6,6 +6,5 @@ namespace Hermes.Messaging
     {
         void Add(OutgoingMessage outgoingMessage);
         void Add(IEnumerable<OutgoingMessage> outgoingMessages);
-        void Send();
     }
 }

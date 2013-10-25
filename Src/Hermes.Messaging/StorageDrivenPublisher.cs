@@ -28,10 +28,13 @@ namespace Hermes.Messaging
         }
 
         public bool Publish(Guid correlationId, params object[] messages)
-        {
+        {   
             GuardPublisher(messages);
 
-            Type[] messageTypes = messages.Select(o => o.GetType()).ToArray();
+            IEnumerable<Type> messageTypes = messages
+                .SelectMany(o => o.GetType().GetInterfaces())
+                .Union(messages.Select(o => o.GetType()));
+
             Address[] subscribers = subscriptionStorage.GetSubscribersForMessageTypes(messageTypes).ToArray();
 
             if (!subscribers.Any())

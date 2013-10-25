@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Hermes;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -22,10 +23,10 @@ namespace Starbucks.Barrista
         {
             Logger.Info("Barista is attempting to prepare order");
 
-            var secondsToSleep = rand.Next(1, 4);
-            System.Threading.Thread.Sleep(secondsToSleep * 1000);
+            //var secondsToSleep = rand.Next(1, 4);
+            //System.Threading.Thread.Sleep(secondsToSleep * 1000);
 
-            if (DateTime.Now.Ticks % 3 == 0)
+            if (DateTime.Now.Ticks % 5568645674894681658 == 0)
             {
                 Logger.Info("Out of coffee!");
                 bus.Return(ErrorCodes.OutOfCoffee);
@@ -34,7 +35,8 @@ namespace Starbucks.Barrista
             {
                 Logger.Info("Barista has completed order");
                 bus.Return(ErrorCodes.Success);
+                bus.Publish(new CoffeeReady(message.OrderNumber, message.Coffee));
             }
         }
-    }
+    }    
 }
