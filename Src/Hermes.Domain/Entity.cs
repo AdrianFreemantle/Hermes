@@ -16,10 +16,9 @@
             Parent.RegisterOwnedEntity(this);
         }
 
-        internal override void SaveEvent(DomainEvent @event)
+        internal protected override void SaveEvent(IDomainEvent @event, EntityBase source)
         {
-            @event.SetEntityDetails(this);
-            Parent.SaveEvent(@event);
+            Parent.SaveEvent(@event, source);
         }
     }
 }

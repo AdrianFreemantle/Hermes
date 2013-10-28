@@ -82,6 +82,7 @@
     <Compile Include="Persistence\ILookupTable.cs" />
     <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Persistence\IUnitOfWork.cs" />
+    <Compile Include="PropertyBag.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="SequentialGuid.cs" />
     <Compile Include="Mandate.cs" />

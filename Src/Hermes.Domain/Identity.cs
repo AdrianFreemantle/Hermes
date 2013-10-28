@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -6,7 +7,8 @@ namespace Hermes.Domain
 {
     [Serializable]
     [DataContract]
-    public abstract class Identity<T> : IEquatable<Identity<T>>, IIdentity
+    [DebuggerStepThrough]
+    public abstract class Identity<T> : IEquatable<Identity<T>>, IEquatable<T>, IIdentity
     {
         // ReSharper disable StaticFieldInGenericType
         private static readonly Type[] SupportTypes = {typeof(int), typeof(long), typeof(uint), typeof(ulong), typeof(Guid), typeof(string)};
@@ -17,7 +19,7 @@ namespace Hermes.Domain
 
         protected T Id
         {
-            get { return (T)id; }
+            get { return id; }
         }
 
         protected Identity()
@@ -54,6 +56,11 @@ namespace Hermes.Domain
             return identity != null && Equals(identity);
         }
 
+        public bool Equals(T other)
+        {
+            return Id.Equals(other);
+        }
+
         public bool Equals(Identity<T> other)
         {
             if (other != null)
@@ -62,7 +69,7 @@ namespace Hermes.Domain
             }
 
             return false;
-        }
+        }        
 
         public override string ToString()
         {
@@ -74,14 +81,14 @@ namespace Hermes.Domain
             return (Id.GetHashCode());
         }
 
-        void VerifyIdentityType(dynamic id)
+        void VerifyIdentityType(T identity)
         {
-            if (id == null)
+            if (ReferenceEquals(identity, null))
             {
                 throw new ArgumentException("You must provide a non null value as an identity");
             }
 
-            var type = id.GetType();
+            var type = identity.GetType();
 
             if (SupportTypes.Any(t => t == type))
             {

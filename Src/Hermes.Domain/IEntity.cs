@@ -3,6 +3,6 @@
     public interface IEntity : IAmRestorable
     {
         IIdentity Identity { get; }
-        void ApplyEvent(DomainEvent @event);
+        bool ApplyEvent(IDomainEvent @event);
     }
 }

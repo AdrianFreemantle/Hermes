@@ -4,9 +4,9 @@ namespace Hermes.Domain
 {
     public interface IAggregate : IEntity
     {
-        IEnumerable<DomainEvent> GetUncommittedEvents();
+        IEnumerable<IDomainEvent> GetUncommittedEvents();
         void ClearUncommittedEvents();
         int GetVersion();
-        void LoadFromHistory(IEnumerable<DomainEvent> domainEvents);
+        void LoadFromHistory(IEnumerable<IDomainEvent> domainEvents);
     }
 }

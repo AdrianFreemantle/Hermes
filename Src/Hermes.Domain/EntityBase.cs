@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -9,48 +8,61 @@ namespace Hermes.Domain
     public abstract class EntityBase : IEntity
     {
         public IIdentity Identity { get; set; }
-        private readonly Dictionary<Type, Action<object>> eventHandlers;
+        private readonly List<EventHandlerProperties> eventHandlers;
 
         protected EntityBase(IIdentity identity)
         {
             Identity = identity;
-            eventHandlers = new Dictionary<Type, Action<object>>();
+            eventHandlers = new List<EventHandlerProperties>();
             GetEventHandlers();
         }
 
-        protected virtual void RaiseEvent(DomainEvent @event)  
+        internal protected void RaiseEvent(IDomainEvent @event)  
         {
-            ApplyEvent(@event);
-            SaveEvent(@event);
+            if (ApplyEvent(@event, false))
+            {
+                SaveEvent(@event, this);
+                return;
+            }
+
+            throw new EventHandlerNotFoundException(this, @event);
         }
 
-        void IEntity.ApplyEvent(DomainEvent @event)
+        bool IEntity.ApplyEvent(IDomainEvent @event)
         {
-            ApplyEvent(@event);
+            return ApplyEvent(@event, true);
         }
 
-        protected virtual void ApplyEvent(DomainEvent @event)
+        internal protected virtual bool ApplyEvent(IDomainEvent @event, bool isReplay)
         {
             try
             {
-                var eventType = @event.GetType();
-                
-                if(eventType.GetCustomAttribute<EventDoesNotMutateStateAttribute>() == null)
+                EventHandlerProperties handler = isReplay 
+                    ? eventHandlers.First(h => h.EventIsOwnedByEntity(@event, this))
+                    : eventHandlers.First(h => h.CanHandleEvent(@event));
+
+                if (handler != null)
                 {
-                    eventHandlers[eventType].Invoke(@event);
+                    handler.InvokeHandler(@event, this);
+                    return true;
                 }
             }
             catch (TargetInvocationException ex)
             {
                 throw new EventHandlerInvocationException(this, @event, ex);
             }
-            catch (KeyNotFoundException)
-            {
-                throw new EventHandlerNotFoundException(this, @event);
-            }
+
+            return false;
         }
 
-        internal abstract void SaveEvent(DomainEvent @event);
+        internal protected abstract void SaveEvent(IDomainEvent @event, EntityBase source);
+
+
+        internal void UpdateEventDetails(IDomainEvent @event, IAggregate aggregate)
+        {
+            var handler = eventHandlers.First(h => h.CanHandleEvent(@event));
+            handler.UpdateEventDetails(@event, aggregate, this);
+        }
 
         public override int GetHashCode()
         {
@@ -119,10 +131,10 @@ namespace Hermes.Domain
             return Identity.ToString();
         }
 
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         private void GetEventHandlers()
         {
-            Type EventBaseType = typeof(DomainEvent);
+            Type eventBaseType = typeof(IDomainEvent);
 
             var targetType = GetType();
 
@@ -133,23 +145,16 @@ namespace Hermes.Domain
                                  where
                                      method.Name.Equals("When", StringComparison.InvariantCulture) &&
                                          parameters.Length == 1 &&
-                                         EventBaseType.IsAssignableFrom(parameters[0].ParameterType)
+                                         eventBaseType.IsAssignableFrom(parameters[0].ParameterType)
                                  select
                                      new { MethodInfo = method, FirstParameter = method.GetParameters()[0] };
 
             foreach (var method in matchedMethods)
             {
-                var methodCopy = method.MethodInfo;
-                Type firstParameterType = methodCopy.GetParameters().First().ParameterType;
-                var invokeAction = InvokeAction(methodCopy);
-                eventHandlers.Add(firstParameterType, invokeAction);
+                MethodInfo methodCopy = method.MethodInfo;
+                Type eventType = methodCopy.GetParameters().First().ParameterType;
+                eventHandlers.Add(EventHandlerProperties.CreateFromMethodInfo(methodCopy, targetType));
             }
-        }
-
-        [DebuggerStepThrough]
-        private Action<object> InvokeAction(MethodInfo methodCopy)
-        {
-            return e => methodCopy.Invoke(this, new[] { e });
         }
     }
 }

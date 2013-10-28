@@ -5,19 +5,19 @@ using System.Linq;
 
 namespace Hermes.Domain
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public abstract class Aggregate : EntityBase, IAggregate
     {
         private int version;
-        private readonly HashSet<DomainEvent> changes = new HashSet<DomainEvent>();
-        protected readonly HashSet<IEntity> Entities = new HashSet<IEntity>();
+        private readonly HashSet<IDomainEvent> changes = new HashSet<IDomainEvent>();
+        protected readonly HashSet<Entity> Entities = new HashSet<Entity>();
 
         protected Aggregate(IIdentity identity) 
             : base(identity)
         {
         }
 
-        IEnumerable<DomainEvent> IAggregate.GetUncommittedEvents()
+        IEnumerable<IDomainEvent> IAggregate.GetUncommittedEvents()
         {
             return changes.ToArray();
         }
@@ -32,16 +32,20 @@ namespace Hermes.Domain
             return version;
         }
 
-        void IAggregate.LoadFromHistory(IEnumerable<DomainEvent> domainEvents)
+        void IAggregate.LoadFromHistory(IEnumerable<IDomainEvent> domainEvents)
         {
             foreach (var @event in domainEvents)
             {
-                ApplyEvent(@event);
+                if (!ApplyEvent(@event, true))
+                {
+                    throw new EventHandlerNotFoundException(this, @event);
+                }
+
                 version = @event.Version;
             }
         }
 
-        internal void RegisterOwnedEntity(IEntity entity)
+        internal void RegisterOwnedEntity(Entity entity)
         {
             if (entity.Identity.IsEmpty())
             {
@@ -56,7 +60,7 @@ namespace Hermes.Domain
             Entities.Add(entity);
         }
 
-        protected TEntity Get<TEntity>(IIdentity entityId) where TEntity : IEntity
+        protected TEntity Get<TEntity>(IIdentity entityId) where TEntity : Entity
         {
             var entity = Entities.SingleOrDefault(e => e.Identity.Equals(entityId));
 
@@ -68,45 +72,36 @@ namespace Hermes.Domain
             return (TEntity)entity;
         }
 
-        protected TEntity Get<TEntity>(Func<TEntity, bool> predicate) where TEntity : IEntity
+        protected TEntity Get<TEntity>(Func<TEntity, bool> predicate) where TEntity : Entity
         {
             return GetAll<TEntity>().SingleOrDefault(predicate);
         }
 
-        protected ICollection<TEntity> GetAll<TEntity>() where TEntity : IEntity
+        protected ICollection<TEntity> GetAll<TEntity>() where TEntity : Entity
         {
             return Entities.Where(e => e is TEntity).Cast<TEntity>().ToArray();
         }
 
-        protected ICollection<TEntity> GetAll<TEntity>(Func<TEntity, bool> predicate) where TEntity : IEntity
+        protected ICollection<TEntity> GetAll<TEntity>(Func<TEntity, bool> predicate) where TEntity : Entity
         {
             return GetAll<TEntity>().Where(predicate).ToArray();
         }
 
-        protected override void RaiseEvent(DomainEvent @event)
-        {
-            SaveEvent(@event);
-            ApplyEvent(@event);
-        }
-
-        internal override void SaveEvent(DomainEvent @event)
+        internal protected override void SaveEvent(IDomainEvent @event, EntityBase source)
         {
             version++;
-            @event.SetAggregateDetails(this);
+            source.UpdateEventDetails(@event, this);
             changes.Add(@event);
         }
 
-        protected override void ApplyEvent(DomainEvent @event)
+        internal protected override bool ApplyEvent(IDomainEvent @event, bool isReplay)
         {
-            if (@event.EntityId.IsEmpty())
+            if (base.ApplyEvent(@event, isReplay))
             {
-                base.ApplyEvent(@event);
+                return true;
             }
-            else
-            {
-                var entity = Entities.Single(e => e.Identity.Equals(@event.EntityId));
-                entity.ApplyEvent(@event);
-            }
+
+            return Entities.Any(entity => entity.ApplyEvent(@event, isReplay));
         }
 
         protected TEntity RestoreEntity<TEntity>(IMemento memento) where TEntity : class, IEntity
@@ -116,5 +111,4 @@ namespace Hermes.Domain
             return entity;
         }
     }
-
 }

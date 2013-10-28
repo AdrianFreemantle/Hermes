@@ -41,7 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
-    <Compile Include="DomainEvent.cs" />
+    <Compile Include="AggregateIdAttribute.cs" />
+    <Compile Include="DomainEventAggregateIdException.cs" />
+    <Compile Include="DomainEventEntityIdException.cs" />
+    <Compile Include="DomainEventException.cs" />
+    <Compile Include="EntityIdAttribute.cs" />
+    <Compile Include="EventHandlerProperties.cs" />
+    <Compile Include="IDomainEvent.cs" />
     <Compile Include="DomainException.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityBase.cs" />
@@ -56,7 +62,6 @@
     <Compile Include="IIdentity.cs" />
     <Compile Include="IMemento.cs" />
     <Compile Include="Memento.cs" />
-    <Compile Include="NullIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
