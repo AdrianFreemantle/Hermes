@@ -45,6 +45,7 @@
     <Compile Include="DomainEventAggregateIdException.cs" />
     <Compile Include="DomainEventEntityIdException.cs" />
     <Compile Include="DomainEventException.cs" />
+    <Compile Include="EntityEventHandlerCache.cs" />
     <Compile Include="EntityIdAttribute.cs" />
     <Compile Include="EventHandlerProperties.cs" />
     <Compile Include="IDomainEvent.cs" />

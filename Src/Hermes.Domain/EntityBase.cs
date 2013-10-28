@@ -8,13 +8,13 @@ namespace Hermes.Domain
     public abstract class EntityBase : IEntity
     {
         public IIdentity Identity { get; set; }
-        private readonly List<EventHandlerProperties> eventHandlers;
+
+        private readonly IReadOnlyCollection<EventHandlerProperties> eventHandlers;
 
         protected EntityBase(IIdentity identity)
         {
             Identity = identity;
-            eventHandlers = new List<EventHandlerProperties>();
-            GetEventHandlers();
+            eventHandlers = EntityEventHandlerCache.ScanEntity(this);
         }
 
         internal protected void RaiseEvent(IDomainEvent @event)  
@@ -129,32 +129,6 @@ namespace Hermes.Domain
         public override string ToString()
         {
             return Identity.ToString();
-        }
-
-        //[DebuggerStepThrough]
-        private void GetEventHandlers()
-        {
-            Type eventBaseType = typeof(IDomainEvent);
-
-            var targetType = GetType();
-
-            var methodsToMatch = targetType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            var matchedMethods = from method in methodsToMatch
-                                 let parameters = method.GetParameters()
-                                 where
-                                     method.Name.Equals("When", StringComparison.InvariantCulture) &&
-                                         parameters.Length == 1 &&
-                                         eventBaseType.IsAssignableFrom(parameters[0].ParameterType)
-                                 select
-                                     new { MethodInfo = method, FirstParameter = method.GetParameters()[0] };
-
-            foreach (var method in matchedMethods)
-            {
-                MethodInfo methodCopy = method.MethodInfo;
-                Type eventType = methodCopy.GetParameters().First().ParameterType;
-                eventHandlers.Add(EventHandlerProperties.CreateFromMethodInfo(methodCopy, targetType));
-            }
         }
     }
 }
