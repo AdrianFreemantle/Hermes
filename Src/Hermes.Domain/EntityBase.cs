@@ -7,6 +7,12 @@ namespace Hermes.Domain
 {
     public abstract class EntityBase : IEntity
     {
+        internal protected enum ApplyEventAs
+        {
+            New,
+            Historical
+        }
+
         public IIdentity Identity { get; set; }
 
         private readonly IReadOnlyCollection<EventHandlerProperties> eventHandlers;
@@ -19,7 +25,7 @@ namespace Hermes.Domain
 
         internal protected void RaiseEvent(IDomainEvent @event)  
         {
-            if (ApplyEvent(@event, false))
+            if (ApplyEvent(@event, ApplyEventAs.New))
             {
                 SaveEvent(@event, this);
                 return;
@@ -30,16 +36,16 @@ namespace Hermes.Domain
 
         bool IEntity.ApplyEvent(IDomainEvent @event)
         {
-            return ApplyEvent(@event, true);
+            return ApplyEvent(@event, ApplyEventAs.Historical);
         }
 
-        internal protected virtual bool ApplyEvent(IDomainEvent @event, bool isReplay)
+        internal protected virtual bool ApplyEvent(IDomainEvent @event, ApplyEventAs applyEventAs)
         {
             try
             {
-                EventHandlerProperties handler = isReplay 
-                    ? eventHandlers.First(h => h.EventIsOwnedByEntity(@event, this))
-                    : eventHandlers.First(h => h.CanHandleEvent(@event));
+                EventHandlerProperties handler = applyEventAs == ApplyEventAs.Historical
+                    ? eventHandlers.FirstOrDefault(h => h.EventIsOwnedByEntity(@event, this))
+                    : eventHandlers.FirstOrDefault(h => h.CanHandleEvent(@event));
 
                 if (handler != null)
                 {

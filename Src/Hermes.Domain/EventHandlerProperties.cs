@@ -26,7 +26,7 @@ namespace Hermes.Domain
             entityIdentityProperty = GetEntityIdentityProperty();
             versionProperty = GetAggregateVersionProperty();
 
-            eventMutatesEntityState = eventType.GetCustomAttribute<EventDoesNotMutateStateAttribute>() != null;
+            eventMutatesEntityState = eventType.GetCustomAttribute<EventDoesNotMutateStateAttribute>() == null;
         }
 
         public static EventHandlerProperties CreateFromMethodInfo(MethodInfo method, Type entityType)

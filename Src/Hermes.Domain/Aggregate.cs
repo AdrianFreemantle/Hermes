@@ -36,7 +36,7 @@ namespace Hermes.Domain
         {
             foreach (var @event in domainEvents)
             {
-                if (!ApplyEvent(@event, true))
+                if (!ApplyEvent(@event, ApplyEventAs.Historical))
                 {
                     throw new EventHandlerNotFoundException(this, @event);
                 }
@@ -94,14 +94,14 @@ namespace Hermes.Domain
             changes.Add(@event);
         }
 
-        internal protected override bool ApplyEvent(IDomainEvent @event, bool isReplay)
+        internal protected override bool ApplyEvent(IDomainEvent @event, ApplyEventAs applyAs)
         {
-            if (base.ApplyEvent(@event, isReplay))
+            if (base.ApplyEvent(@event, applyAs))
             {
                 return true;
             }
 
-            return Entities.Any(entity => entity.ApplyEvent(@event, isReplay));
+            return Entities.Any(entity => entity.ApplyEvent(@event, applyAs));
         }
 
         protected TEntity RestoreEntity<TEntity>(IMemento memento) where TEntity : class, IEntity

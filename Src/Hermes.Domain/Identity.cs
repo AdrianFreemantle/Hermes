@@ -7,8 +7,8 @@ namespace Hermes.Domain
 {
     [Serializable]
     [DataContract]
-    [DebuggerStepThrough]
-    public abstract class Identity<T> : IEquatable<Identity<T>>, IEquatable<T>, IIdentity
+    //[DebuggerStepThrough]
+    public abstract class Identity<T> : IIdentity, IEquatable<Identity<T>>, IEquatable<T>
     {
         // ReSharper disable StaticFieldInGenericType
         private static readonly Type[] SupportTypes = {typeof(int), typeof(long), typeof(uint), typeof(ulong), typeof(Guid), typeof(string)};
@@ -53,7 +53,17 @@ namespace Hermes.Domain
 
             var identity = obj as Identity<T>;
 
-            return identity != null && Equals(identity);
+            if (identity != null)
+            {
+                return Equals(identity);
+            }
+
+            if (obj is T)
+            {
+                return Equals((T)obj);
+            }
+
+            return false;
         }
 
         public bool Equals(T other)
