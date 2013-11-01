@@ -23,6 +23,10 @@ namespace Hermes.Messaging.Configuration
         {
             SecondLevelRetryAttempts = 0;
             FirstLevelRetryAttempts = 0;
+
+            IsMessageType = type => false;
+            IsCommandType = type => false;
+            IsEventType = type => false;
         }
 
         public static int NumberOfWorkers

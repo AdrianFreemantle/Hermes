@@ -13,7 +13,7 @@ namespace Starbucks.Models
     {
         public string Drink { get; private set; }
 
-        public OrderReadyViewModel(OrderCoffee order)
+        public OrderReadyViewModel(PlaceOrder order)
         {
             Drink = order.Coffee.GetDescription();
         }

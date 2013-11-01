@@ -7,6 +7,7 @@ using System.Reflection;
 
 using Autofac;
 using Autofac.Builder;
+
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -34,11 +35,11 @@ namespace Hermes.ObjectBuilder.Autofac
             if (container == null)
             {
                 LifetimeScope = new ContainerBuilder().Build();
-                ((IContainerBuilder)this).RegisterType<AutofacAdapter>(DependencyLifecycle.InstancePerUnitOfWork);
             }
             else
             {
                 LifetimeScope = container;
+                System.Diagnostics.Trace.WriteLine(String.Format("Starting new lifetime scope {0}", LifetimeScope.GetHashCode()));
             }
 
             Logger.Debug("Starting new container {0}", LifetimeScope.GetHashCode());
@@ -69,10 +70,11 @@ namespace Hermes.ObjectBuilder.Autofac
             var builder = new ContainerBuilder();
 
             builder.RegisterAssemblyTypes(assemblies.ToArray())
-                   .AsClosedTypesOf(typeof(IHandleMessage<>))
+                   .AsClosedTypesOf(typeof (IHandleMessage<>))
                    .InstancePerLifetimeScope()
-                   .PropertiesAutowired();
-
+                   .PropertiesAutowired()
+                   .AsImplementedInterfaces();  
+            
             builder.Update(LifetimeScope.ComponentRegistry);
         }
 
@@ -91,7 +93,9 @@ namespace Hermes.ObjectBuilder.Autofac
             var services = GetAllServices(instance.GetType());
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(instance).As(services).PropertiesAutowired();
+            builder.RegisterInstance(instance).As(services)
+                .PropertiesAutowired();
+
             builder.Update(LifetimeScope.ComponentRegistry);
         }
 
@@ -105,7 +109,9 @@ namespace Hermes.ObjectBuilder.Autofac
             var services = GetAllServices(type);
 
             var builder = new ContainerBuilder();
-            var registration = builder.RegisterType(type).As(services).PropertiesAutowired();
+            var registration = builder.RegisterType(type)
+                                      .As(services)
+                                      .PropertiesAutowired();
 
             ConfigureLifetimeScope(dependencyLifecycle, registration);
             builder.Update(LifetimeScope.ComponentRegistry);
@@ -165,17 +171,13 @@ namespace Hermes.ObjectBuilder.Autofac
                 throw new ArgumentNullException("serviceType");
             }
 
-            LogServiceType(serviceType);
-
-            return key != null
+            object instance = key != null
                 ? LifetimeScope.ResolveNamed(key, serviceType)
                 : LifetimeScope.Resolve(serviceType);
-        }
 
-        private static string GetGenericParametersString(Type serviceType)
-        {
-             var genericArguments = serviceType.GenericTypeArguments.Select(type => type.Name.ToString(CultureInfo.InvariantCulture));
-             return String.Join(", ", genericArguments);
+            LogServiceType(instance);
+
+            return instance;
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
@@ -185,26 +187,41 @@ namespace Hermes.ObjectBuilder.Autofac
                 throw new ArgumentNullException("serviceType");
             }
 
-            LogServiceType(serviceType);
-
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             object instance = LifetimeScope.Resolve(enumerableType);
+
+            var services = ((IEnumerable)instance).Cast<object>().ToList();
+
+            foreach (var service in services)
+            {
+                LogServiceType(service);
+            }
 
             return ((IEnumerable)instance).Cast<object>();
         }
 
-        private void LogServiceType(Type serviceType)
+        private void LogServiceType(object service)
         {
+            var serviceType = service.GetType();
+
             string genericParametrs = GetGenericParametersString(serviceType);
 
             if (genericParametrs.Length > 0)
             {
-                Logger.Debug("Resolving service {0}<{1}> from container {2}", serviceType.Name, genericParametrs, GetHashCode());
+                System.Diagnostics.Trace.WriteLine(String.Format("Activated service {0}<{1}> : {2} from lifetime scope {3}", serviceType.Name, genericParametrs, service.GetHashCode(), GetHashCode()));
+                //Logger.Info("Resolving service {0}<{1}> from container {2}", serviceType.Name, genericParametrs, GetHashCode());
             }
             else
             {
-                Logger.Debug("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+                System.Diagnostics.Trace.WriteLine(String.Format("Activated service {0} {1} from lifetime scope {2}", serviceType.Name, service.GetHashCode(), GetHashCode()));
+                //Logger.Info("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
             }
+        }
+
+        private static string GetGenericParametersString(Type serviceType)
+        {
+            var genericArguments = serviceType.GenericTypeArguments.Select(type => type.Name.ToString(CultureInfo.InvariantCulture));
+            return String.Join(", ", genericArguments);
         }
 
         public void Dispose()
@@ -222,6 +239,7 @@ namespace Hermes.ObjectBuilder.Autofac
 
             if (disposing && LifetimeScope != null)
             {
+                System.Diagnostics.Trace.WriteLine(String.Format("Disposing lifetime scope {0}", GetHashCode()));
                 Logger.Debug("Disposing container {0}", GetHashCode());
                 LifetimeScope.Dispose();
             }

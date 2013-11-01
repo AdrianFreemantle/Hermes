@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -48,12 +47,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterSingleton(containerBuilder);
 
             var busRegistrar = new UnicastBusDependencyRegistrar();
-            busRegistrar.Register(containerBuilder);
-
-            using (var scanner = new AssemblyScanner())
-            {
-                containerBuilder.RegisterMessageHandlers(scanner.Assemblies);
-            }
+            busRegistrar.Register(containerBuilder);           
 
             Settings.SetEndpointName(endpointName);
             Settings.RootContainer = containerBuilder.BuildContainer();
@@ -76,9 +70,6 @@ namespace Hermes.Messaging.Configuration
             Settings.IsEventType = isEventRule;
             return this;
         }
-
-        internal static Func<Type, bool> IsCommandType { get; set; }
-        internal static Func<Type, bool> IsEventType { get; set; }
 
         public IConfigureEndpoint NumberOfWorkers(int numberOfWorkers)
         {
@@ -127,6 +118,19 @@ namespace Hermes.Messaging.Configuration
 
         internal void Start()
         {
+            using (var scanner = new AssemblyScanner())
+            {
+                var messageTypes = scanner.Types.Where(Settings.IsCommandType)
+                    .Union(scanner.Types.Where(Settings.IsEventType))
+                    .Union(scanner.Types.Where(Settings.IsMessageType)).Distinct().ToList();
+
+
+                HandlerCache.Scan(messageTypes, scanner);
+
+                containerBuilder.RegisterMessageHandlers(scanner.Assemblies);
+            }
+
+
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
 

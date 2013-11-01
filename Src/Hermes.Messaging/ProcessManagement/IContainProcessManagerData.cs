@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.Messaging.Saga
+namespace Hermes.Messaging.ProcessManagement
 {
     public interface IContainProcessManagerData
     {

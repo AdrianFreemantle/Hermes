@@ -16,10 +16,10 @@ namespace Starbucks.BaristaServiceProxy {
     public interface BaristaService {
         
         [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/BaristaService/Put", ReplyAction="Hermes.Messaging.Wcf/BaristaService/PutResponse")]
-        int Put(Starbucks.Messages.OrderCoffee command);
+        int Put(Starbucks.Messages.PlaceOrder command);
         
         [System.ServiceModel.OperationContractAttribute(Action="Hermes.Messaging.Wcf/BaristaService/Put", ReplyAction="Hermes.Messaging.Wcf/BaristaService/PutResponse")]
-        System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.OrderCoffee command);
+        System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.PlaceOrder command);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -49,11 +49,11 @@ namespace Starbucks.BaristaServiceProxy {
                 base(binding, remoteAddress) {
         }
         
-        public int Put(Starbucks.Messages.OrderCoffee command) {
+        public int Put(Starbucks.Messages.PlaceOrder command) {
             return base.Channel.Put(command);
         }
         
-        public System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.OrderCoffee command) {
+        public System.Threading.Tasks.Task<int> PutAsync(Starbucks.Messages.PlaceOrder command) {
             return base.Channel.PutAsync(command);
         }
     }

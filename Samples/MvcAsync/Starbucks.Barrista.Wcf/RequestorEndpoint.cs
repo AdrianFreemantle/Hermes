@@ -22,7 +22,7 @@ namespace Starbucks.Barrista.Wcf
                 .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .RegisterDependencies(new QueryDependencies())
-                .RegisterMessageRoute<OrderCoffee>(Address.Parse("Starbucks.Barrista"));
+                .RegisterMessageRoute<PlaceOrder>(Address.Parse("Starbucks.Barrista"));
         }
 
         private static bool IsCommand(Type type)

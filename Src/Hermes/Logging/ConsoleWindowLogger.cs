@@ -2,8 +2,6 @@
 
 namespace Hermes.Logging
 {
-
-
     public class ConsoleWindowLogger : ILog
     {
         private static readonly object Sync = new object();

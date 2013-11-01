@@ -5,10 +5,18 @@ using Hermes;
 
 namespace Starbucks.Messages
 {
-    public class OrderCoffee : ICommand
+    public class PlaceOrder : ICommand
     {
         public Guid OrderNumber { get; set; }
         public Coffee Coffee { get; set; }
+        public Sandwich Sandwich { get; set; }
+    }
+
+    public interface IOrderPlaced : IEvent
+    {
+        Guid OrderNumber { get; }
+        Coffee Coffee { get; }
+        Sandwich Sandwich { get; }
     }
 
     public interface IOrderReady : IEvent
@@ -18,22 +26,28 @@ namespace Starbucks.Messages
 
     public interface IDrinkPrepared : IEvent
     {
+        Guid OrderNumber { get; }
         string Drink { get; }
     }
 
+    public interface ISandwichPrepared : IEvent
+    {
+        Guid OrderNumber { get; }
+    }
+
     [DataContract]
-    public class CoffeeReady : IOrderReady, IDrinkPrepared
+    public class OrderReady : IOrderReady, IDrinkPrepared
     {
         [DataMember]
         public Guid OrderNumber { get; protected set; }
         [DataMember]
         public string Drink { get; protected set; }
 
-        protected CoffeeReady()
+        protected OrderReady()
         {
         }
 
-        public CoffeeReady(Guid orderNumber, Coffee coffee)
+        public OrderReady(Guid orderNumber, Coffee coffee)
         {
             OrderNumber = orderNumber;
             Drink = coffee.GetDescription();
@@ -42,8 +56,17 @@ namespace Starbucks.Messages
 
     public enum Coffee
     {
-        Filter,
-        Espresso
+        None,
+        FilterCoffee,
+        Espresso,
+        DoubleEspresso
+    }
+
+    public enum Sandwich
+    {
+        None,
+        HamAndCheese,
+        BaconLettuceAndTomato
     }
 
     public enum ErrorCodes

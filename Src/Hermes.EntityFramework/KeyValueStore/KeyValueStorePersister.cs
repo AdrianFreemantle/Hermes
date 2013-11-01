@@ -11,12 +11,12 @@ namespace Hermes.EntityFramework.KeyValueStore
     {
         private readonly Encoding encoding = Encoding.UTF8;
 
-        private readonly IEntityUnitOfWork unitOfWork;
+        private readonly IRepositoryFactory repositoryFactory;
         private readonly ISerializeObjects serializer;
 
-        public KeyValueStorePersister(IEntityUnitOfWork unitOfWork, ISerializeObjects serializer)
+        public KeyValueStorePersister(IRepositoryFactory repositoryFactory, ISerializeObjects serializer)
         {
-            this.unitOfWork = unitOfWork;
+            this.repositoryFactory = repositoryFactory;
             this.serializer = serializer;
         }
 
@@ -33,7 +33,7 @@ namespace Hermes.EntityFramework.KeyValueStore
 
             string id = ToHash(key);
 
-            var repository = unitOfWork.GetRepository<KeyValueEntity>();
+            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
 
             var entity = new KeyValueEntity
             {
@@ -53,7 +53,7 @@ namespace Hermes.EntityFramework.KeyValueStore
 
             string id = ToHash(key);
 
-            var repository = unitOfWork.GetRepository<KeyValueEntity>();
+            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
             KeyValueEntity entity = repository.Get(id);
             entity.Value = Serialize(value);
             entity.ValueType = value.GetType().AssemblyQualifiedName;
@@ -63,7 +63,7 @@ namespace Hermes.EntityFramework.KeyValueStore
         {
             string id = ToHash(key);
 
-            var repository = unitOfWork.GetRepository<KeyValueEntity>();
+            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
             var entity = repository.Get(id);
 
             if (entity == null)

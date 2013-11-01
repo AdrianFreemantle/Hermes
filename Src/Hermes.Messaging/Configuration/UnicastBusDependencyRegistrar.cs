@@ -16,14 +16,14 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
-
-            containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerUnitOfWork);
+
+            containerBuilder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
 
             if (!Settings.IsClientEndpoint)
-            {
-                containerBuilder.RegisterType<OutgoingMessagesUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
+            {                
                 containerBuilder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
             }
         }

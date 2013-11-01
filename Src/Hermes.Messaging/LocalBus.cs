@@ -41,7 +41,7 @@ namespace Hermes.Messaging
 
             foreach (var @event in events)
             {
-                dispatcher.DispatchToHandlers(@event);
+                dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
             }
         }
     }

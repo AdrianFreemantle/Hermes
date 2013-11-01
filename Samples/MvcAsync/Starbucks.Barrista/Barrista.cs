@@ -7,7 +7,7 @@ using Starbucks.Messages;
 
 namespace Starbucks.Barrista
 {
-    public class Barrista : IHandleMessage<OrderCoffee>
+    public class Barrista : IHandleMessage<PlaceOrder>
     {
         static readonly Random rand = new Random(DateTime.Now.Second);
 
@@ -19,7 +19,7 @@ namespace Starbucks.Barrista
             this.bus = bus;
         }
 
-        public void Handle(OrderCoffee message)
+        public void Handle(PlaceOrder message)
         {
             Logger.Info("Barista is attempting to prepare order");
 
@@ -35,7 +35,7 @@ namespace Starbucks.Barrista
             {
                 Logger.Info("Barista has completed order");
                 bus.Return(ErrorCodes.Success);
-                bus.Publish(new CoffeeReady(message.OrderNumber, message.Coffee));
+                bus.Publish(new OrderReady(message.OrderNumber, message.Coffee));
             }
         }
     }    

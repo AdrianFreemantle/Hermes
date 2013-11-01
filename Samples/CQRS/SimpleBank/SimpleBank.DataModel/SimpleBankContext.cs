@@ -2,7 +2,7 @@
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 using Hermes.EntityFramework;
-using Hermes.Storage.EntityFramework.KeyValueStore;
+using Hermes.EntityFramework.KeyValueStore;
 
 using SimpleBank.DataModel.ReadModel;
 
@@ -27,7 +27,6 @@ namespace SimpleBank.DataModel
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
             modelBuilder.Configurations.Add(new KeyValueEntityConfiguration());
             modelBuilder.Configurations.Add(new PortfolioRecordConfiguration());
             modelBuilder.Configurations.Add(new AccountRecordConfiguration());

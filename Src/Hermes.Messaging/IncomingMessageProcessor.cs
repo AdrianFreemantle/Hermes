@@ -9,6 +9,8 @@ using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 using Hermes.Serialization;
 
+using Microsoft.Practices.ServiceLocation;
+
 namespace Hermes.Messaging
 {
     public class IncomingMessageProcessor : IProcessIncomingMessages
@@ -16,22 +18,22 @@ namespace Hermes.Messaging
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
 
         private readonly ISerializeMessages messageSerializer;
-        private readonly IDispatchMessagesToHandlers messageDispatcher;
         private readonly IManageCallbacks callBackManager;
+        private readonly IDispatchMessagesToHandlers dispatcher;
         private readonly ICollection<IUnitOfWork> unitsOfWork;
 
         private TransportMessage transportMessage;
         private object[] messages;
 
-        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IDispatchMessagesToHandlers messageDispatcher, IManageCallbacks callBackManager, IEnumerable<IUnitOfWork> unitsOfWork)
+        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IManageCallbacks callBackManager, IDispatchMessagesToHandlers dispatcher, IEnumerable<IUnitOfWork> unitsOfWork)
         {
             this.messageSerializer = messageSerializer;
-            this.messageDispatcher = messageDispatcher;
             this.callBackManager = callBackManager;
+            this.dispatcher = dispatcher;
             this.unitsOfWork = unitsOfWork.ToArray();
         }
 
-        public void ProcessTransportMessage(TransportMessage incommingTransportMessage)
+        public void ProcessTransportMessage(TransportMessage incommingTransportMessage, IServiceLocator serviceLocator)
         {
             Logger.Verbose("Processing transport message {0}", incommingTransportMessage.MessageId);
 
@@ -40,7 +42,7 @@ namespace Hermes.Messaging
 
             callBackManager.HandleCallback(transportMessage, messages);
 
-            Retry.Action(TryProcessMessages, OnRetry, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+            Retry.Action(() => TryProcessMessages(serviceLocator), OnRetry, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
         }
 
         private void OnRetry(Exception ex)
@@ -48,11 +50,11 @@ namespace Hermes.Messaging
             Logger.Warn("Attempting first level retry for message {0} : {1}", transportMessage.MessageId, ex.Message);
         }
 
-        private void TryProcessMessages()
+        private void TryProcessMessages(IServiceLocator serviceLocator)
         {
             try
             {
-                DispatchToHandlers();
+                DispatchToHandlers(serviceLocator);
                 CommitUnitsOfWork();
             }
             catch 
@@ -62,7 +64,7 @@ namespace Hermes.Messaging
             }
         }
 
-        private void DispatchToHandlers()
+        private void DispatchToHandlers(IServiceLocator serviceLocator)
         {
             if (transportMessage.IsControlMessage())
             {
@@ -71,7 +73,7 @@ namespace Hermes.Messaging
 
             foreach (var message in messages)
             {
-                messageDispatcher.DispatchToHandlers(message);  
+                dispatcher.DispatchToHandlers(message, serviceLocator);  
             }
         }
 

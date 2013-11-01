@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-using Hermes.Messaging.Saga;
+using Hermes.Messaging.ProcessManagement;
 using Hermes.Serialization;
 
 namespace Hermes.EntityFramework.ProcessManagager
@@ -10,18 +10,18 @@ namespace Hermes.EntityFramework.ProcessManagager
     {
         private readonly Encoding encoding = Encoding.UTF8;
 
-        private readonly IEntityUnitOfWork unitOfWork;
+        private readonly IRepositoryFactory repositoryFactory;
         private readonly ISerializeObjects serializer;
 
-        public ProcessManagerPersister(IEntityUnitOfWork unitOfWork, ISerializeObjects serializer)
+        public ProcessManagerPersister(IRepositoryFactory repositoryFactory, ISerializeObjects serializer)
         {
-            this.unitOfWork = unitOfWork;
+            this.repositoryFactory = repositoryFactory;
             this.serializer = serializer;
         }
 
         public void Create<T>(T saga) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
+            var repository = repositoryFactory.GetRepository<ProcessManagerEntity>();
 
             var entity = new ProcessManagerEntity
             {
@@ -34,14 +34,14 @@ namespace Hermes.EntityFramework.ProcessManagager
 
         public void Update<T>(T saga) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
+            var repository = repositoryFactory.GetRepository<ProcessManagerEntity>();
             ProcessManagerEntity entity = repository.Get(saga.Id);
             entity.State = Serialize(saga);
         }
 
         public T Get<T>(Guid sagaId) where T : class, IContainProcessManagerData
         {
-            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
+            var repository = repositoryFactory.GetRepository<ProcessManagerEntity>();
             var entity = repository.Get(sagaId);
 
             if (entity == null)
@@ -54,7 +54,7 @@ namespace Hermes.EntityFramework.ProcessManagager
 
         public void Complete(Guid sagaId)
         {
-            var repository = unitOfWork.GetRepository<ProcessManagerEntity>();
+            var repository = repositoryFactory.GetRepository<ProcessManagerEntity>();
             var entity = repository.Get(sagaId);
             repository.Remove(entity);
         }

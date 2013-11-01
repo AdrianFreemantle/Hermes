@@ -83,7 +83,7 @@ namespace Hermes.Messaging
             {
                 try
                 {
-                    processor.ProcessTransportMessage(transportMessage);
+                    processor.ProcessTransportMessage(transportMessage, serviceProvider);
                 }
                 catch (Exception ex)
                 {

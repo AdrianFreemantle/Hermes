@@ -53,6 +53,8 @@
     <Compile Include="BusCallback\Callback.cs" />
     <Compile Include="BusCallback\BusAsyncResult.cs" />
     <Compile Include="CallBackManager.cs" />
+    <Compile Include="Configuration\HandlerCache.cs" />
+    <Compile Include="Configuration\MessageHandlerDetail.cs" />
     <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="ClientEndpoint.cs" />
     <Compile Include="CompletionResult.cs" />
@@ -97,9 +99,9 @@
     <Compile Include="Routing\IRouteMessageToEndpoint.cs" />
     <Compile Include="Routing\RouteAlreadyDefinedException.cs" />
     <Compile Include="Routing\RouteNotDefinedException.cs" />
-    <Compile Include="Saga\IContainProcessManagerData.cs" />
-    <Compile Include="Saga\IPersistProcessManagers.cs" />
-    <Compile Include="Saga\IProcessManager.cs" />
+    <Compile Include="ProcessManagement\IContainProcessManagerData.cs" />
+    <Compile Include="ProcessManagement\IPersistProcessManagers.cs" />
+    <Compile Include="ProcessManagement\IProcessManager.cs" />
     <Compile Include="Storage\IPersistTimeouts.cs" />
     <Compile Include="Storage\IStoreSubscriptions.cs" />
     <Compile Include="Storage\TimeoutData.cs" />

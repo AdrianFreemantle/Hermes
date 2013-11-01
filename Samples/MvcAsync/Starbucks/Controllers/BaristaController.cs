@@ -23,13 +23,13 @@ namespace Starbucks.Controllers
         
         public async Task<ActionResult> BuyCoffee()
         {
-            var myOrder = new OrderCoffee
+            var myOrder = new PlaceOrder
             {
                 Coffee = Coffee.Espresso,
                 OrderNumber = Guid.NewGuid()
             };
 
-            ErrorCodes result = await messageBus.Send(Guid.NewGuid(), myOrder).Register<ErrorCodes>(TimeSpan.FromSeconds(5));
+            ErrorCodes result = await messageBus.Send(myOrder).Register<ErrorCodes>(TimeSpan.FromSeconds(50000));
 
             if (result != ErrorCodes.Success)
             {
@@ -41,7 +41,7 @@ namespace Starbucks.Controllers
 
         public async Task<ActionResult> BuyCoffeeWcf()
         {
-            var myOrder = new OrderCoffee
+            var myOrder = new PlaceOrder
             {
                 Coffee = Coffee.Espresso,
                 OrderNumber = Guid.NewGuid()

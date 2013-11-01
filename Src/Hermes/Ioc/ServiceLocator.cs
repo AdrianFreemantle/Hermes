@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+
+using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Ioc
 {
-    public class ServiceLocator : IServiceProvider
+    public class ServiceLocator : ServiceLocatorImplBase
     {
         private static readonly ThreadLocal<ServiceLocator> instance = new ThreadLocal<ServiceLocator>();
         private static readonly object SyncRoot = new Object();
-        private IServiceProvider serviceProvider;
+        private IServiceLocator serviceProvider;
 
         private ServiceLocator()
         {
@@ -35,14 +38,19 @@ namespace Hermes.Ioc
             return instance.Value;
         }
 
-        public void SetCurrentLifetimeScope(IServiceProvider provider)
+        public void SetCurrentLifetimeScope(IServiceLocator provider)
         {
             serviceProvider = provider ?? new DisposedProvider();
         }
 
-        public object GetService(Type serviceType)
+        protected override object DoGetInstance(Type serviceType, string key)
         {
-            return serviceProvider.GetService(serviceType);
+            return serviceProvider.GetInstance(serviceType, key);
+        }
+
+        protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
+        {
+            return serviceProvider.GetAllInstances(serviceType);
         }
 
         public TService GetService<TService>() where TService : class

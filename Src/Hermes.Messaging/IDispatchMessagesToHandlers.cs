@@ -4,6 +4,6 @@ namespace Hermes.Messaging
 {
     public interface IDispatchMessagesToHandlers
     {
-        void DispatchToHandlers(object message);
+        void DispatchToHandlers(object message, IServiceLocator serviceLocator);
     }
 }

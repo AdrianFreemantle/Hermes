@@ -1,4 +1,4 @@
-﻿namespace Hermes.Messaging.Saga
+﻿namespace Hermes.Messaging.ProcessManagement
 {
     public interface IProcessManager<out T> where T : class, IContainProcessManagerData
     {

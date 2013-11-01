@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Hermes.Messaging.Saga;
-
 namespace Hermes.Messaging.ProcessManagement
 {
     public abstract class ProcessManager
@@ -59,7 +57,7 @@ namespace Hermes.Messaging.ProcessManagement
             }
         }        
 
-        protected virtual void CompleteSaga()
+        protected virtual void Complete()
         {
             IsComplete = true;
         }

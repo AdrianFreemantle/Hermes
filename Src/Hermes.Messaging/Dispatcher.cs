@@ -13,22 +13,14 @@ namespace Hermes.Messaging
     public class Dispatcher : IDispatchMessagesToHandlers
     {
         private static readonly ILog logger = LogFactory.BuildLogger(typeof(Dispatcher)); 
-        private readonly IServiceLocator serviceLocator;
 
-        public Dispatcher(IServiceLocator serviceLocator)
+        public void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
-            this.serviceLocator = serviceLocator;
-        }
-
-        public void DispatchToHandlers(object message)
-        {
-            object[] handlers = GetHandlers(message).ToArray();
+            object[] handlers = GetHandlers(message, serviceLocator).ToArray();
             ValidateCommandMessageHandlers(message, handlers);
 
             if (handlers.Any())
             {
-                //logger.Verbose("Dispatching message {0} to {1} handlers", message.GetType(), handlers.Length);
-                //InvokeHandlers(handlers, message);
                 TrySaveSaga(handlers);
             }
             else if (!Settings.IsClientEndpoint)
@@ -58,7 +50,7 @@ namespace Hermes.Messaging
             }
         }
 
-        private IEnumerable<object> GetHandlers(object message)
+        private IEnumerable<object> GetHandlers(object message, IServiceLocator serviceLocator)
         {
             var messageType = message.GetType();
 
