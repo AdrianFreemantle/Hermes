@@ -13,7 +13,6 @@ namespace Hermes.Messaging
 
         public OutgoingMessagesUnitOfWork(ISendMessages messageSender)
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Starting new OutgoingMessagesUnitOfWork {0}", GetHashCode()));
             this.messageSender = messageSender;
         }
 
@@ -34,19 +33,16 @@ namespace Hermes.Messaging
 
         public void Dispose()
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Dispose OutgoingMessagesUnitOfWork {0}", GetHashCode()));
             outgoingMessages.Clear();
         }
 
         public void Commit()
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Committing OutgoingMessagesUnitOfWork {0}", GetHashCode()));
             messageSender.Send(outgoingMessages);
         }
 
         public void Rollback()
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Rolling back OutgoingMessagesUnitOfWork {0}", GetHashCode()));
             outgoingMessages.Clear();
         }
     }

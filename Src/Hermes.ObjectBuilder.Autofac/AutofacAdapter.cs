@@ -39,10 +39,8 @@ namespace Hermes.ObjectBuilder.Autofac
             else
             {
                 LifetimeScope = container;
-                System.Diagnostics.Trace.WriteLine(String.Format("Starting new lifetime scope {0}", LifetimeScope.GetHashCode()));
+                Logger.Debug("Starting new lifetime scope {0}", LifetimeScope.GetHashCode());
             }
-
-            Logger.Debug("Starting new container {0}", LifetimeScope.GetHashCode());
         }
 
         ~AutofacAdapter()
@@ -208,13 +206,11 @@ namespace Hermes.ObjectBuilder.Autofac
 
             if (genericParametrs.Length > 0)
             {
-                System.Diagnostics.Trace.WriteLine(String.Format("Activated service {0}<{1}> : {2} from lifetime scope {3}", serviceType.Name, genericParametrs, service.GetHashCode(), GetHashCode()));
-                //Logger.Info("Resolving service {0}<{1}> from container {2}", serviceType.Name, genericParametrs, GetHashCode());
+                Logger.Debug("Activated service {0}<{1}> : {2} from lifetime scope {3}", serviceType.Name, genericParametrs, service.GetHashCode(), GetHashCode());
             }
             else
             {
-                System.Diagnostics.Trace.WriteLine(String.Format("Activated service {0} {1} from lifetime scope {2}", serviceType.Name, service.GetHashCode(), GetHashCode()));
-                //Logger.Info("Resolving service {0} from container {1}", serviceType.Name, GetHashCode());
+                Logger.Info("Activated service {0} {1} from lifetime scope {2}", serviceType.Name, service.GetHashCode(), GetHashCode());
             }
         }
 
@@ -239,8 +235,7 @@ namespace Hermes.ObjectBuilder.Autofac
 
             if (disposing && LifetimeScope != null)
             {
-                System.Diagnostics.Trace.WriteLine(String.Format("Disposing lifetime scope {0}", GetHashCode()));
-                Logger.Debug("Disposing container {0}", GetHashCode());
+                Logger.Debug("Disposing lifetime scope {0}", GetHashCode());
                 LifetimeScope.Dispose();
             }
 

@@ -19,6 +19,6 @@ namespace Hermes.Messaging.Configuration
         IConfigureEndpoint DefineMessageAs(Func<Type, bool> isMessageRule);
         IConfigureEndpoint DefineCommandAs(Func<Type, bool> isCommandRule);
         IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule);
-        IConfigureEndpoint SubscribeToEvent<TMessage>();
+        //IConfigureEndpoint SubscribeToEvent<TMessage>();
     }
 }

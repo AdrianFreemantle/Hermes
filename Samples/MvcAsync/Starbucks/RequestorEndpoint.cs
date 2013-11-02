@@ -29,8 +29,6 @@ namespace Starbucks
                 .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .SubscribeToEvent<IDrinkPrepared>()
-                .SubscribeToEvent<IOrderReady>()
                 .RegisterMessageRoute<PlaceOrder>(Address.Parse("Starbucks.Barrista"));
         }
 

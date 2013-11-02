@@ -90,6 +90,7 @@
     <Compile Include="Serialization\ISerializeObjects.cs" />
     <Compile Include="TransactionalSqlConnection.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
+    <Compile Include="TypeComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ErrorMessages.resx">

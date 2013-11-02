@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Logging;
+using Hermes.Messaging.Configuration.MessageHandlers;
 using Hermes.Messaging.Routing;
 using Hermes.Messaging.Transports;
 
@@ -84,12 +85,6 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        public IConfigureEndpoint SubscribeToEvent<TMessage>()
-        {
-            Settings.Subscriptions.Subscribe<TMessage>();
-            return this;
-        }
-
         IConfigureWorker IConfigureWorker.UseDistributedTransaction()
         {
             Settings.UseDistributedTransaction = true;
@@ -118,19 +113,23 @@ namespace Hermes.Messaging.Configuration
 
         internal void Start()
         {
-            using (var scanner = new AssemblyScanner())
+            ScanForMessageHandlers();
+            CreateQueues();
+            StartServices();
+        }
+
+        private static void StartServices()
+        {
+            var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
+
+            foreach (var startableObject in startableObjects)
             {
-                var messageTypes = scanner.Types.Where(Settings.IsCommandType)
-                    .Union(scanner.Types.Where(Settings.IsEventType))
-                    .Union(scanner.Types.Where(Settings.IsMessageType)).Distinct().ToList();
-
-
-                HandlerCache.Scan(messageTypes, scanner);
-
-                containerBuilder.RegisterMessageHandlers(scanner.Assemblies);
+                startableObject.Start();
             }
+        }
 
-
+        private static void CreateQueues()
+        {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
 
@@ -141,14 +140,16 @@ namespace Hermes.Messaging.Configuration
             else
             {
                 queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
-                //queueCreator.CreateQueueIfNecessary(Settings.DefermentEndpoint);
             }
+        }
 
-            var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
+        private static void ScanForMessageHandlers()
+        {
+            MessageHandlerScanner.Scan(containerBuilder);
 
-            foreach (var startableObject in startableObjects)
+            foreach (var eventType in MessageHandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
-                startableObject.Start();
+                Settings.Subscriptions.Subscribe(eventType);
             }
         }
 

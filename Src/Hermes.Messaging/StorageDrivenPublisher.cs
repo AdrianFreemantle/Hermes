@@ -35,7 +35,7 @@ namespace Hermes.Messaging
                 .SelectMany(o => o.GetType().GetInterfaces())
                 .Union(messages.Select(o => o.GetType()));
 
-            Address[] subscribers = subscriptionStorage.GetSubscribersForMessageTypes(messageTypes).ToArray();
+            Address[] subscribers = subscriptionStorage.GetSubscribersForMessageTypes(messageTypes).Distinct().ToArray();
 
             if (!subscribers.Any())
             {

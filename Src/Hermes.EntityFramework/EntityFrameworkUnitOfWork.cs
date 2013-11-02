@@ -13,14 +13,11 @@ namespace Hermes.EntityFramework
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Starting new EntityFrameworkUnitOfWork {0}", GetHashCode()));
             this.contextFactory = contextFactory;            
         }
 
         public void Commit()
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Committing EntityFrameworkUnitOfWork {0}", GetHashCode()));
-
             if (Context != null)
             {
                 Context.SaveChanges();
@@ -30,8 +27,6 @@ namespace Hermes.EntityFramework
 
         public void Rollback()
         {
-            System.Diagnostics.Trace.WriteLine(String.Format("Rolling back EntityFrameworkUnitOfWork {0}", GetHashCode()));
-
             if (Context != null)
             {
                 Context.Dispose();
@@ -66,8 +61,6 @@ namespace Hermes.EntityFramework
             {
                 return;
             }
-
-            System.Diagnostics.Trace.WriteLine(String.Format("Disposing EntityFrameworkUnitOfWork {0}", GetHashCode()));
 
             if (disposing && Context != null)
             {
