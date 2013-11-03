@@ -2,6 +2,7 @@
 using System.Reflection;
 
 using Hermes.Logging;
+using Hermes.Reflection;
 
 using Topshelf;
 

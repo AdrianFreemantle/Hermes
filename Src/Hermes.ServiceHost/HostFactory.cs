@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
+using Hermes.Reflection;
+
 using Topshelf;
 
 namespace Hermes.ServiceHost

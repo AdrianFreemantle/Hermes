@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Hermes.Logging;
+using Hermes.Reflection;
 
 namespace Hermes.ServiceHost
 {

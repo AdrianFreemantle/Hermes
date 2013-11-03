@@ -4,9 +4,8 @@ using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Logging;
-using Hermes.Messaging.Configuration.MessageHandlers;
+using Hermes.Messaging.Configuration.MessageHandlerCache;
 using Hermes.Messaging.Routing;
-using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Configuration
 {
@@ -147,7 +146,7 @@ namespace Hermes.Messaging.Configuration
         {
             MessageHandlerScanner.Scan(containerBuilder);
 
-            foreach (var eventType in MessageHandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
+            foreach (var eventType in HandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
                 Settings.Subscriptions.Subscribe(eventType);
             }

@@ -46,14 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyExtensions.cs" />
-    <Compile Include="IAnswerQuery.cs" />
+    <Compile Include="IService.cs" />
+    <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
-    <Compile Include="IReturn.cs" />
-    <Compile Include="ObjectFactory.cs" />
-    <Compile Include="AssemblyScanner.cs" />
-    <Compile Include="EnumExtensions.cs" />
-    <Compile Include="IgnoreForSelectListAttribute.cs" />
+    <Compile Include="Reflection\ObjectFactory.cs" />
+    <Compile Include="Reflection\AssemblyScanner.cs" />
+    <Compile Include="Reflection\EnumExtensions.cs" />
+    <Compile Include="Attributes\IgnoreForSelectListAttribute.cs" />
     <Compile Include="ErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -73,7 +72,6 @@
     <Compile Include="Ioc\ServiceProviderAdapter.cs" />
     <Compile Include="Ioc\IContainerBuilder.cs" />
     <Compile Include="IAmStartable.cs" />
-    <Compile Include="IService.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />
     <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
@@ -82,15 +80,16 @@
     <Compile Include="Persistence\ILookupTable.cs" />
     <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Persistence\IUnitOfWork.cs" />
-    <Compile Include="PropertyBag.cs" />
+    <Compile Include="Reflection\PropertyBag.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="SequentialGuid.cs" />
     <Compile Include="Mandate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\ISerializeObjects.cs" />
-    <Compile Include="TransactionalSqlConnection.cs" />
+    <Compile Include="TestError.cs" />
+    <Compile Include="Sql\TransactionalSqlConnection.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
-    <Compile Include="TypeComparer.cs" />
+    <Compile Include="Reflection\TypeComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ErrorMessages.resx">

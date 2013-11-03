@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Hermes.Messaging.Bus.Transports;
+
 namespace Hermes.Messaging
 {
     public interface ITransportMessageFactory

@@ -4,7 +4,9 @@ using System.Data;
 using System.Data.SqlClient;
 
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Timeouts;
 using Hermes.Serialization;
+using Hermes.Sql;
 
 namespace Hermes.Messaging.Storage.MsSql
 {

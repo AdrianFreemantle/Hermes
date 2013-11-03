@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -36,7 +37,7 @@ namespace Hermes.Serialization.Json
             if (messages.Length == 1)
             {
                 var jsonSerializer = JsonSerializer.Create(serializerSettings2);
-                jsonSerializer.Binder = new MessageSerializationBinder();
+                jsonSerializer.Binder = new DefaultSerializationBinder();
                 var jsonWriter = CreateJsonWriter(stream);
                 jsonSerializer.Serialize(jsonWriter, messages[0]);
                 jsonWriter.Flush();
@@ -44,7 +45,7 @@ namespace Hermes.Serialization.Json
             else
             {
                 var jsonSerializer = JsonSerializer.Create(serializerSettings);
-                jsonSerializer.Binder = new MessageSerializationBinder();
+                jsonSerializer.Binder = new DefaultSerializationBinder();
                 var jsonWriter = CreateJsonWriter(stream);
                 jsonSerializer.Serialize(jsonWriter, messages);
                 jsonWriter.Flush();

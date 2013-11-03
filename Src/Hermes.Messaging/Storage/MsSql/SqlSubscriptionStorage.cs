@@ -6,6 +6,7 @@ using System.Linq;
 using System.Transactions;
 
 using Hermes.Messaging.Configuration;
+using Hermes.Sql;
 
 namespace Hermes.Messaging.Storage.MsSql
 {

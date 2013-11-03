@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Hermes.Reflection;
+
 namespace Hermes.Domain
 {
     //[DebuggerStepThrough]

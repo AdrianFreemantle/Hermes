@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 
+using Hermes.Messaging;
 using Hermes.Messaging.ProcessManagement;
 using Hermes.Serialization;
 

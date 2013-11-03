@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 
+using Hermes.Reflection;
+
 namespace Hermes.Domain
 {
     internal class EventHandlerProperties

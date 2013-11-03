@@ -2,6 +2,7 @@
 using Hermes.Domain;
 using Hermes.Messaging;
 using Hermes.Persistence;
+using Hermes.Reflection;
 
 namespace Hermes.EntityFramework
 {

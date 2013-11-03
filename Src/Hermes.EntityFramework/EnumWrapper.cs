@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Hermes.Persistence;
+using Hermes.Reflection;
 
 namespace Hermes.EntityFramework
 {

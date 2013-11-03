@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Hermes.Messaging.Bus.Transports;
+
 namespace Hermes.Messaging
 {
     /// <summary>
