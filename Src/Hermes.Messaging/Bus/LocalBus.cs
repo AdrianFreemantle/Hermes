@@ -1,38 +1,114 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 using Hermes.Ioc;
+using Hermes.Logging;
 using Hermes.Messaging.Bus.Transports;
+using Hermes.Messaging.Configuration;
+using Hermes.Persistence;
+
+using Microsoft.Practices.ServiceLocation;
+
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Bus
 {
+    
     public class LocalBus : IInMemoryBus
     {
         private readonly ITransportMessages messageTransport;
-        private readonly ITransportMessageFactory transportMessageFactory;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageContext));
 
-        public LocalBus(ITransportMessages messageTransport, ITransportMessageFactory transportMessageFactory)
+        private readonly ThreadLocal<bool> messageBeingProcessed = new ThreadLocal<bool>();
+
+        public LocalBus(ITransportMessages messageTransport)
         {
             this.messageTransport = messageTransport;
-            this.transportMessageFactory = transportMessageFactory;
-            this.transportMessageFactory = transportMessageFactory;
-        }
-
-        public void Execute(Guid corrolationId, params object[] messages)
-        {
-            if (messageTransport.CurrentTransportMessage != TransportMessage.Undefined)
-            {
-                throw new InvalidOperationException("Only one comand may be processed at a time. Either group all required commands together in a single Execute call or send additional commands via the message bus.");
-            }
-
-            MessageRuleValidation.ValidateIsCommandType(messages);
-            var transportMessage = transportMessageFactory.BuildTransportMessage(corrolationId, TimeSpan.MaxValue, messages);
-            messageTransport.OnMessageReceived(transportMessage);
         }
 
         public void Execute(params object[] messages)
         {
-            MessageRuleValidation.ValidateIsCommandType(messages);
-            Execute(Guid.Empty, messages);
+            if (messages == null || messages.Length == 0)
+            {
+                return;
+            }
+
+            if (!Settings.IsClientEndpoint)
+            {
+                throw new InvalidOperationException("Only a client endpoint may use IInMemoryBus to execute a command.");
+            }
+
+            if (messageBeingProcessed.Value)
+            {
+                throw new InvalidOperationException("Only one comand may be processed at a time. Either group all required commands together in a single Execute call or send additional commands via the message bus.");
+            }
+
+            if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
+            {
+                throw new InvalidOperationException("A command may not be executed while an incoming message is being processed.");
+            }
+
+            try
+            {
+                MessageRuleValidation.ValidateIsCommandType(messages);
+
+                using (IContainer scope = Settings.RootContainer.BeginLifetimeScope())
+                {
+                    TryProcessMessages(messages, scope);
+                }
+            }
+            finally
+            {
+                messageBeingProcessed.Value = false;
+            }
+        }
+
+        private void TryProcessMessages(IEnumerable<object> messages, IServiceLocator serviceLocator)
+        {
+            var unitsOfWork = serviceLocator.GetAllInstances<IUnitOfWork>().ToArray();
+
+            try
+            {
+                DispatchToHandlers(messages, serviceLocator);
+                CommitUnitsOfWork(unitsOfWork);
+            }
+            catch
+            {
+                RollBackUnitsOfWork(unitsOfWork);
+                throw;
+            }
+        }
+
+        private void DispatchToHandlers(IEnumerable<object> messages, IServiceLocator serviceLocator)
+        {
+            var dispatcher = serviceLocator.GetInstance<IDispatchMessagesToHandlers>();
+
+            foreach (var message in messages)
+            {
+                dispatcher.DispatchToHandlers(message, serviceLocator);
+            }
+        }
+
+        private void CommitUnitsOfWork(IEnumerable<IUnitOfWork> unitsOfWork)
+        {
+            Logger.Verbose("Committing units of work");
+
+            foreach (var unitOfWork in unitsOfWork.Reverse())
+            {
+                unitOfWork.Commit();
+            }
+        }
+
+        private void RollBackUnitsOfWork(IEnumerable<IUnitOfWork> unitsOfWork)
+        {
+            Logger.Verbose("Rolling back units of work");
+
+            foreach (var unitOfWork in unitsOfWork)
+            {
+                unitOfWork.Rollback();
+            }
         }
 
         void IInMemoryBus.Raise(params object[] events)

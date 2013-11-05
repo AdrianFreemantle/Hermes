@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Hermes.Messaging.Bus.Transports;
+
 namespace Hermes.Messaging
 {
-    public interface IMessageContext
+    public interface IMessageContext 
     {
         Guid MessageId { get; }
         Guid CorrelationId { get; }
         Address ReplyToAddress { get; }
-        IReadOnlyDictionary<string, string> Headers { get; }
+        IEnumerable<HeaderValue> Headers { get; }
     }
 }

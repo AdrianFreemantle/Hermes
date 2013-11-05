@@ -89,7 +89,7 @@ namespace Hermes.Messaging.Storage.MsSql
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
             {
-                foreach (var messageType in messageTypes)
+                foreach (var messageType in messageTypes.ToArray())
                 {
                     var messageTypeParam = new SqlParameter("MessageType", messageType.FullName);
                     var command = connection.BuildCommand(SqlCommands.GetSubscribers, messageTypeParam);

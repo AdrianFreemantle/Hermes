@@ -13,35 +13,42 @@ using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Bus.Transports
 {
+    public delegate void MessageEventHandler(object sender, MessageProcessingEventArgs e);
+    public delegate void MessageProcessingErrorEventHandler(object sender, MessageProcessingProcessingErrorEventArgs e);
+
     public class MessageTransport : ITransportMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageTransport));
 
+        private readonly IPublishMessages messagePublisher;
         private readonly ISendMessages messageSender;
         private readonly IReceiveMessages messageReceiver;
-        private readonly ITransportMessageFactory transportMessageFactory;
-        private readonly IHandleMessageErrors errorProcessor;
+        private readonly IHandleMessageErrors errorHandler; 
         private readonly IManageCallbacks callBackManager;
         private readonly IContainer container;
-        
-        private readonly ThreadLocal<TransportMessage> currentMessageBeingProcessed = new ThreadLocal<TransportMessage>();
+        private readonly NullMessageContext nullMessage = new NullMessageContext();
+        private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
 
-        public TransportMessage CurrentTransportMessage
+        public event MessageEventHandler OnMessageReceived;
+        public event MessageEventHandler OnMessageProcessingCompleted;
+        public event MessageProcessingErrorEventHandler OnMessageProcessingError;
+
+        public IMessageContext CurrentMessage
         {
             get
             {
-                return currentMessageBeingProcessed.Value ?? TransportMessage.Undefined;
+                return currentMessageBeingProcessed.Value ?? nullMessage;
             }
         }
 
-        public MessageTransport(ISendMessages messageSender, IReceiveMessages messageReceiver, ITransportMessageFactory transportMessageFactory, IHandleMessageErrors errorProcessor, IManageCallbacks callBackManager, IContainer container)
+        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IManageCallbacks callBackManager, IContainer container, IHandleMessageErrors errorHandler)
         {
+            this.messagePublisher = messagePublisher;
             this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;
-            this.transportMessageFactory = transportMessageFactory;
-            this.errorProcessor = errorProcessor;
             this.callBackManager = callBackManager;
             this.container = container;
+            this.errorHandler = errorHandler;
         }
 
         public void Dispose()
@@ -51,7 +58,7 @@ namespace Hermes.Messaging.Bus.Transports
 
         public void Start()
         {
-            messageReceiver.Start(OnMessageReceived);
+            messageReceiver.Start(MessageReceived);
         }
 
         public void Stop()
@@ -59,84 +66,88 @@ namespace Hermes.Messaging.Bus.Transports
             messageReceiver.Stop();
         }
 
-        public void OnMessageReceived(TransportMessage transportMessage)
+        private void MessageReceived(TransportMessage incomingMessage)
         {
             using (IContainer childContainer = container.BeginLifetimeScope())
             {
                 try
                 {
                     ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                    var processor = childContainer.GetInstance<IncomingMessageProcessor>();
-                    currentMessageBeingProcessed.Value = transportMessage;
-                    ProcessIncommingMessage(transportMessage, processor, childContainer);
-                    currentMessageBeingProcessed.Value = TransportMessage.Undefined;
+                    ProcessIncomingMessage(incomingMessage, childContainer);
                 }
                 finally
                 {
+                    currentMessageBeingProcessed.Value = nullMessage;
                     ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
             }
         }
 
-        private void ProcessIncommingMessage(TransportMessage transportMessage, IncomingMessageProcessor processor, IServiceLocator serviceProvider)
+        private void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             using (var scope = StartTransactionScope())
-            {
+            {   
                 try
                 {
-                    processor.ProcessTransportMessage(transportMessage, serviceProvider);
+                    RaiseMessageReceivedEvent(transportMessage);
+
+                    var incomingMessageContext = serviceLocator.GetInstance<IIncomingMessageContext>();
+                    currentMessageBeingProcessed.Value = incomingMessageContext;
+                    incomingMessageContext.Process(transportMessage, serviceLocator);
+
+                    RaiseProcessingCompletedEvent(transportMessage);
                 }
                 catch (Exception ex)
                 {
-                    errorProcessor.Handle(transportMessage, ex);
+                    errorHandler.Handle(transportMessage, ex);
+                    RaiseErrorEvent(transportMessage, ex);
                 }
 
                 scope.Complete();
             }
         }
-       
+
+        private void RaiseMessageReceivedEvent(TransportMessage transportMessage)
+        {
+            if (OnMessageReceived != null)
+            {
+                OnMessageReceived(this, new MessageProcessingEventArgs(transportMessage));
+            }
+        }
+
+        private void RaiseProcessingCompletedEvent(TransportMessage transportMessage)
+        {
+            if (OnMessageProcessingCompleted != null)
+            {
+                OnMessageProcessingCompleted(this, new MessageProcessingEventArgs(transportMessage));
+            }
+        }
+
+        private void RaiseErrorEvent(TransportMessage transportMessage, Exception ex)
+        {
+            if (OnMessageProcessingError != null)
+            {
+                OnMessageProcessingError(this, new MessageProcessingProcessingErrorEventArgs(transportMessage, ex));
+            }
+        }
+
         private static TransactionScope StartTransactionScope()
         {
             return Settings.UseDistributedTransaction
                 ? TransactionScopeUtils.Begin(TransactionScopeOption.Required)
                 : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
-        }
+        }       
 
-        public ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages)
+        public ICallback SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext)
         {
-            return SendMessage(recipient, correlationId, timeToLive, messages, new Dictionary<string, string>());
-        }
-
-        public ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers)
-        {
-            if (messages == null || messages.Length == 0)
-                throw new InvalidOperationException("Cannot send an empty set of messages.");
-
-            var transportMessage = transportMessageFactory.BuildTransportMessage(correlationId, timeToLive, messages);          
-            Send(transportMessage, recipient);
+            var transportMessage = outgoingMessageContext.ToTransportMessage(timeToLive);
+            messageSender.Send(transportMessage, recipient);
             return callBackManager.SetupCallback(transportMessage.CorrelationId);
         }
 
-        public void SendControlMessage(Address recipient, Guid correlationId, params HeaderValue[] headerValues)
+        public void Publish(IOutgoingMessageContext outgoingMessage)
         {
-            if (headerValues == null || headerValues.Length == 0)
-                throw new InvalidOperationException("Cannot send an control message without any control headers.");
-
-            var transportMessage = transportMessageFactory.BuildControlMessage(correlationId, headerValues);
-            Send(transportMessage, recipient);
-        }
-
-        private void Send(TransportMessage transportMessage, Address recipient)
-        {
-            if (Settings.IsClientEndpoint || currentMessageBeingProcessed.Value == null || currentMessageBeingProcessed.Value == TransportMessage.Undefined)
-            {
-                messageSender.Send(transportMessage, recipient);
-            }
-            else
-            {
-                var outgoingMessageManager = ServiceLocator.Current.GetService<IProcessOutgoingMessages>();
-                outgoingMessageManager.Add(new OutgoingMessage(transportMessage, recipient));
-            }
+            messagePublisher.Publish(outgoingMessage);
         }
     }
 }

@@ -3,14 +3,13 @@ using System.Globalization;
 
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
-using Hermes.Messaging.Storage;
 using Hermes.Messaging.Timeouts;
 
 namespace Hermes.Messaging.Bus.Transports
 {
     public class ErrorHandler : IHandleMessageErrors
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(ErrorHandler));
         private readonly IPersistTimeouts timeoutStore;
         
         private readonly ISendMessages messageSender;

@@ -46,7 +46,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder = builder;
             containerBuilder.RegisterSingleton(containerBuilder);
 
-            var busRegistrar = new UnicastBusDependencyRegistrar();
+            var busRegistrar = new MessageBusDependencyRegistrar();
             busRegistrar.Register(containerBuilder);           
 
             Settings.SetEndpointName(endpointName);
@@ -112,7 +112,10 @@ namespace Hermes.Messaging.Configuration
 
         internal void Start()
         {
-            ScanForMessageHandlers();
+            ComponentScanner.Scan(containerBuilder);
+
+            RunInitializers();
+            SubscribeToEvents();
             CreateQueues();
             StartServices();
         }
@@ -124,6 +127,16 @@ namespace Hermes.Messaging.Configuration
             foreach (var startableObject in startableObjects)
             {
                 startableObject.Start();
+            }
+        }
+
+        private static void RunInitializers()
+        {
+            var intializers = Settings.RootContainer.GetAllInstances<INeedToInitializeSomething>();
+
+            foreach (var init in intializers)
+            {
+                init.Initialize();
             }
         }
 
@@ -142,10 +155,8 @@ namespace Hermes.Messaging.Configuration
             }
         }
 
-        private static void ScanForMessageHandlers()
-        {
-            MessageHandlerScanner.Scan(containerBuilder);
-
+        private static void SubscribeToEvents()
+        {            
             foreach (var eventType in HandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
                 Settings.Subscriptions.Subscribe(eventType);

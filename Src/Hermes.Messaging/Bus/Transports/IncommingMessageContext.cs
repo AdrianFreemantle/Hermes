@@ -10,36 +10,86 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Bus.Transports
 {
-    public class IncomingMessageProcessor : IProcessIncomingMessages
+    public class IncomingMessageContext : IIncomingMessageContext
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageProcessor));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageContext));
 
         private readonly ISerializeMessages messageSerializer;
         private readonly IManageCallbacks callBackManager;
         private readonly IDispatchMessagesToHandlers dispatcher;
         private readonly ICollection<IUnitOfWork> unitsOfWork;
-
+        private readonly ICollection<IMutateIncomingMessages> messageMutators;
+        private readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
         private TransportMessage transportMessage;
         private object[] messages;
 
-        public IncomingMessageProcessor(ISerializeMessages messageSerializer, IManageCallbacks callBackManager, IDispatchMessagesToHandlers dispatcher, IEnumerable<IUnitOfWork> unitsOfWork)
+        public Guid MessageId
+        {
+            get { return transportMessage.MessageId; }
+        }
+
+        public Guid CorrelationId
+        {
+            get { return transportMessage.CorrelationId; }
+        }
+
+        public Address ReplyToAddress
+        {
+            get { return transportMessage.ReplyToAddress; }
+        }
+
+        public IEnumerable<HeaderValue> Headers
+        {
+            get { return messageHeaders; }
+        }
+
+        public IncomingMessageContext(ISerializeMessages messageSerializer, IManageCallbacks callBackManager, IDispatchMessagesToHandlers dispatcher, IEnumerable<IUnitOfWork> unitsOfWork, IEnumerable<IMutateIncomingMessages> messageMutators)
         {
             this.messageSerializer = messageSerializer;
             this.callBackManager = callBackManager;
             this.dispatcher = dispatcher;
-            this.unitsOfWork = unitsOfWork.ToArray();
+            this.messageMutators = messageMutators == null ? new IMutateIncomingMessages[0] : messageMutators.ToArray();
+            this.unitsOfWork = unitsOfWork == null ? new IUnitOfWork[0] : unitsOfWork.ToArray();
         }
 
-        public void ProcessTransportMessage(TransportMessage incommingTransportMessage, IServiceLocator serviceLocator)
+        public void SetTransportMessage()
         {
-            Logger.Verbose("Processing transport message {0}", incommingTransportMessage.MessageId);
+        }
 
-            transportMessage = incommingTransportMessage;
-            messages = messageSerializer.Deserialize(incommingTransportMessage.Body);
+        public void Process(TransportMessage incomingMessage, IServiceLocator serviceLocator)
+        {
+            transportMessage = incomingMessage;
 
-            callBackManager.HandleCallback(transportMessage, messages);
+            Logger.Verbose("Processing transport message {0}", MessageId);
+
+            ExtractMessages();
 
             Retry.Action(() => TryProcessMessages(serviceLocator), OnRetry, Settings.FirstLevelRetryAttempts, Settings.FirstLevelRetryDelay);
+
+            callBackManager.HandleCallback(transportMessage, messages);
+        }
+
+        private void ExtractMessages()
+        {
+            messages = messageSerializer.Deserialize(transportMessage.Body);
+
+            foreach (var message in messages)
+            {
+                MutateMessage(message);
+            }
+
+            foreach (var header in transportMessage.Headers)
+            {
+                messageHeaders.Add(new HeaderValue(header.Key, header.Value));
+            }
+        }
+
+        private void MutateMessage(object message)
+        {
+            foreach (var mutator in messageMutators)
+            {
+                mutator.Mutate(message);
+            }
         }
 
         private void OnRetry(Exception ex)

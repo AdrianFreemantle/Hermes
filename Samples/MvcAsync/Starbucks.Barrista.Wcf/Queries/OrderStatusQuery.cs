@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Hermes;
+using Hermes.Messaging;
 
 namespace Starbucks.Barrista.Wcf.Queries
 {

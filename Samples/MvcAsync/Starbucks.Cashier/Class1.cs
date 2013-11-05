@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Hermes.Messaging;
 using Hermes.Messaging.ProcessManagement;
 
 using Starbucks.Messages;

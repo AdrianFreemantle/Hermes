@@ -53,12 +53,6 @@
     <Reference Include="Hermes.ServiceHost">
       <HintPath>..\..\..\bin\Debug\Hermes.ServiceHost.exe</HintPath>
     </Reference>
-    <Reference Include="Hermes.Storage.SqlServer">
-      <HintPath>..\..\..\bin\Debug\Hermes.Storage.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>

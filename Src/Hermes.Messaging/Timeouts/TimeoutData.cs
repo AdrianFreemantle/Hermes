@@ -43,7 +43,7 @@ namespace Hermes.Messaging.Timeouts
             return string.Format("Timeout({0}) - Expires:{1}", MessageId, Expires);
         }
 
-        public TransportMessage ToMessageEnvelope()
+        public TransportMessage ToTransportmessage()
         {
             var replyToAddress = Address.Local;
 

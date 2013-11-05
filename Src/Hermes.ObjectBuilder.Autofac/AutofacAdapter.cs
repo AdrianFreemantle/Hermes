@@ -173,8 +173,6 @@ namespace Hermes.ObjectBuilder.Autofac
                 ? LifetimeScope.ResolveNamed(key, serviceType)
                 : LifetimeScope.Resolve(serviceType);
 
-            LogServiceType(instance);
-
             return instance;
         }
 
@@ -188,36 +186,7 @@ namespace Hermes.ObjectBuilder.Autofac
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             object instance = LifetimeScope.Resolve(enumerableType);
 
-            var services = ((IEnumerable)instance).Cast<object>().ToList();
-
-            foreach (var service in services)
-            {
-                LogServiceType(service);
-            }
-
-            return ((IEnumerable)instance).Cast<object>();
-        }
-
-        private void LogServiceType(object service)
-        {
-            var serviceType = service.GetType();
-
-            string genericParametrs = GetGenericParametersString(serviceType);
-
-            if (genericParametrs.Length > 0)
-            {
-                Logger.Debug("Activated service {0}<{1}> : {2} from lifetime scope {3}", serviceType.Name, genericParametrs, service.GetHashCode(), GetHashCode());
-            }
-            else
-            {
-                Logger.Info("Activated service {0} {1} from lifetime scope {2}", serviceType.Name, service.GetHashCode(), GetHashCode());
-            }
-        }
-
-        private static string GetGenericParametersString(Type serviceType)
-        {
-            var genericArguments = serviceType.GenericTypeArguments.Select(type => type.Name.ToString(CultureInfo.InvariantCulture));
-            return String.Join(", ", genericArguments);
+            return ((IEnumerable)instance).Cast<object>().ToArray();
         }
 
         public void Dispose()

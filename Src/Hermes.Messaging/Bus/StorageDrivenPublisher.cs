@@ -1,89 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Hermes.Ioc;
-using Hermes.Messaging.Bus.Transports;
 using Hermes.Messaging.Configuration;
+using Microsoft.Practices.ServiceLocation;
+
 
 namespace Hermes.Messaging.Bus
 {
     public class StorageDrivenPublisher : IPublishMessages
     {
         private readonly IStoreSubscriptions subscriptionStorage;
-        private readonly ITransportMessageFactory messageFactory;
         private readonly ISendMessages messageSender;
 
-        public StorageDrivenPublisher(ISendMessages messageSender, IStoreSubscriptions subscriptionStorage, ITransportMessageFactory messageFactory)
+        public StorageDrivenPublisher(ISendMessages messageSender, IStoreSubscriptions subscriptionStorage)
         {
             this.messageSender = messageSender;
             this.subscriptionStorage = subscriptionStorage;
-            this.messageFactory = messageFactory;
         }
 
-        public bool Publish(params object[] messages)
-        {
-            return Publish(Guid.Empty, messages);
-        }
-
-        public bool Publish(Guid correlationId, params object[] messages)
+        public bool Publish(IOutgoingMessageContext outgoingMessage)
         {   
-            GuardPublisher(messages);
-
-            IEnumerable<Type> messageTypes = messages
-                .SelectMany(o => o.GetType().GetInterfaces())
-                .Union(messages.Select(o => o.GetType()));
-
-            Address[] subscribers = subscriptionStorage.GetSubscribersForMessageTypes(messageTypes).Distinct().ToArray();
+            var subscribers = GetMessageSubscribers(outgoingMessage);
 
             if (!subscribers.Any())
             {
                 return false;
             }
 
-            var outgoingMessages = BuildOutgoingMessages(correlationId, messages, subscribers);
-            PublishMessages(outgoingMessages);
+            PublishMessages(outgoingMessage, subscribers);
 
             return true;
         }
 
-        private void PublishMessages(IEnumerable<OutgoingMessage> outgoingMessages)
+        private Address[] GetMessageSubscribers(IOutgoingMessageContext outgoingMessage)
         {
-            if (Settings.IsClientEndpoint)
-            {
-                messageSender.Send(outgoingMessages);
-            }
-            else
-            {
-                var outgoingMessageManager = ServiceLocator.Current.GetService<IProcessOutgoingMessages>();
-                outgoingMessageManager.Add(outgoingMessages);
-            }
+            var messageTypes = outgoingMessage.GetMessageContracts();
+            return subscriptionStorage.GetSubscribersForMessageTypes(messageTypes)
+                                      .Distinct()
+                                      .ToArray();
         }
 
-        private IEnumerable<OutgoingMessage> BuildOutgoingMessages(Guid correlationId, object[] messages, IEnumerable<Address> subscribers)
+        private void PublishMessages(IOutgoingMessageContext outgoingMessage, IEnumerable<Address> subscribers)
         {
-            var outgoingMessages = new List<OutgoingMessage>();
-
             foreach (var subscriber in subscribers)
             {
-                var transportMessage = messageFactory.BuildTransportMessage(correlationId, messages);
-                outgoingMessages.Add(new OutgoingMessage(transportMessage, subscriber));
-            }
-
-            return outgoingMessages;
-        }
-
-        private void GuardPublisher(object[] messages)
-        {
-            if (messages == null || messages.Length == 0)
-            {
-                throw new InvalidOperationException("Cannot publish an empty set of messages.");
-            }
-
-            if (subscriptionStorage == null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot publish on this endpoint - no subscription storage has been configured.");
+                outgoingMessage.SetMessageId(SequentialGuid.New());
+                messageSender.Send(outgoingMessage.ToTransportMessage(), subscriber);
             }
         }
     }

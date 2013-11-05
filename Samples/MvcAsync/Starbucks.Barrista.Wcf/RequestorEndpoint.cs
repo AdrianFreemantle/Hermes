@@ -2,10 +2,11 @@
 
 using Hermes.Ioc;
 using Hermes.Messaging;
+using Hermes.Messaging.Bus.Transports.SqlTransport;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.EndPoints;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using Hermes.Transports.SqlServer;
 
 using Starbucks.Barrista.Wcf.Queries;
 using Starbucks.Messages;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Hermes.Messaging.Bus.Transports;
 
@@ -11,24 +10,15 @@ namespace Hermes.Messaging
     /// <remarks>
     /// Object instances which implement this interface must be designed to be multi-thread safe.
     /// </remarks>
-    public interface ITransportMessages : IDisposable
-    {        
-        TransportMessage CurrentTransportMessage { get; }
+    public interface ITransportMessages : IAmStartable, IDisposable
+    {
+        IMessageContext CurrentMessage { get; }
 
-        /// <summary>
-        /// Starts the transport listening for new messages to receive.
-        /// </summary>
-        void Start();
+        event MessageEventHandler OnMessageReceived;
+        event MessageEventHandler OnMessageProcessingCompleted;
+        event MessageProcessingErrorEventHandler OnMessageProcessingError;
 
-        /// <summary>
-        /// Stops the transport listening for new messages.
-        /// </summary>
-        void Stop();
-
-        ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages);
-        ICallback SendMessage(Address recipient, Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers);
-        void SendControlMessage(Address recipient, Guid correlationId, params HeaderValue[] headerValues);
-
-        void OnMessageReceived(TransportMessage transportMessage);
+        ICallback SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext);
+        void Publish(IOutgoingMessageContext outgoingMessage);
     }
 }

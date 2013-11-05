@@ -115,51 +115,5 @@ namespace Hermes.Messaging.Bus.Transports
             this.correlationId = correlationId == Guid.Empty ? messageId : correlationId;
             this.replyToAddress = replyToAddress;
         }
-
-        /// <summary>
-        /// Initializes a new instance of the EnvelopeMessage class.
-        /// </summary>
-        /// <param name="messageId">The value which uniquely identifies the envelope message.</param>
-        /// /// <param name="correlationId">The unique identifier of another message bundle this message bundle is associated with.</param>
-        /// <param name="body">The collection of dispatched logical messages.</param>
-        public TransportMessage(Guid messageId, Guid correlationId, byte[] body)
-            : this(messageId, correlationId, Address.Local, TimeSpan.MaxValue, new Dictionary<string, string>(), body)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the EnvelopeMessage class.
-        /// </summary>
-        /// <param name="messageId">The value which uniquely identifies the envelope message.</param>
-        /// <param name="body">The collection of dispatched logical messages.</param>
-        public TransportMessage(Guid messageId, byte[] body)
-            : this(messageId, messageId, body)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the EnvelopeMessage class.
-        /// </summary>
-        /// <param name="messageId">The value which uniquely identifies the envelope message.</param>
-        /// <param name="correlationId">The unique identifier of another message bundle this message bundle is associated with.</param>
-        /// <param name="headers">The message headers which contain additional metadata about the logical messages.</param>
-        public TransportMessage(Guid messageId, Guid correlationId, IDictionary<string, string> headers)
-            : this(messageId, correlationId, Address.Local, TimeSpan.MaxValue, headers, new byte[0])
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the EnvelopeMessage class.
-        /// </summary>
-        /// <param name="body">The collection of dispatched logical messages.</param>
-        public TransportMessage(byte[] body)
-            : this(SequentialGuid.New(), body)
-        {
-        }
-      
-        protected void ChangeMessageId(Guid id)
-        {
-            messageId = id;
-        }                
     }
 }

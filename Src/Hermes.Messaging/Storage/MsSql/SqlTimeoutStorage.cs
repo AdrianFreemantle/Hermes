@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
+using Hermes.Messaging.Bus.Transports;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 using Hermes.Serialization;
@@ -12,8 +13,8 @@ namespace Hermes.Messaging.Storage.MsSql
 {
     public class SqlTimeoutStorage : IPersistTimeouts
     {       
-        private readonly ITransportMessageFactory transportMessageFactory;
         private readonly ISerializeObjects objectSerializer;
+        private readonly ISerializeMessages messageSerializer;
         private readonly string connectionString;
 
         const int messageIdIndex = 0;
@@ -23,10 +24,10 @@ namespace Hermes.Messaging.Storage.MsSql
         const int headersIndex = 4;
         const int bodyIndex = 5;
 
-        public SqlTimeoutStorage(ISerializeObjects objectSerializer, ITransportMessageFactory transportMessageFactory)
+        public SqlTimeoutStorage(ISerializeObjects objectSerializer, ISerializeMessages messageSerializer)
         {
             this.objectSerializer = objectSerializer;
-            this.transportMessageFactory = transportMessageFactory;
+            this.messageSerializer = messageSerializer;
             connectionString = Settings.GetSetting<string>(SqlStorageConfiguration.StorageConnectionStringKey);
             CreateTableIfNecessary();
         }
@@ -60,8 +61,21 @@ namespace Hermes.Messaging.Storage.MsSql
 
         public void Add(Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers)
         {
-            var message = transportMessageFactory.BuildTransportMessage(correlationId, timeToLive, messages, headers);
-            Add(new TimeoutData(message));
+            Mandate.ParameterNotNullOrEmpty(messages, "messages");
+
+            var serializedMessages = messageSerializer.Serialize(messages);
+
+            var timeoutData = new TimeoutData
+            {
+                MessageId = SequentialGuid.New(),
+                CorrelationId = correlationId,
+                Body = serializedMessages,
+                DestinationAddress = Address.Local.ToString(),
+                Expires = DateTime.MaxValue,
+                Headers = headers
+            };
+
+            Add(timeoutData);
         }
 
         private SqlCommand BuildAddCommand(TransactionalSqlConnection connection, TimeoutData timoutData)

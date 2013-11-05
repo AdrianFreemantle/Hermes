@@ -7,7 +7,7 @@ using Hermes.Messaging.Timeouts;
 
 namespace Hermes.Messaging.Configuration
 {
-    internal class UnicastBusDependencyRegistrar : IRegisterDependencies
+    internal class MessageBusDependencyRegistrar : IRegisterDependencies
     {
         public void Register(IContainerBuilder containerBuilder)
         {
@@ -17,14 +17,13 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<TransportMessageFactory>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<IncomingMessageProcessor>(DependencyLifecycle.InstancePerUnitOfWork);
-
-            containerBuilder.RegisterType<OutgoingMessagesProcessor>(DependencyLifecycle.InstancePerUnitOfWork);
+            
+            containerBuilder.RegisterType<IncomingMessageContext>(DependencyLifecycle.InstancePerDependency);
+            containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
             if (!Settings.IsClientEndpoint)
             {                

@@ -31,19 +31,6 @@ namespace Hermes.Messaging.Bus.Transports.SqlTransport
             }
         }        
 
-        public void Send(IEnumerable<OutgoingMessage> messages)
-        {
-            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
-            {
-                foreach (var outgoingMessage in messages)
-                {
-                    Send(outgoingMessage.TransportMessage, outgoingMessage.Address, transactionalConnection);
-                }
-
-                transactionalConnection.Commit();
-            }
-        }
-
         private void Send(TransportMessage transportMessage, Address address, TransactionalSqlConnection transactionalConnection)
         {
             using (var command = BuildSendCommand(transactionalConnection, transportMessage, address))

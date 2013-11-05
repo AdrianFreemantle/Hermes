@@ -10,7 +10,7 @@ using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration
 {
-    internal static class MessageHandlerScanner
+    internal static class ComponentScanner
     {
         public static void Scan(IContainerBuilder containerBuilder)
         {
@@ -26,7 +26,12 @@ namespace Hermes.Messaging.Configuration
                 
                 foreach (var messageType in messageTypes)
                 {
-                    blah(messageType, messageHandlerTypes);
+                    CacheHandlersForMessageContract(messageType, messageHandlerTypes);
+                }
+
+                foreach (var intitializer in scanner.Types.Where(t => typeof(INeedToInitializeSomething).IsAssignableFrom(t) && !t.IsAbstract))
+                {
+                    containerBuilder.RegisterType(intitializer, DependencyLifecycle.SingleInstance);
                 }
             }
         }
@@ -40,7 +45,7 @@ namespace Hermes.Messaging.Configuration
                           .Distinct();
         }
 
-        private static void blah(Type messageContract, IEnumerable<Type> messageHandlerTypes)
+        private static void CacheHandlersForMessageContract(Type messageContract, IEnumerable<Type> messageHandlerTypes)
         {
             foreach (Type handlerType in messageHandlerTypes)
             {

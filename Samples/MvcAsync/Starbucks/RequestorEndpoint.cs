@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 
 using Hermes.Messaging;
+using Hermes.Messaging.Bus.Transports.SqlTransport;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.EndPoints;
 using Hermes.ObjectBuilder.Autofac;
-using Hermes.Persistence;
 using Hermes.Serialization.Json;
-using Hermes.Transports.SqlServer;
 using Hermes.EntityFramework;
 using Starbucks.Messages;
 

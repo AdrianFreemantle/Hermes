@@ -19,8 +19,8 @@ namespace Hermes.Messaging.ProcessManagement
             State = new T
             {
                 Id = id,
-                OriginalMessageId = Bus.CurrentMessageContext.MessageId,
-                Originator = Bus.CurrentMessageContext.ReplyToAddress.ToString()
+                OriginalMessageId = Bus.CurrentMessage.MessageId,
+                Originator = Bus.CurrentMessage.ReplyToAddress.ToString()
             };
 
             ProcessManagerPersistence.Create(State);
@@ -33,7 +33,7 @@ namespace Hermes.Messaging.ProcessManagement
 
         protected virtual void BeginOrContinue(Guid id)
         {
-            var state = ProcessManagerPersistence.Get<T>(Bus.CurrentMessageContext.CorrelationId);
+            var state = ProcessManagerPersistence.Get<T>(Bus.CurrentMessage.CorrelationId);
 
             if (state == null)
             {

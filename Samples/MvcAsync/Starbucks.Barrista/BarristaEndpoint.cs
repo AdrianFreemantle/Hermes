@@ -1,10 +1,12 @@
 ﻿using System;
 
+using Hermes;
 using Hermes.Messaging;
+using Hermes.Messaging.Bus.Transports.SqlTransport;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.EndPoints;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using Hermes.Transports.SqlServer;
 using Starbucks.Messages;
 
 namespace Starbucks.Barrista
@@ -15,7 +17,7 @@ namespace Starbucks.Barrista
         {
             configuration
                 .SecondLevelRetryPolicy(3, TimeSpan.FromSeconds(10))
-                .FirstLevelRetryPolicy(1, TimeSpan.FromMilliseconds(10))
+                .FirstLevelRetryPolicy(0, TimeSpan.FromMilliseconds(10))
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .UseSqlStorage()
@@ -32,6 +34,14 @@ namespace Starbucks.Barrista
         private static bool IsEvent(Type type)
         {
             return typeof(IEvent).IsAssignableFrom(type) && type.Namespace.StartsWith("Starbucks");
+        }
+    }
+
+    public class IntializationTest : INeedToInitializeSomething
+    {
+        public void Initialize()
+        {
+            System.Diagnostics.Debug.WriteLine("Hello there...");
         }
     }
 }

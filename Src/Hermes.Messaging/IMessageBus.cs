@@ -20,6 +20,6 @@ namespace Hermes.Messaging
         void Defer(TimeSpan delay, params object[] messages);
         void Defer(TimeSpan delay, Guid corrolationId, params object[] messages);
 
-        IMessageContext CurrentMessageContext { get; }
+        IMessageContext CurrentMessage { get; }
     }
 }

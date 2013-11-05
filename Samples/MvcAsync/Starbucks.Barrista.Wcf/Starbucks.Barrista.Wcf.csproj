@@ -54,10 +54,7 @@
       <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\Starbucks\bin\Hermes.Serialization.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Hermes.Transports.SqlServer">
-      <HintPath>..\..\..\bin\Debug\Hermes.Transports.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

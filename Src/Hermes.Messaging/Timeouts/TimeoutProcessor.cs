@@ -81,7 +81,7 @@ namespace Hermes.Messaging.Timeouts
             if (timeoutStore.TryFetchNextTimeout(out timeoutData))
             {
                 Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.DestinationAddress);
-                messageSender.Send(timeoutData.ToMessageEnvelope(), Address.Parse(timeoutData.DestinationAddress));
+                messageSender.Send(timeoutData.ToTransportmessage(), Address.Parse(timeoutData.DestinationAddress));
                 return true;
             }
 
