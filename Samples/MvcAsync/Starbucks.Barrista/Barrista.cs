@@ -9,8 +9,6 @@ namespace Starbucks.Barrista
 {
     public class Barrista : IHandleMessage<PlaceOrder>
     {
-        static readonly Random rand = new Random(DateTime.Now.Second);
-
         private readonly IMessageBus bus;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Barrista));
 
@@ -25,10 +23,8 @@ namespace Starbucks.Barrista
 
             if (DateTime.Now.Ticks % 2 == 0)
             {
-                throw new Exception("blah");
-
-             //   Logger.Info("Out of coffee!");
-             //   bus.Return(ErrorCodes.OutOfCoffee);
+                Logger.Info("Out of coffee!");
+                bus.Return(ErrorCodes.OutOfCoffee);
             }
             else
             {

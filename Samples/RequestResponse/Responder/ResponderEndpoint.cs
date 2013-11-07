@@ -2,10 +2,10 @@
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.EndPoints;
+using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using Hermes.Storage.SqlServer;
-using Hermes.Transports.SqlServer;
 
 using RequestResponseMessages;
 

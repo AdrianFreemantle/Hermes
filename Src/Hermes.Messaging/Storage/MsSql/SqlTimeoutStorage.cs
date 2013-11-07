@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-using Hermes.Messaging.Bus.Transports;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 using Hermes.Serialization;
@@ -38,7 +37,7 @@ namespace Hermes.Messaging.Storage.MsSql
             {
                 connection.Open();
 
-                using (var command = new SqlCommand(SqlCommands.CreateTimeoutTable, connection))
+                using (var command = new SqlCommand(String.Format(SqlCommands.CreateTimeoutTable, Address.Local), connection))
                 {
                     command.CommandType = CommandType.Text;
                     command.ExecuteNonQuery();
@@ -80,7 +79,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private SqlCommand BuildAddCommand(TransactionalSqlConnection connection, TimeoutData timoutData)
         {
-            var command = connection.BuildCommand(SqlCommands.AddTimeout);
+            var command = connection.BuildCommand(String.Format(SqlCommands.AddTimeout, Address.Local));
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", timoutData.MessageId);
@@ -104,7 +103,7 @@ namespace Hermes.Messaging.Storage.MsSql
         public bool TryFetchNextTimeout(out TimeoutData timeoutData)
         {
             using (var connection = TransactionalSqlConnection.Begin(connectionString))
-            using (var command = connection.BuildCommand(SqlCommands.TryRemoveTimeout))
+            using (var command = connection.BuildCommand(String.Format(SqlCommands.TryRemoveTimeout, Address.Local)))
             {
                 using (var dataReader = command.ExecuteReader())
                 {

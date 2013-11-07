@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Hermes.Messaging.Bus.Transports;
+using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Callbacks
 {

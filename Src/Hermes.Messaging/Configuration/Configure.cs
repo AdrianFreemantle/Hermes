@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
-using Hermes.Messaging.Routing;
 
 namespace Hermes.Messaging.Configuration
 {

@@ -9,34 +9,10 @@ namespace Starbucks.Messages
     {
         public Guid OrderNumber { get; set; }
         public Coffee Coffee { get; set; }
-        public Sandwich Sandwich { get; set; }
-    }
-
-    public interface IOrderPlaced : IEvent
-    {
-        Guid OrderNumber { get; }
-        Coffee Coffee { get; }
-        Sandwich Sandwich { get; }
-    }
-
-    public interface IOrderReady : IEvent
-    {
-        Guid OrderNumber { get; }
-    }
-
-    public interface IDrinkPrepared : IEvent
-    {
-        Guid OrderNumber { get; }
-        string Drink { get; }
-    }
-
-    public interface ISandwichPrepared : IEvent
-    {
-        Guid OrderNumber { get; }
     }
 
     [DataContract]
-    public class OrderReady : IOrderReady, IDrinkPrepared
+    public class OrderReady
     {
         [DataMember]
         public Guid OrderNumber { get; protected set; }
@@ -60,13 +36,6 @@ namespace Starbucks.Messages
         FilterCoffee,
         Espresso,
         DoubleEspresso
-    }
-
-    public enum Sandwich
-    {
-        None,
-        HamAndCheese,
-        BaconLettuceAndTomato
     }
 
     public enum ErrorCodes

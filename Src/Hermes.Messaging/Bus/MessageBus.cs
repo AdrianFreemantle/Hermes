@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Hermes.Logging;
-using Hermes.Messaging.Bus.Transports;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
 
 using Microsoft.Practices.ServiceLocation;
 

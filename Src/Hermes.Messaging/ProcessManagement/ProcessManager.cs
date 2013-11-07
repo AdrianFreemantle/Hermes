@@ -49,7 +49,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             if (IsComplete)
             {
-                ProcessManagerPersistence.Complete(State.Id);
+                ProcessManagerPersistence.Complete<T>(State.Id);
             }
             else
             {

@@ -37,7 +37,6 @@ namespace Starbucks
         private static void ConfigureMvcAutofac()
         {
             var autofacAdapter = new MvcAutofacAdapter();
-            //autofacAdapter.RegisterModule(new EntityFrameworkConfigurationRegistrar<StarbucksContext>("Starbucks"));
             autofacAdapter.RegisterSingleton(endpoint.MessageBus);
             autofacAdapter.BuildContainer();
             DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());

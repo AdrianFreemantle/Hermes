@@ -1,4 +1,4 @@
-﻿using Hermes.Messaging.Bus.Transports;
+﻿using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
 {

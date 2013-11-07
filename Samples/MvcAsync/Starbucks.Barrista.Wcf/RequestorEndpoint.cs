@@ -2,9 +2,9 @@
 
 using Hermes.Ioc;
 using Hermes.Messaging;
-using Hermes.Messaging.Bus.Transports.SqlTransport;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
+using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 

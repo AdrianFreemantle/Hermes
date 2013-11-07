@@ -15,14 +15,14 @@ namespace Hermes.Messaging
         /// <summary>
         /// Gets a saga entity from the persistence store by its Id.
         /// </summary>
-        /// <param name="sagaId">The Id of the saga entity to get.</param>
+        /// <param name="processId">The Id of the saga entity to get.</param>
         /// <returns></returns>
-        T Get<T>(Guid sagaId) where T : class, IContainProcessManagerData;
+        T Get<T>(Guid processId) where T : class, IContainProcessManagerData;
 
         /// <summary>
         /// Sets a saga as completed and removes it from the active saga list
         /// in the persistence store.
         /// </summary>
-        void Complete(Guid sagaId);
+        void Complete<T>(Guid processId) where T : class, IContainProcessManagerData;
     }
 }

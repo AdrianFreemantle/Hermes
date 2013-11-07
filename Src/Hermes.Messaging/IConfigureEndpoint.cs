@@ -4,12 +4,6 @@ using Hermes.Ioc;
 
 namespace Hermes.Messaging
 {
-    public interface IConfigureWorker : IConfigureEndpoint
-    {
-        IConfigureWorker SecondLevelRetryPolicy(int attempts, TimeSpan delay);
-        IConfigureWorker UseDistributedTransaction();
-    }
-
     public interface IConfigureEndpoint
     {
         IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);

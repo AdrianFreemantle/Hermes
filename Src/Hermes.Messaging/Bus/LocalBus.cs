@@ -5,8 +5,8 @@ using System.Threading;
 
 using Hermes.Ioc;
 using Hermes.Logging;
-using Hermes.Messaging.Bus.Transports;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
 using Hermes.Persistence;
 
 using Microsoft.Practices.ServiceLocation;
