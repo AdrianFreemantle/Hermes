@@ -15,17 +15,18 @@ using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Bus
 {
-    
     public class LocalBus : IInMemoryBus
     {
         private readonly ITransportMessages messageTransport;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(IncomingMessageContext));
+        private readonly IDispatchMessagesToHandlers dispatcher;
 
         private readonly ThreadLocal<bool> messageBeingProcessed = new ThreadLocal<bool>();
 
-        public LocalBus(ITransportMessages messageTransport)
+        public LocalBus(ITransportMessages messageTransport, IDispatchMessagesToHandlers dispatcher)
         {
             this.messageTransport = messageTransport;
+            this.dispatcher = dispatcher;
         }
 
         public void Execute(params object[] messages)
@@ -114,7 +115,6 @@ namespace Hermes.Messaging.Bus
         void IInMemoryBus.Raise(params object[] events)
         {
             MessageRuleValidation.ValidateIsEventType(events);
-            var dispatcher = ServiceLocator.Current.GetService<IDispatchMessagesToHandlers>();
 
             foreach (var @event in events)
             {
