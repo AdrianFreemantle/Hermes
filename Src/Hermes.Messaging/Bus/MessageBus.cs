@@ -12,8 +12,6 @@ namespace Hermes.Messaging.Bus
 {
     public class MessageBus : IMessageBus
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessageBus));
-
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPersistTimeouts timeoutPersistence;
@@ -123,7 +121,7 @@ namespace Hermes.Messaging.Bus
         {
             var currentMessage = messageTransport.CurrentMessage;
 
-            if (currentMessage == null || currentMessage == TransportMessage.Undefined)
+            if (currentMessage == null || currentMessage.MessageId == Guid.Empty)
                 throw new InvalidOperationException("Return was called but we have no current message to return.");
 
             if (currentMessage.ReplyToAddress == Address.Undefined)
@@ -137,16 +135,16 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(currentMessage.ReplyToAddress, TimeSpan.MaxValue, controlMessage);
         }
 
-        public void Publish(params object[] messages)
+        public bool Publish(params object[] messages)
         {
             MessageRuleValidation.ValidateIsEventType(messages);
-            messageTransport.Publish(BuildOutgoingMessage(Guid.Empty, messages));
+            return messageTransport.Publish(BuildOutgoingMessage(Guid.Empty, messages));
         }
 
-        public void Publish(Guid correlationId, params object[] messages)
+        public bool Publish(Guid correlationId, params object[] messages)
         {
             MessageRuleValidation.ValidateIsEventType(messages);
-            messageTransport.Publish(BuildOutgoingMessage(correlationId, messages));
+            return messageTransport.Publish(BuildOutgoingMessage(correlationId, messages));
         }
 
         private IOutgoingMessageContext BuildOutgoingMessage(Guid correlationId, IEnumerable<object> messages)

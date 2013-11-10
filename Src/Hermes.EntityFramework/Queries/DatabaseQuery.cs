@@ -1,9 +1,8 @@
 using System.Data.Entity;
-using System.Linq;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class DatabaseQuery : ISqlQuery, IEntityQuery
+    public class DatabaseQuery : ISqlQuery
     {
         private readonly DbContext context;
  
@@ -21,10 +20,5 @@ namespace Hermes.EntityFramework.Queries
             var result = context.Database.SqlQuery<TDto>(sqlQuery, parameters);
             return new SqlQueryResult<TDto>(result);
         }
-
-        public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class
-        {
-            return context.Set<TEntity>();
-        }        
     }
 }

@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Linq.Expressions;
 
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {
-    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity>, IQueryable<TEntity> where TEntity : class
+    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly IDbSet<TEntity> DbSet;
-
-        public Expression Expression { get { return DbSet.Expression; } }
-        public Type ElementType { get { return DbSet.ElementType; } }
-        public IQueryProvider Provider { get { return DbSet.Provider; } }
 
         internal EntityFrameworkRepository(DbContext context)
         {
@@ -61,15 +53,5 @@ namespace Hermes.EntityFramework
         {
             DbSet.Remove(entity);
         }
-
-        public IEnumerator<TEntity> GetEnumerator()
-        {
-            return ((IEnumerable<TEntity>)Provider.Execute(Expression)).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)Provider.Execute(Expression)).GetEnumerator();
-        } 
     }
 }

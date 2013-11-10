@@ -1,7 +1,9 @@
-﻿namespace Hermes.EntityFramework
+﻿using Hermes.Persistence;
+
+namespace Hermes.EntityFramework
 {
     public interface IRepositoryFactory 
     {
-        EntityFrameworkRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
+        IRepository<TEntity> GetRepository<TEntity>() where TEntity : class, new();
     }
 }

@@ -13,24 +13,24 @@ namespace Hermes.EntityFramework.ProcessManagager
             this.repositoryFactory = repositoryFactory;
         }
 
-        public void Create<T>(T state) where T : class, IContainProcessManagerData
+        public void Create<T>(T state) where T : class, IContainProcessManagerData, new()
         {
             var repository = repositoryFactory.GetRepository<T>();
             repository.Add(state);
         }
 
-        public void Update<T>(T state) where T : class, IContainProcessManagerData
+        public void Update<T>(T state) where T : class, IContainProcessManagerData, new()
         {
             //no-operation required for entity framework
         }
 
-        public T Get<T>(Guid processId) where T : class, IContainProcessManagerData
+        public T Get<T>(Guid processId) where T : class, IContainProcessManagerData, new()
         {
             var repository = repositoryFactory.GetRepository<T>();
             return repository.Get(processId);
         }
 
-        public void Complete<T>(Guid processId) where T : class, IContainProcessManagerData
+        public void Complete<T>(Guid processId) where T : class, IContainProcessManagerData, new()
         {
             var repository = repositoryFactory.GetRepository<T>();
             var entity = repository.Get(processId);

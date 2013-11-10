@@ -26,5 +26,11 @@ namespace Hermes.Messaging.Transports
         {
             return new HeaderValue(key, value);
         }
+
+        internal void AppendValue(string value)
+        {
+            Mandate.ParameterNotNull(value, "value");
+            Value = String.Format("{0};{1}", Value, value);
+        }
     }
 }

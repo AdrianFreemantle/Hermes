@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using Hermes;
+
 using Hermes.Logging;
 using Hermes.Messaging;
 using Starbucks.Messages;

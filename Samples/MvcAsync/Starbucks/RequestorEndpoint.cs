@@ -33,4 +33,12 @@ namespace Starbucks
             return typeof(IEvent).IsAssignableFrom(type) && type.Namespace.StartsWith("Starbucks");
         }
     }
+
+    public class OrderReadyHandler : IHandleMessage<OrderReady>
+    {
+        public void Handle(OrderReady message)
+        {
+            
+        }
+    }
 }

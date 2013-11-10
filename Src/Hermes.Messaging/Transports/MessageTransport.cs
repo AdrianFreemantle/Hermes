@@ -144,9 +144,9 @@ namespace Hermes.Messaging.Transports
             return callBackManager.SetupCallback(transportMessage.CorrelationId);
         }
 
-        public void Publish(IOutgoingMessageContext outgoingMessage)
+        public bool Publish(IOutgoingMessageContext outgoingMessage)
         {
-            messagePublisher.Publish(outgoingMessage);
+            return messagePublisher.Publish(outgoingMessage);
         }
     }
 }

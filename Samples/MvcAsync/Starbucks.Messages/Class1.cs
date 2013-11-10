@@ -12,7 +12,7 @@ namespace Starbucks.Messages
     }
 
     [DataContract]
-    public class OrderReady
+    public class OrderReady : IEvent
     {
         [DataMember]
         public Guid OrderNumber { get; protected set; }

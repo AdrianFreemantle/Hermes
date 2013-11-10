@@ -60,6 +60,8 @@
     <Compile Include="Configuration\MessageHandlerCache\HandlerCache.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
     <Compile Include="Configuration\ComponentScanner.cs" />
+    <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
+    <Compile Include="Storage\MsSql\SubscriptionCacheItem.cs" />
     <Compile Include="Transports\SqlTransport\SqlCommands.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageDequeStrategy.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageSender.cs" />

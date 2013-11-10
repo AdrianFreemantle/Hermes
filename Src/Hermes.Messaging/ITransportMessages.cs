@@ -19,6 +19,6 @@ namespace Hermes.Messaging
         event MessageProcessingErrorEventHandler OnMessageProcessingError;
 
         ICallback SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext);
-        void Publish(IOutgoingMessageContext outgoingMessage);
+        bool Publish(IOutgoingMessageContext outgoingMessage);
     }
 }

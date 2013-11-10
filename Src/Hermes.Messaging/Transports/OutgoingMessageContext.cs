@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Hermes.Messaging.Transports
 {
     public class OutgoingMessageContext : IOutgoingMessageContext
     {
-        readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
-        readonly List<object> messages = new List<object>(); 
+        private readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
+        private readonly List<object> messages = new List<object>(); 
         private readonly ISerializeMessages messageSerializer;
         private readonly ICollection<IMutateOutgoingMessages> messageMutators;
         private Guid messageId;
@@ -47,18 +48,6 @@ namespace Hermes.Messaging.Transports
             messageHeaders.Add(new HeaderValue(HeaderKeys.ControlMessageHeader, true.ToString()));
         }
 
-        private Dictionary<string, string> BuildMessageHeaders()
-        {
-            var headers = new Dictionary<string, string>(messageHeaders.Count);
-
-            foreach (var messageHeader in messageHeaders)
-            {
-                headers[messageHeader.Key] = messageHeader.Value;
-            }
-
-            return headers;
-        }        
-
         public void AddMessage(object message)
         {
             foreach (var mutator in messageMutators)
@@ -66,7 +55,22 @@ namespace Hermes.Messaging.Transports
                 mutator.Mutate(message);
             }
 
+            AddMessageTypeToHeader(message);
             messages.Add(message);
+        }
+
+        private void AddMessageTypeToHeader(object message)
+        {
+            var headerValue = messageHeaders.FirstOrDefault(header => header.Key.Equals(HeaderKeys.MessageTypes));
+
+            if (headerValue == null)
+            {
+                messageHeaders.Add(new HeaderValue(HeaderKeys.MessageTypes, message.GetType().FullName));
+            }
+            else
+            {
+                headerValue.AppendValue(message.GetType().FullName);
+            }
         }
 
         public void SetMessageId(Guid id)
@@ -99,7 +103,7 @@ namespace Hermes.Messaging.Transports
         public TransportMessage ToTransportMessage(TimeSpan timeToLive)
         {
             byte[] messageBody = null;
-
+            
             if (messages.Any())
             {
                 messageBody = messageSerializer.Serialize(messages.ToArray());
@@ -111,6 +115,21 @@ namespace Hermes.Messaging.Transports
 
             return new TransportMessage(messageId, correlationId, replyToAddress, timeToLive, BuildMessageHeaders(), messageBody);
         }
+
+        private Dictionary<string, string> BuildMessageHeaders()
+        {
+            var headers = new Dictionary<string, string>(Headers.Count() + 1)
+            {
+                {HeaderKeys.SentTime, DateTime.UtcNow.ToWireFormattedString()}
+            };
+
+            foreach (var messageHeader in messageHeaders)
+            {
+                headers[messageHeader.Key] = messageHeader.Value;
+            }
+
+            return headers;
+        }  
 
         public IEnumerable<Type> GetMessageContracts()
         {

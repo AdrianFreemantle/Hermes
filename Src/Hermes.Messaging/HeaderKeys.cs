@@ -2,6 +2,8 @@
 {
     public class HeaderKeys
     {
+        public const string MessageTypes = "Hermes.MessageTypes";
+        public const string SentTime = "Hermes.SentTime";
         public const string RetryCount = "Hermes.Retry.Count";
         public const string FailureDetails = "Hermes.Failed.Exception";
         public const string TimeoutExpire = "Hermes.Timeout.Expire";
