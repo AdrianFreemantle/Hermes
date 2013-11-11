@@ -1,4 +1,4 @@
-﻿namespace Hermes.Persistence
+﻿namespace Hermes.EntityFramework
 {
     public interface ILookupTable
     {

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace Hermes.EntityFramework.Queries
+namespace Hermes
 {
     public class PagedResult<T>
     {
         /// <summary>
         /// The actual results from a query
         /// </summary>
-        public IReadOnlyList<T> Results { get; private set; }
+        public IReadOnlyCollection<T> Results { get; private set; }
 
         /// <summary>
         /// The current page number for this query result
@@ -34,7 +34,7 @@ namespace Hermes.EntityFramework.Queries
         /// </summary>
         public int TotalResultCount { get; private set; }
 
-        public PagedResult(List<T> results, int currentPage, int pageSize, int totalCount)
+        public PagedResult(IReadOnlyCollection<T> results, int currentPage, int pageSize, int totalCount)
         {
             Mandate.ParameterNotNull(results, "results");
  

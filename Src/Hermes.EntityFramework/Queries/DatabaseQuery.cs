@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class DatabaseQuery : ISqlQuery
+    public class DatabaseQuery : ISqlQuery, ISqlCommand
     {
         private readonly DbContext context;
  
@@ -15,10 +19,14 @@ namespace Hermes.EntityFramework.Queries
             context.Configuration.ProxyCreationEnabled = false;
         }
 
-        public SqlQueryResult<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters)
+        public List<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters)
         {
-            var result = context.Database.SqlQuery<TDto>(sqlQuery, parameters);
-            return new SqlQueryResult<TDto>(result);
+            return context.Database.SqlQuery<TDto>(sqlQuery, parameters).ToList();
+        }
+
+        public void SqlCommand(string sqlQuery, params object[] parameters)
+        {
+            context.Database.ExecuteSqlCommand(sqlQuery, parameters);
         }
     }
 }

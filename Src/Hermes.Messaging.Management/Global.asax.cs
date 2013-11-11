@@ -6,9 +6,9 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using Hermes.Messaging.Management.App_Start;
 using Hermes.Messaging.Management.Services;
-
+using ServiceStack.Razor;
 using ServiceStack.WebHost.Endpoints;
 
 namespace Hermes.Messaging.Management
@@ -21,24 +21,20 @@ namespace Hermes.Messaging.Management
         public class HelloAppHost : AppHostBase
         {
             //Tell Service Stack the name of your application and where to find your web services
-            public HelloAppHost() : base("Hello Web Services", typeof(HelloService).Assembly) { }
+            public HelloAppHost() : base("Hello Web Services", typeof(TableSchemaService).Assembly) { }
 
             public override void Configure(Funq.Container container)
             {
+                SetConfig(new EndpointHostConfig {ServiceStackHandlerFactoryPath = "api"});
+                Plugins.Add(new RazorFormat());
             }
-        }
-
-        //Initialize your application singleton
-        protected void Application_Start(object sender, EventArgs e)
-        {
-            new HelloAppHost().Init();
         }
 
         protected void Application_Start()
         {
+            new HelloAppHost().Init();
             AreaRegistration.RegisterAllAreas();
 
-            //WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

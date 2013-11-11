@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="DataAnnotationValidator.cs" />
     <Compile Include="IService.cs" />
+    <Compile Include="PagedResult.cs" />
     <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
     <Compile Include="ObectExtensions.cs" />
@@ -80,8 +81,6 @@
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\LoggingExtensionMethods.cs" />
     <Compile Include="Persistence\IKeyValueStore.cs" />
-    <Compile Include="Persistence\ILookupTable.cs" />
-    <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Persistence\IUnitOfWork.cs" />
     <Compile Include="Reflection\PropertyBag.cs" />
     <Compile Include="Retry.cs" />

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Linq;
 
-namespace Hermes.Persistence
+namespace Hermes.EntityFramework
 {
-    public interface IRepository<TEntity>
+    public interface IRepository<TEntity> : IQueryable<TEntity>
     {
         TEntity Get(int id);
         TEntity Get(long id);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Hermes.EntityFramework.Queries;
+using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {

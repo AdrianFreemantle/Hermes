@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
-
 using Hermes.Attributes;
 
-namespace Hermes.Reflection
+namespace Hermes
 {
     public static class EnumExtensions
     {
