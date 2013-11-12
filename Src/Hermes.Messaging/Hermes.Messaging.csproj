@@ -104,7 +104,6 @@
     <Compile Include="Transports\MessageRuleValidation.cs" />
     <Compile Include="Configuration\DefaultSerializationBinder.cs" />
     <Compile Include="Storage\MsSql\SqlCommands.cs" />
-    <Compile Include="Configuration\SqlStorageConfiguration.cs" />
     <Compile Include="Storage\MsSql\SqlSubscriptionStorage.cs" />
     <Compile Include="Storage\MsSql\SqlTimeoutStorage.cs" />
     <Compile Include="Transports\TransportMessage.cs" />

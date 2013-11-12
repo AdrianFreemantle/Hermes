@@ -20,7 +20,6 @@ namespace Starbucks.Barrista
                 .FirstLevelRetryPolicy(1, TimeSpan.FromMilliseconds(10))
                 .UseJsonSerialization()
                 .UseSqlTransport()
-                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .NumberOfWorkers(5);

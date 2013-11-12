@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
+using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.Serialization;
 using Hermes.Sql;
 
@@ -27,7 +28,7 @@ namespace Hermes.Messaging.Storage.MsSql
         {
             this.objectSerializer = objectSerializer;
             this.messageSerializer = messageSerializer;
-            connectionString = Settings.GetSetting<string>(SqlStorageConfiguration.StorageConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
             CreateTableIfNecessary();
         }
 

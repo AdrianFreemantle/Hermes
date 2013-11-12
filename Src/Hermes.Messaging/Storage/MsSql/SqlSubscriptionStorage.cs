@@ -6,6 +6,7 @@ using System.Linq;
 using System.Transactions;
 
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.Sql;
 
 namespace Hermes.Messaging.Storage.MsSql
@@ -18,7 +19,7 @@ namespace Hermes.Messaging.Storage.MsSql
         public SqlSubscriptionStorage()
         {
             subscriptionCache = new SubscriptionCache();
-            connectionString = Settings.GetSetting<string>(SqlStorageConfiguration.StorageConnectionStringKey);
+            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
             CreateSubcribtionTableIfNecessary();
         }
 

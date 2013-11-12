@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Hermes;
 using Hermes.Reflection;
 
 namespace Starbucks.Messages

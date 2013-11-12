@@ -1,4 +1,5 @@
-﻿using Hermes.Reflection;
+﻿using Hermes;
+using Hermes.Reflection;
 
 using Starbucks.Messages;
 

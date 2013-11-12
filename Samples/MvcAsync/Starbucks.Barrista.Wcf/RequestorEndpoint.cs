@@ -20,7 +20,6 @@ namespace Starbucks.Barrista.Wcf
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport()
-                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .RegisterDependencies(new QueryDependencies())
                 .RegisterMessageRoute<PlaceOrder>(Address.Parse("Starbucks.Barrista"));

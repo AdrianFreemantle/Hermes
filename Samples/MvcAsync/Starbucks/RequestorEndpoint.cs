@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -17,7 +16,6 @@ namespace Starbucks
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport()
-                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<PlaceOrder>(Address.Parse("Starbucks.Barrista"));
