@@ -68,7 +68,7 @@
              END";
 
         public const string AddTimeout =
-            @"INSERT INTO [timeout].[{0}]' ([Id],[CorrelationId],[Destination],[Expires],[Headers],[Body]) 
+            @"INSERT INTO [timeout].[{0}] ([Id],[CorrelationId],[Destination],[Expires],[Headers],[Body]) 
               VALUES (@Id,@CorrelationId,@Destination,@Expires,@Headers,@Body)";
 
         public const string TryRemoveTimeout =

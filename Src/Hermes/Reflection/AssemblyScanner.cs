@@ -10,10 +10,12 @@ namespace Hermes.Reflection
 {
     public class AssemblyScanner : IDisposable
     {
-        readonly List<Assembly> assemblies = new List<Assembly>();
-        readonly List<Type> types = new List<Type>(); 
-        static readonly ILog logger = LogFactory.BuildLogger(typeof (AssemblyScanner));
-        bool disposed;
+        private static readonly List<Func<string, bool>> ExclusionRules = new List<Func<string, bool>>();
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AssemblyScanner));
+
+        private readonly List<Assembly> assemblies = new List<Assembly>();
+        private readonly List<Type> types = new List<Type>();         
+        private bool disposed;      
 
         public IReadOnlyCollection<Type> Types { get { return types; } }
         public IReadOnlyCollection<Assembly> Assemblies { get { return assemblies; } }
@@ -23,19 +25,27 @@ namespace Hermes.Reflection
             Scan();
         }
 
+        public static void Exclude(Func<string, bool> exclusionRule)
+        {
+            Mandate.ParameterNotNull(exclusionRule, "exclusionRule");
+
+            ExclusionRules.Add(exclusionRule);   
+        }
+
         private void Scan()
         {
             var baseDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            logger.Debug("Scanning assembly files in location {0}", baseDirectory.FullName);
+            Logger.Debug("Scanning assembly files in location {0}", baseDirectory.FullName);
 
             var assemblyFiles = baseDirectory.GetFiles("*.dll", SearchOption.AllDirectories)
-                .Union(baseDirectory.GetFiles("*.exe", SearchOption.AllDirectories));
+                                             .Union(baseDirectory.GetFiles("*.exe", SearchOption.AllDirectories))
+                                             .Where(info => ExclusionRules.All(func => func(info.FullName)));
 
             foreach (var assemblyFile in assemblyFiles)
             {
                 try
                 {
-                    logger.Debug("Scanning file {0}", assemblyFile);
+                    Logger.Debug("Scanning file {0}", assemblyFile);
                     Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
                     assembly.GetTypes();
                     assemblies.Add(assembly);
@@ -43,7 +53,7 @@ namespace Hermes.Reflection
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex.Message);
+                    Logger.Error(ex.Message);
                 }
             }
         }

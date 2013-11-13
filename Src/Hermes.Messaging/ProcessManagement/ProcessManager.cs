@@ -26,14 +26,14 @@ namespace Hermes.Messaging.ProcessManagement
             ProcessManagerPersistence.Create(State);
         }
 
-        protected virtual void Continue(Guid sagaId)
+        protected virtual void Continue(Guid id)
         {
-            State = ProcessManagerPersistence.Get<T>(sagaId);
+            State = ProcessManagerPersistence.Get<T>(id);
         }
 
         protected virtual void BeginOrContinue(Guid id)
         {
-            var state = ProcessManagerPersistence.Get<T>(Bus.CurrentMessage.CorrelationId);
+            var state = ProcessManagerPersistence.Get<T>(id);
 
             if (state == null)
             {
