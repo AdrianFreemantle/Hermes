@@ -13,6 +13,7 @@ namespace Hermes.Messaging.ProcessManagement
         public IMessageBus Bus { get; set; }
         public T State { get; protected set; }
         protected internal bool IsComplete { get; protected set; }
+        protected internal bool IsNew { get; protected set; }
 
         protected virtual void Begin(Guid id)
         {
@@ -20,10 +21,11 @@ namespace Hermes.Messaging.ProcessManagement
             {
                 Id = id,
                 OriginalMessageId = Bus.CurrentMessage.MessageId,
-                Originator = Bus.CurrentMessage.ReplyToAddress.ToString()
+                Originator = Bus.CurrentMessage.ReplyToAddress.ToString(),
+                Version = 1
             };
 
-            ProcessManagerPersistence.Create(State);
+            IsNew = true;
         }
 
         protected virtual void Continue(Guid id)
@@ -42,12 +44,17 @@ namespace Hermes.Messaging.ProcessManagement
             else
             {
                 State = state;
+                State.Version++;
             }
         }
 
         protected internal override void Save()
         {
-            if (IsComplete)
+            if (IsNew)
+            {
+                ProcessManagerPersistence.Create(State);
+            }
+            else if (IsComplete)
             {
                 ProcessManagerPersistence.Complete<T>(State.Id);
             }

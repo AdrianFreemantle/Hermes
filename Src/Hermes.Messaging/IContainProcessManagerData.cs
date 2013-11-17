@@ -16,15 +16,17 @@ namespace Hermes.Messaging
         Guid Id { get; set; }
 
         /// <summary>
-        /// Contains the return address of the endpoint that caused the process to run.
-        /// </summary>
-        string Originator { get; set; }
-
-        /// <summary>
         /// Contains the Id of the message which caused the saga to start.
         /// This is needed so that when we reply to the Originator, any
         /// registered callbacks will be fired correctly.
         /// </summary>
         Guid OriginalMessageId { get; set; }
+
+        /// <summary>
+        /// Contains the return address of the endpoint that caused the process to run.
+        /// </summary>
+        string Originator { get; set; }
+
+        int Version { get; set; }
     }
 }

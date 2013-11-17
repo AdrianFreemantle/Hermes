@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Hermes.EntityFramework
 {
-    public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class EntityFrameworkRepository<TEntity> : IQueryableRepository<TEntity> where TEntity : class
     {
         protected readonly IDbSet<TEntity> DbSet;
 
@@ -19,33 +19,8 @@ namespace Hermes.EntityFramework
         {
             DbSet = context.Set<TEntity>();
         }
-
-        public TEntity Get(int id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public TEntity Get(long id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public TEntity Get(uint id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public TEntity Get(ulong id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public TEntity Get(Guid id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public TEntity Get(string id)
+   
+        public TEntity Get(object id)
         {
             return DbSet.Find(id);
         }

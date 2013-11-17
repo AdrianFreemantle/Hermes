@@ -34,7 +34,7 @@ namespace Hermes.EntityFramework
             }
         }
 
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class, new()
+        public IQueryableRepository<TEntity> GetRepository<TEntity>() where TEntity : class, new()
         {
             if (Context == null)
             {
