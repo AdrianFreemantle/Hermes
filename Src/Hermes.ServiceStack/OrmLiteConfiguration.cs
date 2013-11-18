@@ -9,7 +9,7 @@ namespace Hermes.ServiceStack
 {
     public static class OrmLiteConfiguration
     {
-        public static IConfigureEndpoint ConfigureOrmLite(this IConfigureEndpoint config, string connectionStringName)
+        public static IConfigureEndpoint UseOrmLite(this IConfigureEndpoint config, string connectionStringName)
         {
             Mandate.ParameterNotNullOrEmpty(connectionStringName, "connectionStringName", "Please provide a valid connection string name.");
 

@@ -22,7 +22,7 @@ namespace Hermes.Messaging.ProcessManagement
                 Id = id,
                 OriginalMessageId = Bus.CurrentMessage.MessageId,
                 Originator = Bus.CurrentMessage.ReplyToAddress.ToString(),
-                Version = 1
+                Version = 0
             };
 
             IsNew = true;
@@ -44,12 +44,13 @@ namespace Hermes.Messaging.ProcessManagement
             else
             {
                 State = state;
-                State.Version++;
             }
         }
 
         protected internal override void Save()
         {
+            State.Version++;
+
             if (IsNew)
             {
                 ProcessManagerPersistence.Create(State);

@@ -104,7 +104,7 @@ namespace Hermes.Messaging.Bus
         {
             var currentMessage = messageTransport.CurrentMessage;
 
-            if (currentMessage == null || currentMessage == TransportMessage.Undefined)
+            if (currentMessage == null || currentMessage.MessageId == Guid.Empty)
                 throw new InvalidOperationException("Reply was called but we have no current message to reply to.");
 
             if (currentMessage.ReplyToAddress == Address.Undefined)

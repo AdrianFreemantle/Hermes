@@ -84,8 +84,6 @@ namespace Hermes.Messaging.Bus
 
         private void DispatchToHandlers(IEnumerable<object> messages, IServiceLocator serviceLocator)
         {
-            var dispatcher = serviceLocator.GetInstance<IDispatchMessagesToHandlers>();
-
             foreach (var message in messages)
             {
                 dispatcher.DispatchToHandlers(message, serviceLocator);
