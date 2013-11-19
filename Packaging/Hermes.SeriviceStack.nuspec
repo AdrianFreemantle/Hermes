@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Hermes.ServiceStack</id>
+    <version>0.1.0</version>
+    <authors>Adrian Freemantle</authors>
+    <owners>Adrian Freemantle</owners>
+    <projectUrl>https://github.com/AdrianFreemantle/Hermes</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Persistence library using ORMLite from Service Stack</description>
+    <dependencies>
+      <dependency id="ServiceStack.Common" version="3.9" />
+      <dependency id="ServiceStack.OrmLite.SqlServer" version="3.9" />
+      <dependency id="ServiceStack.Text" version="3.9" />
+      <dependency id="Hermes.Core"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\Hermes.ServiceStack.dll" target="lib\net45" />
+    <file src="..\bin\Hermes.ServiceStack.pdb" target="lib\net45" />
+  </files>
+</package>

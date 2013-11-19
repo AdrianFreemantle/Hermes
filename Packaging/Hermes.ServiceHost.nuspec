@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Hermes.ServiceHost</id>
+    <version>0.1.0</version>
+    <authors>Adrian Freemantle</authors>
+    <owners>Adrian Freemantle</owners>
+    <projectUrl>https://github.com/AdrianFreemantle/Hermes</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Service hosting framework using Topshelf.</description>
+    <dependencies>
+      <dependency id="Hermes.Core"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\Hermes.ServiceHost.exe" target="lib\net45" />
+    <file src="..\bin\Hermes.ServiceHost.pdb" target="lib\net45" />
+    <file src="..\bin\Topshelf.dll" target="lib\net45" />
+  </files>
+</package>
