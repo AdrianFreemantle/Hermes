@@ -7,11 +7,9 @@
     <owners>Adrian Freemantle</owners>
     <projectUrl>https://github.com/AdrianFreemantle/Hermes</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Core Hermes messaging libraries.</description>
+    <description>Core Hermes core libraries.</description>
     <dependencies>
-      <dependency id="Autofac" version="3.1.5" />
       <dependency id="CommonServiceLocator" version="1.0" />
-      <dependency id="Newtonsoft.Json" version="5.0" />
     </dependencies>
   </metadata>
   <files>
@@ -19,11 +17,5 @@
     <file src="..\bin\Hermes.pdb" target="lib\net45" />
     <file src="..\bin\Hermes.Domain.dll" target="lib\net45" />
     <file src="..\bin\Hermes.Domain.pdb" target="lib\net45" />
-    <file src="..\bin\Hermes.Messaging.dll" target="lib\net45" />
-    <file src="..\bin\Hermes.Messaging.pdb" target="lib\net45" />
-    <file src="..\bin\Hermes.Serialization.Json.dll" target="lib\net45" />
-    <file src="..\bin\Hermes.Serialization.Json.pdb" target="lib\net45" />
-    <file src="..\bin\Hermes.ObjectBuilder.Autofac.dll" target="lib\net45" />
-    <file src="..\bin\Hermes.ObjectBuilder.Autofac.pdb" target="lib\net45" />
   </files>
 </package>
