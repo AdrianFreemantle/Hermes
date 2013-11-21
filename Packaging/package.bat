@@ -1,11 +1,13 @@
 rd /S /Q Packages
 mkdir Packages
 
-c:\LocalNugetPackages\nuget pack Hermes.Core.nuspec
-c:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec
-c:\LocalNugetPackages\nuget pack Hermes.EntityFramework.nuspec
-c:\LocalNugetPackages\nuget pack Hermes.SeriviceStack.nuspec
-c:\LocalNugetPackages\nuget pack Hermes.ServiceHost.nuspec
+set var=0.1.3
+
+c:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
+c:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%
+c:\LocalNugetPackages\nuget pack Hermes.EntityFramework.nuspec -Version %var%
+c:\LocalNugetPackages\nuget pack Hermes.SeriviceStack.nuspec -Version %var%
+c:\LocalNugetPackages\nuget pack Hermes.ServiceHost.nuspec -Version %var%
 
 move *.nupkg c:\LocalNugetPackages\
 

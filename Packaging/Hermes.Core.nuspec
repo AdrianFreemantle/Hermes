@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Hermes.Core</id>
-    <version>0.1.2</version>
+    <version>$version$</version>
     <authors>Adrian Freemantle</authors>
     <owners>Adrian Freemantle</owners>
     <projectUrl>https://github.com/AdrianFreemantle/Hermes</projectUrl>
