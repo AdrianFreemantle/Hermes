@@ -67,7 +67,7 @@ namespace Hermes.Messaging.Transports
 
         private void MessageReceived(TransportMessage incomingMessage)
         {
-            using (IContainer childContainer = container.BeginLifetimeScope())
+            using ( IContainer childContainer = container.BeginLifetimeScope())
             {
                 try
                 {

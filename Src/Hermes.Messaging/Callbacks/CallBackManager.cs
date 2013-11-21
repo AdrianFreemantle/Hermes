@@ -20,7 +20,7 @@ namespace Hermes.Messaging.Callbacks
 
             BusAsyncResult busAsyncResult;
 
-            lock (MessageIdToAsyncResultLookup)
+             lock (MessageIdToAsyncResultLookup)
             {
                 MessageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
                 MessageIdToAsyncResultLookup.Remove(message.CorrelationId);
@@ -42,11 +42,11 @@ namespace Hermes.Messaging.Callbacks
             busAsyncResult.Complete(statusCode, messages);
         }
 
-        public ICallback SetupCallback(Guid messageId)
+        public ICallback SetupCallback(Guid correlationId)
         {
-            Mandate.That<ArgumentException>(messageId != Guid.Empty, "You must provide correlationId that is a non-empty Guid in order to perform a callback action.");
+            Mandate.That<ArgumentException>(correlationId != Guid.Empty, "You must provide correlationId that is a non-empty Guid in order to perform a callback action.");
 
-            var result = new Callback(messageId);
+            var result = new Callback(correlationId);
 
             result.Registered += delegate(object sender, BusAsyncResultEventArgs args)
             {

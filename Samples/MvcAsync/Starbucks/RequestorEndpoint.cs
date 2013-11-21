@@ -9,7 +9,7 @@ using Starbucks.Messages;
 
 namespace Starbucks
 {
-    public class RequestorEndpoint : ClientEndpoint<AutofacAdapter>
+    public class RequestorEndpoint : ClientEndpoint<MvcAutofacAdapter>
     {
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
@@ -29,14 +29,6 @@ namespace Starbucks
         private static bool IsEvent(Type type)
         {
             return typeof(IEvent).IsAssignableFrom(type) && type.Namespace.StartsWith("Starbucks");
-        }
-    }
-
-    public class OrderReadyHandler : IHandleMessage<OrderReady>
-    {
-        public void Handle(OrderReady message)
-        {
-            
         }
     }
 }

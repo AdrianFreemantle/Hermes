@@ -29,7 +29,6 @@ namespace Starbucks.Barrista
             {
                 Logger.Info("Barista has completed order");
                 bus.Return(ErrorCodes.Success);
-                bus.Publish(new OrderReady(message.OrderNumber, message.Coffee));
             }
         }
     }    

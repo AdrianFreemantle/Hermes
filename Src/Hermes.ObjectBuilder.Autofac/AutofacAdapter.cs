@@ -52,7 +52,7 @@ namespace Hermes.ObjectBuilder.Autofac
             return this;
         }
 
-        public IContainer BeginLifetimeScope()
+        public virtual IContainer BeginLifetimeScope()
         {
             return new AutofacAdapter(LifetimeScope.BeginLifetimeScope());
         }

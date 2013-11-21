@@ -15,7 +15,6 @@
   <files>
     <file src="..\bin\Hermes.ServiceHost.exe" target="lib\net45" />
     <file src="..\bin\Hermes.ServiceHost.pdb" target="lib\net45" />
-    <file src="..\bin\Topshelf.dll" target="lib\net45" />
-    <file src="Hermes.ServiceHost\install.ps1" target="tools" />
+    <file src="..\bin\Topshelf.dll" target="lib\net45"/>
   </files>
 </package>

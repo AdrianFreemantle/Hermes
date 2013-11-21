@@ -12,24 +12,24 @@ namespace Starbucks.Messages
         public Coffee Coffee { get; set; }
     }
 
-    [DataContract]
-    public class OrderReady : IEvent
-    {
-        [DataMember]
-        public Guid OrderNumber { get; protected set; }
-        [DataMember]
-        public string Drink { get; protected set; }
+    //[DataContract]
+    //public class OrderReady : IEvent
+    //{
+    //    [DataMember]
+    //    public Guid OrderNumber { get; protected set; }
+    //    [DataMember]
+    //    public string Drink { get; protected set; }
 
-        protected OrderReady()
-        {
-        }
+    //    protected OrderReady()
+    //    {
+    //    }
 
-        public OrderReady(Guid orderNumber, Coffee coffee)
-        {
-            OrderNumber = orderNumber;
-            Drink = coffee.GetDescription();
-        }
-    }
+    //    public OrderReady(Guid orderNumber, Coffee coffee)
+    //    {
+    //        OrderNumber = orderNumber;
+    //        Drink = coffee.GetDescription();
+    //    }
+    //}
 
     public enum Coffee
     {

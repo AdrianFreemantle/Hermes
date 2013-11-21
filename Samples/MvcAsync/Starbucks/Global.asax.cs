@@ -3,7 +3,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using Hermes.Messaging.Configuration;
 using Starbucks.App_Start;
 
 namespace Starbucks
@@ -22,11 +22,8 @@ namespace Starbucks
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            
-            endpoint = new RequestorEndpoint();
-            endpoint.Start();
 
-            ConfigureMvcAutofac();
+            ConfigureEndpoint();
         }
 
         protected void Application_End()
@@ -34,12 +31,11 @@ namespace Starbucks
             endpoint.Dispose();
         }
 
-        private static void ConfigureMvcAutofac()
+        private static void ConfigureEndpoint()
         {
-            var autofacAdapter = new MvcAutofacAdapter();
-            autofacAdapter.RegisterSingleton(endpoint.MessageBus);
-            autofacAdapter.BuildContainer();
-            DependencyResolver.SetResolver(autofacAdapter.BuildAutofacDependencyResolver());
+            endpoint = new RequestorEndpoint();
+            DependencyResolver.SetResolver(((MvcAutofacAdapter)Settings.RootContainer).BuildAutofacDependencyResolver());
+            endpoint.Start();
         }
     }
 }

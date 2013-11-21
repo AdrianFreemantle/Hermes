@@ -1,7 +1,7 @@
 rd /S /Q Packages
 mkdir Packages
 
-set var=0.1.3
+set var=0.1.7
 
 c:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
 c:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%

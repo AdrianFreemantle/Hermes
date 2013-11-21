@@ -35,23 +35,29 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.1.3\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes">
-      <HintPath>..\..\..\bin\Debug\Hermes.dll</HintPath>
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.0.1.4\lib\net45\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Domain">
-      <HintPath>..\..\..\bin\Debug\Hermes.Domain.dll</HintPath>
+    <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.0.1.4\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Messaging">
-      <HintPath>..\..\..\bin\Debug\Hermes.Messaging.dll</HintPath>
+    <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.1.4\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\..\..\bin\Debug\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.1.4\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\..\..\bin\Debug\Hermes.Serialization.Json.dll</HintPath>
+    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.1.4\lib\net45\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ServiceHost">
-      <HintPath>..\..\..\bin\Debug\Hermes.ServiceHost.exe</HintPath>
+    <Reference Include="Hermes.ServiceHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.ServiceHost.0.1.4\lib\net45\Hermes.ServiceHost.exe</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -67,6 +73,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Topshelf">
+      <HintPath>..\packages\Hermes.ServiceHost.0.1.4\lib\net45\Topshelf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Barrista.cs" />
@@ -92,4 +101,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(ProjectDir)$(OutputPath)Hermes.ServiceHost.exe</StartProgram>
+  </PropertyGroup>
 </Project>
