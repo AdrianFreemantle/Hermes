@@ -81,7 +81,10 @@ namespace Hermes.Messaging.Transports
 
         public void SetCorrelationId(Guid id)
         {
-            correlationId = id;
+            if (id != Guid.Empty)
+            {
+                correlationId = id;
+            }
         }
 
         public void SetReplyAddress(Address address)
