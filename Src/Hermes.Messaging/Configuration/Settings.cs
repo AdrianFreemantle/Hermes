@@ -11,8 +11,8 @@ namespace Hermes.Messaging.Configuration
     public static class Settings
     {
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
-        
-        private static Address errorAddress = Address.Undefined;
+
+        private static Address errorAddress = Address.Parse("Error");
         private static IContainer rootContainer;
         private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
@@ -81,7 +81,6 @@ namespace Hermes.Messaging.Configuration
         internal static void SetEndpointName(string endpointName)
         {
             Address.InitializeLocalAddress(endpointName);
-            errorAddress = Address.Local.SubScope("Error");            
         }
  
         public static T GetSetting<T>(string settingKey)

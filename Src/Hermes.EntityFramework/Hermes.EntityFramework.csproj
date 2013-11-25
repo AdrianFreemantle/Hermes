@@ -69,7 +69,6 @@
     <Compile Include="KeyValueStore\KeyValueEntityConfiguration.cs" />
     <Compile Include="KeyValueStore\KeyValueStorePersister.cs" />
     <Compile Include="NullUser.cs" />
-    <Compile Include="ProcessManagager\ProcessManagerEntity.cs" />
     <Compile Include="ProcessManagager\ProcessManagerPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrderedQueryableExtensions.cs" />

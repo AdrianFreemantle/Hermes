@@ -71,7 +71,7 @@
     <Compile Include="IIncommingMessageContext.cs" />
     <Compile Include="IMutateIncommingMessages.cs" />
     <Compile Include="IMutateOutgoingMessages.cs" />
-    <Compile Include="Transports\IncommingMessageContext.cs" />
+    <Compile Include="Transports\IncomingMessageContext.cs" />
     <Compile Include="INeedToInitializeSomething.cs" />
     <Compile Include="IOutgoingMessageContext.cs" />
     <Compile Include="IReturn.cs" />

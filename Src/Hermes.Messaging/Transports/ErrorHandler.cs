@@ -64,6 +64,7 @@ namespace Hermes.Messaging.Transports
         {
             Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
             transportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
+            transportMessage.Headers[HeaderKeys.FailureEndpoint] = Address.Local.ToString();
             messageSender.Send(transportMessage, Settings.ErrorEndpoint);
         }
 
@@ -73,6 +74,7 @@ namespace Hermes.Messaging.Transports
             envelope.Headers.Remove(HeaderKeys.TimeoutExpire);
             envelope.Headers.Remove(HeaderKeys.RouteExpiredTimeoutTo);
             envelope.Headers.Remove(HeaderKeys.FailureDetails);
+            envelope.Headers.Remove(HeaderKeys.FailureEndpoint);
         }
     }
 }

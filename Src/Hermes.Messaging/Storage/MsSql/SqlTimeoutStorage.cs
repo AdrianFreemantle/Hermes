@@ -17,12 +17,12 @@ namespace Hermes.Messaging.Storage.MsSql
         private readonly ISerializeMessages messageSerializer;
         private readonly string connectionString;
 
-        const int messageIdIndex = 0;
-        const int correlationIdIndex = 1;
-        const int destinationIndex = 2;
-        const int timeToLiveIndex = 3;
-        const int headersIndex = 4;
-        const int bodyIndex = 5;
+        const int MessageIdIndex = 0;
+        const int CorrelationIdIndex = 1;
+        const int DestinationIndex = 2;
+        const int TimeToLiveIndex = 3;
+        const int HeadersIndex = 4;
+        const int BodyIndex = 5;
 
         public SqlTimeoutStorage(ISerializeObjects objectSerializer, ISerializeMessages messageSerializer)
         {
@@ -123,12 +123,12 @@ namespace Hermes.Messaging.Storage.MsSql
             {
                 return new TimeoutData
                 {
-                    MessageId = dataReader.GetGuid(messageIdIndex),
-                    CorrelationId = dataReader.IsDBNull(correlationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(correlationIdIndex)),
-                    DestinationAddress = dataReader.GetString(destinationIndex),
-                    Expires = dataReader.GetDateTime(timeToLiveIndex),
-                    Headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(headersIndex)),
-                    Body = dataReader.IsDBNull(bodyIndex) ? null : dataReader.GetSqlBinary(bodyIndex).Value
+                    MessageId = dataReader.GetGuid(MessageIdIndex),
+                    CorrelationId = dataReader.IsDBNull(CorrelationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(CorrelationIdIndex)),
+                    DestinationAddress = dataReader.GetString(DestinationIndex),
+                    Expires = dataReader.GetDateTime(TimeToLiveIndex),
+                    Headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(HeadersIndex)),
+                    Body = dataReader.IsDBNull(BodyIndex) ? null : dataReader.GetSqlBinary(BodyIndex).Value
                 };
             }
 

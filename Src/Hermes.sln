@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02F0A028
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Domain.Tests", "Hermes.Domain.Tests\Hermes.Domain.Tests.csproj", "{799F740B-8F96-4915-831D-D710CB5FD494}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ServiceStack", "Hermes.ServiceStack\Hermes.ServiceStack.csproj", "{3EA623E1-6C1B-43A1-B716-8BB5A2AAA02E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.OrmLite", "Hermes.OrmLite\Hermes.OrmLite.csproj", "{3EA623E1-6C1B-43A1-B716-8BB5A2AAA02E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

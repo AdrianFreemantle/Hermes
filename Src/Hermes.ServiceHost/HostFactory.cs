@@ -52,7 +52,7 @@ namespace Hermes.ServiceHost
                 .OfType<AssemblyDescriptionAttribute>()
                 .FirstOrDefault();
 
-            return descriptionAttribute != null ? descriptionAttribute.Description : hostableService.Assembly.GetVersionFormattedName();
+            return descriptionAttribute != null ? descriptionAttribute.Description : String.Format("Hermes.{0}", hostableService.Assembly.GetName().Name);
         }
 
         private static void GetHostableService()

@@ -7,8 +7,8 @@
     <ProjectGuid>{3EA623E1-6C1B-43A1-B716-8BB5A2AAA02E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hermes.ServiceStack</RootNamespace>
-    <AssemblyName>Hermes.ServiceStack</AssemblyName>
+    <RootNamespace>Hermes.OrmLite</RootNamespace>
+    <AssemblyName>Hermes.OrmLite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

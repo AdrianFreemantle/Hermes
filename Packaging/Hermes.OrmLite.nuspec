@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Hermes.ServiceStack</id>
+    <id>Hermes.OrmLite</id>
     <version>$version$</version>
     <authors>Adrian Freemantle</authors>
     <owners>Adrian Freemantle</owners>
