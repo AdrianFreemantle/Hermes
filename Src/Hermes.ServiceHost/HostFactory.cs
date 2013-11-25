@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,7 @@ namespace Hermes.ServiceHost
     static class HostFactory
     {
         private static Type hostableService;
+        private static string serviceName;
 
         public static Host BuildHost()
         {
@@ -24,8 +26,8 @@ namespace Hermes.ServiceHost
 
             return Topshelf.HostFactory.New(configurator =>
             {
-                configurator.SetServiceName(hostableService.Assembly.GetVersionFormattedName());
-                configurator.SetDisplayName(hostableService.Assembly.GetVersionFormattedName());
+                configurator.SetServiceName(serviceName);
+                configurator.SetDisplayName(serviceName);
                 configurator.SetDescription(GetDescription());
                 configurator.RunAsPrompt();
 
@@ -52,7 +54,7 @@ namespace Hermes.ServiceHost
                 .OfType<AssemblyDescriptionAttribute>()
                 .FirstOrDefault();
 
-            return descriptionAttribute != null ? descriptionAttribute.Description : hostableService.Assembly.GetVersionFormattedName();
+            return descriptionAttribute != null ? descriptionAttribute.Description : serviceName;
         }
 
         private static void GetHostableService()
@@ -62,8 +64,10 @@ namespace Hermes.ServiceHost
             ValidateThatOnlyOneServiceIsPresent(serviceTypes);
             ValidateServiceTypeImplementsDefaultConstructor(serviceTypes.First());
             hostableService = serviceTypes.First();
-        }
 
+            serviceName = String.Format("Hermes.{0}", hostableService.Assembly.GetName().Name);
+        }
+      
         private static Type[] FindAllServiceTypes()
         {
             using (var scanner = new AssemblyScanner())
@@ -100,6 +104,6 @@ namespace Hermes.ServiceHost
                     String.Format("Service type {0} must implement a default constructor for it to be hostable",
                         serviceType.FullName));
             }
-        }
+        }        
     }
 }

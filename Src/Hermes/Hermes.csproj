@@ -51,7 +51,6 @@
     <Compile Include="IService.cs" />
     <Compile Include="PagedResult.cs" />
     <Compile Include="Persistence\IRepository.cs" />
-    <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
     <Compile Include="ObectExtensions.cs" />
     <Compile Include="Reflection\ObjectFactory.cs" />

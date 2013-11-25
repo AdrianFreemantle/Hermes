@@ -24,13 +24,13 @@ namespace Hermes.Messaging.Transports
         {
             int retryCount = GetRetryCount(transportMessage);
 
-            if (++retryCount > Settings.SecondLevelRetryAttempts)
+            if (++retryCount > Settings.SecondLevelRetryAttempts || Settings.IsClientEndpoint)
             {
                 SendToErrorQueue(transportMessage, ex);
             }
             else
             {
-                SendToRetryQueue(transportMessage, retryCount);
+                SendToTimeoutStore(transportMessage, retryCount);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Hermes.Messaging.Transports
             return 0;
         }
 
-        private void SendToRetryQueue(TransportMessage transportMessage, int retryCount)
+        private void SendToTimeoutStore(TransportMessage transportMessage, int retryCount)
         {
             Logger.Warn("Sending message {0} to retry queue: attempt {1}", transportMessage.MessageId, retryCount);
             transportMessage.Headers[HeaderKeys.RetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
