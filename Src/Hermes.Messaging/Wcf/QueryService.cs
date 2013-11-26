@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Hermes.Messaging.Configuration;
+using Hermes.Queries;
 
 namespace Hermes.Messaging.Wcf
 {

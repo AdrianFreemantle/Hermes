@@ -1,40 +1,41 @@
 ﻿using System;
 using System.Globalization;
-
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 
-namespace Hermes.Messaging.Transports
+namespace Hermes.Messaging.Transports.Monitoring
 {
-    public class ErrorHandler : IHandleMessageErrors
+    public class MessageErrorModule : IModule
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(ErrorHandler));
-        private readonly IPersistTimeouts timeoutStore;
-        
-        private readonly ISendMessages messageSender;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageErrorModule));
 
-        public ErrorHandler(IPersistTimeouts timeoutStore, ISendMessages messageSender)
-        {
-            this.timeoutStore = timeoutStore;
-            this.messageSender = messageSender;
+        protected readonly IPersistTimeouts TimeoutStore;
+        protected readonly ISendMessages MessageSender;
+
+        public MessageErrorModule(ITransportMessages messageTransport, IPersistTimeouts timeoutStore, ISendMessages messageSender)
+        {            
+            TimeoutStore = timeoutStore;
+            MessageSender = messageSender;
+
+            messageTransport.OnMessageProcessingError += OnOnMessageProcessingError;
         }
 
-        public void Handle(TransportMessage transportMessage, Exception ex)
+        protected virtual void OnOnMessageProcessingError(object sender, MessageProcessingProcessingErrorEventArgs e)
         {
-            int retryCount = GetRetryCount(transportMessage);
+            int retryCount = GetRetryCount(e.TransportMessage);
 
             if (++retryCount > Settings.SecondLevelRetryAttempts || Settings.IsClientEndpoint)
             {
-                SendToErrorQueue(transportMessage, ex);
+                SendToErrorQueue(e.TransportMessage, e.Error);
             }
             else
             {
-                SendToTimeoutStore(transportMessage, retryCount);
+                SendToTimeoutStore(e.TransportMessage, retryCount);
             }
         }
 
-        private static int GetRetryCount(TransportMessage envelope)
+        protected virtual int GetRetryCount(TransportMessage envelope)
         {
             if (envelope.Headers.ContainsKey(HeaderKeys.RetryCount))
             {
@@ -44,7 +45,7 @@ namespace Hermes.Messaging.Transports
             return 0;
         }
 
-        private void SendToTimeoutStore(TransportMessage transportMessage, int retryCount)
+        protected virtual void SendToTimeoutStore(TransportMessage transportMessage, int retryCount)
         {
             Logger.Warn("Sending message {0} to retry queue: attempt {1}", transportMessage.MessageId, retryCount);
             transportMessage.Headers[HeaderKeys.RetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
@@ -57,24 +58,15 @@ namespace Hermes.Messaging.Transports
             }
 
             Logger.Warn("Defering error message: {0}", transportMessage.MessageId);
-            timeoutStore.Add(new TimeoutData(transportMessage));
+            TimeoutStore.Add(new TimeoutData(transportMessage));
         }
 
-        private void SendToErrorQueue(TransportMessage transportMessage, Exception ex)
+        protected virtual void SendToErrorQueue(TransportMessage transportMessage, Exception ex)
         {
             Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
             transportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
             transportMessage.Headers[HeaderKeys.FailureEndpoint] = Address.Local.ToString();
-            messageSender.Send(transportMessage, Settings.ErrorEndpoint);
-        }
-
-        public void RemoveRetryHeaders(TransportMessage envelope)
-        {
-            envelope.Headers.Remove(HeaderKeys.RetryCount);
-            envelope.Headers.Remove(HeaderKeys.TimeoutExpire);
-            envelope.Headers.Remove(HeaderKeys.RouteExpiredTimeoutTo);
-            envelope.Headers.Remove(HeaderKeys.FailureDetails);
-            envelope.Headers.Remove(HeaderKeys.FailureEndpoint);
-        }
+            MessageSender.Send(transportMessage, Settings.ErrorEndpoint);
+        }      
     }
 }

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-
 using Hermes.Persistence;
-
 using ServiceStack.OrmLite;
 
-namespace Hermes.ServiceStack
+namespace Hermes.OrmLite
 {
     public class OrmLiteUnitOfWork : IUnitOfWork
     {

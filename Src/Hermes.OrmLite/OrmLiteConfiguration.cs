@@ -1,11 +1,9 @@
 ﻿using System.Configuration;
-
 using Hermes.Ioc;
 using Hermes.Messaging;
-
 using ServiceStack.OrmLite;
 
-namespace Hermes.ServiceStack
+namespace Hermes.OrmLite
 {
     public static class OrmLiteConfiguration
     {

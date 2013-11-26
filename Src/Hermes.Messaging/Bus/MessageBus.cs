@@ -15,17 +15,20 @@ namespace Hermes.Messaging.Bus
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IPersistTimeouts timeoutPersistence;
         private readonly IServiceLocator serviceLocator;
+        private readonly IManageCallbacks callBackManager;
 
         public IMessageContext CurrentMessage
         {
             get { return messageTransport.CurrentMessage; }
         }
 
-        public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPersistTimeouts timeoutPersistence)
+        public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPersistTimeouts timeoutPersistence, IManageCallbacks callBackManager)
         {
             this.messageTransport = messageTransport;
             this.messageRouter = messageRouter;
             this.timeoutPersistence = timeoutPersistence;
+            this.callBackManager = callBackManager;
+
             serviceLocator = Settings.RootContainer;
         }
 
@@ -95,8 +98,9 @@ namespace Hermes.Messaging.Bus
         {
             MessageRuleValidation.ValidateIsCommandType(messages);
 
-            IOutgoingMessageContext commandMessagae = BuildOutgoingMessage(correlationId, messages);
-            return messageTransport.SendMessage(address, timeToLive, commandMessagae);
+            IOutgoingMessageContext commandMessage = BuildOutgoingMessage(correlationId, messages);
+            messageTransport.SendMessage(address, timeToLive, commandMessage);
+            return callBackManager.SetupCallback(commandMessage.CorrelationId);
         }
 
         public void Reply(params object[] messages)

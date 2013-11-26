@@ -5,10 +5,7 @@ using System.Transactions;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
-
 using Microsoft.Practices.ServiceLocation;
-
-using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Transports
 {
@@ -22,8 +19,6 @@ namespace Hermes.Messaging.Transports
         private readonly IPublishMessages messagePublisher;
         private readonly ISendMessages messageSender;
         private readonly IReceiveMessages messageReceiver;
-        private readonly IHandleMessageErrors errorHandler; 
-        private readonly IManageCallbacks callBackManager;
         private readonly IContainer container;
         private readonly NullMessageContext nullMessage = new NullMessageContext();
         private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
@@ -40,14 +35,12 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IManageCallbacks callBackManager, IContainer container, IHandleMessageErrors errorHandler)
+        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IContainer container)
         {
             this.messagePublisher = messagePublisher;
             this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;
-            this.callBackManager = callBackManager;
             this.container = container;
-            this.errorHandler = errorHandler;
         }
 
         public void Dispose()
@@ -71,13 +64,13 @@ namespace Hermes.Messaging.Transports
             {
                 try
                 {
-                    ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
+                    Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
                     ProcessIncomingMessage(incomingMessage, childContainer);
                 }
                 finally
                 {
                     currentMessageBeingProcessed.Value = nullMessage;
-                    ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
+                    Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
             }
         }
@@ -89,16 +82,13 @@ namespace Hermes.Messaging.Transports
                 try
                 {
                     RaiseMessageReceivedEvent(transportMessage);
-
                     var incomingMessageContext = serviceLocator.GetInstance<IIncomingMessageContext>();
                     currentMessageBeingProcessed.Value = incomingMessageContext;
                     incomingMessageContext.Process(transportMessage, serviceLocator);
-
                     RaiseProcessingCompletedEvent(transportMessage);
                 }
                 catch (Exception ex)
                 {
-                    errorHandler.Handle(transportMessage, ex);
                     RaiseErrorEvent(transportMessage, ex);
                 }
 
@@ -137,11 +127,10 @@ namespace Hermes.Messaging.Transports
                 : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
         }       
 
-        public ICallback SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext)
+        public void SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext)
         {
             var transportMessage = outgoingMessageContext.ToTransportMessage(timeToLive);
             messageSender.Send(transportMessage, recipient);
-            return callBackManager.SetupCallback(transportMessage.CorrelationId);
         }
 
         public bool Publish(IOutgoingMessageContext outgoingMessage)

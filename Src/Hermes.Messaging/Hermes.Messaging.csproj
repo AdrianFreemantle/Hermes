@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IConfigureWorker.cs" />
+    <Compile Include="IModule.cs" />
     <Compile Include="MessageProcessingEventArgs.cs" />
     <Compile Include="MessageProcessingProcessingErrorEventArgs.cs" />
     <Compile Include="Callbacks\BusAsyncResultEventArgs.cs" />
@@ -62,21 +63,21 @@
     <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCacheItem.cs" />
+    <Compile Include="Transports\Monitoring\AuditModule.cs" />
     <Compile Include="Transports\SqlTransport\SqlCommands.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageDequeStrategy.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageSender.cs" />
     <Compile Include="Transports\SqlTransport\SqlQueueCreator.cs" />
     <Compile Include="Transports\SqlTransport\SqlTransportConfiguration.cs" />
-    <Compile Include="IAnswerQuery.cs" />
     <Compile Include="IIncommingMessageContext.cs" />
     <Compile Include="IMutateIncommingMessages.cs" />
     <Compile Include="IMutateOutgoingMessages.cs" />
     <Compile Include="Transports\IncomingMessageContext.cs" />
     <Compile Include="INeedToInitializeSomething.cs" />
     <Compile Include="IOutgoingMessageContext.cs" />
-    <Compile Include="IReturn.cs" />
     <Compile Include="Transports\NullMessageContext.cs" />
     <Compile Include="Transports\OutgoingMessageContext.cs" />
+    <Compile Include="Transports\Monitoring\PerformanceCounterModule.cs" />
     <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
     <Compile Include="Callbacks\CompletionResult.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="Transports\HeaderValue.cs" />
     <Compile Include="IDispatchMessagesToHandlers.cs" />
     <Compile Include="IHandleMessage.cs" />
-    <Compile Include="IHandleMessageErrors.cs" />
     <Compile Include="IInMemoryBus.cs" />
     <Compile Include="IManageSubscriptions.cs" />
     <Compile Include="IMessageBus.cs" />
@@ -122,7 +122,7 @@
     <Compile Include="Timeouts\TimeoutProcessor.cs" />
     <Compile Include="Bus\MessageBus.cs" />
     <Compile Include="Transports\Dispatcher.cs" />
-    <Compile Include="Transports\ErrorHandler.cs" />
+    <Compile Include="Transports\Monitoring\MessageErrorModule.cs" />
     <Compile Include="Bus\LocalBus.cs" />
     <Compile Include="Routing\Router.cs" />
     <Compile Include="Transports\MessageTransport.cs" />

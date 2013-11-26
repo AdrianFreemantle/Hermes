@@ -1,4 +1,4 @@
-﻿namespace Hermes.Messaging
+﻿namespace Hermes.Queries
 {
     public interface IReturn<TResult>
     {

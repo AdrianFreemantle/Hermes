@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Data;
-
 using Hermes.Messaging;
-
 using ServiceStack.OrmLite;
 
-namespace Hermes.ServiceStack
+namespace Hermes.OrmLite
 {
     public class OrmLiteProcessManagerPersister : IPersistProcessManagers
     {

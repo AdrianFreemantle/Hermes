@@ -4,6 +4,7 @@ using Hermes.Messaging.Callbacks;
 using Hermes.Messaging.Routing;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports;
+using Hermes.Messaging.Transports.Monitoring;
 
 namespace Hermes.Messaging.Configuration
 {
@@ -16,7 +17,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<ErrorHandler>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
@@ -25,6 +26,11 @@ namespace Hermes.Messaging.Configuration
 
             containerBuilder.RegisterType<IncomingMessageContext>(DependencyLifecycle.InstancePerDependency);
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
+
+
+            containerBuilder.RegisterType<AuditModule>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<PerformanceCounterModule>(DependencyLifecycle.SingleInstance);
         }
     }
 }

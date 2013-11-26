@@ -52,10 +52,6 @@ namespace Hermes.Messaging.Transports
             this.unitsOfWork = unitsOfWork == null ? new IUnitOfWork[0] : unitsOfWork.ToArray();
         }
 
-        public void SetTransportMessage()
-        {
-        }
-
         public void Process(TransportMessage incomingMessage, IServiceLocator serviceLocator)
         {
             transportMessage = incomingMessage;
