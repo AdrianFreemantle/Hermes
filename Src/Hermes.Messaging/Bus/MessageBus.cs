@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
 

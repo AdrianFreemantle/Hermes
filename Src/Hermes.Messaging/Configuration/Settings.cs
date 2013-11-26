@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Hermes.Ioc;
 
@@ -10,9 +11,12 @@ namespace Hermes.Messaging.Configuration
     /// </summary>
     public static class Settings
     {
+        private const string EndpointNameSpace = ".Endpoint";
+
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
 
-        private static Address errorAddress = Address.Parse("Error");
+        private static readonly Address errorAddress = Address.Parse("Error");
+        private static readonly Address auditAddress = Address.Parse("Audit");
         private static IContainer rootContainer;
         private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
@@ -71,6 +75,11 @@ namespace Hermes.Messaging.Configuration
             get { return errorAddress; }
         }
 
+        public static Address AuditEndpoint
+        {
+            get { return auditAddress; }
+        }
+
         public static IManageSubscriptions Subscriptions
         {
             get { return RootContainer.GetInstance<IManageSubscriptions>(); }
@@ -80,7 +89,17 @@ namespace Hermes.Messaging.Configuration
 
         internal static void SetEndpointName(string endpointName)
         {
-            Address.InitializeLocalAddress(endpointName);
+            Address.InitializeLocalAddress(ConfigureServiceName(endpointName));         
+        }
+
+        private static string ConfigureServiceName(string endpointName)
+        {
+            if (endpointName.EndsWith(EndpointNameSpace, true, CultureInfo.InvariantCulture))
+            {
+                return endpointName.Substring(0, endpointName.Length - EndpointNameSpace.Length);
+            }
+
+            return endpointName;
         }
  
         public static T GetSetting<T>(string settingKey)

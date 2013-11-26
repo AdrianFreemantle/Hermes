@@ -142,14 +142,12 @@ namespace Hermes.Messaging.Configuration
         {
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
+            queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
+            queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
 
             if (Settings.IsClientEndpoint)
             {
                 queueCreator.Purge(Address.Local);
-            }
-            else
-            {
-                queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             }
         }
 
