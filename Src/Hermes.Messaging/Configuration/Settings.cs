@@ -31,6 +31,7 @@ namespace Hermes.Messaging.Configuration
             IsMessageType = type => false;
             IsCommandType = type => false;
             IsEventType = type => false;
+            UseDistributedTransaction = true;
         }
 
         public static int NumberOfWorkers

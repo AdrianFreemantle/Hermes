@@ -64,8 +64,8 @@ namespace Hermes.Messaging.Transports.Monitoring
         protected virtual void SendToErrorQueue(TransportMessage transportMessage, Exception ex)
         {
             Logger.Error("Processing failed for message {0}. Sending to error queue : {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
+            transportMessage.Headers[HeaderKeys.ProcessingEndpoint] = Address.Local.ToString();
             transportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
-            transportMessage.Headers[HeaderKeys.FailureEndpoint] = Address.Local.ToString();
             MessageSender.Send(transportMessage, Settings.ErrorEndpoint);
         }      
     }

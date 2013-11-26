@@ -21,7 +21,9 @@ namespace Hermes.Messaging.Transports
         private readonly IReceiveMessages messageReceiver;
         private readonly IContainer container;
         private readonly NullMessageContext nullMessage = new NullMessageContext();
+        
         private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
+        private readonly ThreadLocal<ActionCollection> outgoingMessageActions = new ThreadLocal<ActionCollection>(); 
 
         public event MessageEventHandler OnMessageReceived;
         public event MessageEventHandler OnMessageProcessingCompleted;
@@ -60,10 +62,11 @@ namespace Hermes.Messaging.Transports
 
         private void MessageReceived(TransportMessage incomingMessage)
         {
-            using ( IContainer childContainer = container.BeginLifetimeScope())
+            using (IContainer childContainer = container.BeginLifetimeScope())
             {
                 try
                 {
+                    InitializeOutgoingMessagesActionCollection();
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
                     ProcessIncomingMessage(incomingMessage, childContainer);
                 }
@@ -72,6 +75,18 @@ namespace Hermes.Messaging.Transports
                     currentMessageBeingProcessed.Value = nullMessage;
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
+            }
+        }
+
+        private void InitializeOutgoingMessagesActionCollection()
+        {
+            if (outgoingMessageActions.Value == null)
+            {
+                outgoingMessageActions.Value = new ActionCollection();
+            }
+            else
+            {
+                outgoingMessageActions.Value.Clear();
             }
         }
 
@@ -86,6 +101,7 @@ namespace Hermes.Messaging.Transports
                     currentMessageBeingProcessed.Value = incomingMessageContext;
                     incomingMessageContext.Process(transportMessage, serviceLocator);
                     RaiseProcessingCompletedEvent(transportMessage);
+                    outgoingMessageActions.Value.InvokeAll();
                 }
                 catch (Exception ex)
                 {
@@ -130,12 +146,27 @@ namespace Hermes.Messaging.Transports
         public void SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext)
         {
             var transportMessage = outgoingMessageContext.ToTransportMessage(timeToLive);
-            messageSender.Send(transportMessage, recipient);
+
+            if (CurrentMessage.MessageId == Guid.Empty)
+            {
+                messageSender.Send(transportMessage, recipient);
+            }
+            else
+            {                
+                outgoingMessageActions.Value.AddAction(() => messageSender.Send(transportMessage, recipient));
+            }
         }
 
-        public bool Publish(IOutgoingMessageContext outgoingMessage)
+        public void Publish(IOutgoingMessageContext outgoingMessage)
         {
-            return messagePublisher.Publish(outgoingMessage);
+            if (CurrentMessage.MessageId == Guid.Empty)
+            {
+                messagePublisher.Publish(outgoingMessage);
+            }
+            else
+            {
+                outgoingMessageActions.Value.AddAction(() => messagePublisher.Publish(outgoingMessage));
+            }
         }
     }
 }

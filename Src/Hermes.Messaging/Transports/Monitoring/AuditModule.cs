@@ -25,6 +25,7 @@ namespace Hermes.Messaging.Transports.Monitoring
             {
                 RemoveRetryHeaders(e.TransportMessage);
                 e.TransportMessage.Headers[HeaderKeys.CompletedTime] = DateTime.UtcNow.ToWireFormattedString();
+                e.TransportMessage.Headers[HeaderKeys.ProcessingEndpoint] = Address.Local.ToString();
                 messageSender.Send(e.TransportMessage, Settings.AuditEndpoint);
             }
             catch
@@ -39,7 +40,6 @@ namespace Hermes.Messaging.Transports.Monitoring
             envelope.Headers.Remove(HeaderKeys.TimeoutExpire);
             envelope.Headers.Remove(HeaderKeys.RouteExpiredTimeoutTo);
             envelope.Headers.Remove(HeaderKeys.FailureDetails);
-            envelope.Headers.Remove(HeaderKeys.FailureEndpoint);
         }
     }
 }

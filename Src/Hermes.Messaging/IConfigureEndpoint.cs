@@ -6,8 +6,8 @@ namespace Hermes.Messaging
 {
     public interface IConfigureEndpoint
     {
+        IConfigureEndpoint DontUseDistributedTransaction();
         IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);
-        IConfigureEndpoint FirstLevelRetryPolicy(int attempts, TimeSpan delay);
         IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder);
         IConfigureEndpoint RegisterMessageRoute<TMessage>(Address endpointAddress);
         IConfigureEndpoint DefineMessageAs(Func<Type, bool> isMessageRule);

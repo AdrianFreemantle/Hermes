@@ -18,9 +18,7 @@ namespace Hermes.Messaging.Configuration
         }
 
         private Configure()
-        {
-            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Verbose;
+        {         
         }
 
         internal static Configure ClientEndpoint(string endpointName, IContainerBuilder builder)
@@ -82,9 +80,9 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        IConfigureWorker IConfigureWorker.UseDistributedTransaction()
+        public IConfigureEndpoint DontUseDistributedTransaction()
         {
-            Settings.UseDistributedTransaction = true;
+            Settings.UseDistributedTransaction = false;
             return this;
         }
 
@@ -95,7 +93,7 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        public IConfigureEndpoint FirstLevelRetryPolicy(int attempts, TimeSpan delay)
+        IConfigureWorker IConfigureWorker.FirstLevelRetryPolicy(int attempts, TimeSpan delay)
         {
             Settings.FirstLevelRetryAttempts = attempts;
             Settings.FirstLevelRetryDelay = delay;

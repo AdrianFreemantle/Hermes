@@ -11,8 +11,8 @@ namespace Hermes.Messaging
         ICallback Send(Guid corrolationId, params object[] messages);
         ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages);
 
-        bool Publish(params object[] messages);
-        bool Publish(Guid correlationId, params object[] messages);
+        void Publish(params object[] messages);
+        void Publish(Guid correlationId, params object[] messages);
 
         void Reply(params object[] messages);
         void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;

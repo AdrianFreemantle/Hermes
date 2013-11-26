@@ -138,16 +138,16 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(currentMessage.ReplyToAddress, TimeSpan.MaxValue, controlMessage);
         }
 
-        public bool Publish(params object[] messages)
+        public void Publish(params object[] messages)
         {
             MessageRuleValidation.ValidateIsEventType(messages);
-            return messageTransport.Publish(BuildOutgoingMessage(Guid.Empty, messages));
+            messageTransport.Publish(BuildOutgoingMessage(Guid.Empty, messages));
         }
 
-        public bool Publish(Guid correlationId, params object[] messages)
+        public void Publish(Guid correlationId, params object[] messages)
         {
             MessageRuleValidation.ValidateIsEventType(messages);
-            return messageTransport.Publish(BuildOutgoingMessage(correlationId, messages));
+            messageTransport.Publish(BuildOutgoingMessage(correlationId, messages));
         }
 
         private IOutgoingMessageContext BuildOutgoingMessage(Guid correlationId, IEnumerable<object> messages)

@@ -26,17 +26,9 @@ namespace Hermes.Messaging.Timeouts
         public void Start()
         {
             tokenSource = new CancellationTokenSource();
-
-            if (Settings.SecondLevelRetryAttempts > 0)
-            {
-                Logger.Verbose("Starting Timeout Processor");
-                CancellationToken token = tokenSource.Token;
-                Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-            }
-            else
-            {
-                Logger.Verbose("Skipping starting of Timeout Processor as no second level retries are configured.");
-            }
+            Logger.Verbose("Starting Timeout Processor");
+            CancellationToken token = tokenSource.Token;
+            Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         public void Stop()
@@ -78,10 +70,14 @@ namespace Hermes.Messaging.Timeouts
         private bool ProcessNextTimeout()
         {
             TimeoutData timeoutData;
+
             if (timeoutStore.TryFetchNextTimeout(out timeoutData))
             {
                 Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.DestinationAddress);
-                messageSender.Send(timeoutData.ToTransportmessage(), Address.Parse(timeoutData.DestinationAddress));
+            
+                var transportMessage = timeoutData.ToTransportmessage();
+                transportMessage.Headers[HeaderKeys.SentTime] = DateTime.UtcNow.ToWireFormattedString();
+                messageSender.Send(transportMessage, Address.Parse(timeoutData.DestinationAddress));
                 return true;
             }
 

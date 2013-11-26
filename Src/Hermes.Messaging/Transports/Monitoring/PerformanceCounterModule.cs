@@ -1,5 +1,4 @@
 using System;
-using System.Timers;
 
 namespace Hermes.Messaging.Transports.Monitoring
 {
