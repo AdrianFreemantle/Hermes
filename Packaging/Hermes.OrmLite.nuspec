@@ -17,7 +17,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\bin\Hermes.ServiceStack.dll" target="lib\net45" />
-    <file src="..\bin\Hermes.ServiceStack.pdb" target="lib\net45" />
+    <file src="..\bin\Hermes.OrmLite.dll" target="lib\net45" />
+    <file src="..\bin\Hermes.OrmLite.pdb" target="lib\net45" />
   </files>
 </package>
