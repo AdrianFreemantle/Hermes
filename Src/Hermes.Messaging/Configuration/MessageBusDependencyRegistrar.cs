@@ -27,10 +27,13 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<IncomingMessageContext>(DependencyLifecycle.InstancePerDependency);
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
+            if (!Settings.IsClientEndpoint)
+            {
+                containerBuilder.RegisterType<AuditModule>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<PerformanceCounterModule>(DependencyLifecycle.SingleInstance);
+            }
 
-            containerBuilder.RegisterType<AuditModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<PerformanceCounterModule>(DependencyLifecycle.SingleInstance);
         }
     }
 }
