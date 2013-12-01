@@ -1,7 +1,9 @@
 ﻿using System;
-using Hermes.Messaging.Configuration;
 
-namespace Hermes.Messaging.Transports.Monitoring
+using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
+
+namespace Hermes.Messaging.Monitoring
 {
     public class AuditModule : IModule
     {

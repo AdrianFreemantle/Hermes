@@ -1,6 +1,8 @@
 using System;
 
-namespace Hermes.Messaging.Transports.Monitoring
+using Hermes.Messaging.Transports;
+
+namespace Hermes.Messaging.Monitoring
 {
     public delegate void PerformanceCounterEventHandler(object sender, ProcessingPerformanceCounterEventArgs e);
 

@@ -145,7 +145,7 @@ namespace Hermes.Messaging.Configuration
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
 
-            if (Settings.IsClientEndpoint)
+            if (Settings.FlushQueueOnStartup)
             {
                 queueCreator.Purge(Address.Local);
             }
@@ -185,6 +185,12 @@ namespace Hermes.Messaging.Configuration
         {
             Settings.IsEventType = definesEventType;
             return this;
-        }      
+        }
+
+        public IConfigureEndpoint FlushQueueOnStartup(bool flush)
+        {
+            Settings.FlushQueueOnStartup = flush;
+            return this;
+        } 
     }
 }

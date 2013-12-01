@@ -1,10 +1,10 @@
 ﻿using Hermes.Ioc;
 using Hermes.Messaging.Bus;
 using Hermes.Messaging.Callbacks;
+using Hermes.Messaging.Monitoring;
 using Hermes.Messaging.Routing;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports;
-using Hermes.Messaging.Transports.Monitoring;
 
 namespace Hermes.Messaging.Configuration
 {
