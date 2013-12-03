@@ -32,5 +32,10 @@ namespace Hermes
                 return string.Empty;
             }
         }
+
+        public static string Trim(this string current, string valueToTrim)
+        {
+            return current.Substring(0, current.Length - valueToTrim.Length);
+        }
     }
 }

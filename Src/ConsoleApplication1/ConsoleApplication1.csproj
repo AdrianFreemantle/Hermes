@@ -52,6 +52,10 @@
       <Project>{D757B0F9-9480-414D-93C5-C467B050D33F}</Project>
       <Name>Hermes.Monitoring.Statistics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hermes.Serialization.Json\Hermes.Serialization.Json.csproj">
+      <Project>{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}</Project>
+      <Name>Hermes.Serialization.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes\Hermes.csproj">
       <Project>{2266CC77-210B-48DB-8FA9-29C4CB432C1A}</Project>
       <Name>Hermes</Name>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Hermes.Logging;
 using Hermes.Monitoring.Statistics;
+using Hermes.Serialization.Json;
 
 namespace ConsoleApplication1
 {
@@ -14,7 +15,7 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
-            var counter = new MessagesPerSeccondCounter();
+            var counter = new MessagesPerSeccondCounter(new JsonObjectSerializer());
 
             while (true)
             {

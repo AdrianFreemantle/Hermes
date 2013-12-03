@@ -7,22 +7,24 @@ using System.Linq;
 using System.Timers;
 
 using Hermes.Logging;
-using Hermes.Messaging;
-using Hermes.Serialization.Json;
+using Hermes.Serialization;
 using Hermes.Sql;
 
 namespace Hermes.Monitoring.Statistics
 {
     public class MessagesPerSeccondCounter
     {
+        private readonly ISerializeObjects serializer;
         private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessagesPerSeccondCounter));
         private readonly string connectionString;
         private readonly Timer timer;
         private bool disposed;
-        private long previous;
+        private long previousAudit;
+        private long previousError;
 
-        public MessagesPerSeccondCounter()
+        public MessagesPerSeccondCounter(ISerializeObjects serializer)
         {
+            this.serializer = serializer;
             connectionString = ConfigurationManager.ConnectionStrings["SqlTransport"].ConnectionString;
 
             timer = new Timer
@@ -33,25 +35,21 @@ namespace Hermes.Monitoring.Statistics
 
             timer.Elapsed += Elapsed;
             timer.Start();
-            previous = GetCurrentMessageCount();            
+            previousAudit = GetCurrentAuditMessageCount();
+            previousError = GetCurrentErrorMessageCount();
         }
 
         void Elapsed(object sender, ElapsedEventArgs e)
         {
-            var metrics = GetNextAuditMessageDetails();
+            PerformanceCounter performanceCounter = GetNextAuditMessageDetails();
 
-            if (metrics.Any())
+            foreach (var metric in performanceCounter.GetEndpointPerformance())
             {
-                TimeSpan averageTtd = TimeSpan.FromTicks((long)metrics.Average(metric => metric.TimeToDeliver.Ticks));
-                TimeSpan averageTtp = TimeSpan.FromTicks((long)metrics.Average(metric => metric.TimeToProcess.Ticks));
-                TimeSpan maxTtd = metrics.Max(metric => metric.TimeToDeliver);
-                TimeSpan maxTtp = metrics.Max(metric => metric.TimeToProcess);
-
-                logger.Info("[MSG/S {0}] [ATTD: {1} ] [ATTP: {2}] [MxTTD: {3}] [MxTTP: {4}]", (int)(metrics.Count/10), averageTtd, averageTtp, maxTtd, maxTtp);
+                logger.Info("[Endpoint: {0}] [MSG: {1}] [MSG/S: {2}] [ATTD: {3} ] [ATTP: {4}]", metric.Endpoint, metric.TotalMessagesProcessed, (int)(metric.TotalMessagesProcessed / 10), performanceCounter.AverageTimeToDelivery, performanceCounter.AverageTimeToProcess);
             }
         }
 
-        private long GetCurrentMessageCount()
+        private long GetCurrentAuditMessageCount()
         {
             using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
             {
@@ -63,29 +61,44 @@ namespace Hermes.Monitoring.Statistics
             }
         }
 
-        private List<MessagePerformanceMetric> GetNextAuditMessageDetails()
+        private long GetCurrentErrorMessageCount()
         {
-            var performanceMetrics = new List<MessagePerformanceMetric>();
+            using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
+            {
+                var command = connection.BuildCommand("SELECT TOP 1 [RowVersion] " +
+                    "FROM [queue].[Error] " +
+                    "ORDER BY [RowVersion] desc");
+
+                return Convert.ToInt64(command.ExecuteScalar());
+            }
+        }
+
+        private PerformanceCounter GetNextAuditMessageDetails()
+        {
+            var performanceCounter = new PerformanceCounter();
 
             using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
             {
                 var command = connection.BuildCommand("SELECT [RowVersion], [Headers] " +
                     "FROM [queue].[Audit] " +
                     "WHERE [RowVersion] > @previous " +
-                    "ORDER BY [RowVersion]", new SqlParameter("previous", previous));
+                    "ORDER BY [RowVersion]", new SqlParameter("previous", previousAudit));
 
                 using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection))
                 {
                     while (reader.Read())
                     {
-                        previous = reader.GetInt64(0);
+                        previousAudit = reader.GetInt64(0);
                         string header = reader.GetString(1);
-                        performanceMetrics.Add(new MessagePerformanceMetric(header));
+
+                        var messageHeader = serializer.DeserializeObject<Dictionary<string, string>>(header);
+
+                        performanceCounter.Add(new MessagePerformanceMetric(messageHeader));
                     }
                 }
             }
 
-            return performanceMetrics;
+            return performanceCounter;
         }
 
         ~MessagesPerSeccondCounter()
@@ -115,32 +128,6 @@ namespace Hermes.Monitoring.Statistics
             }
 
             disposed = true;
-        }
-    }
-
-    
-
-    public class MessagePerformanceMetric
-    {
-        private static readonly JsonObjectSerializer serializer = new JsonObjectSerializer();
-        private readonly Dictionary<string, string> headers;
-
-        public TimeSpan TimeToProcess { get; private set; }
-        public TimeSpan TimeToDeliver { get; private set; }
-        public Address Endpoint { get; private set; }
-
-        public MessagePerformanceMetric(string header)
-        {
-            Mandate.ParameterNotNullOrEmpty(header, "header", "A valid header string is required in order to determine message performance metrics");
-            headers = serializer.DeserializeObject<Dictionary<string, string>>(header);
-
-            DateTime completedTime = headers[HeaderKeys.CompletedTime].ToUtcDateTime();
-            DateTime sentTime = headers[HeaderKeys.SentTime].ToUtcDateTime();
-            DateTime receivedTime = headers[HeaderKeys.ReceivedTime].ToUtcDateTime();
-            Endpoint = Address.Parse(headers[HeaderKeys.ProcessingEndpoint]);
-
-            TimeToProcess = completedTime - receivedTime;
-            TimeToDeliver = receivedTime - sentTime;
         }
     }
 }
