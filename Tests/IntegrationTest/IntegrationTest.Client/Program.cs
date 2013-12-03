@@ -16,17 +16,17 @@ namespace IntegrationTest.Client
 {
     class Program
     {
+        const int numberOfMessageToSend = 1000000;
         static void Main(string[] args)
         {
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
-            var bus = Settings.RootContainer.GetInstance<IMessageBus>();            
-            var tokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(30));
+            var bus = Settings.RootContainer.GetInstance<IMessageBus>();
 
-            while (!tokenSource.Token.IsCancellationRequested)
+            for (int i = 0; i < numberOfMessageToSend; i++)
             {
                 bus.Send(new AddRecordToDatabase());
-                Thread.Sleep(1);
+                Thread.Sleep(5);
             }
         }
     }

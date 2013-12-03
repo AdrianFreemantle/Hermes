@@ -24,13 +24,13 @@ namespace IntegrationTest.Endpoint
             ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.NoLogging;
 
             configuration
-                .DontUseDistributedTransaction()
+                .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))
                 .UseJsonSerialization()
                 .UseSqlTransport("SqlStorage")
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest")
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(10)
+                .NumberOfWorkers(4)
                 .FlushQueueOnStartup(true);
         }
 
@@ -82,10 +82,10 @@ namespace IntegrationTest.Endpoint
             repository.Add(new Record{ Id = message.RecordId });
             messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
 
-            //if (DateTime.Now.Ticks % 100 == 0)
-            //{
-            //    throw new Exception("Random test exception");
-            //}
+            if (DateTime.Now.Ticks % 100 == 0)
+            {
+                throw new Exception("Random test exception");
+            }
         }
 
         public void Handle(RecordAddedToDatabase message)

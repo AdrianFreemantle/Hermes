@@ -16,8 +16,6 @@ namespace IntegrationTest.Client
 {
     public class RequestorEndpoint : ClientEndpoint<AutofacAdapter>
     {
-        Timer t = new Timer(TimeSpan.FromMinutes(30).TotalSeconds);
-        
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
             configuration
@@ -27,16 +25,8 @@ namespace IntegrationTest.Client
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
                 .NumberOfWorkers(4);
-
-            t.Elapsed += t_Elapsed;
-            //t.Start();
         }
 
-        void t_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            //this.Stop();
-        }
-        
         private static bool IsCommand(Type type)
         {
             return typeof(ICommand).IsAssignableFrom(type);
