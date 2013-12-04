@@ -65,25 +65,31 @@ namespace Hermes.Monitoring.Statistics
 
         private long GetCurrentAuditMessageCount()
         {
-            using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
+            using (var connection = new SqlConnection(connectionString))
             {
-                var command = connection.BuildCommand("SELECT TOP 1 [RowVersion] " +
-                    "FROM [queue].[Audit] " +
-                    "ORDER BY [RowVersion] desc");
+                connection.Open();
 
-                return Convert.ToInt64(command.ExecuteScalar());
+                using (var command = new SqlCommand("SELECT TOP 1 [RowVersion] " +
+                                                    "FROM [queue].[Audit] " +
+                                                    "ORDER BY [RowVersion] desc", connection))
+                {
+                    return Convert.ToInt64(command.ExecuteScalar());
+                }
             }
         }
 
         private long GetCurrentErrorMessageCount()
         {
-            using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
+            using (var connection = new SqlConnection(connectionString))
             {
-                var command = connection.BuildCommand("SELECT TOP 1 [RowVersion] " +
-                    "FROM [queue].[Error] " +
-                    "ORDER BY [RowVersion] desc");
+                connection.Open();
 
-                return Convert.ToInt64(command.ExecuteScalar());
+                using (var command = new SqlCommand("SELECT TOP 1 [RowVersion] " +
+                                                    "FROM [queue].[Error] " +
+                                                    "ORDER BY [RowVersion] desc", connection))
+                {
+                    return Convert.ToInt64(command.ExecuteScalar());
+                }
             }
         }
 
@@ -91,23 +97,28 @@ namespace Hermes.Monitoring.Statistics
         {
             var performanceCounter = new PerformanceMetricCollection();
 
-            using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
+            using (var connection = new SqlConnection(connectionString))
             {
-                var command = connection.BuildCommand("SELECT [RowVersion], [Headers] " +
-                    "FROM [queue].[Audit] " +
-                    "WHERE [RowVersion] > @previous " +
-                    "ORDER BY [RowVersion]", new SqlParameter("previous", previousAudit));
+                connection.Open();
 
-                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection))
+                using (var command = new SqlCommand("SELECT [RowVersion], [Headers] " +
+                                                    "FROM [queue].[Audit] " +
+                                                    "WHERE [RowVersion] > @previous " +
+                                                    "ORDER BY [RowVersion]", connection))
                 {
-                    while (reader.Read())
+                    command.Parameters.Add(new SqlParameter("previous", previousAudit));
+
+                    using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection))
                     {
-                        previousAudit = reader.GetInt64(0);
-                        string header = reader.GetString(1);
+                        while (reader.Read())
+                        {
+                            previousAudit = reader.GetInt64(0);
+                            string header = reader.GetString(1);
 
-                        var messageHeader = serializer.DeserializeObject<Dictionary<string, string>>(header);
+                            var messageHeader = serializer.DeserializeObject<Dictionary<string, string>>(header);
 
-                        performanceCounter.Add(new MessagePerformanceMetric(messageHeader));
+                            performanceCounter.Add(new MessagePerformanceMetric(messageHeader));
+                        }
                     }
                 }
             }

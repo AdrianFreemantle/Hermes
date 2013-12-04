@@ -8,6 +8,7 @@ using System.Transactions;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.Sql;
+using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Hermes.Messaging.Storage.MsSql
 {
@@ -45,18 +46,18 @@ namespace Hermes.Messaging.Storage.MsSql
             }
 
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
-            using (var connection = TransactionalSqlConnection.Begin(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+
                 foreach (var messageType in messageTypes)
                 {
-                    var subscriberEndpointParam = new SqlParameter("SubscriberEndpoint", client.ToString());
-                    var messageTypeParam = new SqlParameter("MessageType", messageType.FullName);
-
-                    var command = connection.BuildCommand(SqlCommands.Subscribe, subscriberEndpointParam, messageTypeParam);
+                    var command = new SqlCommand(SqlCommands.Subscribe, connection);
+                    command.Parameters.Add(new SqlParameter("SubscriberEndpoint", client.ToString()));
+                    command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
                     command.ExecuteNonQuery();
                 }
 
-                connection.Commit();
                 scope.Complete();
             }
         }
@@ -69,18 +70,18 @@ namespace Hermes.Messaging.Storage.MsSql
             }
 
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
-            using (var connection = TransactionalSqlConnection.Begin(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+
                 foreach (var messageType in messageTypes)
                 {
-                    var subscriberEndpointParam = new SqlParameter("SubscriberEndpoint", client.ToString());
-                    var messageTypeParam = new SqlParameter("MessageType", messageType.FullName);
-
-                    var command = connection.BuildCommand(SqlCommands.Unsubscribe, subscriberEndpointParam, messageTypeParam);
+                    var command = new SqlCommand(SqlCommands.Unsubscribe, connection);
+                    command.Parameters.Add(new SqlParameter("SubscriberEndpoint", client.ToString()));
+                    command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
                     command.ExecuteNonQuery();
                 }
 
-                connection.Commit();
                 scope.Complete();
             }
         }
@@ -101,29 +102,32 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private void UpdateSubsciptions(IEnumerable<Type> contracts)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
-            using (var connection = TransactionalSqlConnection.Begin(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
-                foreach (var messageType in contracts)
-                {
-                    var subscribers = new List<Address>();
-                    var messageTypeParam = new SqlParameter("MessageType", messageType.FullName);
-                    var command = connection.BuildCommand(SqlCommands.GetSubscribers, messageTypeParam);
+                connection.Open();
 
-                    using (var reader = command.ExecuteReader())
+                using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    foreach (var messageType in contracts)
                     {
-                        while (reader.Read())
+                        var subscribers = new List<Address>();
+                        var command = new SqlCommand(SqlCommands.GetSubscribers, connection);
+                        command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
+
+                        using (var reader = command.ExecuteReader())
                         {
-                            var subscriber = Address.Parse(reader.GetString(0));
-                            subscribers.Add(subscriber);
+                            while (reader.Read())
+                            {
+                                var subscriber = Address.Parse(reader.GetString(0));
+                                subscribers.Add(subscriber);
+                            }
                         }
+
+                        subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(60));
                     }
 
-                    subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(60));
+                    transaction.Commit();
                 }
-
-                connection.Commit();
-                scope.Complete();
             }
         }
     }

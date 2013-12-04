@@ -48,14 +48,14 @@ namespace Hermes.Messaging.Storage.MsSql
 
         public void Add(TimeoutData timeout)
         {
-            using (var connection = TransactionalSqlConnection.Begin(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+
                 using (var command = BuildAddCommand(connection, timeout))
                 {
                     command.ExecuteNonQuery();
                 }
-
-                connection.Commit();
             }
         }
 
@@ -78,9 +78,10 @@ namespace Hermes.Messaging.Storage.MsSql
             Add(timeoutData);
         }
 
-        private SqlCommand BuildAddCommand(TransactionalSqlConnection connection, TimeoutData timoutData)
+        private SqlCommand BuildAddCommand(SqlConnection connection, TimeoutData timoutData)
         {
-            var command = connection.BuildCommand(String.Format(SqlCommands.AddTimeout, Address.Local));
+            var command = connection.CreateCommand();
+            command.CommandText = String.Format(SqlCommands.AddTimeout, Address.Local);
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", timoutData.MessageId);
@@ -103,17 +104,18 @@ namespace Hermes.Messaging.Storage.MsSql
 
         public bool TryFetchNextTimeout(out TimeoutData timeoutData)
         {
-            using (var connection = TransactionalSqlConnection.Begin(connectionString))
-            using (var command = connection.BuildCommand(String.Format(SqlCommands.TryRemoveTimeout, Address.Local)))
+            using (var connection = new SqlConnection(connectionString))
             {
-                using (var dataReader = command.ExecuteReader())
+                connection.Open();
+
+                using (var command = new SqlCommand(String.Format(SqlCommands.TryRemoveTimeout, Address.Local), connection))
                 {
-                    timeoutData = FoundTimeoutData(dataReader);
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        timeoutData = FoundTimeoutData(dataReader);
+                        return timeoutData != null;
+                    }
                 }
-
-                connection.Commit();
-
-                return timeoutData != null;
             }
         }
 

@@ -31,5 +31,5 @@ namespace Hermes
 
             return new TransactionScope(scopeOption, transactionOptions);
         }
-    }
+    } 
 }

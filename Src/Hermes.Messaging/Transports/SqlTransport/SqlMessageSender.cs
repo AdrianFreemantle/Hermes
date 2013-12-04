@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-
 using Hermes.Messaging.Configuration;
 using Hermes.Serialization;
-using Hermes.Sql;
 
 namespace Hermes.Messaging.Transports.SqlTransport
 {
@@ -22,25 +20,22 @@ namespace Hermes.Messaging.Transports.SqlTransport
 
         public void Send(TransportMessage transportMessage, Address address)
         {
-            using (var transactionalConnection = TransactionalSqlConnection.Begin(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
-                Send(transportMessage, address, transactionalConnection);
+                connection.Open();
 
-                transactionalConnection.Commit();
+                using (var command = BuildSendCommand(connection, transportMessage, address))
+                {
+                    command.ExecuteNonQuery();
+                }
             }
         }        
 
-        private void Send(TransportMessage transportMessage, Address address, TransactionalSqlConnection transactionalConnection)
+        private SqlCommand BuildSendCommand(SqlConnection connection, TransportMessage transportMessage, Address address)
         {
-            using (var command = BuildSendCommand(transactionalConnection, transportMessage, address))
-            {
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private SqlCommand BuildSendCommand(TransactionalSqlConnection connection, TransportMessage transportMessage, Address address)
-        {
-            var command = connection.BuildCommand(String.Format(SqlCommands.Send, address));
+            var command = connection.CreateCommand();
+            
+            command.CommandText = String.Format(SqlCommands.Send, address);
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", transportMessage.MessageId);
