@@ -126,5 +126,7 @@ namespace Hermes.Messaging.Configuration
         internal static Func<Type, bool> IsMessageType { get; set; }
         internal static Func<Type, bool> IsCommandType { get; set; }
         internal static Func<Type, bool> IsEventType { get; set; }
+
+        public static bool FlushQueueOnStartup { get; internal set; }
     }
 }

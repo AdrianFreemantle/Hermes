@@ -22,7 +22,7 @@ namespace Hermes.Messaging.Transports
             return new HeaderValue(key, code.GetHashCode().ToString(CultureInfo.InvariantCulture));
         }
 
-        public static HeaderValue FromString(string key, string value)
+        public static HeaderValue FromKeyValue(string key, string value)
         {
             return new HeaderValue(key, value);
         }

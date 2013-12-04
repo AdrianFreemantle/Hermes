@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Linq;
 
-using Hermes.Persistence;
 using Hermes.Reflection;
 
 namespace Hermes.EntityFramework

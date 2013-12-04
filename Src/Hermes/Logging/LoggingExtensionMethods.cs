@@ -5,7 +5,7 @@ namespace Hermes.Logging
 {
     internal static class LoggingExtensionMethods
     {
-        private const string MessageFormat = "{0:yyyy/MM/dd HH:mm:ss.ff} - {3} - {1} - {2}";
+        private const string MessageFormat = "{0:yyyy/MM/dd HH:mm:ss.ff} - {1} - {2}";
 
         public static string FormatMessage(this string message, Type typeToLog, params object[] values)
         {
@@ -16,8 +16,7 @@ namespace Hermes.Logging
                     MessageFormat,
                     DateTime.UtcNow,
                     typeToLog.Name,
-                    string.Format(CultureInfo.InvariantCulture, message, values),
-                    System.Threading.Thread.CurrentThread.ManagedThreadId);
+                    string.Format(CultureInfo.InvariantCulture, message, values));
             }
             catch (Exception ex)
             {

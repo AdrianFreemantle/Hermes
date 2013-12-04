@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
+
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
+using Hermes.Messaging.Transports;
 
-namespace Hermes.Messaging.Transports.Monitoring
+namespace Hermes.Messaging.Monitoring
 {
     public class MessageErrorModule : IModule
     {

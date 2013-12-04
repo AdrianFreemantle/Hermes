@@ -54,6 +54,8 @@
     <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
     <Compile Include="ObectExtensions.cs" />
+    <Compile Include="Pipeline\Pipeline.cs" />
+    <Compile Include="Pipeline\IOperation.cs" />
     <Compile Include="Queries\IAnswerQuery.cs" />
     <Compile Include="Queries\IReturn.cs" />
     <Compile Include="Reflection\ObjectFactory.cs" />

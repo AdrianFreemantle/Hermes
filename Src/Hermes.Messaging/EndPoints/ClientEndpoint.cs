@@ -21,6 +21,7 @@ namespace Hermes.Messaging.EndPoints
             configuration = Configure.ClientEndpoint(endpointName, containerBuilder);
             ConfigureEndpoint(configuration);
             Settings.RootContainer = containerBuilder.BuildContainer();
+            Settings.FlushQueueOnStartup = true;
         }
 
         protected abstract void ConfigureEndpoint(IConfigureEndpoint configuration);
