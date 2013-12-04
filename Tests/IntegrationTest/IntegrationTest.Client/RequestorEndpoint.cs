@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Timers;
 
-using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
-using Hermes.Messaging.Transports.Monitoring;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
@@ -24,7 +21,7 @@ namespace IntegrationTest.Client
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
-                .NumberOfWorkers(4);
+                .NumberOfWorkers(8);
         }
 
         private static bool IsCommand(Type type)

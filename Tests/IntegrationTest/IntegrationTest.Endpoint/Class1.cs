@@ -25,13 +25,14 @@ namespace IntegrationTest.Endpoint
 
             configuration
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))
+                .DontUseDistributedTransaction()
                 .UseJsonSerialization()
-                .UseSqlTransport("SqlStorage")
+                .UseSqlTransport()
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest")
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(4)
-                .FlushQueueOnStartup(true);
+                .NumberOfWorkers(4);
+            //.FlushQueueOnStartup(true);
         }
 
         private static bool IsCommand(Type type)
@@ -72,26 +73,26 @@ namespace IntegrationTest.Endpoint
 
         public Handler(IRepositoryFactory repositoryFactory, IMessageBus messageBus)
         {
-            this.repositoryFactory = repositoryFactory;
+            //this.repositoryFactory = repositoryFactory;
             this.messageBus = messageBus;
         }
 
         public void Handle(AddRecordToDatabase message)
         {
-            var repository = repositoryFactory.GetRepository<Record>();
-            repository.Add(new Record{ Id = message.RecordId });
+            //var repository = repositoryFactory.GetRepository<Record>();
+            //repository.Add(new Record{ Id = message.RecordId });
             messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
 
-            if (DateTime.Now.Ticks % 100 == 0)
-            {
-                throw new Exception("Random test exception");
-            }
+            //if (DateTime.Now.Ticks % 100 == 0)
+            //{
+            //    throw new Exception("Random test exception");
+            //}
         }
 
         public void Handle(RecordAddedToDatabase message)
         {
-            var repository = repositoryFactory.GetRepository<RecordLog>();
-            repository.Add(new RecordLog{ RecordId = message.RecordId });
+            //var repository = repositoryFactory.GetRepository<RecordLog>();
+            //repository.Add(new RecordLog{ RecordId = message.RecordId });
         }
     }
 }

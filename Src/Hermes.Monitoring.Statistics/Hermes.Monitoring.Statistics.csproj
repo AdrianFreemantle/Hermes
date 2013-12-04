@@ -42,8 +42,8 @@
   <ItemGroup>
     <Compile Include="EndpointPerformanceMetric.cs" />
     <Compile Include="MessagePerformanceMetric.cs" />
-    <Compile Include="MessagesPerSeccondCounter.cs" />
-    <Compile Include="PerformanceCounter.cs" />
+    <Compile Include="SqlTransportPerfomanceMonitor.cs" />
+    <Compile Include="PerformanceMetricCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

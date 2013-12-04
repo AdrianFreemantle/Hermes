@@ -3,50 +3,64 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Timers;
-
-using Hermes.Logging;
 using Hermes.Serialization;
 using Hermes.Sql;
 
 namespace Hermes.Monitoring.Statistics
 {
-    public class MessagesPerSeccondCounter
+    public class PerformanceMetricEventArgs : EventArgs
+    {
+        public PerformanceMetricCollection PerformanceMetric { get; private set; }
+        public TimeSpan MonitorPeriod { get; private set; }
+
+        public PerformanceMetricEventArgs(PerformanceMetricCollection performanceMetric, TimeSpan monitorPeriod)
+        {
+            PerformanceMetric = performanceMetric;
+            MonitorPeriod = monitorPeriod;
+        }
+    }
+
+    public delegate void PerformanceMetricEventHandler(object sender, PerformanceMetricEventArgs e);
+
+    public class SqlTransportPerfomanceMonitor
     {
         private readonly ISerializeObjects serializer;
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof (MessagesPerSeccondCounter));
         private readonly string connectionString;
         private readonly Timer timer;
         private bool disposed;
         private long previousAudit;
         private long previousError;
+        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(10);
 
-        public MessagesPerSeccondCounter(ISerializeObjects serializer)
+        public event PerformanceMetricEventHandler OnPerformancePeriodCompleted;
+
+        public SqlTransportPerfomanceMonitor(ISerializeObjects serializer)
         {
             this.serializer = serializer;
             connectionString = ConfigurationManager.ConnectionStrings["SqlTransport"].ConnectionString;
 
             timer = new Timer
             {
-                Interval = TimeSpan.FromSeconds(10).TotalMilliseconds,
+                Interval = monitoringPeriod.TotalMilliseconds,
                 AutoReset = true,                
             };
 
             timer.Elapsed += Elapsed;
             timer.Start();
+
             previousAudit = GetCurrentAuditMessageCount();
             previousError = GetCurrentErrorMessageCount();
         }
 
         void Elapsed(object sender, ElapsedEventArgs e)
         {
-            PerformanceCounter performanceCounter = GetNextAuditMessageDetails();
+            PerformanceMetricCollection performanceMetricCollection = GetNextAuditMessageDetails();
 
-            foreach (var metric in performanceCounter.GetEndpointPerformance())
+            if (OnPerformancePeriodCompleted != null)
             {
-                logger.Info("[Endpoint: {0}] [MSG: {1}] [MSG/S: {2}] [ATTD: {3} ] [ATTP: {4}]", metric.Endpoint, metric.TotalMessagesProcessed, (int)(metric.TotalMessagesProcessed / 10), performanceCounter.AverageTimeToDelivery, performanceCounter.AverageTimeToProcess);
-            }
+                OnPerformancePeriodCompleted(this, new PerformanceMetricEventArgs(performanceMetricCollection, monitoringPeriod));
+            }           
         }
 
         private long GetCurrentAuditMessageCount()
@@ -73,9 +87,9 @@ namespace Hermes.Monitoring.Statistics
             }
         }
 
-        private PerformanceCounter GetNextAuditMessageDetails()
+        private PerformanceMetricCollection GetNextAuditMessageDetails()
         {
-            var performanceCounter = new PerformanceCounter();
+            var performanceCounter = new PerformanceMetricCollection();
 
             using (var connection = TransactionalSqlConnection.Begin(connectionString, IsolationLevel.ReadCommitted))
             {
@@ -101,7 +115,7 @@ namespace Hermes.Monitoring.Statistics
             return performanceCounter;
         }
 
-        ~MessagesPerSeccondCounter()
+        ~SqlTransportPerfomanceMonitor()
         {
             Dispose(false);
         }

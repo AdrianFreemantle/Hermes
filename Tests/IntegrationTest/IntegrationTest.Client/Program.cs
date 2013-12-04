@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-using Hermes.Messaging.Transports.Monitoring;
 
 using IntegrationTest.Contracts;
 
@@ -16,17 +15,18 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int numberOfMessageToSend = 1000000;
+        const int NumberOfMessageToSend = 100000; //one hundered thousand
+
         static void Main(string[] args)
         {
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
             var bus = Settings.RootContainer.GetInstance<IMessageBus>();
 
-            for (int i = 0; i < numberOfMessageToSend; i++)
+            for (int i = 0; i < NumberOfMessageToSend; i++)
             {
                 bus.Send(new AddRecordToDatabase());
-                Thread.Sleep(5);
+                Thread.Sleep(1);
             }
         }
     }

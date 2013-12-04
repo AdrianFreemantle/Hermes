@@ -7,8 +7,7 @@ using Hermes.Messaging;
 
 namespace Hermes.Monitoring.Statistics
 {
-
-    public class PerformanceCounter : ICollection<MessagePerformanceMetric>
+    public class PerformanceMetricCollection : ICollection<MessagePerformanceMetric>
     {
         readonly List<MessagePerformanceMetric> performanceMetrics = new List<MessagePerformanceMetric>();
         

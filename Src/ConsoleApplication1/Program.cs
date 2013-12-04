@@ -15,11 +15,37 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
-            var counter = new MessagesPerSeccondCounter(new JsonObjectSerializer());
+            var counter = new SqlTransportPerfomanceMonitor(new JsonObjectSerializer());
+            counter.OnPerformancePeriodCompleted += counter_OnPerformancePeriodCompleted;
 
             while (true)
             {
                 System.Threading.Thread.Sleep(10);
+            }
+        }
+
+        static void counter_OnPerformancePeriodCompleted(object sender, PerformanceMetricEventArgs e)
+        {
+            if (e.PerformanceMetric.Any())
+            {
+                PrintMetrics(e);
+            }
+            else
+            {
+                Console.WriteLine("No messages processed.");
+            }
+           
+        }
+
+        private static void PrintMetrics(PerformanceMetricEventArgs e)
+        {
+            foreach (var metric in e.PerformanceMetric.GetEndpointPerformance())
+            {
+                Console.WriteLine("[Endpoint: {0}] [MSG: {1}] [MSG/S: {2}] [ATTD: {3} ] [ATTP: {4}]",
+                                  metric.Endpoint, metric.TotalMessagesProcessed,
+                                  (metric.TotalMessagesProcessed / 10),
+                                  metric.AverageTimeToDeliver,
+                                  metric.AverageTimeToProcess);
             }
         }
     }

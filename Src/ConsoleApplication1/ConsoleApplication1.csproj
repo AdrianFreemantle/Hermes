@@ -48,6 +48,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">
+      <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
+      <Name>Hermes.Messaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hermes.Monitoring.Statistics\Hermes.Monitoring.Statistics.csproj">
       <Project>{D757B0F9-9480-414D-93C5-C467B050D33F}</Project>
       <Name>Hermes.Monitoring.Statistics</Name>
