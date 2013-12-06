@@ -7,7 +7,6 @@ using System.Transactions;
 
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports.SqlTransport;
-using Hermes.Sql;
 using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Hermes.Messaging.Storage.MsSql
@@ -106,27 +105,22 @@ namespace Hermes.Messaging.Storage.MsSql
             {
                 connection.Open();
 
-                using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                foreach (var messageType in contracts)
                 {
-                    foreach (var messageType in contracts)
+                    var subscribers = new List<Address>();
+                    var command = new SqlCommand(SqlCommands.GetSubscribers, connection);
+                    command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        var subscribers = new List<Address>();
-                        var command = new SqlCommand(SqlCommands.GetSubscribers, connection);
-                        command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
-
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                var subscriber = Address.Parse(reader.GetString(0));
-                                subscribers.Add(subscriber);
-                            }
+                            var subscriber = Address.Parse(reader.GetString(0));
+                            subscribers.Add(subscriber);
                         }
-
-                        subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(60));
                     }
 
-                    transaction.Commit();
+                    subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(10));
                 }
             }
         }

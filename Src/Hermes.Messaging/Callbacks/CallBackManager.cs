@@ -20,7 +20,7 @@ namespace Hermes.Messaging.Callbacks
 
             BusAsyncResult busAsyncResult;
 
-             lock (MessageIdToAsyncResultLookup)
+            lock (MessageIdToAsyncResultLookup)
             {
                 MessageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
                 MessageIdToAsyncResultLookup.Remove(message.CorrelationId);

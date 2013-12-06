@@ -25,14 +25,13 @@ namespace IntegrationTest.Endpoint
 
             configuration
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))
-                .DontUseDistributedTransaction()
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest")
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(4);
-            //.FlushQueueOnStartup(true);
+                .NumberOfWorkers(16)
+                .FlushQueueOnStartup(true);
         }
 
         private static bool IsCommand(Type type)
@@ -73,26 +72,23 @@ namespace IntegrationTest.Endpoint
 
         public Handler(IRepositoryFactory repositoryFactory, IMessageBus messageBus)
         {
-            //this.repositoryFactory = repositoryFactory;
+            this.repositoryFactory = repositoryFactory;
             this.messageBus = messageBus;
         }
 
         public void Handle(AddRecordToDatabase message)
         {
+            System.Threading.Thread.Sleep(10);
             //var repository = repositoryFactory.GetRepository<Record>();
-            //repository.Add(new Record{ Id = message.RecordId });
+            //repository.Add(new Record { Id = message.RecordId });
             messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
-
-            //if (DateTime.Now.Ticks % 100 == 0)
-            //{
-            //    throw new Exception("Random test exception");
-            //}
         }
 
         public void Handle(RecordAddedToDatabase message)
         {
+            System.Threading.Thread.Sleep(10);
             //var repository = repositoryFactory.GetRepository<RecordLog>();
-            //repository.Add(new RecordLog{ RecordId = message.RecordId });
+            //repository.Add(new RecordLog { RecordId = message.RecordId });
         }
     }
 }

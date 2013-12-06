@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Serialization;
-using Hermes.Sql;
 
 namespace Hermes.Messaging.Transports.SqlTransport
 {
@@ -15,6 +14,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
         private readonly string connectionString;
         private readonly ISerializeObjects objectSerializer;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SqlMessageDequeStrategy));
+        private static readonly string DequeueSql = String.Format(SqlCommands.Dequeue, Address.Local);
 
         const int MessageIdIndex = 0;
         const int CorrelationIdIndex = 1;
@@ -29,11 +29,11 @@ namespace Hermes.Messaging.Transports.SqlTransport
             this.objectSerializer = objectSerializer;
         }
 
-        public TransportMessage Dequeue(Address address)
+        public TransportMessage Dequeue()
         {
             try
             {
-                return TryDequeue(address);
+                return TryDequeue();
             }
             catch (Exception ex)
             {
@@ -42,13 +42,13 @@ namespace Hermes.Messaging.Transports.SqlTransport
             }
         }
 
-        private TransportMessage TryDequeue(Address address)
+        private TransportMessage TryDequeue()
         {
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (var command = new SqlCommand(String.Format(SqlCommands.Dequeue, address), connection))
+                using (var command = new SqlCommand(DequeueSql, connection))
                 {
                     return FetchNextMessage(command);
                 }

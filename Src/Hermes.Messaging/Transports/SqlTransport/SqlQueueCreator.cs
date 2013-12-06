@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using Hermes.Messaging.Configuration;
-using Hermes.Sql;
 
 namespace Hermes.Messaging.Transports.SqlTransport
 {

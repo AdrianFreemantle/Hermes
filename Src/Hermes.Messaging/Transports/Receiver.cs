@@ -90,7 +90,7 @@ namespace Hermes.Messaging.Transports
 
         private bool TryDequeueWork()
         {
-            TransportMessage transportMessage = dequeueStrategy.Dequeue(Address.Local);
+            TransportMessage transportMessage = dequeueStrategy.Dequeue();
 
             if (transportMessage == TransportMessage.Undefined)
             {

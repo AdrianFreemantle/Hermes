@@ -8,7 +8,7 @@ namespace Hermes.Messaging.Transports.Msmq
 {
     public class MsmqDequeStategy : IDequeueMessages
     {
-        public TransportMessage Dequeue(Address address)
+        public TransportMessage Dequeue()
         {
             throw new NotImplementedException();
         }

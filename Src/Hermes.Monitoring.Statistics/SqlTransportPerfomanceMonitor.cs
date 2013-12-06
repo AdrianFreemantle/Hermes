@@ -5,7 +5,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Timers;
 using Hermes.Serialization;
-using Hermes.Sql;
 
 namespace Hermes.Monitoring.Statistics
 {

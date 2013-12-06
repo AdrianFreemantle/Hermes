@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 
@@ -15,7 +10,7 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int NumberOfMessageToSend = 100000; //one hundered thousand
+        const int NumberOfMessageToSend = 1000000; //10 thousand
 
         static void Main(string[] args)
         {
@@ -23,11 +18,18 @@ namespace IntegrationTest.Client
             endpoint.Start();
             var bus = Settings.RootContainer.GetInstance<IMessageBus>();
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             for (int i = 0; i < NumberOfMessageToSend; i++)
             {
                 bus.Send(new AddRecordToDatabase());
-                Thread.Sleep(5);
+                Thread.Sleep(TimeSpan.FromMilliseconds(0.5));
             }
+
+            stopwatch.Stop();
+            Console.WriteLine(TimeSpan.FromTicks(stopwatch.ElapsedTicks));
+            Console.ReadKey();
         }
     }
 }

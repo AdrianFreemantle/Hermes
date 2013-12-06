@@ -21,7 +21,7 @@ namespace IntegrationTest.Client
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
-                .NumberOfWorkers(8);
+                .NumberOfWorkers(1);
         }
 
         private static bool IsCommand(Type type)

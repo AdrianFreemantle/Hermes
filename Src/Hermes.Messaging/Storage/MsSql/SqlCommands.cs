@@ -47,12 +47,12 @@
                IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[timeout].[{0}]') AND type in (N'U'))
                BEGIN
                  CREATE TABLE [timeout].[{0}](
-	                 [Id] [uniqueidentifier] NOT NULL,
+                     [Id] [uniqueidentifier] NOT NULL,
                      [CorrelationId] [varchar](255) NULL,
-	                 [Destination] [varchar](255) NOT NULL,
+                     [Destination] [varchar](255) NOT NULL,
                      [Expires] [datetime] NOT NULL,
-	                 [Headers] [varchar](max) NOT NULL,
-	                 [Body] [varbinary](max) NULL,
+                     [Headers] [varchar](max) NOT NULL,
+                     [Body] [varbinary](max) NULL,
                      [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
                  ) ON [PRIMARY];        
            

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Transactions;
 using Hermes.Persistence;
 using ServiceStack.OrmLite;
 
@@ -21,15 +22,15 @@ namespace Hermes.OrmLite
         {
             if (actions.Any())
             {
+                using(var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))
                 using (var connection = dbConnectionFactory.OpenDbConnection())
-                using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
                     foreach (var action in actions)
                     {
                         action.Invoke(connection);
                     }
 
-                    transaction.Commit();
+                    scope.Complete();
                 }
             }
         }
