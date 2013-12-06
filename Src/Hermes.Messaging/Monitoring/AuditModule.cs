@@ -12,8 +12,12 @@ namespace Hermes.Messaging.Monitoring
         public AuditModule(ITransportMessages messageTransport, ISendMessages messageSender)
         {
             this.messageSender = messageSender;
-            messageTransport.OnMessageProcessingCompleted += OnMessageProcessingCompleted;
-            messageTransport.OnMessageReceived += OnOnMessageReceived;
+
+            if (!Settings.IsSendOnly)
+            {
+                messageTransport.OnMessageProcessingCompleted += OnMessageProcessingCompleted;
+                messageTransport.OnMessageReceived += OnOnMessageReceived;
+            }
         }
 
         private void OnOnMessageReceived(object sender, MessageProcessingEventArgs e)

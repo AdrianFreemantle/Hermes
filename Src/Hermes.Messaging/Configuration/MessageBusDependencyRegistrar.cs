@@ -17,23 +17,19 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);            
             containerBuilder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
-
             containerBuilder.RegisterType<IncomingMessageContext>(DependencyLifecycle.InstancePerDependency);
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
             if (!Settings.IsClientEndpoint)
             {
+                containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<AuditModule>(DependencyLifecycle.SingleInstance);
-                containerBuilder.RegisterType<PerformanceCounterModule>(DependencyLifecycle.SingleInstance);
             }
-
-            containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
         }
     }
 }

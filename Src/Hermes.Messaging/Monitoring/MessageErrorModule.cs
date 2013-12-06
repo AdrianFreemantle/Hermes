@@ -20,7 +20,10 @@ namespace Hermes.Messaging.Monitoring
             TimeoutStore = timeoutStore;
             MessageSender = messageSender;
 
-            messageTransport.OnMessageProcessingError += OnOnMessageProcessingError;
+            if (!Settings.IsSendOnly)
+            {
+                messageTransport.OnMessageProcessingError += OnOnMessageProcessingError;
+            }
         }
 
         protected virtual void OnOnMessageProcessingError(object sender, MessageProcessingProcessingErrorEventArgs e)

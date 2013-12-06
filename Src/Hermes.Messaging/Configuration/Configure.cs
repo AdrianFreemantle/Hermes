@@ -105,6 +105,35 @@ namespace Hermes.Messaging.Configuration
             registerationHolder.Register(containerBuilder);
             return this;
         }
+        public IConfigureEndpoint DefiningMessagesAs(Func<Type, bool> definesMessageType)
+        {
+            Settings.IsMessageType = definesMessageType;
+            return this;
+        }
+
+        public IConfigureEndpoint DefiningCommandsAs(Func<Type, bool> definesCommandType)
+        {
+            Settings.IsCommandType = definesCommandType;
+            return this;
+        }
+
+        public IConfigureEndpoint DefiningEventsAs(Func<Type, bool> definesEventType)
+        {
+            Settings.IsEventType = definesEventType;
+            return this;
+        }
+
+        public IConfigureEndpoint FlushQueueOnStartup(bool flush)
+        {
+            Settings.FlushQueueOnStartup = flush;
+            return this;
+        }
+
+        public IConfigureEndpoint SendOnlyEndpoint()
+        {
+            Settings.IsSendOnly = true;
+            return this;
+        }
 
         internal void Start()
         {
@@ -168,29 +197,5 @@ namespace Hermes.Messaging.Configuration
                 startableObject.Stop();
             }
         }
-
-        public IConfigureEndpoint DefiningMessagesAs(Func<Type, bool> definesMessageType)
-        {
-            Settings.IsMessageType = definesMessageType;
-            return this;
-        }
-
-        public IConfigureEndpoint DefiningCommandsAs(Func<Type, bool> definesCommandType)
-        {
-            Settings.IsCommandType = definesCommandType;
-            return this;
-        }
-
-        public IConfigureEndpoint DefiningEventsAs(Func<Type, bool> definesEventType)
-        {
-            Settings.IsEventType = definesEventType;
-            return this;
-        }
-
-        public IConfigureEndpoint FlushQueueOnStartup(bool flush)
-        {
-            Settings.FlushQueueOnStartup = flush;
-            return this;
-        } 
     }
 }

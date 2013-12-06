@@ -14,5 +14,6 @@ namespace Hermes.Messaging
         IConfigureEndpoint DefineCommandAs(Func<Type, bool> isCommandRule);
         IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule);
         IConfigureEndpoint FlushQueueOnStartup(bool flush);
+        IConfigureEndpoint SendOnlyEndpoint();
     }
 }

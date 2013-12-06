@@ -22,6 +22,7 @@ namespace Hermes.Messaging.Configuration
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
 
         private static int numberOfWorkers = 1;
+        private static bool isSendOnly;
 
         static Settings()
         {
@@ -128,5 +129,11 @@ namespace Hermes.Messaging.Configuration
         internal static Func<Type, bool> IsEventType { get; set; }
 
         public static bool FlushQueueOnStartup { get; internal set; }
+
+        public static bool IsSendOnly
+        {
+            get { return isSendOnly; }
+            internal set { isSendOnly = value; }
+        }
     }
 }

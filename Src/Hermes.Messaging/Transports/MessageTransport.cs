@@ -52,7 +52,10 @@ namespace Hermes.Messaging.Transports
 
         public void Start()
         {
-            messageReceiver.Start(MessageReceived);
+            if (!Settings.IsSendOnly)
+            {
+                messageReceiver.Start(MessageReceived);
+            }
         }
 
         public void Stop()

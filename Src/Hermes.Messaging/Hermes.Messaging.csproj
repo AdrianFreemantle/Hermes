@@ -78,7 +78,6 @@
     <Compile Include="IOutgoingMessageContext.cs" />
     <Compile Include="Transports\NullMessageContext.cs" />
     <Compile Include="Transports\OutgoingMessageContext.cs" />
-    <Compile Include="Monitoring\PerformanceCounterModule.cs" />
     <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
     <Compile Include="Callbacks\CompletionResult.cs" />

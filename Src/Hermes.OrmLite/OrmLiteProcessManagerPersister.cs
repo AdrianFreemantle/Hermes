@@ -37,7 +37,6 @@ namespace Hermes.OrmLite
 
         public void Complete<T>(Guid t) where T : class, IContainProcessManagerData, new()
         {
-
             unitOfWork.AddAction(connection => connection.DeleteById<T>(t));
         }
 
