@@ -51,7 +51,11 @@ namespace Hermes.Messaging.ProcessManagement
         {
             State.Version++;
 
-            if (IsNew)
+            if (IsNew && IsComplete)
+            {
+                ProcessManagerPersistence.Create(State);
+            }
+            else if (IsNew)
             {
                 ProcessManagerPersistence.Create(State);
             }
