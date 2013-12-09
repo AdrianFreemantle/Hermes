@@ -1,50 +1,58 @@
 ﻿using System;
 using System.Globalization;
-
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
-using Hermes.Messaging.Transports;
+using Hermes.Pipes;
 
-namespace Hermes.Messaging.Monitoring
+namespace Hermes.Messaging.Transports.Modules
 {
-    public class MessageErrorModule : IModule
+    public class MessageErrorModule : IModule<IncomingMessageContext>
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageErrorModule));
-
         protected readonly IPersistTimeouts TimeoutStore;
         protected readonly ISendMessages MessageSender;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageErrorModule));
 
-        public MessageErrorModule(ITransportMessages messageTransport, IPersistTimeouts timeoutStore, ISendMessages messageSender)
+        public MessageErrorModule(IPersistTimeouts timeoutStore, ISendMessages messageSender)
         {            
             TimeoutStore = timeoutStore;
             MessageSender = messageSender;
+        }
 
-            if (!Settings.IsSendOnly)
+        public void Invoke(IncomingMessageContext input, Action next)
+        {
+            try
             {
-                messageTransport.OnMessageProcessingError += OnOnMessageProcessingError;
+                next();                
+            }
+            catch(Exception ex)
+            {
+                HandleError(input, ex);    
             }
         }
 
-        protected virtual void OnOnMessageProcessingError(object sender, MessageProcessingProcessingErrorEventArgs e)
+        private void HandleError(IncomingMessageContext input, Exception ex)
         {
-            int retryCount = GetRetryCount(e.TransportMessage);
+            int retryCount = GetRetryCount(input);
 
-            if (++retryCount > Settings.SecondLevelRetryAttempts || Settings.IsClientEndpoint)
+            if (retryCount >= Settings.SecondLevelRetryAttempts || Settings.IsClientEndpoint)
             {
-                SendToErrorQueue(e.TransportMessage, e.Error);
+                SendToErrorQueue(input.TransportMessage, ex);
             }
             else
             {
-                SendToTimeoutStore(e.TransportMessage, retryCount);
+                retryCount++;
+                SendToTimeoutStore(input.TransportMessage, retryCount);
             }
         }
 
-        protected virtual int GetRetryCount(TransportMessage envelope)
+        protected virtual int GetRetryCount(IncomingMessageContext input)
         {
-            if (envelope.Headers.ContainsKey(HeaderKeys.RetryCount))
+            HeaderValue retryHeader;
+
+            if (input.TryGetHeaderValue(HeaderKeys.RetryCount, out retryHeader))
             {
-                return Int32.Parse(envelope.Headers[HeaderKeys.RetryCount]);
+                return Int32.Parse(retryHeader.Value);
             }
 
             return 0;
@@ -62,7 +70,6 @@ namespace Hermes.Messaging.Monitoring
                 transportMessage.Headers[HeaderKeys.OriginalReplyToAddress] = transportMessage.ReplyToAddress.ToString();
             }
 
-            Logger.Warn("Defering error message: {0}", transportMessage.MessageId);
             TimeoutStore.Add(new TimeoutData(transportMessage));
         }
 

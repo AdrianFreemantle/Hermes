@@ -10,6 +10,5 @@ namespace Hermes.Messaging
         Guid MessageId { get; }
         Guid CorrelationId { get; }
         Address ReplyToAddress { get; }
-        IEnumerable<HeaderValue> Headers { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Hermes.Pipeline
+namespace Hermes.Pipes
 {
     public abstract class Pipeline<T>
     {

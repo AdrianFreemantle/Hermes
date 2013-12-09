@@ -143,8 +143,6 @@ namespace Hermes.Messaging.Configuration
             SubscribeToEvents();
             CreateQueues();
             StartServices();
-
-            var modules = Settings.RootContainer.GetAllInstances<IModule>().ToList();
         }
 
         private static void StartServices()

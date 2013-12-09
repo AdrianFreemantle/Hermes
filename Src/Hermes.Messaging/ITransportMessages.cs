@@ -14,9 +14,9 @@ namespace Hermes.Messaging
     {
         IMessageContext CurrentMessage { get; }
 
-        event MessageEventHandler OnMessageReceived;
-        event MessageEventHandler OnMessageProcessingCompleted;
-        event MessageProcessingErrorEventHandler OnMessageProcessingError;
+        //event MessageEventHandler OnMessageReceived;
+        //event MessageEventHandler OnMessageProcessingCompleted;
+        //event MessageProcessingErrorEventHandler OnMessageProcessingError;
 
         void SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext);
         void Publish(IOutgoingMessageContext outgoingMessage);

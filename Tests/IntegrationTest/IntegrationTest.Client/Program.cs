@@ -23,6 +23,7 @@ namespace IntegrationTest.Client
 
             for (int i = 0; i < NumberOfMessageToSend; i++)
             {
+                Console.ReadKey();
                 bus.Send(new AddRecordToDatabase());
                 Thread.Sleep(TimeSpan.FromMilliseconds(0.5));
             }

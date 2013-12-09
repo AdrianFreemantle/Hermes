@@ -13,17 +13,17 @@ namespace Hermes.Messaging.Callbacks
         /// </summary>
         protected readonly IDictionary<Guid, BusAsyncResult> MessageIdToAsyncResultLookup = new Dictionary<Guid, BusAsyncResult>();
 
-        public void HandleCallback(TransportMessage message, object[] messages)
+        public void HandleCallback(IncomingMessageContext context)
         {
-            if (message.CorrelationId == Guid.Empty)
+            if (context.CorrelationId == Guid.Empty)
                 return;
 
             BusAsyncResult busAsyncResult;
 
             lock (MessageIdToAsyncResultLookup)
             {
-                MessageIdToAsyncResultLookup.TryGetValue(message.CorrelationId, out busAsyncResult);
-                MessageIdToAsyncResultLookup.Remove(message.CorrelationId);
+                MessageIdToAsyncResultLookup.TryGetValue(context.CorrelationId, out busAsyncResult);
+                MessageIdToAsyncResultLookup.Remove(context.CorrelationId);
             }
 
             if (busAsyncResult == null)
@@ -31,15 +31,17 @@ namespace Hermes.Messaging.Callbacks
 
             int statusCode = 0;
 
-            if (message.IsControlMessage())
+            if (context.IsControlMessage())
             {
-                if (message.Headers.ContainsKey(HeaderKeys.ReturnErrorCode))
+                HeaderValue errorCodeHeader;
+
+                if (context.TryGetHeaderValue(HeaderKeys.ReturnErrorCode, out errorCodeHeader))
                 {
-                    statusCode = int.Parse(message.Headers[HeaderKeys.ReturnErrorCode]);
+                    statusCode = Int32.Parse(errorCodeHeader.Value);
                 }
             }
 
-            busAsyncResult.Complete(statusCode, messages);
+            busAsyncResult.Complete(statusCode, context.Messages);
         }
 
         public ICallback SetupCallback(Guid correlationId)

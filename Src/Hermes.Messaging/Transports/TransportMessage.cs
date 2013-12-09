@@ -85,11 +85,6 @@ namespace Hermes.Messaging.Transports
             get { return undefined; }
         }
 
-        public bool IsControlMessage()
-        {
-            return Headers != null && Headers.ContainsKey(Messaging.HeaderKeys.ControlMessageHeader);
-        }
-
         /// <summary>
         /// Initializes a new instance of the EnvelopeMessage class.
         /// </summary>

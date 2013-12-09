@@ -3,31 +3,23 @@ using System.Threading;
 using System.Transactions;
 
 using Hermes.Ioc;
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
+using Hermes.Pipes;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Transports
 {
-    public delegate void MessageEventHandler(object sender, MessageProcessingEventArgs e);
-    public delegate void MessageProcessingErrorEventHandler(object sender, MessageProcessingProcessingErrorEventArgs e);
-
     public class MessageTransport : ITransportMessages
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageTransport));
-
         private readonly IPublishMessages messagePublisher;
         private readonly ISendMessages messageSender;
         private readonly IReceiveMessages messageReceiver;
         private readonly IContainer container;
+        private readonly ModuleStack<IncomingMessageContext> incommingPipeline;
         private readonly NullMessageContext nullMessage = new NullMessageContext();
         
         private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
         private readonly ThreadLocal<ActionCollection> outgoingMessageActions = new ThreadLocal<ActionCollection>(); 
-
-        public event MessageEventHandler OnMessageReceived;
-        public event MessageEventHandler OnMessageProcessingCompleted;
-        public event MessageProcessingErrorEventHandler OnMessageProcessingError;
 
         public IMessageContext CurrentMessage
         {
@@ -37,12 +29,13 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IContainer container)
+        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IContainer container, ModuleStack<IncomingMessageContext> incommingPipeline)
         {
             this.messagePublisher = messagePublisher;
             this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;
             this.container = container;
+            this.incommingPipeline = incommingPipeline;
         }
 
         public void Dispose()
@@ -63,7 +56,7 @@ namespace Hermes.Messaging.Transports
             messageReceiver.Stop();
         }
 
-        private void MessageReceived(TransportMessage incomingMessage)
+        private void MessageReceived(TransportMessage transportMessage)
         {
             using (IContainer childContainer = container.BeginLifetimeScope())
             {
@@ -71,7 +64,7 @@ namespace Hermes.Messaging.Transports
                 {
                     InitializeOutgoingMessagesActionCollection();
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                    ProcessIncomingMessage(incomingMessage, childContainer);
+                    ProcessIncomingMessage(transportMessage, childContainer);
                 }
                 finally
                 {
@@ -96,46 +89,14 @@ namespace Hermes.Messaging.Transports
         private void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             using (var scope = StartTransactionScope())
-            {   
-                try
-                {
-                    RaiseMessageReceivedEvent(transportMessage);
-                    var incomingMessageContext = serviceLocator.GetInstance<IIncomingMessageContext>();
-                    currentMessageBeingProcessed.Value = incomingMessageContext;
-                    incomingMessageContext.Process(transportMessage, serviceLocator);
-                    RaiseProcessingCompletedEvent(transportMessage);
-                    outgoingMessageActions.Value.InvokeAll();
-                }
-                catch (Exception ex)
-                {
-                    RaiseErrorEvent(transportMessage, ex);
-                }
+            {
+                var incomingContext = new IncomingMessageContext(transportMessage, serviceLocator);
+                currentMessageBeingProcessed.Value = incomingContext;
+                var processChain = incommingPipeline.ToProcessChain(serviceLocator);
+                processChain.Invoke(incomingContext);
+                outgoingMessageActions.Value.InvokeAll();
 
                 scope.Complete();
-            }
-        }
-
-        private void RaiseMessageReceivedEvent(TransportMessage transportMessage)
-        {
-            if (OnMessageReceived != null)
-            {
-                OnMessageReceived(this, new MessageProcessingEventArgs(transportMessage));
-            }
-        }
-
-        private void RaiseProcessingCompletedEvent(TransportMessage transportMessage)
-        {
-            if (OnMessageProcessingCompleted != null)
-            {
-                OnMessageProcessingCompleted(this, new MessageProcessingEventArgs(transportMessage));
-            }
-        }
-
-        private void RaiseErrorEvent(TransportMessage transportMessage, Exception ex)
-        {
-            if (OnMessageProcessingError != null)
-            {
-                OnMessageProcessingError(this, new MessageProcessingProcessingErrorEventArgs(transportMessage, ex));
             }
         }
 

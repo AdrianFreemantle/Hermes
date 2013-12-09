@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Hermes.Pipeline
+namespace Hermes.Pipes
 {
     public interface IOperation<T>
     {
