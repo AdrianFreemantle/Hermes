@@ -25,10 +25,20 @@ namespace Hermes.Messaging.Timeouts
 
         public void Start()
         {
+            PurgeQueueIfRequired();
+
             tokenSource = new CancellationTokenSource();
             Logger.Verbose("Starting Timeout Processor");
             CancellationToken token = tokenSource.Token;
             Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        private void PurgeQueueIfRequired()
+        {
+            if (Settings.FlushQueueOnStartup)
+            {
+                timeoutStore.Purge();
+            }
         }
 
         public void Stop()

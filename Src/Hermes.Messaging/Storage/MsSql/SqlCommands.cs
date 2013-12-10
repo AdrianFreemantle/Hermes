@@ -75,5 +75,11 @@
             @"WITH message AS (SELECT TOP(1) * FROM [timeout].[{0}] WITH (UPDLOCK, READPAST, ROWLOCK) WHERE [Expires] < GETUTCDATE() ORDER BY [Expires] ASC) 
               DELETE FROM message 
               OUTPUT deleted.Id, deleted.CorrelationId, deleted.Destination, deleted.Expires, deleted.Headers, deleted.Body;";
+
+        public const string Purge =
+            @"IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[timeout].[{0}]') AND type in (N'U'))
+              BEGIN
+	              TRUNCATE TABLE [timeout].[{0}]
+              END";
     }
 }

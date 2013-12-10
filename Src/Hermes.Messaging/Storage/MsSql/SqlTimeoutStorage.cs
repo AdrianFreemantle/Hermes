@@ -45,6 +45,21 @@ namespace Hermes.Messaging.Storage.MsSql
             }
         }
 
+        public void Purge()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+                using (var command = new SqlCommand(String.Format(SqlCommands.Purge, Address.Local), connection, transaction))
+                {
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+            }
+        }
+
         public void Add(TimeoutData timeout)
         {
             using (var connection = new SqlConnection(connectionString))
@@ -116,7 +131,7 @@ namespace Hermes.Messaging.Storage.MsSql
                     }
                 }
             }
-        }
+        }        
 
         private TimeoutData FoundTimeoutData(SqlDataReader dataReader)
         {
