@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Hermes.Messaging.Configuration;
-using Microsoft.Practices.ServiceLocation;
-
+using Hermes.Messaging.Pipeline;
+using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Bus
 {
@@ -18,7 +16,7 @@ namespace Hermes.Messaging.Bus
             this.subscriptionStorage = subscriptionStorage;
         }
 
-        public bool Publish(IOutgoingMessageContext outgoingMessage)
+        public bool Publish(OutgoingMessageContext outgoingMessage)
         {   
             var subscribers = GetMessageSubscribers(outgoingMessage);
 
@@ -32,7 +30,7 @@ namespace Hermes.Messaging.Bus
             return true;
         }
 
-        private Address[] GetMessageSubscribers(IOutgoingMessageContext outgoingMessage)
+        private Address[] GetMessageSubscribers(OutgoingMessageContext outgoingMessage)
         {
             var messageTypes = outgoingMessage.GetMessageContracts();
             return subscriptionStorage.GetSubscribersForMessageTypes(messageTypes)
@@ -40,12 +38,14 @@ namespace Hermes.Messaging.Bus
                                       .ToArray();
         }
 
-        private void PublishMessages(IOutgoingMessageContext outgoingMessage, IEnumerable<Address> subscribers)
+        private void PublishMessages(OutgoingMessageContext outgoingMessage, IEnumerable<Address> subscribers)
         {
+            TransportMessage message = outgoingMessage.GetTransportMessage();
+
             foreach (var subscriber in subscribers)
             {
-                outgoingMessage.SetMessageId(SequentialGuid.New());
-                messageSender.Send(outgoingMessage.ToTransportMessage(), subscriber);
+                message.SetMessageId(SequentialGuid.New());
+                messageSender.Send(message, subscriber);
             }
         }
     }

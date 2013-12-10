@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hermes.Logging;
 using Hermes.Persistence;
 using Hermes.Pipes;
 
-namespace Hermes.Messaging.Transports.Modules
+namespace Hermes.Messaging.Pipeline.Modules
 {
     public class UnitOfWorkModule : IModule<IncomingMessageContext>
     {

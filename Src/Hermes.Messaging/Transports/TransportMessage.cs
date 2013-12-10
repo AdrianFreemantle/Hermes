@@ -110,5 +110,10 @@ namespace Hermes.Messaging.Transports
             this.correlationId = correlationId == Guid.Empty ? messageId : correlationId;
             this.replyToAddress = replyToAddress;
         }
+
+        public void SetMessageId(Guid id)
+        {
+            messageId = id;
+        }
     }
 }

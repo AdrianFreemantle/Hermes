@@ -1,7 +1,7 @@
 ﻿using System;
 using Hermes.Pipes;
 
-namespace Hermes.Messaging.Transports.Modules
+namespace Hermes.Messaging.Pipeline.Modules
 {
     public class DispatchMessagesModule : IModule<IncomingMessageContext>
     {

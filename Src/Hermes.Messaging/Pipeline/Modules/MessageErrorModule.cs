@@ -3,9 +3,10 @@ using System.Globalization;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
+using Hermes.Messaging.Transports;
 using Hermes.Pipes;
 
-namespace Hermes.Messaging.Transports.Modules
+namespace Hermes.Messaging.Pipeline.Modules
 {
     public class MessageErrorModule : IModule<IncomingMessageContext>
     {
@@ -23,7 +24,9 @@ namespace Hermes.Messaging.Transports.Modules
         {
             try
             {
-                next();                
+                Logger.Verbose("Starting processing chain for message {0}", input.MessageId);
+                next();
+                Logger.Verbose("Completed processing chain for message {0}", input.MessageId);
             }
             catch(Exception ex)
             {

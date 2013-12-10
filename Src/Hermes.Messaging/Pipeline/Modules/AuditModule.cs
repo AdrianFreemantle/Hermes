@@ -1,9 +1,9 @@
 ﻿using System;
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Transports;
 using Hermes.Pipes;
 
-namespace Hermes.Messaging.Transports.Modules
+namespace Hermes.Messaging.Pipeline.Modules
 {
     public class AuditModule : IModule<IncomingMessageContext>
     {

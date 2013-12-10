@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Hermes.Ioc;
+using Hermes.Messaging.Pipeline;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Transports
 {
-    public class NullMessageContext : IMessageContext
+    public class NullMessageContext : IncomingMessageContext
     {
-        static readonly HeaderValue[] EmptyHeaders = new HeaderValue[0];
+        private NullMessageContext(TransportMessage transportMessage, IServiceLocator serviceLocator) 
+            : base(transportMessage, serviceLocator)
+        {
+        }
 
-        public Guid MessageId { get { return Guid.Empty; } }
-        public Guid CorrelationId { get { return Guid.Empty; } }
-        public Address ReplyToAddress { get { return Address.Parse("__UNDEFINED"); } }
-        public IEnumerable<HeaderValue> Headers { get { return EmptyHeaders; } }
+        public static NullMessageContext Empty()
+        {
+            return new NullMessageContext(new TransportMessage(Guid.Empty, Guid.Empty, Address.Undefined, TimeSpan.MinValue, new Dictionary<string, string>(), new byte[0]), new DisposedProvider());
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Hermes.Messaging.Configuration;
-using Hermes.Messaging.Transports;
-
+using Hermes.Messaging.Pipeline;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Bus
@@ -13,8 +11,6 @@ namespace Hermes.Messaging.Bus
     {
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
-        private readonly IPersistTimeouts timeoutPersistence;
-        private readonly IServiceLocator serviceLocator;
         private readonly IManageCallbacks callBackManager;
 
         public IMessageContext CurrentMessage
@@ -22,14 +18,11 @@ namespace Hermes.Messaging.Bus
             get { return messageTransport.CurrentMessage; }
         }
 
-        public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IPersistTimeouts timeoutPersistence, IManageCallbacks callBackManager)
+        public MessageBus(ITransportMessages messageTransport, IRouteMessageToEndpoint messageRouter, IManageCallbacks callBackManager)
         {
             this.messageTransport = messageTransport;
             this.messageRouter = messageRouter;
-            this.timeoutPersistence = timeoutPersistence;
             this.callBackManager = callBackManager;
-
-            serviceLocator = Settings.RootContainer;
         }
 
         public void Defer(TimeSpan delay, params object[] messages)
@@ -47,17 +40,9 @@ namespace Hermes.Messaging.Bus
             if (messages == null || messages.Length == 0)
                 throw new InvalidOperationException("Cannot send an empty set of messages.");
 
-            string destination = messageRouter.GetDestinationFor(messages.First().GetType()).ToString();
-            string timeout = DateTime.UtcNow.Add(delay).ToWireFormattedString();
-
-            var headers = new Dictionary<string, string>
-            {
-                {HeaderKeys.TimeoutExpire, timeout},
-                {HeaderKeys.RouteExpiredTimeoutTo, destination}
-            };
-
-            MessageRuleValidation.ValidateIsCommandType(messages);
-            timeoutPersistence.Add(correlationId, delay, messages, headers);
+            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
+            var outgoingMessage = OutgoingMessageContext.BuildDeferredCommand(destination, correlationId, delay, messages);
+            messageTransport.SendMessage(outgoingMessage);
         }
 
         public ICallback Send(params object[] messages)
@@ -96,11 +81,10 @@ namespace Hermes.Messaging.Bus
         private ICallback SendMessages(Address address, Guid correlationId, TimeSpan timeToLive,
             params object[] messages)
         {
-            MessageRuleValidation.ValidateIsCommandType(messages);
 
-            IOutgoingMessageContext commandMessage = BuildOutgoingMessage(correlationId, messages);
-            messageTransport.SendMessage(address, timeToLive, commandMessage);
-            return callBackManager.SetupCallback(commandMessage.CorrelationId);
+            var outgoingMessage = OutgoingMessageContext.BuildCommand(address, correlationId, timeToLive, messages);
+            messageTransport.SendMessage(outgoingMessage);
+            return callBackManager.SetupCallback(outgoingMessage.CorrelationId);
         }
 
         public void Reply(params object[] messages)
@@ -114,10 +98,8 @@ namespace Hermes.Messaging.Bus
                 throw new InvalidOperationException(
                     "Reply was called but the current message does not have a reply to address.");
 
-            MessageRuleValidation.ValidateIsMessageType(messages);
-            IOutgoingMessageContext replyMessage = BuildOutgoingMessage(currentMessage.CorrelationId, messages);
-
-            messageTransport.SendMessage(currentMessage.ReplyToAddress, TimeSpan.MaxValue, replyMessage);
+            var outgoingMessage = OutgoingMessageContext.BuildReply(currentMessage, messages);
+            messageTransport.SendMessage(outgoingMessage);
         }
 
         public void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible
@@ -130,40 +112,20 @@ namespace Hermes.Messaging.Bus
             if (currentMessage.ReplyToAddress == Address.Undefined)
                 throw new InvalidOperationException("Return was called with undefined reply-to-address field.");
 
-            HeaderValue errorCodeHeader = HeaderValue.FromEnum(HeaderKeys.ReturnErrorCode, errorCode);
+            var outgoingMessage = OutgoingMessageContext.BuildReturn(currentMessage, errorCode);
 
-            IOutgoingMessageContext controlMessage = BuildOutgoingMessage(currentMessage.CorrelationId, new object[0]);
-            controlMessage.AddHeader(errorCodeHeader);
-
-            messageTransport.SendMessage(currentMessage.ReplyToAddress, TimeSpan.MaxValue, controlMessage);
+            messageTransport.SendMessage(outgoingMessage);
         }
 
         public void Publish(params object[] messages)
         {
-            MessageRuleValidation.ValidateIsEventType(messages);
-            messageTransport.Publish(BuildOutgoingMessage(Guid.Empty, messages));
+            Publish(Guid.Empty, messages);
         }
 
         public void Publish(Guid correlationId, params object[] messages)
         {
-            MessageRuleValidation.ValidateIsEventType(messages);
-            messageTransport.Publish(BuildOutgoingMessage(correlationId, messages));
-        }
-
-        private IOutgoingMessageContext BuildOutgoingMessage(Guid correlationId, IEnumerable<object> messages)
-        {
-            var outgoingMessage = serviceLocator.GetInstance<IOutgoingMessageContext>();
-            outgoingMessage.SetCorrelationId(correlationId);
-
-            if (messages != null)
-            {
-                foreach (var message in messages)
-                {
-                    outgoingMessage.AddMessage(message);
-                }
-            }
-
-            return outgoingMessage;
+            var outgoingMessage = OutgoingMessageContext.BuildEvent(correlationId, messages);
+            messageTransport.SendMessage(outgoingMessage);
         }
     }
 }

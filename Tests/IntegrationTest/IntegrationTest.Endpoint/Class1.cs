@@ -21,7 +21,7 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Debug;
+            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.NoLogging;
 
             configuration
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))

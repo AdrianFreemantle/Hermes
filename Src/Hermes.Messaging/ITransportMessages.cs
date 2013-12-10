@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging
@@ -13,12 +13,6 @@ namespace Hermes.Messaging
     public interface ITransportMessages : IAmStartable, IDisposable
     {
         IMessageContext CurrentMessage { get; }
-
-        //event MessageEventHandler OnMessageReceived;
-        //event MessageEventHandler OnMessageProcessingCompleted;
-        //event MessageProcessingErrorEventHandler OnMessageProcessingError;
-
-        void SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext);
-        void Publish(IOutgoingMessageContext outgoingMessage);
+        void SendMessage(OutgoingMessageContext outgoingMessageContext);
     }
 }

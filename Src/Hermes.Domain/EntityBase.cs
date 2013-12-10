@@ -63,7 +63,6 @@ namespace Hermes.Domain
 
         internal protected abstract void SaveEvent(IDomainEvent @event, EntityBase source);
 
-
         internal void UpdateEventDetails(IDomainEvent @event, IAggregate aggregate)
         {
             var handler = eventHandlers.First(h => h.CanHandleEvent(@event));

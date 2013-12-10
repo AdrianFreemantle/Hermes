@@ -6,19 +6,19 @@ namespace Hermes.Pipes
 {
     public class ModuleStack<T>
     {
-        private readonly List<Type> processChain = new List<Type>();
+        protected readonly List<Type> ModuleChain = new List<Type>();
 
-        public ModuleStack<T> Add<TProcessor>() where TProcessor : IModule<T>
+        public virtual ModuleStack<T> Add<TProcessor>() where TProcessor : IModule<T>
         {
-            processChain.Add(typeof(TProcessor));
+            ModuleChain.Add(typeof(TProcessor));
             return this;
         }
 
-        public ModuleChain<T> ToProcessChain(IServiceLocator serviceLocator)
+        public virtual ModuleChain<T> ToModuleChain(IServiceLocator serviceLocator)
         {
             var chain = new Queue<Type>();
 
-            foreach (var type in processChain)
+            foreach (var type in ModuleChain)
             {
                 chain.Enqueue(type);
             }

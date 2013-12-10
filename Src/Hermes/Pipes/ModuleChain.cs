@@ -5,25 +5,25 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Pipes
 {
-    public sealed class ModuleChain<T>
+    public class ModuleChain<T>
     {
         private readonly ILog logger;
         private readonly Queue<Type> chain;
         private readonly IServiceLocator serviceLocator;
 
-        internal ModuleChain(Queue<Type> chain, IServiceLocator serviceLocator)
+        public ModuleChain(Queue<Type> chain, IServiceLocator serviceLocator)
         {
             logger = LogFactory.BuildLogger(GetType());
             this.chain = chain;
             this.serviceLocator = serviceLocator;
         }
 
-        public void Invoke(T input)
+        public virtual void Invoke(T input)
         {
             InvokeNext(input);
         }
 
-        void InvokeNext(T input)
+        protected virtual void InvokeNext(T input)
         {
             if (chain.Count == 0)
             {

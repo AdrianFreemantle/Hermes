@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Hermes.Messaging.Pipeline;
 
 namespace Hermes.Messaging
 {
     public interface IPublishMessages
     {
-        bool Publish(IOutgoingMessageContext outgoingMessage);
+        bool Publish(OutgoingMessageContext outgoingMessage);
     }
 }

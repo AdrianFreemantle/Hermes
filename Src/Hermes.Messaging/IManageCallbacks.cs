@@ -1,4 +1,5 @@
 ﻿using System;
+using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging

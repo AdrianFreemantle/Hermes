@@ -10,7 +10,7 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int NumberOfMessageToSend = 1000000; //10 thousand
+        const int NumberOfMessageToSend = 10000; //10 thousand
 
         static void Main(string[] args)
         {
@@ -23,9 +23,8 @@ namespace IntegrationTest.Client
 
             for (int i = 0; i < NumberOfMessageToSend; i++)
             {
-                Console.ReadKey();
                 bus.Send(new AddRecordToDatabase());
-                Thread.Sleep(TimeSpan.FromMilliseconds(0.5));
+                Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
 
             stopwatch.Stop();

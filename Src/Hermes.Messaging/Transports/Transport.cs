@@ -1,41 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Transactions;
 
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Pipeline;
 using Hermes.Pipes;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Transports
 {
-    public class MessageTransport : ITransportMessages
+    public class Transport : ITransportMessages
     {
-        private readonly IPublishMessages messagePublisher;
-        private readonly ISendMessages messageSender;
         private readonly IReceiveMessages messageReceiver;
         private readonly IContainer container;
         private readonly ModuleStack<IncomingMessageContext> incommingPipeline;
-        private readonly NullMessageContext nullMessage = new NullMessageContext();
-        
-        private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
-        private readonly ThreadLocal<ActionCollection> outgoingMessageActions = new ThreadLocal<ActionCollection>(); 
+        private readonly ModuleStack<OutgoingMessageContext> outgoingPipeline;
+
+        private readonly ThreadLocal<IncomingMessageContext> currentMessageBeingProcessed = new ThreadLocal<IncomingMessageContext>();
 
         public IMessageContext CurrentMessage
         {
             get
             {
-                return currentMessageBeingProcessed.Value ?? nullMessage;
+                return currentMessageBeingProcessed.Value ?? IncomingMessageContext.Null;
             }
         }
 
-        public MessageTransport(IPublishMessages messagePublisher, ISendMessages messageSender, IReceiveMessages messageReceiver, IContainer container, ModuleStack<IncomingMessageContext> incommingPipeline)
+        public Transport(IReceiveMessages messageReceiver, IContainer container, ModuleStack<IncomingMessageContext> incommingPipeline, ModuleStack<OutgoingMessageContext> outgoingPipeline)
         {
-            this.messagePublisher = messagePublisher;
-            this.messageSender = messageSender;
             this.messageReceiver = messageReceiver;
             this.container = container;
             this.incommingPipeline = incommingPipeline;
+            this.outgoingPipeline = outgoingPipeline;
         }
 
         public void Dispose()
@@ -62,27 +60,14 @@ namespace Hermes.Messaging.Transports
             {
                 try
                 {
-                    InitializeOutgoingMessagesActionCollection();
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
                     ProcessIncomingMessage(transportMessage, childContainer);
                 }
                 finally
                 {
-                    currentMessageBeingProcessed.Value = nullMessage;
+                    currentMessageBeingProcessed.Value = IncomingMessageContext.Null;
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
-            }
-        }
-
-        private void InitializeOutgoingMessagesActionCollection()
-        {
-            if (outgoingMessageActions.Value == null)
-            {
-                outgoingMessageActions.Value = new ActionCollection();
-            }
-            else
-            {
-                outgoingMessageActions.Value.Clear();
             }
         }
 
@@ -92,9 +77,7 @@ namespace Hermes.Messaging.Transports
             {
                 var incomingContext = new IncomingMessageContext(transportMessage, serviceLocator);
                 currentMessageBeingProcessed.Value = incomingContext;
-                var processChain = incommingPipeline.ToProcessChain(serviceLocator);
-                processChain.Invoke(incomingContext);
-                outgoingMessageActions.Value.InvokeAll();
+                incomingContext.Process(incommingPipeline);
 
                 scope.Complete();
             }
@@ -105,31 +88,22 @@ namespace Hermes.Messaging.Transports
             return Settings.UseDistributedTransaction
                 ? TransactionScopeUtils.Begin(TransactionScopeOption.Required)
                 : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
-        }       
-
-        public void SendMessage(Address recipient, TimeSpan timeToLive, IOutgoingMessageContext outgoingMessageContext)
-        {
-            var transportMessage = outgoingMessageContext.ToTransportMessage(timeToLive);
-
-            if (CurrentMessage.MessageId == Guid.Empty)
-            {
-                messageSender.Send(transportMessage, recipient);
-            }
-            else
-            {                
-                outgoingMessageActions.Value.AddAction(() => messageSender.Send(transportMessage, recipient));
-            }
         }
 
-        public void Publish(IOutgoingMessageContext outgoingMessage)
+        public void SendMessage(OutgoingMessageContext outgoingMessageContext)
         {
-            if (CurrentMessage.MessageId == Guid.Empty)
+            var currentIncommingMessage = (IncomingMessageContext)CurrentMessage;
+
+            if (currentIncommingMessage == IncomingMessageContext.Null)
             {
-                messagePublisher.Publish(outgoingMessage);
+                using (var scope = container.BeginLifetimeScope())
+                {
+                    outgoingMessageContext.Process(outgoingPipeline, scope);
+                }
             }
             else
             {
-                outgoingMessageActions.Value.AddAction(() => messagePublisher.Publish(outgoingMessage));
+                outgoingMessageContext.Process(outgoingPipeline, currentIncommingMessage.ServiceLocator);
             }
         }
     }
