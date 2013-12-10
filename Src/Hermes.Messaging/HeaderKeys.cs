@@ -6,7 +6,8 @@
         public const string SentTime = "Hermes.SentTime";
         public const string ReceivedTime = "Hermes.ReceivedTime";
         public const string CompletedTime = "Hermes.CompletedTime";
-        public const string RetryCount = "Hermes.Retry.Count";
+        public const string FirstLevelRetryCount = "Hermes.Retry.Count";
+        public const string SecondLevelRetryCount = "Hermes.SecondLevelRetry.Count";
         public const string FailureDetails = "Hermes.Failed.Exception";
         public const string TimeoutExpire = "Hermes.Timeout.Expire";
         public const string RouteExpiredTimeoutTo = "Hermes.Timeout.RouteExpiredTimeoutTo";
