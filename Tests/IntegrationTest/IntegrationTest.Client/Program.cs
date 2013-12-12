@@ -14,6 +14,8 @@ namespace IntegrationTest.Client
 
         static void Main(string[] args)
         {
+            Thread.Sleep(4000); //give worker time to init database etc
+
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
             var bus = Settings.RootContainer.GetInstance<IMessageBus>();
