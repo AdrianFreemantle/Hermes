@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -6,11 +7,6 @@ namespace Hermes
 {
     public static class StringExtensions
     {
-        public static bool HasText(this string value)
-        {
-            return !String.IsNullOrEmpty(value) && !String.IsNullOrWhiteSpace(value);
-        }
-
         public static bool IsAllDigits(this string value)
         {
             return value.All(Char.IsDigit);
@@ -33,9 +29,16 @@ namespace Hermes
             }
         }
 
-        public static string Trim(this string current, string valueToTrim)
+        public static string Trim(this string value, string valueToTrim)
         {
-            return current.Substring(0, current.Length - valueToTrim.Length);
+            return value.EndsWith(valueToTrim, StringComparison.InvariantCultureIgnoreCase) 
+                ? value.Substring(0, value.Length - valueToTrim.Length) 
+                : value;
+        }
+
+        public static bool Contains(this string value, IEnumerable<char> characters)
+        {
+            return characters.Any(value.ToList().Remove);
         }
     }
 }
