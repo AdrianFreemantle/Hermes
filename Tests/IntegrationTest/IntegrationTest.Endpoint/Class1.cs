@@ -21,9 +21,10 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.NoLogging;
+            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Warn;
 
             configuration
+                .FirstLevelRetryPolicy(1, TimeSpan.FromSeconds(10))
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))
                 .UseJsonSerialization()
                 .UseSqlTransport()
@@ -83,7 +84,7 @@ namespace IntegrationTest.Endpoint
             repository.Add(new Record { Id = message.RecordId });
             messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
 
-            if (DateTime.Now.Ticks % 10 == 0)
+            if (DateTime.Now.Ticks % 2 == 0)
             {
                 throw new Exception("Boom!!!!!");
             }
