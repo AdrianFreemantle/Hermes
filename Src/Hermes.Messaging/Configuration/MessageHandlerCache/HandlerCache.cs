@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Hermes.Logging;
+using Hermes.Messaging.Transports;
+
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
     internal static class HandlerCache
@@ -24,9 +27,21 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
             details.AddHandlerAction(messageContract, handlerAction);
         }
 
-        public static IEnumerable<HandlerCacheItem> GetHandlerDetails(ICollection<Type> messageTypes)
+        public static HandlerCacheItem[] GetHandlerDetails(ICollection<Type> messageTypes)
         {
-            return handlerDetails.Where(detail => messageTypes.Any(detail.ContainsHandlerFor)).Distinct().ToList();
+            var result = handlerDetails.Where(detail => messageTypes.Any(detail.ContainsHandlerFor)).Distinct().ToArray();
+
+            if (!result.Any())
+            {
+                throw new InvalidOperationException(String.Format("No handlers could be found for message contract {0}", GetContractNames(messageTypes)));
+            }
+
+            return result;
+        }
+
+        private static string GetContractNames(IEnumerable<Type> messageTypes)
+        {
+            return String.Join(", ", messageTypes.Select(type => type.FullName));
         }
 
         public static bool Contains(Type handlerType, Type messageContract)

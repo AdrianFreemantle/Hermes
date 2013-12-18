@@ -13,46 +13,52 @@ namespace Hermes.Messaging.Transports
 {
     public class Dispatcher : IDispatchMessagesToHandlers
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof(Dispatcher)); 
+        private static readonly ILog logger = LogFactory.BuildLogger(typeof(Dispatcher));
 
-        public void DispatchToHandlers(object message, IServiceLocator serviceLocator)
+        public virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
             Type[] contracts = GetMessageContracts(message);
-            IEnumerable<HandlerCacheItem> handlerDetails = HandlerCache.GetHandlerDetails(contracts).ToArray();
+            HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlerDetails(contracts);
+            DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
+        }
 
-            if (!handlerDetails.Any())
-            {
-                throw new InvalidOperationException(String.Format("No handlers could be found for message {0}", message.GetType()));
-            }
+        protected virtual Type[] GetMessageContracts(object message)
+        {
+            var messageType = message.GetType();
 
+            Type[] contracts = Settings.IsCommandType(messageType)
+                ? new[] { messageType }
+                : message.GetType().GetInterfaces().Union(new[] { messageType }).ToArray();
+            return contracts;
+        }
+
+        protected virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator, IEnumerable<HandlerCacheItem> handlerDetails, Type[] contracts)
+        {
             var handlers = new List<object>();
 
             foreach (var messageHandlerDetail in handlerDetails)
             {
-                object messageHandler = serviceLocator.GetInstance(messageHandlerDetail.HandlerType);
-                messageHandlerDetail.TryHandleMessage(messageHandler, message, contracts);
-                handlers.Add(messageHandler);
-            }
-
-            if (!handlers.Any())
-            {
-                throw new InvalidOperationException(String.Format("No handlers could be found for message {0}", message.GetType()));
+                TryHandleMessage(message, serviceLocator, messageHandlerDetail, contracts, handlers);
             }
 
             SaveProcessManagers(handlers);
         }
 
-        private static Type[] GetMessageContracts(object message)
+        protected virtual void TryHandleMessage(object message, IServiceLocator serviceLocator, HandlerCacheItem messageHandlerDetail, IEnumerable<Type> contracts, List<object> handlers)
         {
-            var messageType = message.GetType();
-
-            Type[] contracts = Settings.IsCommandType(messageType)
-                ? new[] {messageType}
-                : message.GetType().GetInterfaces().Union(new[] {messageType}).ToArray();
-            return contracts;
+            try
+            {
+                logger.Verbose("Dispatching message {0}", message.ToString());
+                object messageHandler = messageHandlerDetail.TryHandleMessage(serviceLocator, message, contracts);
+                handlers.Add(messageHandler);
+            }
+            catch (ProcessManagerDataNotFoundException ex)
+            {
+                logger.Warn(ex.Message);
+            }
         }
 
-        private static void SaveProcessManagers(IEnumerable<object> handlers)
+        protected virtual void SaveProcessManagers(IEnumerable<object> handlers)
         {
             foreach (var handler in handlers)
             {

@@ -61,6 +61,7 @@
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
+    <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCacheItem.cs" />
     <Compile Include="Pipeline\Modules\AuditModule.cs" />

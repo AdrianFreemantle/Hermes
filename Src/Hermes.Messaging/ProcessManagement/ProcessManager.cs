@@ -31,6 +31,11 @@ namespace Hermes.Messaging.ProcessManagement
         protected virtual void Continue(Guid id)
         {
             State = ProcessManagerPersistence.Get<T>(id);
+
+            if (State == null)
+            {
+                throw new ProcessManagerDataNotFoundException(id, this);
+            }
         }
 
         protected virtual void BeginOrContinue(Guid id)

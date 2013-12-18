@@ -1,4 +1,6 @@
 ﻿using System;
+
+using Hermes.Logging;
 using Hermes.Pipes;
 
 namespace Hermes.Messaging.Pipeline.Modules
@@ -17,7 +19,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             if (!input.IsControlMessage())
             {
                 foreach (var message in input.Messages)
-                {
+                {                    
                     dispatcher.DispatchToHandlers(message, input.ServiceLocator);
                 }
             }

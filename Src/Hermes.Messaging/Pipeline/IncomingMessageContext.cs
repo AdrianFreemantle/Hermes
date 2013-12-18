@@ -101,5 +101,10 @@ namespace Hermes.Messaging.Pipeline
         {
             return !Equals(left, right);
         }
+
+        public override string ToString()
+        {
+            return TransportMessage.MessageId.ToString();
+        }
     }
 }

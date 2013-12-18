@@ -24,9 +24,9 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                Logger.Verbose("Starting processing chain for message {0}", input.MessageId);
+                Logger.Verbose("Starting processing chain for message {0}", input);
                 next();
-                Logger.Verbose("Completed processing chain for message {0}", input.MessageId);
+                Logger.Verbose("Completed processing chain for message {0}", input);
             }
             catch(Exception ex)
             {

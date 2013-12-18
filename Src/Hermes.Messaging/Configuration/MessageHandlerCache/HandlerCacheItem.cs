@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Hermes.Logging;
 using Hermes.Reflection;
+
+using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
-    internal class HandlerCacheItem : IEquatable<HandlerCacheItem>
+    public class HandlerCacheItem : IEquatable<HandlerCacheItem>
     {
+        private static readonly ILog logger = LogFactory.BuildLogger(typeof(HandlerCacheItem)); 
+
         private readonly List<ActionCacheItem> actionDetails;
 
         public Type HandlerType { get; private set; } 
@@ -58,9 +63,9 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
             return other.HandlerType == HandlerType;
         }
 
-        public bool TryHandleMessage(object handler, object message, IEnumerable<Type> contracts)
+        public object TryHandleMessage(IServiceLocator serviceLocator, object message, IEnumerable<Type> contracts)
         {
-            bool foundHandler = false;
+            object messageHandler = serviceLocator.GetInstance(HandlerType);
 
             foreach (var contract in contracts)
             {
@@ -68,12 +73,12 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 
                 if (action != null)
                 {
-                    action.Invoke(handler, message);
-                    foundHandler = true;
+                    logger.Debug("Invoking handler {0} for message {1}", HandlerType.FullName, message.ToString());
+                    action.Invoke(messageHandler, message);
                 }
             }
 
-            return foundHandler;
+            return messageHandler;
         }
     }
 }
