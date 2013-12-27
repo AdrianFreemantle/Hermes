@@ -18,23 +18,24 @@ namespace Hermes.Pipes
             this.serviceLocator = serviceLocator;
         }
 
-        public virtual void Invoke(T input)
+        public virtual bool Invoke(T input)
         {
-            InvokeNext(input);
+            return InvokeNext(input);
         }
 
-        protected virtual void InvokeNext(T input)
+        protected virtual bool InvokeNext(T input)
         {
             if (chain.Count == 0)
             {
-                return;
+                return true;
             }
 
             var processor = (IModule<T>)serviceLocator.GetInstance(chain.Dequeue());
 
             logger.Debug("Invoking module {0}", processor.GetType().FullName);
-            processor.Invoke(input, () => InvokeNext(input));
-            logger.Debug("Returning module {0}", processor.GetType().FullName);
+            var result = processor.Invoke(input, () => InvokeNext(input));
+            logger.Debug("Returning module {0} with result [{1}]", processor.GetType().FullName, result);
+            return result;
         }
     }
 }

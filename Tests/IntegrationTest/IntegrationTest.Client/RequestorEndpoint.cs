@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
@@ -15,13 +16,16 @@ namespace IntegrationTest.Client
     {
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
+            LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Verbose;
+
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
-                .NumberOfWorkers(1);
+                .SendOnlyEndpoint();
         }
 
         private static bool IsCommand(Type type)

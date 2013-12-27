@@ -15,10 +15,12 @@ namespace IntegrationTest.Contracts
     public class AddRecordToDatabase : ICommand
     {
         public Guid RecordId { get; private set; }
+        public int RecordNumber { get; private set; }
         public List<Guid> RandomData { get; private set; }
 
-        public AddRecordToDatabase()
+        public AddRecordToDatabase(int recordNumber)
         {
+            RecordNumber = recordNumber;
             RecordId = SequentialGuid.New();
             RandomData = new List<Guid>();
 
@@ -26,7 +28,6 @@ namespace IntegrationTest.Contracts
             {
                 RandomData.Add(Guid.NewGuid());
             }
-            
         }
     }
 

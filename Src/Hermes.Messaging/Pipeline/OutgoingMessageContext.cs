@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Hermes.Logging;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
 using Microsoft.Practices.ServiceLocation;
@@ -58,7 +60,6 @@ namespace Hermes.Messaging.Pipeline
         public static OutgoingMessageContext BuildDeferredCommand(Address address, Guid correlationId, TimeSpan delay, params object[] messages)
         {
             MessageRuleValidation.ValidateIsCommandType(messages);
-
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
@@ -72,7 +73,7 @@ namespace Hermes.Messaging.Pipeline
 
             context.AddHeader(new HeaderValue(HeaderKeys.TimeoutExpire, timeout));
             context.AddHeader(new HeaderValue(HeaderKeys.RouteExpiredTimeoutTo, deliveryAddress));
-
+            
             return context;
         }
 
@@ -178,6 +179,11 @@ namespace Hermes.Messaging.Pipeline
         public void BuildHeaderFunction(Func<OutgoingMessageContext, Dictionary<string, string>> buildHeader)
         {
             buildHeaderFunction = buildHeader;
+        }
+
+        public override string ToString()
+        {
+            return messageId.ToString();
         }
 
         public enum MessageType

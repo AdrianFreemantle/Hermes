@@ -2,10 +2,13 @@
 using System.Linq;
 
 using Hermes.Ioc;
-using Hermes.Logging;
+using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
 
-namespace Hermes.Messaging.Configuration
+// ReSharper disable CheckNamespace
+// ReSharper disable RedundantExtendsListEntry
+namespace Hermes
 {
     public class Configure : IConfigureEndpoint, IConfigureWorker
     {
@@ -93,10 +96,9 @@ namespace Hermes.Messaging.Configuration
             return this;
         }
 
-        IConfigureWorker IConfigureWorker.FirstLevelRetryPolicy(int attempts, TimeSpan delay)
+        IConfigureWorker IConfigureWorker.FirstLevelRetryPolicy(int attempts)
         {
             Settings.FirstLevelRetryAttempts = attempts;
-            Settings.FirstLevelRetryDelay = delay;
             return this;
         }
 
@@ -197,3 +199,5 @@ namespace Hermes.Messaging.Configuration
         }
     }
 }
+// ReSharper restore RedundantExtendsListEntry
+// ReSharper restore CheckNamespace

@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Configuration;
 using System.Reflection;
 
 using Hermes.Logging;
-using Hermes.Reflection;
 
 using Topshelf;
 
@@ -10,25 +10,45 @@ namespace Hermes.ServiceHost
 {
     public class Program
     {
-        static readonly ILog Logger;
-
-        static Program()
-        {
-            if (Environment.UserInteractive)
-            {
-                LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-                ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Verbose;
-                Logger = LogFactory.BuildLogger(typeof(Program));
-            }
-        }
+        private static ILog Logger;
+        private static HostableService hostableService;
 
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+            ConfigureServiceHost();
+            ConfigureLogging();
+            RunHostedService();
+        }
 
+        private static void ConfigureServiceHost()
+        {
+            hostableService = HostFactory.GetHostableService();
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", hostableService.GetConfigurationFilePath());
+            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        }
+
+        private static void ConfigureLogging()
+        {
+            if (Environment.UserInteractive)
+            {
+                LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+                ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
+            }
+            else
+            {
+                LogFactory.BuildLogger = type => new TraceLogger(type);
+                TraceLogger.MinimumLogLevel = LogLevel.Debug;
+            }
+
+            Logger = LogFactory.BuildLogger(typeof (Program));
+        }
+
+        private static void RunHostedService()
+        {
             Logger.Info("Starting service host {0}", Assembly.GetEntryAssembly().GetName().FullName);
 
-            TopshelfExitCode exitCode = HostFactory.BuildHost().Run();
+            TopshelfExitCode exitCode = hostableService.Run();
 
             if (exitCode == TopshelfExitCode.Ok)
             {
@@ -40,7 +60,7 @@ namespace Hermes.ServiceHost
             }
 
             Environment.Exit((int)exitCode);
-        }        
+        }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

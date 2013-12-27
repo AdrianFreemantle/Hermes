@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Microsoft.Practices.ServiceLocation;
@@ -8,7 +9,7 @@ using Microsoft.Practices.ServiceLocation;
 namespace Hermes.Messaging.Bus
 {
     public class MessageBus : IMessageBus
-    {
+    {        
         private readonly ITransportMessages messageTransport;
         private readonly IRouteMessageToEndpoint messageRouter;
         private readonly IManageCallbacks callBackManager;

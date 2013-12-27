@@ -66,12 +66,6 @@ namespace Hermes.Messaging.Configuration
 
         public static int FirstLevelRetryAttempts { get; internal set; }
 
-        public static TimeSpan FirstLevelRetryDelay
-        {
-            get { return firstLevelRetryDelay; }
-            internal set { firstLevelRetryDelay = value; }
-        }
-
         public static Address ErrorEndpoint
         {
             get { return errorAddress; }

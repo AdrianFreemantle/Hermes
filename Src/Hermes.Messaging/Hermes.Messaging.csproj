@@ -70,6 +70,7 @@
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
     <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />
     <Compile Include="Pipeline\Modules\MessageMutatorModule.cs" />
+    <Compile Include="Transports\OutgoingMessageUnitOfWork.cs" />
     <Compile Include="Transports\SqlTransport\SqlCommands.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageDequeStrategy.cs" />
     <Compile Include="Transports\SqlTransport\SqlMessageSender.cs" />

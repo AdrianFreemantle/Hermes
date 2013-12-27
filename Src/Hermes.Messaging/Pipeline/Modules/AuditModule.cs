@@ -1,4 +1,6 @@
 ﻿using System;
+
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
@@ -7,6 +9,8 @@ namespace Hermes.Messaging.Pipeline.Modules
 {
     public class AuditModule : IModule<IncomingMessageContext>
     {
+        private readonly static ILog Logger = LogFactory.BuildLogger(typeof(AuditModule));
+
         private readonly ISendMessages messageSender;
 
         public AuditModule(ISendMessages messageSender)
@@ -14,11 +18,18 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.messageSender = messageSender;
         }
 
-        public void Invoke(IncomingMessageContext input, Action next)
+        public bool Invoke(IncomingMessageContext input, Func<bool> next)
         {
             DateTime receivedTime = DateTime.UtcNow;
-            next();
-            SendToAuditQueue(input.TransportMessage, receivedTime);
+            
+            if (next())
+            {
+                SendToAuditQueue(input.TransportMessage, receivedTime);
+                Logger.Debug("Message {0} sent to audit queue", input);
+                return true;
+            }
+
+            return false;
         }
 
         private void SendToAuditQueue(TransportMessage transportMessage, DateTime receivedTime)

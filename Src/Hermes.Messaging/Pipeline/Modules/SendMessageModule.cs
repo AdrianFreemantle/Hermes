@@ -1,12 +1,16 @@
 ﻿using System;
 using System.ComponentModel;
+
+using Hermes.Logging;
 using Hermes.Messaging.Timeouts;
 using Hermes.Pipes;
 
-namespace Hermes.Messaging.Pipeline
+namespace Hermes.Messaging.Pipeline.Modules
 {
     public class SendMessageModule : IModule<OutgoingMessageContext>
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(SendMessageModule));
+
         private readonly ISendMessages sender;
         private readonly IPersistTimeouts timeoutsPersister;
         private readonly IPublishMessages publisher;
@@ -18,21 +22,25 @@ namespace Hermes.Messaging.Pipeline
             this.publisher = publisher;
         }
 
-        public void Invoke(OutgoingMessageContext input, Action next)
+        public bool Invoke(OutgoingMessageContext input, Func<bool> next)
         {
             switch (input.OutgoingMessageType)
             {
                 case OutgoingMessageContext.MessageType.Command:
                 case OutgoingMessageContext.MessageType.Control:
                 case OutgoingMessageContext.MessageType.Reply:
+                    Logger.Debug("Sending message {0} to {1}", input, input.Destination);
                     sender.Send(input.GetTransportMessage(), input.Destination);
                     break;
 
                 case OutgoingMessageContext.MessageType.Defer:
-                    timeoutsPersister.Add(new TimeoutData(input.GetTransportMessage()));
+                    var timeout = new TimeoutData(input.GetTransportMessage());
+                    Logger.Debug("Deferring message {0}", timeout);
+                    timeoutsPersister.Add(timeout);
                     break;
 
                 case OutgoingMessageContext.MessageType.Event:
+                    Logger.Debug("Publishing message {0}", input);
                     publisher.Publish(input);
                     break;
 
@@ -40,7 +48,7 @@ namespace Hermes.Messaging.Pipeline
                     throw new InvalidEnumArgumentException("input.OutgoingMessageType", (int)input.OutgoingMessageType, input.OutgoingMessageType.GetType());
             }
 
-            next();
+            return next();
         }
     }
 }

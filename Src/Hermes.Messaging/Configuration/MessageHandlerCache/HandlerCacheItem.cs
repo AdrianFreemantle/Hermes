@@ -11,7 +11,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
     public class HandlerCacheItem : IEquatable<HandlerCacheItem>
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof(HandlerCacheItem)); 
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(HandlerCacheItem)); 
 
         private readonly List<ActionCacheItem> actionDetails;
 
@@ -73,7 +73,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 
                 if (action != null)
                 {
-                    logger.Debug("Invoking handler {0} for message {1}", HandlerType.FullName, message.ToString());
+                    Logger.Debug("Invoking handler {0} for message {1}", HandlerType.FullName, message.ToString());
                     action.Invoke(messageHandler, message);
                 }
             }

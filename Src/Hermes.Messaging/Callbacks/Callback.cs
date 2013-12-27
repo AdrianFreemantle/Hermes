@@ -11,7 +11,6 @@ namespace Hermes.Messaging.Callbacks
     public class Callback : ICallback
     {
         static readonly Type AsyncControllerType;
-
         private readonly Guid messageId;
 
         static Callback()

@@ -14,7 +14,7 @@ namespace IntegrationTest.Client
 
         static void Main(string[] args)
         {
-            Thread.Sleep(4000); //give worker time to init database etc
+            Thread.Sleep(20000); //give worker time to init database etc
 
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
@@ -25,7 +25,8 @@ namespace IntegrationTest.Client
 
             for (int i = 0; i < NumberOfMessageToSend; i++)
             {
-                bus.Send(new AddRecordToDatabase());
+                //Console.ReadKey();
+                bus.Send(new AddRecordToDatabase(i + 1));
                 Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
 

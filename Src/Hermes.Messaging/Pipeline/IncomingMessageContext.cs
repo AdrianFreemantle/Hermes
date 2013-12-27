@@ -43,10 +43,10 @@ namespace Hermes.Messaging.Pipeline
             ServiceLocator = serviceLocator;
         }
 
-        public void Process(ModuleStack<IncomingMessageContext> incommingPipeline)
+        public bool Process(ModuleStack<IncomingMessageContext> incommingPipeline)
         {
             var pipeline = incommingPipeline.ToModuleChain(ServiceLocator);
-            pipeline.Invoke(this);
+            return pipeline.Invoke(this);
         }
 
         public bool IsControlMessage()

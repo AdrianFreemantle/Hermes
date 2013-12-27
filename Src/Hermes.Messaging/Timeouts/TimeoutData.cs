@@ -40,7 +40,7 @@ namespace Hermes.Messaging.Timeouts
 
         public override string ToString()
         {
-            return string.Format("Timeout({0}) - Expires:{1}", MessageId, Expires);
+            return string.Format("{0} - Expires:{1}", MessageId, Expires);
         }
 
         public TransportMessage ToTransportmessage()

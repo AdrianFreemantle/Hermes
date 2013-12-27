@@ -1,10 +1,14 @@
 ﻿using System;
+
+using Hermes.Logging;
 using Hermes.Pipes;
 
 namespace Hermes.Messaging.Pipeline.Modules
 {
     public class ExtractMessagesModule : IModule<IncomingMessageContext>
     {
+        private readonly static ILog Logger = LogFactory.BuildLogger(typeof(ExtractMessagesModule));
+
         private readonly ISerializeMessages messageSerializer;
 
         public ExtractMessagesModule(ISerializeMessages messageSerializer)
@@ -12,10 +16,11 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.messageSerializer = messageSerializer;
         }
 
-        public void Invoke(IncomingMessageContext input, Action next)
+        public bool Invoke(IncomingMessageContext input, Func<bool> next)
         {
+            Logger.Debug("Deserializing body for message {0}", input);
             input.SetMessages(messageSerializer.Deserialize(input.TransportMessage.Body));
-            next();
+            return next();
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Hermes.Messaging.Pipeline.Modules
 {
     public class MessageErrorModule : IModule<IncomingMessageContext>
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageErrorModule));
         protected readonly IPersistTimeouts TimeoutStore;
         protected readonly ISendMessages MessageSender;
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessageErrorModule));
 
         public MessageErrorModule(IPersistTimeouts timeoutStore, ISendMessages messageSender)
         {            
@@ -20,7 +20,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             MessageSender = messageSender;
         }
 
-        public void Invoke(IncomingMessageContext input, Action next)
+        public bool Invoke(IncomingMessageContext input, Func<bool> next)
         {
             try
             {
@@ -30,8 +30,11 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
             catch(Exception ex)
             {
-                HandleError(input, ex);    
+                HandleError(input, ex);
+                return false;
             }
+
+            return true;
         }
 
         private void HandleError(IncomingMessageContext input, Exception ex)

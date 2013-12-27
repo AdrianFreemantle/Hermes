@@ -21,18 +21,18 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Warn;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Error;
 
             configuration
-                .FirstLevelRetryPolicy(1, TimeSpan.FromSeconds(10))
+                .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(10))
                 .UseJsonSerialization()
                 .UseSqlTransport()
-                .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest")
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(1)
-                .FlushQueueOnStartup(true);
+                .NumberOfWorkers(4)
+                .FlushQueueOnStartup(true)
+                .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
         }
 
         private static bool IsCommand(Type type)
@@ -81,7 +81,14 @@ namespace IntegrationTest.Endpoint
         {
             System.Threading.Thread.Sleep(10);
             var repository = repositoryFactory.GetRepository<Record>();
-            repository.Add(new Record { Id = message.RecordId });
+
+            repository.Add(
+                new Record
+                {
+                    Id = message.RecordId, 
+                    RecordNumber = message.RecordNumber
+                });
+
             messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
 
             if (DateTime.Now.Ticks % 2 == 0)

@@ -13,7 +13,7 @@ namespace Hermes.Messaging.Transports
 {
     public class Dispatcher : IDispatchMessagesToHandlers
     {
-        private static readonly ILog logger = LogFactory.BuildLogger(typeof(Dispatcher));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Dispatcher));
 
         public virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
@@ -48,13 +48,13 @@ namespace Hermes.Messaging.Transports
         {
             try
             {
-                logger.Verbose("Dispatching message {0}", message.ToString());
+                Logger.Debug("Dispatching {0} to {1}", message.GetType().FullName, messageHandlerDetail.HandlerType.FullName);
                 object messageHandler = messageHandlerDetail.TryHandleMessage(serviceLocator, message, contracts);
                 handlers.Add(messageHandler);
             }
             catch (ProcessManagerDataNotFoundException ex)
             {
-                logger.Warn(ex.Message);
+                Logger.Warn(ex.Message);
             }
         }
 

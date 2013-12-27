@@ -7,6 +7,7 @@ namespace Hermes.Messaging.Pipeline.Modules
 {
     public class DispatchMessagesModule : IModule<IncomingMessageContext>
     {
+        private readonly static ILog Logger = LogFactory.BuildLogger(typeof(DispatchMessagesModule));
         private readonly IDispatchMessagesToHandlers dispatcher;
 
         public DispatchMessagesModule(IDispatchMessagesToHandlers dispatcher)
@@ -14,17 +15,19 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.dispatcher = dispatcher;
         }
 
-        public void Invoke(IncomingMessageContext input, Action next)
+        public bool Invoke(IncomingMessageContext input, Func<bool> next)
         {
             if (!input.IsControlMessage())
             {
+                Logger.Debug("Dispatching message {0} to handlers.", input);
+
                 foreach (var message in input.Messages)
                 {                    
                     dispatcher.DispatchToHandlers(message, input.ServiceLocator);
                 }
             }
 
-            next();
+            return next();
         }
     }
 }

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Hermes.Logging;
+using Hermes.Messaging.Pipeline.Modules;
+
 namespace Hermes.Messaging.Routing
 {
     public class Router : IRouteMessageToEndpoint, IRegisterMessageRoute
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Router));
         readonly IDictionary<Type, Address> routes;
 
         public Router()
@@ -29,6 +33,7 @@ namespace Hermes.Messaging.Routing
                 throw new RouteAlreadyDefinedException(messageType);
             }
             
+            Logger.Debug("Registering route {0} for message type {1}", endpointAddress, messageType.FullName);
             routes.Add(messageType, endpointAddress);
 
             return this;

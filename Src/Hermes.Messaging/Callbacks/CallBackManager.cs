@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Hermes.Logging;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 
@@ -8,6 +10,8 @@ namespace Hermes.Messaging.Callbacks
 {
     public class CallBackManager : IManageCallbacks
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(CallBackManager));
+
         /// <summary>
         /// Map of message IDs to Async Results - useful for cleanup in case of timeouts.
         /// </summary>
@@ -18,6 +22,8 @@ namespace Hermes.Messaging.Callbacks
             if (context.CorrelationId == Guid.Empty)
                 return;
 
+            Logger.Debug("Handling callback for message {0} with correlation ID {1}", context.MessageId, context.CorrelationId);
+
             BusAsyncResult busAsyncResult;
 
             lock (MessageIdToAsyncResultLookup)
@@ -27,12 +33,15 @@ namespace Hermes.Messaging.Callbacks
             }
 
             if (busAsyncResult == null)
+            {
+                Logger.Debug("No callback is registered with correlation ID {0}", context.CorrelationId);
                 return;
+            }
 
             int statusCode = 0;
 
             if (context.IsControlMessage())
-            {
+            {                
                 HeaderValue errorCodeHeader;
 
                 if (context.TryGetHeaderValue(HeaderKeys.ReturnErrorCode, out errorCodeHeader))
@@ -41,6 +50,7 @@ namespace Hermes.Messaging.Callbacks
                 }
             }
 
+            Logger.Debug("Calling callback for correlation ID {0}", context.CorrelationId);
             busAsyncResult.Complete(statusCode, context.Messages);
         }
 
@@ -54,6 +64,7 @@ namespace Hermes.Messaging.Callbacks
             {
                 lock (MessageIdToAsyncResultLookup)
                 {
+                    Logger.Debug("Registering a callback for correlation ID {0}", correlationId);
                     MessageIdToAsyncResultLookup[args.MessageId] = args.Result;
                     args.Result.OnTimeout += Result_OnTimeout;
                 }
@@ -70,6 +81,7 @@ namespace Hermes.Messaging.Callbacks
 
                 if (!keyValue.Equals(new KeyValuePair<Guid, BusAsyncResult>()))
                 {
+                    Logger.Debug("Callback timeout for correlation ID {0}", keyValue.Key);
                     MessageIdToAsyncResultLookup.Remove(keyValue);
                 }
 

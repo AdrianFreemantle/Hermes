@@ -1,71 +1,20 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 using Hermes.Reflection;
 
-using Topshelf;
-
 namespace Hermes.ServiceHost
 {
     static class HostFactory
-    {
-        private static Type hostableService;
-        private static string serviceName;
-
-        public static Host BuildHost()
-        {
-            GetHostableService();
-
-            RedirectAppDomainConfigFile();
-
-            return Topshelf.HostFactory.New(configurator =>
-            {
-                configurator.SetServiceName(serviceName);
-                configurator.SetDisplayName(serviceName);
-                configurator.SetDescription(GetDescription());
-                configurator.RunAsPrompt();
-
-                configurator.Service<ServiceHost>(s =>
-                {
-                    s.ConstructUsing(() => new ServiceHost(hostableService));
-                    s.WhenStarted(tc => tc.Start());
-                    s.WhenStopped(tc => tc.Stop());
-                });
-            });
-        }
-
-        private static void RedirectAppDomainConfigFile()
-        {
-            var endpointFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, hostableService.Assembly.ManifestModule.Name);
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", endpointFile + ".config");
-        }
-
-        private static string GetDescription()
-        {
-            var descriptionAttribute = hostableService
-                .Assembly
-                .GetCustomAttributes(typeof (AssemblyDescriptionAttribute), false)
-                .OfType<AssemblyDescriptionAttribute>()
-                .FirstOrDefault();
-
-            return descriptionAttribute != null ? descriptionAttribute.Description : serviceName;
-        }
-
-        private static void GetHostableService()
+    {       
+        public static HostableService GetHostableService()
         {
             Type[] serviceTypes = FindAllServiceTypes();
 
             ValidateThatOnlyOneServiceIsPresent(serviceTypes);
             ValidateServiceTypeImplementsDefaultConstructor(serviceTypes.First());
-            hostableService = serviceTypes.First();
-
-            serviceName = String.Format("Hermes.{0}", hostableService.Assembly.GetName().Name);
+            return new HostableService(serviceTypes.First());
         }
       
         private static Type[] FindAllServiceTypes()
@@ -104,6 +53,6 @@ namespace Hermes.ServiceHost
                     String.Format("Service type {0} must implement a default constructor for it to be hostable",
                         serviceType.FullName));
             }
-        }        
+        }
     }
 }

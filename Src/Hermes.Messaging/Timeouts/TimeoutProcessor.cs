@@ -54,8 +54,6 @@ namespace Hermes.Messaging.Timeouts
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                Logger.Debug("Checking for next timeout");
-
                 if (TryProcessNextTimeout())
                 {
                     backoff.Reset();
