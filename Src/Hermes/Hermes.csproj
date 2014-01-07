@@ -50,6 +50,7 @@
     <Compile Include="ActionCollection.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
     <Compile Include="IService.cs" />
+    <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="PagedResult.cs" />
     <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Ioc\IRegisterDependencies.cs" />
