@@ -7,6 +7,7 @@ using Hermes.Messaging.Routing;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
+using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration
 {
@@ -24,6 +25,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Dispatcher>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<TimeoutProcessor>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<TypeMapper>(DependencyLifecycle.SingleInstance);
 
             containerBuilder.RegisterType<MessageErrorModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<AuditModule>(DependencyLifecycle.SingleInstance);

@@ -27,6 +27,9 @@ namespace Hermes.Messaging.Timeouts
         {
             PurgeQueueIfRequired();
 
+            if(Settings.IsSendOnly)
+                return;
+
             tokenSource = new CancellationTokenSource();
             Logger.Verbose("Starting Timeout Processor");
             CancellationToken token = tokenSource.Token;

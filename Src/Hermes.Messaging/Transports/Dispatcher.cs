@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Hermes.Logging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
 using Hermes.Messaging.ProcessManagement;
 
@@ -17,19 +15,9 @@ namespace Hermes.Messaging.Transports
 
         public virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
-            Type[] contracts = GetMessageContracts(message);
+            Type[] contracts = message.GetContracts();
             HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlerDetails(contracts);
             DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
-        }
-
-        protected virtual Type[] GetMessageContracts(object message)
-        {
-            var messageType = message.GetType();
-
-            Type[] contracts = Settings.IsCommandType(messageType)
-                ? new[] { messageType }
-                : message.GetType().GetInterfaces().Union(new[] { messageType }).ToArray();
-            return contracts;
         }
 
         protected virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator, IEnumerable<HandlerCacheItem> handlerDetails, Type[] contracts)

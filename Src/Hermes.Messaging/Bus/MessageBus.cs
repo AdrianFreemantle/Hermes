@@ -26,69 +26,67 @@ namespace Hermes.Messaging.Bus
             this.callBackManager = callBackManager;
         }
 
-        public void Defer(TimeSpan delay, params object[] messages)
+        public void Defer(TimeSpan delay, object command)
         {
-            Defer(delay, Guid.Empty, messages);
+            Defer(delay, Guid.Empty, command);
         }
 
-        public void Defer(TimeSpan delay, Guid correlationId, params object[] messages)
+        public void Defer(TimeSpan delay, Guid correlationId, object command)
         {
             if (Settings.IsClientEndpoint)
             {
                 throw new NotSupportedException("Client endpoints may not defer messages.");
             }
 
-            if (messages == null || messages.Length == 0)
-                throw new InvalidOperationException("Cannot send an empty set of messages.");
+            if (command == null)
+                throw new InvalidOperationException("Cannot send an null set of messages.");
 
-            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
-            var outgoingMessage = OutgoingMessageContext.BuildDeferredCommand(destination, correlationId, delay, messages);
+            Address destination = messageRouter.GetDestinationFor(command.GetType());
+            var outgoingMessage = OutgoingMessageContext.BuildDeferredCommand(destination, correlationId, delay, command);
             messageTransport.SendMessage(outgoingMessage);
         }
 
-        public ICallback Send(params object[] messages)
+        public ICallback Send(object command)
         {
-            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
-            return Send(destination, messages);
+            Address destination = messageRouter.GetDestinationFor(command.GetType());
+            return Send(destination, command);
         }
 
-        public ICallback Send(Address address, params object[] messages)
+        public ICallback Send(Address address, object command)
         {
-            return Send(address, Guid.Empty, messages);
+            return Send(address, Guid.Empty, command);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, params object[] messages)
+        public ICallback Send(Address address, Guid corrolationId, object command)
         {
-            return SendMessages(address, corrolationId, TimeSpan.MaxValue, messages);
+            return SendMessages(address, corrolationId, TimeSpan.MaxValue, command);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, params object[] messages)
+        public ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, object command)
         {
-            return SendMessages(address, corrolationId, timeToLive, messages);
+            return SendMessages(address, corrolationId, timeToLive, command);
         }
 
-        public ICallback Send(Guid corrolationId, params object[] messages)
+        public ICallback Send(Guid corrolationId, object command)
         {
-            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
-            return SendMessages(destination, corrolationId, TimeSpan.MaxValue, messages);
+            Address destination = messageRouter.GetDestinationFor(command.GetType());
+            return SendMessages(destination, corrolationId, TimeSpan.MaxValue, command);
         }
 
-        public ICallback Send(Guid corrolationId, TimeSpan timeToLive, params object[] messages)
+        public ICallback Send(Guid corrolationId, TimeSpan timeToLive, object command)
         {
-            Address destination = messageRouter.GetDestinationFor(messages.First().GetType());
-            return SendMessages(destination, corrolationId, timeToLive, messages);
+            Address destination = messageRouter.GetDestinationFor(command.GetType());
+            return SendMessages(destination, corrolationId, timeToLive, command);
         }
 
-        private ICallback SendMessages(Address address, Guid correlationId, TimeSpan timeToLive,
-            params object[] messages)
+        private ICallback SendMessages(Address address, Guid correlationId, TimeSpan timeToLive, object command)
         {
-
-            var outgoingMessage = OutgoingMessageContext.BuildCommand(address, correlationId, timeToLive, messages);
+            var outgoingMessage = OutgoingMessageContext.BuildCommand(address, correlationId, timeToLive, command);
             messageTransport.SendMessage(outgoingMessage);
             return callBackManager.SetupCallback(outgoingMessage.CorrelationId);
         }
 
-        public void Reply(params object[] messages)
+        public void Reply(object message)
         {
             var currentMessage = messageTransport.CurrentMessage;
 
@@ -99,7 +97,7 @@ namespace Hermes.Messaging.Bus
                 throw new InvalidOperationException(
                     "Reply was called but the current message does not have a reply to address.");
 
-            var outgoingMessage = OutgoingMessageContext.BuildReply(currentMessage, messages);
+            var outgoingMessage = OutgoingMessageContext.BuildReply(currentMessage, message);
             messageTransport.SendMessage(outgoingMessage);
         }
 
@@ -118,14 +116,14 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(outgoingMessage);
         }
 
-        public void Publish(params object[] messages)
+        public void Publish(object @event)
         {
-            Publish(Guid.Empty, messages);
+            Publish(Guid.Empty, @event);
         }
 
-        public void Publish(Guid correlationId, params object[] messages)
+        public void Publish(Guid correlationId, object @event)
         {
-            var outgoingMessage = OutgoingMessageContext.BuildEvent(correlationId, messages);
+            var outgoingMessage = OutgoingMessageContext.BuildEvent(correlationId, @event);
             messageTransport.SendMessage(outgoingMessage);
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 
@@ -14,7 +16,9 @@ namespace IntegrationTest.Client
 
         static void Main(string[] args)
         {
-            Thread.Sleep(20000); //give worker time to init database etc
+            Thread.Sleep(10000); //give worker time to init database etc
+
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
 
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
@@ -25,7 +29,7 @@ namespace IntegrationTest.Client
 
             for (int i = 0; i < NumberOfMessageToSend; i++)
             {
-                //Console.ReadKey();
+                Console.ReadKey();
                 bus.Send(new AddRecordToDatabase(i + 1));
                 Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }

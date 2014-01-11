@@ -1,44 +1,119 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
+using Hermes.Reflection;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Hermes.Messaging.Serialization;
 
 using Shouldly;
 
 namespace Hermes.Serialization.Json.Tests
 {
-    public interface IEventContract
+    public interface IEvent
     {
-        Guid Id { get; set; }
     }
 
-    public class EventMessage : IEventContract
+    public interface IVersion1 : IEvent
     {
-        public Guid Id { get; set; }
+        Guid MessageId { get; }
+    }
+
+    public interface IVersion2 : IVersion1
+    {
+        string Text { get; }
+    }
+
+    public interface IVersion3 : IVersion2
+    {
+        DateTime Sent { get; }
+    }
+
+    [DataContract]
+    public class MyEventMessage : IVersion3
+    {
+        [DataMember]
+        public DateTime Sent { get; private set; }
+
+        [DataMember]
+        public Guid MessageId { get; private set; }
+
+        [DataMember]
+        public string Text { get; private set; }
+
+        protected MyEventMessage()
+        {
+        }
+
+        public MyEventMessage(DateTime sent, Guid messageId, string text)
+        {
+            Sent = sent;
+            MessageId = messageId;
+            Text = text;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var @event = obj as IEvent;
+            var version1 = obj as IVersion1;
+            var version2 = obj as IVersion2;
+            var version3 = obj as IVersion3;
+
+            if (@event == null || version1 == null || version2 == null || version3 == null)
+                return false;
+
+            return version1.MessageId == MessageId
+                && version2.Text == Text
+                && version3.Sent == Sent;
+        }
     }
 
     [TestClass]
     public class UnitTest1
     {
-        readonly JsonMessageSerializer serializer = new JsonMessageSerializer();
+        static JsonMessageSerializer serializer;
+        static MyEventMessage testMessage;
+        static TypeMapper messageMapper;
+
+        [ClassInitialize]
+        public static void Startup(TestContext context)
+        {
+            messageMapper = new TypeMapper();
+            serializer = new JsonMessageSerializer(messageMapper);
+
+            testMessage = new MyEventMessage(DateTime.Now, Guid.NewGuid(), "Hello there");
+
+            messageMapper.Initialize(testMessage.GetType().GetInterfaces());
+        }
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestMethod4()
         {
-            var message1 = new EventMessage { Id = Guid.NewGuid() };
-            var message2 = new EventMessage { Id = Guid.NewGuid() };
+            byte[] serialized = serializer.Serialize(testMessage);
+            object restored = serializer.Deserialize(serialized, testMessage.GetType());
+            testMessage.Equals(restored).ShouldBe(true);
+        }
 
-            byte[] serialized = serializer.Serialize(new object[] {message1, message2});
+        [TestMethod]
+        public void TestMethod5()
+        {
+            byte[] serialized = serializer.Serialize(testMessage);
+            object restored = serializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
+            testMessage.Equals(restored).ShouldBe(true);
+        }
 
-            var text = Encoding.UTF8.GetString(serialized);
-
-            object[] deserialized = serializer
-                .Deserialize(serialized)
-                .ToArray();
-
-            //deserialized[0].Id.ShouldBe(message1.Id);
-            //deserialized[1].Id.ShouldBe(message2.Id);
+        [TestMethod]
+        public void TestMethod6()
+        {
+            byte[] serialized = serializer.Serialize(testMessage);
+            object restored = serializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
+            testMessage.Equals(restored).ShouldBe(true);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Error;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
 
             configuration
                 .FirstLevelRetryPolicy(2)
@@ -64,9 +65,28 @@ namespace IntegrationTest.Endpoint
         }
     }
 
+    public class RecordAddedToDatabase : IRecordAddedToDatabase_V2
+    {
+        public Guid RecordId { get; private set; }
+        public List<Guid> RandomData { get; private set; }
+
+        public RecordAddedToDatabase(Guid recordId)
+        {
+            RecordId = recordId;
+
+            RandomData = new List<Guid>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                RandomData.Add(Guid.NewGuid());
+            }
+        }
+    }
+
     public class Handler 
         : IHandleMessage<AddRecordToDatabase>
-        , IHandleMessage<RecordAddedToDatabase>
+        , IHandleMessage<IRecordAddedToDatabase>
+        , IHandleMessage<IRecordAddedToDatabase_V2>
     {
         private readonly IRepositoryFactory repositoryFactory;
         private readonly IMessageBus messageBus;
@@ -97,11 +117,16 @@ namespace IntegrationTest.Endpoint
             }
         }
 
-        public void Handle(RecordAddedToDatabase message)
+        public void Handle(IRecordAddedToDatabase message)
         {
             System.Threading.Thread.Sleep(10);
             var repository = repositoryFactory.GetRepository<RecordLog>();
             repository.Add(new RecordLog { RecordId = message.RecordId });
+        }
+
+        public void Handle(IRecordAddedToDatabase_V2 message)
+        {
+            System.Threading.Thread.Sleep(10);
         }
     }
 }

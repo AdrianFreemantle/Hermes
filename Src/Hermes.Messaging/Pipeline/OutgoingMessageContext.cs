@@ -13,12 +13,12 @@ namespace Hermes.Messaging.Pipeline
     {
         private readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
         private readonly Guid messageId;
-        private object[] outgoingMessages = new object[0];
+        private object outgoingMessage;
         private Guid correlationId;
         private TimeSpan timeToLive = TimeSpan.MaxValue;
         private Address replyToAddress = Address.Local;
         private Address destination = Address.Undefined;
-        private Func<object[], byte[]> serializeBodyFunction;
+        private Func<object, byte[]> serializeBodyFunction;
         private Func<OutgoingMessageContext, Dictionary<string, string>> buildHeaderFunction;
         
         public MessageType OutgoingMessageType { get; protected set; }
@@ -30,7 +30,7 @@ namespace Hermes.Messaging.Pipeline
             get { return messageId; }
         }
 
-        public object[] OutgoingMessages { get { return outgoingMessages; } }
+        public object OutgoingMessage { get { return outgoingMessage; } }
 
         public Guid CorrelationId
         {
@@ -57,14 +57,14 @@ namespace Hermes.Messaging.Pipeline
             messageId = SequentialGuid.New();
         }
 
-        public static OutgoingMessageContext BuildDeferredCommand(Address address, Guid correlationId, TimeSpan delay, params object[] messages)
+        public static OutgoingMessageContext BuildDeferredCommand(Address address, Guid correlationId, TimeSpan delay, object message)
         {
-            MessageRuleValidation.ValidateIsCommandType(messages);
+            MessageRuleValidation.ValidateIsCommandType(message);
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
                 OutgoingMessageType = MessageType.Command,
-                outgoingMessages = messages,
+                outgoingMessage = message,
                 destination = address
             };
 
@@ -77,15 +77,15 @@ namespace Hermes.Messaging.Pipeline
             return context;
         }
 
-        public static OutgoingMessageContext BuildCommand(Address address, Guid correlationId, TimeSpan timeToLive, params object[] messages)
+        public static OutgoingMessageContext BuildCommand(Address address, Guid correlationId, TimeSpan timeToLive, object message)
         {
-            MessageRuleValidation.ValidateIsCommandType(messages);
+            MessageRuleValidation.ValidateIsCommandType(message);
 
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
                 OutgoingMessageType = MessageType.Command,
-                outgoingMessages = messages,
+                outgoingMessage = message,
                 destination = address,
                 timeToLive = timeToLive
             };
@@ -93,30 +93,30 @@ namespace Hermes.Messaging.Pipeline
             return context;
         }
 
-        public static OutgoingMessageContext BuildEvent(Guid correlationId, params object[] messages)
+        public static OutgoingMessageContext BuildEvent(Guid correlationId, object message)
         {
-            MessageRuleValidation.ValidateIsEventType(messages);
+            MessageRuleValidation.ValidateIsEventType(message);
 
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
                 OutgoingMessageType = MessageType.Event,
-                outgoingMessages = messages
+                outgoingMessage = message
             };
 
             return context;
         }
 
-        public static OutgoingMessageContext BuildReply(IMessageContext currentMessage, params object[] messages)
+        public static OutgoingMessageContext BuildReply(IMessageContext currentMessage, object message)
         {
-            MessageRuleValidation.ValidateIsMessageType(messages);
+            MessageRuleValidation.ValidateIsMessageType(message);
 
             var context = new OutgoingMessageContext
             {
                 correlationId = currentMessage.CorrelationId,
                 destination = currentMessage.ReplyToAddress,
                 OutgoingMessageType = MessageType.Reply,
-                outgoingMessages = messages
+                outgoingMessage = message
             };
 
             return context;
@@ -156,22 +156,18 @@ namespace Hermes.Messaging.Pipeline
 
         public IEnumerable<Type> GetMessageContracts()
         {
-            IEnumerable<Type> messageTypes = outgoingMessages
-                .SelectMany(o => o.GetType().GetInterfaces())
-                .Union(outgoingMessages.Select(o => o.GetType()));
-
-            return messageTypes;
+            return outgoingMessage.GetContracts();
         }
 
         public TransportMessage GetTransportMessage()
         {
-            var body = serializeBodyFunction(OutgoingMessages);
+            var body = serializeBodyFunction(OutgoingMessage);
             var headers = buildHeaderFunction(this);
 
             return new TransportMessage(MessageId, CorrelationId, ReplyToAddress, TimeToLive, headers, body);
         }
 
-        public void MessageSerializationFunction(Func<object[], byte[]> serializeBody)
+        public void MessageSerializationFunction(Func<object, byte[]> serializeBody)
         {
             serializeBodyFunction = serializeBody;
         }

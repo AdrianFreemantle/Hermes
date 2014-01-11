@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
 
 using Hermes.Logging;
 using Hermes.Pipes;
+
+using Hermes.Messaging.Serialization;
 
 namespace Hermes.Messaging.Pipeline.Modules
 {
@@ -23,11 +24,11 @@ namespace Hermes.Messaging.Pipeline.Modules
             return next();
         }
 
-        public byte[] SerializeMessages(object[] messages)
+        public byte[] SerializeMessages(object message)
         {
-            if (messages.Any())
+            if (message != null)
             {
-                return messageSerializer.Serialize(messages);
+                return messageSerializer.Serialize(message);
             }
              
             return new byte[0];

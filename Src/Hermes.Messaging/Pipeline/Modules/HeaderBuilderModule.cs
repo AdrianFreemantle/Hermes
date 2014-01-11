@@ -24,7 +24,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             var headers = new Dictionary<string, string>();
 
             ConvertHeaderValues(context.Headers, headers);
-            AddMessageTypeToHeader(context.OutgoingMessages, headers);
+            AddMessageTypeToHeader(context.OutgoingMessage, headers);
             headers.Add(HeaderKeys.SentTime, DateTime.UtcNow.ToWireFormattedString());
             
             return headers;
@@ -38,12 +38,12 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
         }
 
-        private void AddMessageTypeToHeader(object[] messages, Dictionary<string, string> headers)
+        private void AddMessageTypeToHeader(object message, Dictionary<string, string> headers)
         {
-            if (messages.Any())
+            if (message != null)
             {
-                string messageTypes = String.Join(";", messages.Select(o => o.GetType().FullName));
-                headers.Add(HeaderKeys.MessageTypes, messageTypes);
+                string messageType = String.Join(";", message.GetContracts().Select(type => type.FullName));
+                headers.Add(HeaderKeys.MessageType, messageType);
             }
         }
     }

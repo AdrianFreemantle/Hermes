@@ -21,22 +21,14 @@ namespace Hermes.Messaging.Pipeline.Modules
         public bool Invoke(OutgoingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Mutating message body in message {0}", input);
-            MutateMessages(input.OutgoingMessages);
+            MutateMessage(input.OutgoingMessage);
             return next();
         }
 
         public bool Invoke(IncomingMessageContext input, Func<bool> next)
         {
-            MutateMessages(input.Messages);
+            MutateMessage(input.Message);
             return next();
-        }
-
-        private void MutateMessages(IEnumerable<object> messages)
-        {
-            foreach (var message in messages)
-            {
-                MutateMessage(message);
-            }
         }
 
         private void MutateMessage(object message)

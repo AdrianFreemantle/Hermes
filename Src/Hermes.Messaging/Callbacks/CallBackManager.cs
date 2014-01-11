@@ -51,7 +51,7 @@ namespace Hermes.Messaging.Callbacks
             }
 
             Logger.Debug("Calling callback for correlation ID {0}", context.CorrelationId);
-            busAsyncResult.Complete(statusCode, context.Messages);
+            busAsyncResult.Complete(statusCode, context.Message);
         }
 
         public ICallback SetupCallback(Guid correlationId)
