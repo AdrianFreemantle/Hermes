@@ -12,7 +12,7 @@ namespace Hermes.Messaging.Pipeline.Modules
     {
         private readonly static ILog Logger = LogFactory.BuildLogger(typeof(HeaderBuilderModule));
 
-        public bool Invoke(OutgoingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(OutgoingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Building headers for message {0}.", input);
             input.BuildHeaderFunction(BuildMessageHeaders);

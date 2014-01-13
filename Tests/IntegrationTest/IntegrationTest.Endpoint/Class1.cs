@@ -89,9 +89,9 @@ namespace IntegrationTest.Endpoint
         , IHandleMessage<IRecordAddedToDatabase_V2>
     {
         private readonly IRepositoryFactory repositoryFactory;
-        private readonly IMessageBus messageBus;
+        private readonly IInMemoryBus messageBus;
 
-        public Handler(IRepositoryFactory repositoryFactory, IMessageBus messageBus)
+        public Handler(IRepositoryFactory repositoryFactory, IInMemoryBus messageBus)
         {
             this.repositoryFactory = repositoryFactory;
             this.messageBus = messageBus;
@@ -109,17 +109,13 @@ namespace IntegrationTest.Endpoint
                     RecordNumber = message.RecordNumber
                 });
 
-            messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
-
-            if (DateTime.Now.Ticks % 2 == 0)
-            {
-                throw new Exception("Boom!!!!!");
-            }
+            messageBus.Raise(new RecordAddedToDatabase(message.RecordId));
         }
 
         public void Handle(IRecordAddedToDatabase message)
         {
-            System.Threading.Thread.Sleep(10);
+            var recordRepository = repositoryFactory.GetRepository<Record>();
+
             var repository = repositoryFactory.GetRepository<RecordLog>();
             repository.Add(new RecordLog { RecordId = message.RecordId });
         }

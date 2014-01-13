@@ -17,7 +17,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.messageSerializer = messageSerializer;
         }
 
-        public bool Invoke(OutgoingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(OutgoingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Serializing message body for message {0}", input);
             input.MessageSerializationFunction(SerializeMessages);

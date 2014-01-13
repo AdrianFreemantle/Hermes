@@ -24,27 +24,45 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.typeMapper = typeMapper;
         }
 
-        public bool Invoke(IncomingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Deserializing body for message {0}", input);
 
-            HeaderValue messageTypeHeader;
-
-            if (input.IsControlMessage())
-                return next();
-
-            if(input.TryGetHeaderValue(HeaderKeys.MessageType, out messageTypeHeader))
+            if (!input.IsControlMessage())
             {
-                var mainType = messageTypeHeader.Value.Split(';').First();
-                var messageType = typeMapper.GetMappedTypeFor(mainType);
-                input.SetMessage(messageSerializer.Deserialize(input.TransportMessage.Body, messageType));
-            }
-            else
-            {
-                throw new MessageHeaderException("Missing header value.", HeaderKeys.MessageType, "Hermes.Messaging");
+                DeserializeMessage(input, ExtractMessageType(input));
             }
 
             return next();
+        }
+
+        private HeaderValue ExtractMessageType(IncomingMessageContext input)
+        {
+            HeaderValue messageTypeHeader;
+
+            if (input.TryGetHeaderValue(HeaderKeys.MessageType, out messageTypeHeader))
+            {                
+                return messageTypeHeader;
+            }
+
+            throw new MessageHeaderException("Missing header value.", HeaderKeys.MessageType, "Hermes.Messaging");
+        }
+
+        private void DeserializeMessage(IncomingMessageContext input, HeaderValue messageTypeHeader)
+        {
+            foreach (var contractType in messageTypeHeader.Value.Split(';'))
+            {
+                var messageType = typeMapper.GetMappedTypeFor(contractType);
+
+                if (messageType != null)
+                {
+                    var message = messageSerializer.Deserialize(input.TransportMessage.Body, messageType);
+                    input.SetMessage(message);
+                    return;
+                }
+            }
+
+            throw new TypeLoadException(String.Format("Unable to find any type that implements one of the following contracts: {0}", messageTypeHeader.Value));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.dispatcher = dispatcher;
         }
 
-        public bool Invoke(IncomingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
         {
             if (!input.IsControlMessage())
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using Hermes;
+using Hermes.Messaging;
 
 namespace IntegrationTest.Contracts
 {
