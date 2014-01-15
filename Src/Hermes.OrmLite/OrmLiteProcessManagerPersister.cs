@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Linq.Expressions;
+
 using Hermes.Messaging;
 using ServiceStack.OrmLite;
 
@@ -50,6 +52,11 @@ namespace Hermes.OrmLite
             {
                 return null;
             }
+        }
+
+        public T Find<T>(Expression<Func<T, bool>> expression) where T : class, IContainProcessManagerData, new()
+        {
+            return connectionFactory.Run(c => c.FirstOrDefault(expression));
         }
     }
 }

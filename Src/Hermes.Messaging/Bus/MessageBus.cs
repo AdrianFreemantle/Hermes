@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq;
 
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
-using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Bus
 {

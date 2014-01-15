@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace Hermes.Messaging
 {
@@ -24,5 +25,7 @@ namespace Hermes.Messaging
         /// in the persistence store.
         /// </summary>
         void Complete<T>(Guid processId) where T : class, IContainProcessManagerData, new();
+
+        T Find<T>(Expression<Func<T, bool>> expression) where T : class, IContainProcessManagerData, new();
     }
 }

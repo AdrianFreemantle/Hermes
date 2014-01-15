@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 using Hermes.Messaging;
 
@@ -35,6 +37,12 @@ namespace Hermes.EntityFramework.ProcessManagager
             var repository = repositoryFactory.GetRepository<T>();
             var entity = repository.Get(processId);
             repository.Remove(entity);
-        }         
+        }
+
+        public T Find<T>(Expression<Func<T, bool>> expression) where T : class, IContainProcessManagerData, new()
+        {
+            var repository = repositoryFactory.GetRepository<T>();
+            return repository.FirstOrDefault(expression);
+        }
     }
 }
