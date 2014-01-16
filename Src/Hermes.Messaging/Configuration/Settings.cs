@@ -18,11 +18,9 @@ namespace Hermes.Messaging.Configuration
         private static readonly Address errorAddress = Address.Parse("Error");
         private static readonly Address auditAddress = Address.Parse("Audit");
         private static IContainer rootContainer;
-        private static TimeSpan firstLevelRetryDelay = TimeSpan.FromMilliseconds(50);
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
 
         private static int numberOfWorkers = 1;
-        private static bool isSendOnly;
 
         static Settings()
         {
@@ -123,11 +121,6 @@ namespace Hermes.Messaging.Configuration
         internal static Func<Type, bool> IsEventType { get; set; }
 
         public static bool FlushQueueOnStartup { get; internal set; }
-
-        public static bool IsSendOnly
-        {
-            get { return isSendOnly; }
-            internal set { isSendOnly = value; }
-        }
+        public static bool IsSendOnly { get; internal set; }
     }
 }

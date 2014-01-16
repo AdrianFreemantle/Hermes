@@ -18,7 +18,6 @@ namespace Hermes.Serialization.Json
             {
                 containerBuilder.RegisterType<JsonObjectSerializer>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
-                containerBuilder.RegisterType<JsonMessageSerializer>(DependencyLifecycle.SingleInstance);
             }
         }
     }

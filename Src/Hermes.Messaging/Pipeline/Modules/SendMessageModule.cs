@@ -22,7 +22,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.publisher = publisher;
         }
 
-        public bool Invoke(OutgoingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(OutgoingMessageContext input, Func<bool> next)
         {
             switch (input.OutgoingMessageType)
             {

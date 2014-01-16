@@ -20,7 +20,7 @@ namespace Hermes.Messaging.Pipeline
             Null = new IncomingMessageContext(emptyMessage, new DisposedProvider());
         }
 
-        public object[] Messages { get; protected set; }
+        public object Message { get; protected set; }
 
         public Guid MessageId
         {
@@ -67,9 +67,9 @@ namespace Hermes.Messaging.Pipeline
             return false;
         }
 
-        public void SetMessages(object[] messages)
+        public void SetMessage(object message)
         {
-            Messages = messages;
+            Message = message;
         }
 
         public override int GetHashCode()

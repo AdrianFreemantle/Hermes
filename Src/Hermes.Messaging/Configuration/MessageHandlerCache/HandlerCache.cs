@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Hermes.Logging;
-using Hermes.Messaging.Transports;
+using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
@@ -46,7 +45,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 
         public static bool Contains(Type handlerType, Type messageContract)
         {
-            return handlerDetails.Any(detail => detail.ContainsHandlerFor(handlerType));
+            return handlerDetails.Any(detail => detail.HandlerType == handlerType && detail.ContainsHandlerFor(handlerType));
         }
 
         public static IEnumerable<Type> GetAllHandlerTypes()
@@ -56,7 +55,9 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 
         public static IEnumerable<Type> GetAllHandledMessageContracts()
         {
-            return handlerDetails.SelectMany(handler => handler.GetHandledMessageContracts());
+            return handlerDetails
+                .SelectMany(handler => handler.GetHandledMessageContracts())
+                .Distinct(new TypeComparer());
         }
     }
 }

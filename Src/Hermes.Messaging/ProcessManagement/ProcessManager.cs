@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace Hermes.Messaging.ProcessManagement
 {
@@ -15,6 +16,11 @@ namespace Hermes.Messaging.ProcessManagement
         protected internal bool IsComplete { get; protected set; }
         protected internal bool IsNew { get; protected set; }
 
+        protected virtual void Begin()
+        {
+            Begin(SequentialGuid.New());
+        }
+
         protected virtual void Begin(Guid id)
         {
             State = new T
@@ -28,6 +34,16 @@ namespace Hermes.Messaging.ProcessManagement
             IsNew = true;
         }
 
+        protected virtual void Continue(Expression<Func<T, bool>> expression)
+        {
+            State = ProcessManagerPersistence.Find(expression);
+
+            if (State == null)
+            {
+                throw new ProcessManagerDataNotFoundException(this);
+            }
+        }
+
         protected virtual void Continue(Guid id)
         {
             State = ProcessManagerPersistence.Get<T>(id);
@@ -38,17 +54,23 @@ namespace Hermes.Messaging.ProcessManagement
             }
         }
 
+        protected virtual void BeginOrContinue(Expression<Func<T, bool>> expression)
+        {
+            State = ProcessManagerPersistence.Find(expression);
+
+            if (State == null)
+            {
+                Begin();
+            }
+        }
+
         protected virtual void BeginOrContinue(Guid id)
         {
-            var state = ProcessManagerPersistence.Get<T>(id);
+            State = ProcessManagerPersistence.Get<T>(id);
 
-            if (state == null)
+            if (State == null)
             {
                 Begin(id);
-            }
-            else
-            {
-                State = state;
             }
         }
 

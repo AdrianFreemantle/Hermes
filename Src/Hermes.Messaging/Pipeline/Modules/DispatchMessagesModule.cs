@@ -15,16 +15,13 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.dispatcher = dispatcher;
         }
 
-        public bool Invoke(IncomingMessageContext input, Func<bool> next)
+        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
         {
             if (!input.IsControlMessage())
             {
                 Logger.Debug("Dispatching message {0} to handlers.", input);
-
-                foreach (var message in input.Messages)
-                {                    
-                    dispatcher.DispatchToHandlers(message, input.ServiceLocator);
-                }
+               
+                dispatcher.DispatchToHandlers(input.Message, input.ServiceLocator);
             }
 
             return next();

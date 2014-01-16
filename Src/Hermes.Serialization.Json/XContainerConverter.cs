@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Hermes.Serialization.Json
 {
-    class XContainerConverter : JsonConverter
+    public class XContainerConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -21,7 +21,8 @@ namespace Hermes.Serialization.Json
             writer.WriteValue(container.ToString(SaveOptions.DisableFormatting));
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(
+            JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null)
             {
@@ -38,8 +39,7 @@ namespace Hermes.Serialization.Json
                         reader.Value));
             }
 
-            string value = (string)reader.Value;
-
+            var value = (string)reader.Value;
             if (objectType == typeof(XDocument))
             {
                 try

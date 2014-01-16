@@ -62,12 +62,14 @@
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
     <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
+    <Compile Include="Serialization\MessageSerializationExtensions.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCacheItem.cs" />
     <Compile Include="Pipeline\Modules\AuditModule.cs" />
     <Compile Include="Pipeline\Modules\CallBackHandlerModule.cs" />
     <Compile Include="Pipeline\Modules\DispatchMessagesModule.cs" />
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
+    <Compile Include="MessageExtensions.cs" />
     <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />
     <Compile Include="Pipeline\Modules\MessageMutatorModule.cs" />
     <Compile Include="Transports\OutgoingMessageUnitOfWork.cs" />
@@ -107,7 +109,6 @@
     <Compile Include="ISerializeMessages.cs" />
     <Compile Include="ITransportMessages.cs" />
     <Compile Include="Transports\MessageRuleValidation.cs" />
-    <Compile Include="Configuration\DefaultSerializationBinder.cs" />
     <Compile Include="Storage\MsSql\SqlCommands.cs" />
     <Compile Include="Storage\MsSql\SqlSubscriptionStorage.cs" />
     <Compile Include="Storage\MsSql\SqlTimeoutStorage.cs" />

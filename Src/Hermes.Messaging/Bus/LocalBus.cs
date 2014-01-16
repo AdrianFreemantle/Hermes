@@ -30,9 +30,9 @@ namespace Hermes.Messaging.Bus
             this.dispatcher = dispatcher;
         }
 
-        public void Execute(params object[] messages)
+        public void Execute(object message)
         {
-            if (messages == null || messages.Length == 0)
+            if (message == null)
             {
                 return;
             }
@@ -54,11 +54,11 @@ namespace Hermes.Messaging.Bus
 
             try
             {
-                MessageRuleValidation.ValidateIsCommandType(messages);
+                MessageRuleValidation.ValidateIsCommandType(message);
 
                 using (IContainer scope = Settings.RootContainer.BeginLifetimeScope())
                 {
-                    TryProcessMessages(messages, scope);
+                    TryProcessMessages(message, scope);
                 }
             }
             finally
@@ -67,27 +67,19 @@ namespace Hermes.Messaging.Bus
             }
         }
 
-        private void TryProcessMessages(IEnumerable<object> messages, IServiceLocator serviceLocator)
+        private void TryProcessMessages(object message, IServiceLocator serviceLocator)
         {
             var unitsOfWork = serviceLocator.GetAllInstances<IUnitOfWork>().ToArray();
 
             try
             {
-                DispatchToHandlers(messages, serviceLocator);
+                dispatcher.DispatchToHandlers(message, serviceLocator);
                 CommitUnitsOfWork(unitsOfWork);
             }
             catch
             {
                 RollBackUnitsOfWork(unitsOfWork);
                 throw;
-            }
-        }
-
-        private void DispatchToHandlers(IEnumerable<object> messages, IServiceLocator serviceLocator)
-        {
-            foreach (var message in messages)
-            {
-                dispatcher.DispatchToHandlers(message, serviceLocator);
             }
         }
 
@@ -111,14 +103,10 @@ namespace Hermes.Messaging.Bus
             }
         }
 
-        void IInMemoryBus.Raise(params object[] events)
+        void IInMemoryBus.Raise(object @event)
         {
-            MessageRuleValidation.ValidateIsEventType(events);
-
-            foreach (var @event in events)
-            {
-                dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
-            }
+            MessageRuleValidation.ValidateIsEventType(@event);
+            dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
         }
     }
 }

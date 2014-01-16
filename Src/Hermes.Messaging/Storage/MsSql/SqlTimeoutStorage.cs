@@ -7,6 +7,7 @@ using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.Serialization;
+using Hermes.Messaging.Serialization;
 
 namespace Hermes.Messaging.Storage.MsSql
 {
@@ -73,11 +74,11 @@ namespace Hermes.Messaging.Storage.MsSql
             }
         }
 
-        public void Add(Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers)
+        public void Add(Guid correlationId, TimeSpan timeToLive, object message, IDictionary<string, string> headers)
         {
-            Mandate.ParameterNotNullOrEmpty(messages, "messages");
+            Mandate.ParameterNotNull(message, "messages");
 
-            var serializedMessages = messageSerializer.Serialize(messages);
+            var serializedMessages = messageSerializer.Serialize(message);
 
             var timeoutData = new TimeoutData
             {

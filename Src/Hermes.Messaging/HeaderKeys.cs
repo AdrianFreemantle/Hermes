@@ -2,7 +2,7 @@
 {
     public class HeaderKeys
     {
-        public const string MessageTypes = "Hermes.MessageTypes";
+        public const string MessageType = "Hermes.MessageType";
         public const string SentTime = "Hermes.SentTime";
         public const string ReceivedTime = "Hermes.ReceivedTime";
         public const string CompletedTime = "Hermes.CompletedTime";

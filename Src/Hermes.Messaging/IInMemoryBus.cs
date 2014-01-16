@@ -5,7 +5,7 @@ namespace Hermes.Messaging
 {
     public interface IInMemoryBus
     {
-        void Execute(params object[] commands);
-        void Raise(params object[] events);
+        void Execute(object command);
+        void Raise(object @event);
     }
 }

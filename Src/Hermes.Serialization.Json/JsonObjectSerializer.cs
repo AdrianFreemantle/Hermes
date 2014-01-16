@@ -44,7 +44,7 @@ namespace Hermes.Serialization.Json
 
         public string GetContentType()
         {
-            return "application/json";
+            return ContentTypes.Json;
         } 
     }
 }

@@ -87,7 +87,7 @@ namespace Hermes.Messaging.Callbacks
         /// </summary>
         /// <param name="errorCode"></param>
         /// <param name="messages"></param>
-        public void Complete(int errorCode, object[] messages)
+        public void Complete(int errorCode, object message)
         {
             lock (sync)
             {
@@ -95,7 +95,7 @@ namespace Hermes.Messaging.Callbacks
                     return;
 
                 result.ErrorCode = errorCode;
-                result.Messages = messages;
+                result.Messages = message;
                 completed = true;
                 CompleteCallback();
             }

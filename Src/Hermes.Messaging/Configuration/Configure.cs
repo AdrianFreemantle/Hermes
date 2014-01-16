@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Hermes.Ioc;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
+using Hermes.Reflection;
 
 // ReSharper disable CheckNamespace
 // ReSharper disable RedundantExtendsListEntry
@@ -141,10 +143,17 @@ namespace Hermes
         {
             ComponentScanner.Scan(containerBuilder);
 
+            MapMessageTypes();
             RunInitializers();
             SubscribeToEvents();
             CreateQueues();
             StartServices();
+        }
+
+        private static void MapMessageTypes()
+        {
+            var mapper = Settings.RootContainer.GetInstance<ITypeMapper>();
+            mapper.Initialize(HandlerCache.GetAllHandledMessageContracts());
         }
 
         private static void StartServices()
