@@ -29,6 +29,11 @@ namespace Hermes
             }
         }
 
+        public static string SplitCamelCase(this string input)
+        {
+            return Regex.Replace(input, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
+        }
+
         public static string Trim(this string value, string valueToTrim)
         {
             return value.EndsWith(valueToTrim, StringComparison.InvariantCultureIgnoreCase) 
