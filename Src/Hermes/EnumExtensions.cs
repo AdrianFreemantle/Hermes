@@ -57,16 +57,11 @@ namespace Hermes
 
             if (ReferenceEquals(null, attr))
             {
-                return SplitCamelCase(field.Name);
+                return field.Name.SplitCamelCase();
             }
 
             return attr.Description;
-        }
-
-        static string SplitCamelCase(string input)
-        {
-            return System.Text.RegularExpressions.Regex.Replace(input, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim();
-        }
+        }  
 
         private static bool FieldHasIgnoreForSelectListAttribute(FieldInfo field)
         {
