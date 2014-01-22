@@ -61,7 +61,7 @@ namespace Hermes
             }
 
             return attr.Description;
-        }        
+        }  
 
         private static bool FieldHasIgnoreForSelectListAttribute(FieldInfo field)
         {
