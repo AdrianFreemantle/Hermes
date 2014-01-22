@@ -74,7 +74,10 @@ namespace Hermes.Reflection
 
         private void Scan()
         {
-            var baseDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            DirectoryInfo baseDirectory = String.IsNullOrWhiteSpace(AppDomain.CurrentDomain.DynamicDirectory) 
+                ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+                : new DirectoryInfo(AppDomain.CurrentDomain.DynamicDirectory);
+
             Logger.Debug("Scanning assembly files in location {0}", baseDirectory.FullName);
 
             var assemblyFiles = baseDirectory.GetFiles("*.dll", SearchOption.AllDirectories)
