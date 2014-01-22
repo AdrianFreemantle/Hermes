@@ -137,6 +137,7 @@ namespace Hermes.Reflection
             if (disposing)
             {
                 assemblies.Clear();
+                types.Clear();
             }
 
             disposed = true;
