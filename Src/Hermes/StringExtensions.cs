@@ -45,10 +45,5 @@ namespace Hermes
         {
             return characters.Any(value.ToList().Remove);
         }
-
-        public static string SplitCamelCase(this string input)
-        {
-            return Regex.Replace(input, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
-        }
     }
 }
