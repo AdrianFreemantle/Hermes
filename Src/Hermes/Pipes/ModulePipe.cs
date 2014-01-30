@@ -5,13 +5,13 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Pipes
 {
-    public class ModuleChain<T>
+    public class ModulePipe<T>
     {
         private readonly ILog logger;
         private readonly Queue<Type> chain;
         private readonly IServiceLocator serviceLocator;
 
-        public ModuleChain(Queue<Type> chain, IServiceLocator serviceLocator)
+        public ModulePipe(Queue<Type> chain, IServiceLocator serviceLocator)
         {
             logger = LogFactory.BuildLogger(GetType());
             this.chain = chain;
@@ -32,10 +32,23 @@ namespace Hermes.Pipes
 
             var processor = (IModule<T>)serviceLocator.GetInstance(chain.Dequeue());
 
-            logger.Debug("Invoking module {0}", processor.GetType().FullName);
-            var result = processor.ExtractMessage(input, () => InvokeNext(input));
-            logger.Debug("Returning module {0} with result [{1}]", processor.GetType().FullName, result);
-            return result;
+            return TryInvokeNext(input, processor);
+        }
+
+        private bool TryInvokeNext(T input, IModule<T> processor)
+        {
+            try
+            {
+                logger.Debug("Invoking module {0}", processor.GetType().FullName);
+                var result = processor.ExtractMessage(input, () => InvokeNext(input));
+                logger.Debug("Returning module {0} with result [{1}]", processor.GetType().FullName, result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Error on module {0}: {1}", input.GetType().FullName, ex.GetFullExceptionMessage());
+                throw;
+            }
         }
     }
 }

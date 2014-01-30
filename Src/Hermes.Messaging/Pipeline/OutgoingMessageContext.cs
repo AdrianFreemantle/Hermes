@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using Hermes.Logging;
@@ -137,9 +138,9 @@ namespace Hermes.Messaging.Pipeline
             return context;
         }
 
-        public void Process(ModuleStack<OutgoingMessageContext> outgoingPipeline, IServiceLocator serviceLocator)
+        public void Process(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline, IServiceLocator serviceLocator)
         {
-            var pipeline = outgoingPipeline.ToModuleChain(serviceLocator);
+            var pipeline = outgoingPipeline.Build(serviceLocator);
             pipeline.Invoke(this);
         }
 
@@ -157,6 +158,12 @@ namespace Hermes.Messaging.Pipeline
         public IEnumerable<Type> GetMessageContracts()
         {
             return outgoingMessage.GetContracts();
+        }
+
+        public string GetMessageContractsString()
+        {
+            var contracts = GetMessageContracts().Select(type => type.FullName.ToString(CultureInfo.InvariantCulture));
+            return String.Join("; ", contracts);
         }
 
         public TransportMessage GetTransportMessage()
@@ -179,7 +186,7 @@ namespace Hermes.Messaging.Pipeline
 
         public override string ToString()
         {
-            return messageId.ToString();
+            return String.Format("{0} : {1}", messageId, GetMessageContractsString());
         }
 
         public enum MessageType

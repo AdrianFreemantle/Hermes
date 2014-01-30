@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Hermes.Logging;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 
@@ -7,6 +9,7 @@ namespace Hermes.Messaging.Bus
 {
     public class StorageDrivenPublisher : IPublishMessages
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (StorageDrivenPublisher));
         private readonly IStoreSubscriptions subscriptionStorage;
         private readonly ISendMessages messageSender;
 
@@ -22,6 +25,7 @@ namespace Hermes.Messaging.Bus
 
             if (!subscribers.Any())
             {
+                Logger.Debug("No subscribers found for message {0}", outgoingMessage);
                 return false;
             }
 

@@ -4,17 +4,17 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Pipes
 {
-    public class ModuleStack<T>
+    public class ModulePipeFactory<T>
     {
         protected readonly List<Type> ModuleChain = new List<Type>();
 
-        public virtual ModuleStack<T> Add<TProcessor>() where TProcessor : IModule<T>
+        public virtual ModulePipeFactory<T> Add<TProcessor>() where TProcessor : IModule<T>
         {
             ModuleChain.Add(typeof(TProcessor));
             return this;
         }
 
-        public virtual ModuleChain<T> ToModuleChain(IServiceLocator serviceLocator)
+        public virtual ModulePipe<T> Build(IServiceLocator serviceLocator)
         {
             var chain = new Queue<Type>();
 
@@ -23,7 +23,7 @@ namespace Hermes.Pipes
                 chain.Enqueue(type);
             }
 
-            return new ModuleChain<T>(chain, serviceLocator);
+            return new ModulePipe<T>(chain, serviceLocator);
         }
     }
 }

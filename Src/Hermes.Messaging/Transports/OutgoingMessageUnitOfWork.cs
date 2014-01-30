@@ -11,9 +11,9 @@ namespace Hermes.Messaging.Transports
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(OutgoingMessageUnitOfWork)); 
 
         private readonly Queue<OutgoingMessageContext> outgoingMessages = new Queue<OutgoingMessageContext>();
-        private readonly ModuleStack<OutgoingMessageContext> outgoingPipeline;
+        private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
-        public OutgoingMessageUnitOfWork(ModuleStack<OutgoingMessageContext> outgoingPipeline)
+        public OutgoingMessageUnitOfWork(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
         {
             this.outgoingPipeline = outgoingPipeline;
         }

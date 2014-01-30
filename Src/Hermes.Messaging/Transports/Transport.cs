@@ -17,8 +17,8 @@ namespace Hermes.Messaging.Transports
 
         private readonly IReceiveMessages messageReceiver;
         private readonly IContainer container;
-        private readonly ModuleStack<IncomingMessageContext> incommingPipeline;
-        private readonly ModuleStack<OutgoingMessageContext> outgoingPipeline;
+        private readonly ModulePipeFactory<IncomingMessageContext> incommingPipeline;
+        private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
         private readonly ThreadLocal<IncomingMessageContext> currentMessageBeingProcessed = new ThreadLocal<IncomingMessageContext>();
         private readonly ThreadLocal<OutgoingMessageUnitOfWork> outgoingMessages = new ThreadLocal<OutgoingMessageUnitOfWork>();
@@ -31,7 +31,7 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        public Transport(IReceiveMessages messageReceiver, IContainer container, ModuleStack<IncomingMessageContext> incommingPipeline, ModuleStack<OutgoingMessageContext> outgoingPipeline)
+        public Transport(IReceiveMessages messageReceiver, IContainer container, ModulePipeFactory<IncomingMessageContext> incommingPipeline, ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
         {
             this.messageReceiver = messageReceiver;
             this.container = container;

@@ -61,8 +61,8 @@
     <Compile Include="Ioc\IRegisterDependencies.cs" />
     <Compile Include="ObectExtensions.cs" />
     <Compile Include="Pipes\IModule.cs" />
-    <Compile Include="Pipes\ModuleChain.cs" />
-    <Compile Include="Pipes\ModuleStack.cs" />
+    <Compile Include="Pipes\ModulePipe.cs" />
+    <Compile Include="Pipes\ModulePipeFactory.cs" />
     <Compile Include="Pipes\FilterPipe.cs" />
     <Compile Include="Pipes\IFilter.cs" />
     <Compile Include="Queries\IAnswerQuery.cs" />

@@ -43,9 +43,9 @@ namespace Hermes.Messaging.Pipeline
             ServiceLocator = serviceLocator;
         }
 
-        public bool Process(ModuleStack<IncomingMessageContext> incommingPipeline)
+        public bool Process(ModulePipeFactory<IncomingMessageContext> incommingPipeline)
         {
-            var pipeline = incommingPipeline.ToModuleChain(ServiceLocator);
+            var pipeline = incommingPipeline.Build(ServiceLocator);
             return pipeline.Invoke(this);
         }
 
