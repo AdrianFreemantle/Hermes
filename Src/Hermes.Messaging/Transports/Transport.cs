@@ -17,11 +17,10 @@ namespace Hermes.Messaging.Transports
 
         private readonly IReceiveMessages messageReceiver;
         private readonly IContainer container;
-        private readonly ModulePipeFactory<IncomingMessageContext> incommingPipeline;
+        private readonly ModulePipeFactory<IncomingMessageContext> incomingPipeline;
         private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
         private readonly ThreadLocal<IncomingMessageContext> currentMessageBeingProcessed = new ThreadLocal<IncomingMessageContext>();
-        private readonly ThreadLocal<OutgoingMessageUnitOfWork> outgoingMessages = new ThreadLocal<OutgoingMessageUnitOfWork>();
 
         public IMessageContext CurrentMessage
         {
@@ -31,11 +30,11 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        public Transport(IReceiveMessages messageReceiver, IContainer container, ModulePipeFactory<IncomingMessageContext> incommingPipeline, ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
+        public Transport(IReceiveMessages messageReceiver, IContainer container, ModulePipeFactory<IncomingMessageContext> incomingPipeline, ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
         {
             this.messageReceiver = messageReceiver;
             this.container = container;
-            this.incommingPipeline = incommingPipeline;
+            this.incomingPipeline = incomingPipeline;
             this.outgoingPipeline = outgoingPipeline;
         }
 
@@ -73,7 +72,6 @@ namespace Hermes.Messaging.Transports
                 try
                 {
                     Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                    StartOutgoingMessageUnitOfWork();
                     ProcessIncomingMessage(transportMessage, childContainer);                    
                 }
                 finally
@@ -84,34 +82,13 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        private void StartOutgoingMessageUnitOfWork()
-        {
-            if (outgoingMessages.IsValueCreated)
-            {
-                outgoingMessages.Value.Clear();
-            }
-            else
-            {
-                outgoingMessages.Value = new OutgoingMessageUnitOfWork(outgoingPipeline);
-            }
-        }
-
         private void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             using (var scope = StartTransactionScope())
             {
-                var incomingContext = new IncomingMessageContext(transportMessage, serviceLocator);
+                var incomingContext = new IncomingMessageContext(transportMessage, new OutgoingMessageUnitOfWork(outgoingPipeline), serviceLocator);
                 currentMessageBeingProcessed.Value = incomingContext;
-
-                if (incomingContext.Process(incommingPipeline))
-                {
-                    outgoingMessages.Value.Commit();
-                }
-                else
-                {
-                    outgoingMessages.Value.Clear();
-                }
-
+                incomingContext.Process(incomingPipeline);
                 scope.Complete();
             }
         }
@@ -130,9 +107,9 @@ namespace Hermes.Messaging.Transports
 
         public void SendMessage(OutgoingMessageContext outgoingMessageContext)
         {
-            var currentIncommingMessage = (IncomingMessageContext)CurrentMessage;
+            var currentContext = (IncomingMessageContext)CurrentMessage;
             
-            if (currentIncommingMessage == IncomingMessageContext.Null)
+            if (currentContext == IncomingMessageContext.Null)
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
@@ -141,7 +118,7 @@ namespace Hermes.Messaging.Transports
             }
             else
             {
-                outgoingMessages.Value.Enqueue(outgoingMessageContext);
+                currentContext.Enqueue(outgoingMessageContext);
             }
         }
     }

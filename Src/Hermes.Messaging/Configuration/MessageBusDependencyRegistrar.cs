@@ -42,12 +42,12 @@ namespace Hermes.Messaging.Configuration
 
             if (Settings.IsSendOnly)
             {
-                var incommingPipeline = new ModulePipeFactory<IncomingMessageContext>();
-                containerBuilder.RegisterSingleton(incommingPipeline);
+                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>();
+                containerBuilder.RegisterSingleton(incomingPipeline);
             }
             else if (Settings.IsClientEndpoint)
             {
-                var incommingPipeline = new ModulePipeFactory<IncomingMessageContext>()
+                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
                     .Add<MessageErrorModule>()
                     .Add<ExtractMessagesModule>()
                     .Add<MessageMutatorModule>()
@@ -55,11 +55,11 @@ namespace Hermes.Messaging.Configuration
                     .Add<DispatchMessagesModule>()
                     .Add<CallBackHandlerModule>();
 
-                containerBuilder.RegisterSingleton(incommingPipeline);
+                containerBuilder.RegisterSingleton(incomingPipeline);
             }
             else
             {
-                var incommingPipeline = new ModulePipeFactory<IncomingMessageContext>()
+                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
                     .Add<MessageErrorModule>()
                     .Add<AuditModule>()
                     .Add<ExtractMessagesModule>()
@@ -68,7 +68,7 @@ namespace Hermes.Messaging.Configuration
                     .Add<DispatchMessagesModule>()
                     .Add<CallBackHandlerModule>();
 
-                containerBuilder.RegisterSingleton(incommingPipeline);
+                containerBuilder.RegisterSingleton(incomingPipeline);
             }
 
             var outgoingPipeline = new ModulePipeFactory<OutgoingMessageContext>()

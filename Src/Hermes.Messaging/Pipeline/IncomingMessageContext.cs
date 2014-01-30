@@ -13,11 +13,12 @@ namespace Hermes.Messaging.Pipeline
         public IServiceLocator ServiceLocator { get; private set; }
 
         public static IncomingMessageContext Null { get; private set; }
+        private readonly OutgoingMessageUnitOfWork outgoingMessages;
 
         static IncomingMessageContext()
         {
             var emptyMessage = new TransportMessage(Guid.Empty, Guid.Empty, Address.Undefined, TimeSpan.MinValue, new Dictionary<string, string>(), new byte[0]);
-            Null = new IncomingMessageContext(emptyMessage, new DisposedProvider());
+            Null = new IncomingMessageContext(emptyMessage, null, new DisposedProvider());
         }
 
         public object Message { get; protected set; }
@@ -37,16 +38,17 @@ namespace Hermes.Messaging.Pipeline
             get { return TransportMessage.ReplyToAddress; }
         }
 
-        public IncomingMessageContext(TransportMessage transportMessage, IServiceLocator serviceLocator)
+        public IncomingMessageContext(TransportMessage transportMessage, OutgoingMessageUnitOfWork outgoingMessages, IServiceLocator serviceLocator)
         {
             TransportMessage = transportMessage;
             ServiceLocator = serviceLocator;
+            this.outgoingMessages = outgoingMessages;
         }
 
-        public bool Process(ModulePipeFactory<IncomingMessageContext> incommingPipeline)
+        public void Process(ModulePipeFactory<IncomingMessageContext> incomingPipeline)
         {
-            var pipeline = incommingPipeline.Build(ServiceLocator);
-            return pipeline.Invoke(this);
+            var pipeline = incomingPipeline.Build(ServiceLocator);
+            pipeline.Invoke(this);
         }
 
         public bool IsControlMessage()
@@ -70,6 +72,17 @@ namespace Hermes.Messaging.Pipeline
         public void SetMessage(object message)
         {
             Message = message;
+        }
+
+        public void Enqueue(OutgoingMessageContext outgoingMessage)
+        {
+            outgoingMessages.Enqueue(outgoingMessage);
+        }
+
+        public void CommitOutgoingMessages()
+        {
+            outgoingMessages.Commit();
+            outgoingMessages.Clear();
         }
 
         public override int GetHashCode()

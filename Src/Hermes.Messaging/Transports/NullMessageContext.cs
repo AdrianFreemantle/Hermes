@@ -9,7 +9,7 @@ namespace Hermes.Messaging.Transports
     public class NullMessageContext : IncomingMessageContext
     {
         private NullMessageContext(TransportMessage transportMessage, IServiceLocator serviceLocator) 
-            : base(transportMessage, serviceLocator)
+            : base(transportMessage, null, serviceLocator)
         {
         }
 

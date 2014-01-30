@@ -20,7 +20,6 @@ namespace Hermes.Messaging.Pipeline.Modules
             if (!input.IsControlMessage())
             {
                 Logger.Debug("Dispatching message {0} to handlers.", input);
-               
                 dispatcher.DispatchToHandlers(input.Message, input.ServiceLocator);
             }
 
