@@ -61,6 +61,7 @@ namespace Hermes.Messaging.Pipeline
         public static OutgoingMessageContext BuildDeferredCommand(Address address, Guid correlationId, TimeSpan delay, object message)
         {
             MessageRuleValidation.ValidateIsCommandType(message);
+
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
@@ -182,6 +183,21 @@ namespace Hermes.Messaging.Pipeline
         public void BuildHeaderFunction(Func<OutgoingMessageContext, Dictionary<string, string>> buildHeader)
         {
             buildHeaderFunction = buildHeader;
+        }
+
+        public void SetUserId(Guid userId)
+        {
+            AddHeader(new HeaderValue(HeaderKeys.UserId, userId.ToString()));
+        }
+
+        public void SetUserId(Action<Guid> userIdResolver)
+        {
+            if (userIdResolver == null)
+            {
+                return;
+            }
+
+            SetUserId(userIdResolver.Invoke);
         }
 
         public override string ToString()

@@ -13,6 +13,7 @@ namespace Hermes.Messaging.Pipeline
         public IServiceLocator ServiceLocator { get; private set; }
 
         public static IncomingMessageContext Null { get; private set; }
+
         private readonly OutgoingMessageUnitOfWork outgoingMessages;
 
         static IncomingMessageContext()
@@ -38,6 +39,11 @@ namespace Hermes.Messaging.Pipeline
             get { return TransportMessage.ReplyToAddress; }
         }
 
+        public Guid UserId
+        {
+            get { return GetUserId(); }
+        } 
+       
         public IncomingMessageContext(TransportMessage transportMessage, OutgoingMessageUnitOfWork outgoingMessages, IServiceLocator serviceLocator)
         {
             TransportMessage = transportMessage;
@@ -49,6 +55,16 @@ namespace Hermes.Messaging.Pipeline
         {
             var pipeline = incomingPipeline.Build(ServiceLocator);
             pipeline.Invoke(this);
+        }
+
+        public Guid GetUserId()
+        {
+            if (TransportMessage.Headers.ContainsKey(HeaderKeys.UserId))
+            {
+                return Guid.Parse(TransportMessage.Headers[HeaderKeys.UserId]);
+            }
+
+            return Guid.Empty;
         }
 
         public bool IsControlMessage()

@@ -139,6 +139,12 @@ namespace Hermes
             return this;
         }
 
+        public IConfigureEndpoint UserIdResolver(Action<Guid> resolveUserIdAction)
+        {
+            Settings.UserIdResolver = resolveUserIdAction;
+            return this;
+        }
+
         internal void Start()
         {
             ComponentScanner.Scan(containerBuilder);

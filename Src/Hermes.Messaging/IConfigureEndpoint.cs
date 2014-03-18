@@ -15,5 +15,6 @@ namespace Hermes.Messaging
         IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule);
         IConfigureEndpoint FlushQueueOnStartup(bool flush);
         IConfigureEndpoint SendOnlyEndpoint();
+        IConfigureEndpoint UserIdResolver(Action<Guid> resolveUserIdAction);
     }
 }

@@ -113,6 +113,7 @@ namespace Hermes.Messaging.Transports
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
+                    outgoingMessageContext.AddHeader(new HeaderValue(HeaderKeys.UserId, currentContext.UserId.ToString()));
                     outgoingMessageContext.Process(outgoingPipeline, scope);
                 }
             }
