@@ -47,6 +47,7 @@ namespace Hermes.Reflection
     {
         public static T GetPropertyValue<T>(this PropertyInfo propertyInfo, object obj)
         {
+             
             return (T)GetPropertyValue(propertyInfo, obj);
         }
 

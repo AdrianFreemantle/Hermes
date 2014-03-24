@@ -1,11 +1,11 @@
-set var=0.4.19
+set var=0.5.0-test
 
-c:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
-c:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%
-c:\LocalNugetPackages\nuget pack Hermes.EntityFramework.nuspec -Version %var%
-c:\LocalNugetPackages\nuget pack Hermes.OrmLite.nuspec -Version %var%
-c:\LocalNugetPackages\nuget pack Hermes.ServiceHost.nuspec -Version %var%
+d:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
+d:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%
+d:\LocalNugetPackages\nuget pack Hermes.EntityFramework.nuspec -Version %var%
+d:\LocalNugetPackages\nuget pack Hermes.OrmLite.nuspec -Version %var%
+d:\LocalNugetPackages\nuget pack Hermes.ServiceHost.nuspec -Version %var%
 
-move *.nupkg c:\LocalNugetPackages\
+move *.nupkg %LOCALAPPDATA%\NuGet\Cache
 
 pause

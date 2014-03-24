@@ -187,17 +187,20 @@ namespace Hermes.Messaging.Pipeline
 
         public void SetUserId(Guid userId)
         {
+            if(userId == Guid.Empty)
+                return;
+
             AddHeader(new HeaderValue(HeaderKeys.UserId, userId.ToString()));
         }
 
-        public void SetUserId(Action<Guid> userIdResolver)
+        public void SetUserId(Func<Guid> userIdResolver)
         {
             if (userIdResolver == null)
             {
                 return;
             }
 
-            SetUserId(userIdResolver.Invoke);
+            SetUserId(userIdResolver());
         }
 
         public override string ToString()

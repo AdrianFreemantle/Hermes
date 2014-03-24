@@ -63,7 +63,7 @@ namespace Hermes.Messaging.Transports
             messageReceiver.Stop();
         }
 
-        private void MessageReceived(TransportMessage transportMessage)
+        protected virtual  void MessageReceived(TransportMessage transportMessage)
         {
             Logger.Debug("Message {0} with correlation Id {1} received", transportMessage.MessageId, transportMessage.CorrelationId);
 
@@ -82,7 +82,7 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        private void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
+        protected virtual void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             using (var scope = StartTransactionScope())
             {
@@ -93,7 +93,7 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        private static TransactionScope StartTransactionScope()
+        protected virtual TransactionScope StartTransactionScope()
         {
             if (Settings.UseDistributedTransaction)
             {
@@ -111,15 +111,26 @@ namespace Hermes.Messaging.Transports
             
             if (currentContext == IncomingMessageContext.Null)
             {
-                using (var scope = container.BeginLifetimeScope())
-                {
-                    outgoingMessageContext.AddHeader(new HeaderValue(HeaderKeys.UserId, currentContext.UserId.ToString()));
-                    outgoingMessageContext.Process(outgoingPipeline, scope);
-                }
+                DispatchOutgoingMessage(outgoingMessageContext);
             }
             else
             {
-                currentContext.Enqueue(outgoingMessageContext);
+                EnqueOutgoingMessage(outgoingMessageContext, currentContext);
+            }
+        }
+
+        protected virtual void EnqueOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IncomingMessageContext currentContext)
+        {
+            outgoingMessageContext.SetUserId(currentContext.UserId);
+            currentContext.Enqueue(outgoingMessageContext);
+        }
+
+        protected virtual void DispatchOutgoingMessage(OutgoingMessageContext outgoingMessageContext)
+        {
+            using (var scope = container.BeginLifetimeScope())
+            {
+                outgoingMessageContext.SetUserId(Settings.UserIdResolver);
+                outgoingMessageContext.Process(outgoingPipeline, scope);
             }
         }
     }

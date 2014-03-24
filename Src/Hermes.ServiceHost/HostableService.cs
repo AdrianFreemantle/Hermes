@@ -36,15 +36,16 @@ namespace Hermes.ServiceHost
             return host.Run();
         }
 
-        private string GetDescription()
+        public string GetDescription()
         {
-            var descriptionAttribute = hostableService
-                .Assembly
-                .GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false)
-                .OfType<AssemblyDescriptionAttribute>()
-                .FirstOrDefault();
+            var descriptionAttribute = GetServiceAttribute<AssemblyDescriptionAttribute>();
 
-            return descriptionAttribute != null ? descriptionAttribute.Description : GetServiceName();
+            if (descriptionAttribute == null || String.IsNullOrWhiteSpace(descriptionAttribute.Description))
+            {
+                return "A service hosted by Hermes Service-Host";
+            }
+
+            return descriptionAttribute.Description;
         }
 
         public string GetServiceFilePath()
@@ -54,7 +55,23 @@ namespace Hermes.ServiceHost
 
         public string GetServiceName()
         {
-            return String.Format("Hermes.{0}", hostableService.Assembly.GetName().Name);
+            var titleAttribute = GetServiceAttribute<AssemblyTitleAttribute>();
+
+            if (titleAttribute == null || String.IsNullOrWhiteSpace(titleAttribute.Title))
+            {
+                return String.Format("Hermes.{0}", hostableService.Assembly.GetName().Name); 
+            }
+
+            return String.Format("Hermes.{0}", titleAttribute.Title); 
+        }
+
+        private T GetServiceAttribute<T>() where T : Attribute
+        {
+            return hostableService
+                .Assembly
+                .GetCustomAttributes(typeof (T), false)
+                .OfType<T>()
+                .FirstOrDefault();
         }
 
         public string GetConfigurationFilePath()

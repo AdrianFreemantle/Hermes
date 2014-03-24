@@ -46,7 +46,10 @@ namespace Hermes.ServiceHost
 
         private static void RunHostedService()
         {
-            Logger.Info("Starting service host {0}", Assembly.GetEntryAssembly().GetName().FullName);
+            Logger.Info("Starting service host {0} for service {1} : {2}", 
+                Assembly.GetEntryAssembly().GetName().Name, 
+                hostableService.GetServiceName(), 
+                hostableService.GetDescription());
 
             TopshelfExitCode exitCode = hostableService.Run();
 
