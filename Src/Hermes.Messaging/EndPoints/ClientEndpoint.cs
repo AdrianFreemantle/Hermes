@@ -3,6 +3,9 @@ using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Pipeline;
+using Hermes.Messaging.Pipeline.Modules;
+using Hermes.Pipes;
 
 namespace Hermes.Messaging.EndPoints
 {
@@ -20,11 +23,25 @@ namespace Hermes.Messaging.EndPoints
             string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;
             configuration = Configure.ClientEndpoint(endpointName, containerBuilder);
             ConfigureEndpoint(configuration);
+            ConfigurePipeline(containerBuilder);
             Settings.RootContainer = containerBuilder.BuildContainer();
             Settings.FlushQueueOnStartup = true;
         }
 
         protected abstract void ConfigureEndpoint(IConfigureEndpoint configuration);
+
+        protected virtual void ConfigurePipeline(TContainerBuilder containerBuilder)
+        {
+            var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
+                    .Add<MessageErrorModule>()
+                    .Add<ExtractMessagesModule>()
+                    .Add<MessageMutatorModule>()
+                    .Add<UnitOfWorkModule>()
+                    .Add<DispatchMessagesModule>()
+                    .Add<CallBackHandlerModule>();
+
+            containerBuilder.RegisterSingleton(incomingPipeline);
+        }
 
         public void Start()
         {

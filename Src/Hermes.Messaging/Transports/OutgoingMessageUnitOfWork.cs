@@ -3,19 +3,22 @@
 using Hermes.Logging;
 using Hermes.Messaging.Pipeline;
 using Hermes.Pipes;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Transports
 {
     public class OutgoingMessageUnitOfWork
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(OutgoingMessageUnitOfWork)); 
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(OutgoingMessageUnitOfWork));
 
+        private readonly IServiceLocator serviceLocator;
         private readonly Queue<OutgoingMessageContext> outgoingMessages = new Queue<OutgoingMessageContext>();
         private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
-        public OutgoingMessageUnitOfWork(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
+        public OutgoingMessageUnitOfWork(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline, IServiceLocator serviceLocator)
         {
             this.outgoingPipeline = outgoingPipeline;
+            this.serviceLocator = serviceLocator;
         }
 
         public void Enqueue(OutgoingMessageContext outgoingMessageContext)
@@ -30,7 +33,7 @@ namespace Hermes.Messaging.Transports
             {
                 OutgoingMessageContext outgoingContext = outgoingMessages.Dequeue();
                 Logger.Debug("Sending enqueued message {0}", outgoingContext);
-                outgoingContext.Process(outgoingPipeline, Ioc.ServiceLocator.Current);
+                outgoingContext.Process(outgoingPipeline, serviceLocator);
             }
         }
 

@@ -15,8 +15,9 @@ namespace Hermes.Messaging.Configuration
 
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
 
-        private static readonly Address errorAddress = Address.Parse("Error");
-        private static readonly Address auditAddress = Address.Parse("Audit");
+        private static readonly Address ErrorAddress = Address.Parse("Error");
+        private static readonly Address AuditAddress = Address.Parse("Audit");
+        private static bool autoSubscribeEvents = true;
         private static IContainer rootContainer;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
 
@@ -31,15 +32,18 @@ namespace Hermes.Messaging.Configuration
             IsCommandType = type => false;
             IsEventType = type => false;
             UseDistributedTransaction = true;
-        }
-
-        public static int NumberOfWorkers
-        {
-            get { return numberOfWorkers; }
-            internal set { numberOfWorkers = value; }
-        }
+        }        
 
         public static bool UseDistributedTransaction { get; internal set; }
+        public static bool FlushQueueOnStartup { get; internal set; }
+        public static bool IsSendOnly { get; internal set; }
+        internal static int SecondLevelRetryAttempts { get; set; }
+        public static int FirstLevelRetryAttempts { get; internal set; }
+        public static bool IsClientEndpoint { get; internal set; }
+        internal static Func<Type, bool> IsMessageType { get; set; }
+        internal static Func<Type, bool> IsCommandType { get; set; }
+        internal static Func<Type, bool> IsEventType { get; set; }
+        internal static Func<Guid> UserIdResolver { get; set; }
 
         public static IContainer RootContainer
         {
@@ -54,7 +58,17 @@ namespace Hermes.Messaging.Configuration
             internal set { rootContainer = value; }
         }
 
-        internal static int SecondLevelRetryAttempts { get; set; }
+        public static int NumberOfWorkers
+        {
+            get { return numberOfWorkers; }
+            internal set { numberOfWorkers = value; }
+        }
+
+        public static bool AutoSubscribeEvents
+        {
+            get { return autoSubscribeEvents; }
+            internal set { autoSubscribeEvents = value; }
+        }
 
         public static TimeSpan SecondLevelRetryDelay
         {
@@ -62,24 +76,20 @@ namespace Hermes.Messaging.Configuration
             internal set { secondLevelRetryDelay = value; }
         }
 
-        public static int FirstLevelRetryAttempts { get; internal set; }
-
         public static Address ErrorEndpoint
         {
-            get { return errorAddress; }
+            get { return ErrorAddress; }
         }
 
         public static Address AuditEndpoint
         {
-            get { return auditAddress; }
+            get { return AuditAddress; }
         }
 
         public static IManageSubscriptions Subscriptions
         {
             get { return RootContainer.GetInstance<IManageSubscriptions>(); }
         }
-
-        public static bool IsClientEndpoint { get; internal set; }
 
         internal static void SetEndpointName(string endpointName)
         {
@@ -114,14 +124,6 @@ namespace Hermes.Messaging.Configuration
             }
 
             settings.Add(settingKey, value);
-        }
-
-        internal static Func<Type, bool> IsMessageType { get; set; }
-        internal static Func<Type, bool> IsCommandType { get; set; }
-        internal static Func<Type, bool> IsEventType { get; set; }
-        internal static Func<Guid> UserIdResolver { get; set; }
-
-        public static bool FlushQueueOnStartup { get; internal set; }
-        public static bool IsSendOnly { get; internal set; }
+        }        
     }
 }

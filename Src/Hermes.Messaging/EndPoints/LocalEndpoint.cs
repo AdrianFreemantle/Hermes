@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Threading;
-
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
@@ -10,51 +8,49 @@ using Hermes.Pipes;
 
 namespace Hermes.Messaging.EndPoints
 {
-    public abstract class WorkerEndpoint<TContainerBuilder> : IService
+    public abstract class LocalEndpoint<TContainerBuilder> : IDisposable
         where TContainerBuilder : IContainerBuilder, new()
     {
         private readonly Configure configuration;
         private bool disposed;
 
-        protected WorkerEndpoint()
+        public IMessageBus MessageBus { get { return Settings.RootContainer.GetInstance<IMessageBus>(); } }
+
+        protected LocalEndpoint()
         {
             var containerBuilder = new TContainerBuilder();
             string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;
-            configuration = Configure.WorkerEndpoint(endpointName, containerBuilder);
+            configuration = Configure.ClientEndpoint(endpointName, containerBuilder);
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
+            Settings.IsSendOnly = true;
+            Settings.AutoSubscribeEvents = false;
             Settings.RootContainer = containerBuilder.BuildContainer();
+            Settings.FlushQueueOnStartup = true;
         }
 
-        protected abstract void ConfigureEndpoint(IConfigureWorker configuration);
+        protected abstract void ConfigureEndpoint(IConfigureEndpoint configuration);
+
+        public void Start()
+        {
+            configuration.Start();
+        }
 
         protected virtual void ConfigurePipeline(TContainerBuilder containerBuilder)
         {
             var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
-                    .Add<MessageErrorModule>()
-                    .Add<AuditModule>()
-                    .Add<ExtractMessagesModule>()
-                    .Add<MessageMutatorModule>()
-                    .Add<UnitOfWorkModule>()
-                    .Add<DispatchMessagesModule>()
-                    .Add<CallBackHandlerModule>();
+                .Add<UnitOfWorkModule>()
+                .Add<DispatchMessagesModule>();
 
-            containerBuilder.RegisterSingleton(incomingPipeline);
+            containerBuilder.RegisterSingleton(incomingPipeline); 
         }
 
-        public void Run(CancellationToken token)
+        public void Stop()
         {
-            configuration.Start();
-
-            while (!token.IsCancellationRequested)
-            {
-                Thread.Sleep(100);
-            }
-
             configuration.Stop();
         }
 
-        ~WorkerEndpoint()
+        ~LocalEndpoint()
         {
             Dispose(false);
         }

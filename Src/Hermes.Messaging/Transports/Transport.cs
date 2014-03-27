@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Transactions;
 
 using Hermes.Ioc;
@@ -7,7 +6,6 @@ using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Pipes;
-using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Transports
 {
@@ -63,7 +61,7 @@ namespace Hermes.Messaging.Transports
             messageReceiver.Stop();
         }
 
-        protected virtual  void MessageReceived(TransportMessage transportMessage)
+        protected virtual void MessageReceived(TransportMessage transportMessage)
         {
             Logger.Debug("Message {0} with correlation Id {1} received", transportMessage.MessageId, transportMessage.CorrelationId);
 
@@ -71,22 +69,23 @@ namespace Hermes.Messaging.Transports
             {
                 try
                 {
-                    Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
-                    ProcessIncomingMessage(transportMessage, childContainer);                    
+                    ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
+                    var incomingContext = new IncomingMessageContext(transportMessage, childContainer);
+                    ProcessMessage(incomingContext);                    
                 }
                 finally
                 {
                     currentMessageBeingProcessed.Value = IncomingMessageContext.Null;                    
-                    Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
+                    ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
             }
         }
 
-        protected virtual void ProcessIncomingMessage(TransportMessage transportMessage, IServiceLocator serviceLocator)
+        public virtual void ProcessMessage(IncomingMessageContext incomingContext)
         {
             using (var scope = StartTransactionScope())
             {
-                var incomingContext = new IncomingMessageContext(transportMessage, new OutgoingMessageUnitOfWork(outgoingPipeline), serviceLocator);
+                //Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(incomingContext.ServiceLocator);
                 currentMessageBeingProcessed.Value = incomingContext;
                 incomingContext.Process(incomingPipeline);
                 scope.Complete();
@@ -117,7 +116,7 @@ namespace Hermes.Messaging.Transports
             {
                 EnqueOutgoingMessage(outgoingMessageContext, currentContext);
             }
-        }
+        }        
 
         protected virtual void EnqueOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IncomingMessageContext currentContext)
         {

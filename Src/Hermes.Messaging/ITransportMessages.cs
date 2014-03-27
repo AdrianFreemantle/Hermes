@@ -1,6 +1,7 @@
 ﻿using System;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging
 {
@@ -14,5 +15,6 @@ namespace Hermes.Messaging
     {
         IMessageContext CurrentMessage { get; }
         void SendMessage(OutgoingMessageContext outgoingMessageContext);
+        void ProcessMessage(IncomingMessageContext incomingContext);
     }
 }

@@ -40,37 +40,6 @@ namespace Hermes.Messaging.Configuration
 
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
-            if (Settings.IsSendOnly)
-            {
-                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>();
-                containerBuilder.RegisterSingleton(incomingPipeline);
-            }
-            else if (Settings.IsClientEndpoint)
-            {
-                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
-                    .Add<MessageErrorModule>()
-                    .Add<ExtractMessagesModule>()
-                    .Add<MessageMutatorModule>()
-                    .Add<UnitOfWorkModule>()
-                    .Add<DispatchMessagesModule>()
-                    .Add<CallBackHandlerModule>();
-
-                containerBuilder.RegisterSingleton(incomingPipeline);
-            }
-            else
-            {
-                var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
-                    .Add<MessageErrorModule>()
-                    .Add<AuditModule>()
-                    .Add<ExtractMessagesModule>()
-                    .Add<MessageMutatorModule>()
-                    .Add<UnitOfWorkModule>()
-                    .Add<DispatchMessagesModule>()
-                    .Add<CallBackHandlerModule>();
-
-                containerBuilder.RegisterSingleton(incomingPipeline);
-            }
-
             var outgoingPipeline = new ModulePipeFactory<OutgoingMessageContext>()
                 .Add<MessageMutatorModule>()
                 .Add<MessageSerializationModule>()

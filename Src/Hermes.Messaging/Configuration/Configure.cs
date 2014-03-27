@@ -104,6 +104,12 @@ namespace Hermes
             return this;
         }
 
+        IConfigureWorker IConfigureWorker.FlushQueueOnStartup(bool flush)
+        {
+            Settings.FlushQueueOnStartup = flush;
+            return this;
+        }
+
         public IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder)
         {
             registerationHolder.Register(containerBuilder);
@@ -125,13 +131,7 @@ namespace Hermes
         {
             Settings.IsEventType = definesEventType;
             return this;
-        }
-
-        public IConfigureEndpoint FlushQueueOnStartup(bool flush)
-        {
-            Settings.FlushQueueOnStartup = flush;
-            return this;
-        }
+        }        
 
         public IConfigureEndpoint SendOnlyEndpoint()
         {
@@ -164,6 +164,9 @@ namespace Hermes
 
         private static void StartServices()
         {
+            if (Settings.IsSendOnly)
+                return;
+
             var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
 
             foreach (var startableObject in startableObjects)
@@ -184,6 +187,9 @@ namespace Hermes
 
         private static void CreateQueues()
         {
+            if(Settings.IsSendOnly)
+                return;
+
             var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
@@ -196,7 +202,12 @@ namespace Hermes
         }
 
         private static void SubscribeToEvents()
-        {            
+        {
+            if (!Settings.AutoSubscribeEvents)
+            {
+                 return;   
+            }
+
             foreach (var eventType in HandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
                 Settings.Subscriptions.Subscribe(eventType);

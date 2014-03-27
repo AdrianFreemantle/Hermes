@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EndPoints\LocalEndpoint.cs" />
     <Compile Include="IConfigureWorker.cs" />
     <Compile Include="Callbacks\BusAsyncResultEventArgs.cs" />
     <Compile Include="Callbacks\Callback.cs" />
@@ -86,7 +87,6 @@
     <Compile Include="IMutateOutgoingMessages.cs" />
     <Compile Include="Pipeline\IncomingMessageContext.cs" />
     <Compile Include="INeedToInitializeSomething.cs" />
-    <Compile Include="Transports\NullMessageContext.cs" />
     <Compile Include="Pipeline\OutgoingMessageContext.cs" />
     <Compile Include="Pipeline\Modules\UnitOfWorkModule.cs" />
     <Compile Include="Wcf\CommandService.cs" />

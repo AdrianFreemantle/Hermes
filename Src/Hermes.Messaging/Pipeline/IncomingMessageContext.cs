@@ -18,8 +18,12 @@ namespace Hermes.Messaging.Pipeline
 
         static IncomingMessageContext()
         {
-            var emptyMessage = new TransportMessage(Guid.Empty, Guid.Empty, Address.Undefined, TimeSpan.MinValue, new Dictionary<string, string>(), new byte[0]);
-            Null = new IncomingMessageContext(emptyMessage, null, new DisposedProvider());
+            Null = new IncomingMessageContext
+            {
+                ServiceLocator = new DisposedProvider(),
+                TransportMessage = TransportMessage.Undefined,
+                Message = new object()
+            };
         }
 
         public object Message { get; protected set; }
@@ -43,12 +47,31 @@ namespace Hermes.Messaging.Pipeline
         {
             get { return GetUserId(); }
         } 
+
+        protected IncomingMessageContext()
+        {
+        }
        
-        public IncomingMessageContext(TransportMessage transportMessage, OutgoingMessageUnitOfWork outgoingMessages, IServiceLocator serviceLocator)
+        public IncomingMessageContext(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             TransportMessage = transportMessage;
             ServiceLocator = serviceLocator;
-            this.outgoingMessages = outgoingMessages;
+            outgoingMessages = outgoingMessages = BuildOutgoingMessageUnitOfWork(serviceLocator);
+        }
+
+        public IncomingMessageContext(object localMessage, IServiceLocator serviceLocator)
+        {
+            TransportMessage = Null.TransportMessage;
+            Message = localMessage;
+            ServiceLocator = serviceLocator;
+
+            outgoingMessages = BuildOutgoingMessageUnitOfWork(serviceLocator);
+        }
+
+        private static OutgoingMessageUnitOfWork BuildOutgoingMessageUnitOfWork(IServiceLocator serviceLocator)
+        {
+            var outgoingContext = serviceLocator.GetInstance<ModulePipeFactory<OutgoingMessageContext>>();
+            return new OutgoingMessageUnitOfWork(outgoingContext, serviceLocator);
         }
 
         public void Process(ModulePipeFactory<IncomingMessageContext> incomingPipeline)
