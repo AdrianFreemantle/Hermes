@@ -14,8 +14,6 @@ namespace Hermes.Messaging.EndPoints
         private readonly Configure configuration;
         private bool disposed;
 
-        public IMessageBus MessageBus { get { return Settings.RootContainer.GetInstance<IMessageBus>(); } }
-
         protected LocalEndpoint()
         {
             var containerBuilder = new TContainerBuilder();
@@ -31,9 +29,10 @@ namespace Hermes.Messaging.EndPoints
 
         protected abstract void ConfigureEndpoint(IConfigureEndpoint configuration);
 
-        public void Start()
+        public IInMemoryBus Start()
         {
             configuration.Start();
+            return Settings.RootContainer.GetInstance<IInMemoryBus>();
         }
 
         protected virtual void ConfigurePipeline(TContainerBuilder containerBuilder)
