@@ -7,6 +7,6 @@ namespace Hermes.Domain
     public abstract class Memento : IMemento
     {
         [DataMember(Name = "Identity")]
-        public IIdentity Identity { get; set; }
+        public dynamic Identity { get; set; }
     }
 }

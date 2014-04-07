@@ -13,7 +13,7 @@ namespace Hermes.EntityFramework
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
-            this.contextFactory = contextFactory;            
+            this.contextFactory = contextFactory; 
         }
 
         public void Commit()

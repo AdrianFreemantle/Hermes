@@ -18,7 +18,7 @@ namespace Hermes.Messaging.Transports
         private readonly ModulePipeFactory<IncomingMessageContext> incomingPipeline;
         private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
-        private readonly ThreadLocal<IncomingMessageContext> currentMessageBeingProcessed = new ThreadLocal<IncomingMessageContext>();
+        private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
 
         public IMessageContext CurrentMessage
         {
@@ -75,7 +75,6 @@ namespace Hermes.Messaging.Transports
                 }
                 finally
                 {
-                    currentMessageBeingProcessed.Value = IncomingMessageContext.Null;                    
                     ServiceLocator.Current.SetCurrentLifetimeScope(null);                    
                 }
             }
@@ -83,12 +82,18 @@ namespace Hermes.Messaging.Transports
 
         public virtual void ProcessMessage(IncomingMessageContext incomingContext)
         {
-            using (var scope = StartTransactionScope())
+            try
             {
-                //Ioc.ServiceLocator.Current.SetCurrentLifetimeScope(incomingContext.ServiceLocator);
-                currentMessageBeingProcessed.Value = incomingContext;
-                incomingContext.Process(incomingPipeline);
-                scope.Complete();
+                using (var scope = StartTransactionScope())
+                {
+                    currentMessageBeingProcessed.Value = incomingContext;
+                    incomingContext.Process(incomingPipeline);
+                    scope.Complete();
+                }
+            }
+            finally
+            {
+                currentMessageBeingProcessed.Value = IncomingMessageContext.Null;  
             }
         }
 

@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Transactions;
 using Hermes.Ioc;
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
-using Hermes.Persistence;
-
-using Microsoft.Practices.ServiceLocation;
 using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 //using ServiceLocator = Hermes.Ioc.ServiceLocator;

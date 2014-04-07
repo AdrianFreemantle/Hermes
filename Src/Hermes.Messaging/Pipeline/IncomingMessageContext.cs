@@ -12,9 +12,10 @@ namespace Hermes.Messaging.Pipeline
         public TransportMessage TransportMessage { get; private set; }
         public IServiceLocator ServiceLocator { get; private set; }
 
-        public static IncomingMessageContext Null { get; private set; }
+        public static IMessageContext Null { get; private set; }
 
         private readonly OutgoingMessageUnitOfWork outgoingMessages;
+        private readonly Guid messageId;
 
         static IncomingMessageContext()
         {
@@ -30,7 +31,7 @@ namespace Hermes.Messaging.Pipeline
 
         public Guid MessageId
         {
-            get { return TransportMessage.MessageId; }
+            get { return messageId; }
         }
 
         public Guid CorrelationId
@@ -55,15 +56,17 @@ namespace Hermes.Messaging.Pipeline
         public IncomingMessageContext(TransportMessage transportMessage, IServiceLocator serviceLocator)
         {
             TransportMessage = transportMessage;
+            messageId = transportMessage.MessageId;
             ServiceLocator = serviceLocator;
             outgoingMessages = outgoingMessages = BuildOutgoingMessageUnitOfWork(serviceLocator);
         }
 
         public IncomingMessageContext(object localMessage, IServiceLocator serviceLocator)
         {
-            TransportMessage = Null.TransportMessage;
+            TransportMessage = TransportMessage.Undefined;
             Message = localMessage;
             ServiceLocator = serviceLocator;
+            messageId = SequentialGuid.New();
 
             outgoingMessages = BuildOutgoingMessageUnitOfWork(serviceLocator);
         }

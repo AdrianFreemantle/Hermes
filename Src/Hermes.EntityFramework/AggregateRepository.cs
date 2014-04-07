@@ -9,13 +9,11 @@ namespace Hermes.EntityFramework
     public class AggregateRepository : IAggregateRepository
     {
         private readonly IKeyValueStore keyValueStore;
-        private readonly IMessageBus messageBus;
         private readonly IInMemoryBus inMemoryBus;
 
-        public AggregateRepository(IKeyValueStore keyValueStore, IMessageBus messageBus, IInMemoryBus inMemoryBus)
+        public AggregateRepository(IKeyValueStore keyValueStore, IInMemoryBus inMemoryBus)
         {
             this.keyValueStore = keyValueStore;
-            this.messageBus = messageBus;
             this.inMemoryBus = inMemoryBus;
         }
 
@@ -44,8 +42,12 @@ namespace Hermes.EntityFramework
         private void PublishEvents(IAggregate aggregate)
         {
             var events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
-            inMemoryBus.Raise(events);
-            messageBus.Publish(events);
+
+            foreach (var e in events)
+            {
+                inMemoryBus.Raise(e);
+            }
+
             aggregate.ClearUncommittedEvents();
         }
     }
