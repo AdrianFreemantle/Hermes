@@ -7,7 +7,7 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Pipeline
 {
-    public class IncomingMessageContext : IMessageContext, IEquatable<IncomingMessageContext>
+    public class IncomingMessageContext : IMessageContext, IEquatable<IMessageContext>, IEquatable<IncomingMessageContext>
     {
         public TransportMessage TransportMessage { get; private set; }
         public IServiceLocator ServiceLocator { get; private set; }
@@ -137,7 +137,7 @@ namespace Hermes.Messaging.Pipeline
             return Equals(obj as IncomingMessageContext);
         }
 
-        public virtual bool Equals(IncomingMessageContext other)
+        public virtual bool Equals(IMessageContext other)
         {
             if (null != other && other.GetType() == GetType())
             {
@@ -145,6 +145,11 @@ namespace Hermes.Messaging.Pipeline
             }
 
             return false;
+        }
+
+        public bool Equals(IncomingMessageContext other)
+        {
+            return Equals((IMessageContext)other);
         }
 
         public static bool operator ==(IncomingMessageContext left, IncomingMessageContext right)
@@ -155,7 +160,7 @@ namespace Hermes.Messaging.Pipeline
         public static bool operator !=(IncomingMessageContext left, IncomingMessageContext right)
         {
             return !Equals(left, right);
-        }
+        }        
 
         public override string ToString()
         {

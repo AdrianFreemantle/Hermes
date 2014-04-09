@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AggregateRepository.cs" />
     <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="DatabaseExtensions.cs" />
     <Compile Include="DbContextExtensions.cs" />
     <Compile Include="EntityFrameworkConfiguration.cs" />
     <Compile Include="EnumWrapper.cs" />

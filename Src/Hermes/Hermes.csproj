@@ -54,6 +54,7 @@
     <Compile Include="ActionCollection.cs" />
     <Compile Include="ContentTypes.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
+    <Compile Include="DeterministicGuid.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="PagedResult.cs" />

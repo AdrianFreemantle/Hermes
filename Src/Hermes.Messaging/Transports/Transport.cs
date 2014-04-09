@@ -113,7 +113,7 @@ namespace Hermes.Messaging.Transports
         {
             var currentContext = (IncomingMessageContext)CurrentMessage;
             
-            if (currentContext == IncomingMessageContext.Null)
+            if (currentContext.Equals(IncomingMessageContext.Null))
             {
                 DispatchOutgoingMessage(outgoingMessageContext);
             }

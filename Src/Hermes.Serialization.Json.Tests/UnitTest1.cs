@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-
 using Hermes.Reflection;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -77,7 +72,8 @@ namespace Hermes.Serialization.Json.Tests
     [TestClass]
     public class UnitTest1
     {
-        static JsonMessageSerializer serializer;
+        static JsonMessageSerializer messageSerializer;
+        static ISerializeObjects objectSerializer;
         static MyEventMessage testMessage;
         static TypeMapper messageMapper;
 
@@ -85,7 +81,8 @@ namespace Hermes.Serialization.Json.Tests
         public static void Startup(TestContext context)
         {
             messageMapper = new TypeMapper();
-            serializer = new JsonMessageSerializer(messageMapper);
+            messageSerializer = new JsonMessageSerializer(messageMapper);
+            objectSerializer = new JsonObjectSerializer();
 
             testMessage = new MyEventMessage(DateTime.Now, Guid.NewGuid(), "Hello there");
 
@@ -95,24 +92,24 @@ namespace Hermes.Serialization.Json.Tests
         [TestMethod]
         public void TestMethod4()
         {
-            byte[] serialized = serializer.Serialize(testMessage);
-            object restored = serializer.Deserialize(serialized, testMessage.GetType());
+            byte[] serialized = messageSerializer.Serialize(testMessage);
+            object restored = messageSerializer.Deserialize(serialized, testMessage.GetType());
             testMessage.Equals(restored).ShouldBe(true);
         }
 
         [TestMethod]
         public void TestMethod5()
         {
-            byte[] serialized = serializer.Serialize(testMessage);
-            object restored = serializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
+            byte[] serialized = messageSerializer.Serialize(testMessage);
+            object restored = messageSerializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
             testMessage.Equals(restored).ShouldBe(true);
         }
 
         [TestMethod]
         public void TestMethod6()
         {
-            byte[] serialized = serializer.Serialize(testMessage);
-            object restored = serializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
+            byte[] serialized = messageSerializer.Serialize(testMessage);
+            object restored = messageSerializer.Deserialize(serialized, testMessage.GetType().GetInterfaces().First());
             testMessage.Equals(restored).ShouldBe(true);
         }
     }

@@ -51,7 +51,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
                 foreach (var messageType in messageTypes)
                 {
-                    var command = new SqlCommand(SqlCommands.Subscribe, connection);
+                    SqlCommand command = new SqlCommand(SqlCommands.Subscribe, connection);
                     command.Parameters.Add(new SqlParameter("SubscriberEndpoint", client.ToString()));
                     command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));
                     command.ExecuteNonQuery();
