@@ -15,7 +15,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.callBackManager = callBackManager;
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             Logger.Verbose("Attempting to dispatch message {0} to registered callbacks.", input);
             callBackManager.HandleCallback(input);

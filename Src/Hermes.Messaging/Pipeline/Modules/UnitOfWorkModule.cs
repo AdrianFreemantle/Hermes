@@ -18,7 +18,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.unitsOfWork = unitsOfWork;
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             try
             {

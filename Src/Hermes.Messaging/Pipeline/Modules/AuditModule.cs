@@ -18,7 +18,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.messageSender = messageSender;
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             DateTime receivedTime = DateTime.UtcNow;
             

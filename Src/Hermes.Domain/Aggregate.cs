@@ -62,7 +62,7 @@ namespace Hermes.Domain
             Entities.Add(entity);
         }
 
-        protected TEntity Get<TEntity>(IIdentity entityId) where TEntity : Entity
+        public TEntity Get<TEntity>(IIdentity entityId) where TEntity : Entity
         {
             var entity = Entities.SingleOrDefault(e => e.Identity.Equals(entityId));
 
@@ -106,11 +106,37 @@ namespace Hermes.Domain
             return Entities.Any(entity => entity.ApplyEvent(@event, applyAs));
         }
 
-        protected TEntity RestoreEntity<TEntity>(IMemento memento) where TEntity : class, IEntity
+        protected TEntity RestoreEntity<TEntity, TIdentity>(IMemento memento, TIdentity identity) 
+            where TEntity : class, IEntity
+            where TIdentity : class, IIdentity
         {
-            var entity = ObjectFactory.CreateInstance<TEntity>(this, memento.Identity);
+            var entity = ObjectFactory.CreateInstance<TEntity>(this, identity);
             entity.RestoreSnapshot(memento);
             return entity;
+        }
+
+        void IAmRestorable.RestoreSnapshot(IMemento memento)
+        {
+            if (memento == null)
+            {
+                return;
+            }
+
+            version = memento.Version;
+            RestoreSnapshot(memento);
+        }
+
+        IMemento IAmRestorable.GetSnapshot()
+        {
+            var snapshot = GetSnapshot();
+
+            if (snapshot != null)
+            {
+                snapshot.Version = version;
+                snapshot.Identity = Identity;
+            }
+
+            return snapshot;
         }
     }
 }

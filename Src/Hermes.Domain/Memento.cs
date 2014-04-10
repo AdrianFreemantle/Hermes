@@ -8,5 +8,8 @@ namespace Hermes.Domain
     {
         [DataMember(Name = "Identity")]
         public dynamic Identity { get; set; }
+
+        [DataMember(Name = "Version")]
+        public int Version { get; set; }
     }
 }

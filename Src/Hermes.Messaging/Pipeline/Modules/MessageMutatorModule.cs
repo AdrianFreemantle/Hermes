@@ -18,14 +18,14 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.messageMutators = messageMutators.ToArray();
         }
 
-        public bool ExtractMessage(OutgoingMessageContext input, Func<bool> next)
+        public bool Process(OutgoingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Mutating message body in message {0}", input);
             MutateMessage(input.OutgoingMessage);
             return next();
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             MutateMessage(input.Message);
             return next();

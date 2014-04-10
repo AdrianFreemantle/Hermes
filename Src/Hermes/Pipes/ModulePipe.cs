@@ -40,7 +40,7 @@ namespace Hermes.Pipes
             try
             {
                 logger.Debug("Invoking module {0}", processor.GetType().FullName);
-                var result = processor.ExtractMessage(input, () => InvokeNext(input));
+                var result = processor.Process(input, () => InvokeNext(input));
                 logger.Debug("Returning module {0} with result [{1}]", processor.GetType().FullName, result);
                 return result;
             }

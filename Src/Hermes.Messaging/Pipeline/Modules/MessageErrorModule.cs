@@ -20,7 +20,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             MessageSender = messageSender;
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             try
             {

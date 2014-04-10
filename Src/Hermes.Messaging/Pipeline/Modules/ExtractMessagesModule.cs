@@ -24,7 +24,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             this.typeMapper = typeMapper;
         }
 
-        public bool ExtractMessage(IncomingMessageContext input, Func<bool> next)
+        public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             Logger.Debug("Deserializing body for message {0}", input);
 
