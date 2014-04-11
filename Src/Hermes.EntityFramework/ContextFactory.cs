@@ -19,5 +19,7 @@ namespace Hermes.EntityFramework
                 ? new TContext()
                 : Activator.CreateInstance(typeof(TContext), connectionStringName) as TContext;
         }
+
+
     }
 }

@@ -74,6 +74,21 @@ namespace Hermes.EntityFramework.KeyValueStore
             return Deserialize(entity.Value, Type.GetType(entity.ValueType));
         }
 
+        public void Remove(dynamic key)
+        {
+            string id = ToHash(key);
+
+            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
+            var entity = repository.Get(id);
+
+            if (entity == null)
+            {
+                return;
+            }
+
+            repository.Remove(entity);
+        }
+
         public object Deserialize(byte[] body, Type objectType)
         {
             if (body == null || body.Length == 0)

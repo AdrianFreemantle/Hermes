@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Persistence library using Entity Framework 6</description>
     <dependencies>
-      <dependency id="EntityFramework" version="6.0.1" />
+      <dependency id="EntityFramework" version="6.1.0" />
       <dependency id="Hermes.Core"/>
       <dependency id="Hermes.Messaging"/>
     </dependencies>

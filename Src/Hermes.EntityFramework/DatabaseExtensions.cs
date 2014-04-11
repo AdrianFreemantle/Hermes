@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
+using System.Linq;
 
 namespace Hermes.EntityFramework
 {
@@ -13,7 +15,7 @@ namespace Hermes.EntityFramework
             {
                 try
                 {
-                    T result = ExecuteScalar<T>(database, command, parameters);
+                    var result = ExecuteScalar<T>(database, command, parameters);
                     dbContextTransaction.Commit();
                     return result;
                 }
@@ -25,13 +27,26 @@ namespace Hermes.EntityFramework
             }
         }
 
-        private static T ExecuteScalar<T>(Database database, string command, object[] parameters)
+        private static T ExecuteScalar<T>(Database database, string command, IEnumerable<object> parameters)
         {
             DbCommand cmd = database.Connection.CreateCommand();
             cmd.CommandText = command;
             cmd.CommandType = CommandType.Text;
-            cmd.Parameters.Add(parameters);
-            return (T)cmd.ExecuteScalar();
+            
+            if(parameters != null && parameters.Any())
+                cmd.Parameters.Add(parameters);
+
+            using (var result = cmd.ExecuteReader(CommandBehavior.SingleResult))
+            {
+                if (result.Read())
+                {
+                    return (T)result[0];
+                }
+
+                result.Close();
+            }
+            
+            return default(T);
         }
     }
 }

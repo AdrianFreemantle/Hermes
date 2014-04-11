@@ -3,29 +3,21 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
+using Hermes.Messaging.Configuration;
 
 namespace Hermes.EntityFramework
 {
     public abstract class FrameworkContext : DbContext
     {
-        public ICurrentUser CurrentUser { get; set; }
-
         protected FrameworkContext()
         {
-            CurrentUser = new NullUser();
         }
 
         protected FrameworkContext(string databaseName)
             : base(databaseName)
         {
-            CurrentUser = new NullUser();
         }
 
-        protected FrameworkContext(string databaseName, ICurrentUser currentUser)
-            : base(databaseName)
-        {
-            CurrentUser = currentUser;
-        }
 
         public virtual int SaveLookupTableChanges(params Type[] lookupTypes)
         {
@@ -79,10 +71,10 @@ namespace Hermes.EntityFramework
         protected virtual void AdjustUsers(DbEntityEntry<IPersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
-                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.UserName;
+                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserId().ToString();
 
             if (entity.State == EntityState.Modified)
-                entity.Entity.ModifiedBy = CurrentUser.UserName;
+                entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserId().ToString();
         }
 
         protected virtual void AdjustTimestamps(DbEntityEntry<IPersistenceAudit> entity)
