@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -31,13 +32,13 @@ namespace Hermes.EntityFramework.KeyValueStore
             Mandate.ParameterNotNull(key, "Please provide a non-null key");
             Mandate.ParameterNotNull(value, "Please provide a non null value to store.");
 
-            string id = ToHash(key);
+            string hash = ToHash(key);
 
             var repository = repositoryFactory.GetRepository<KeyValueEntity>();
 
             var entity = new KeyValueEntity
             {
-                Id = id,
+                Hash = hash,
                 Key = key.ToString(),
                 ValueType = value.GetType().AssemblyQualifiedName,
                 Value = Serialize(value)
@@ -51,20 +52,19 @@ namespace Hermes.EntityFramework.KeyValueStore
             Mandate.ParameterNotNull(key, "Please provide a non-null key");
             Mandate.ParameterNotNull(value, "Please provide a non-null value to update.");
 
-            string id = ToHash(key);
-
+            string hash = ToHash(key);
             var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            KeyValueEntity entity = repository.Get(id);
+            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
+
             entity.Value = Serialize(value);
             entity.ValueType = value.GetType().AssemblyQualifiedName;
         }
 
         public object Get(dynamic key)
         {
-            string id = ToHash(key);
-
+            string hash = ToHash(key);
             var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            var entity = repository.Get(id);
+            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
 
             if (entity == null)
             {
@@ -76,10 +76,9 @@ namespace Hermes.EntityFramework.KeyValueStore
 
         public void Remove(dynamic key)
         {
-            string id = ToHash(key);
-
+            string hash = ToHash(key);
             var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            var entity = repository.Get(id);
+            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
 
             if (entity == null)
             {

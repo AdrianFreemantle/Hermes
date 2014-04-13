@@ -8,9 +8,9 @@ namespace Hermes.EntityFramework.KeyValueStore
         public KeyValueEntityConfiguration()
         {
             ToTable("KeyValueStore");
-            HasKey(entity => entity.Id);
+            HasKey(entity => entity.Hash);
             
-            Property(entity => entity.Id)
+            Property(entity => entity.Hash)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
                 .HasMaxLength(40);
             

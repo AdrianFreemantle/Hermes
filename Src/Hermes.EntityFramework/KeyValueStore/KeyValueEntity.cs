@@ -7,10 +7,13 @@ namespace Hermes.EntityFramework.KeyValueStore
     [Table("KeyValueStore")]
     public class KeyValueEntity : IPersistenceAudit 
     {
-        [Key, StringLength(40), DatabaseGenerated(DatabaseGeneratedOption.None)] 
-        public string Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
-        [Required, StringLength(256), Index(IsUnique = true)] 
+        [Required, Index(IsUnique = true), StringLength(40), DatabaseGenerated(DatabaseGeneratedOption.None)] 
+        public string Hash { get; set; }
+
+        [Required, StringLength(256)] 
         public string Key { get; set; }
        
         [Required, StringLength(1024)] 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Hermes
+namespace Hermes.Queries
 {
     public class PagedResult<T>
     {

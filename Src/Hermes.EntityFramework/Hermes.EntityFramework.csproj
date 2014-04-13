@@ -80,9 +80,8 @@
     <Compile Include="ProcessManagager\ProcessManagerPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrderedQueryableExtensions.cs" />
+    <Compile Include="Queries\EntityQuery.cs" />
     <Compile Include="Queries\DatabaseQuery.cs" />
-    <Compile Include="Queries\ISqlCommand.cs" />
-    <Compile Include="Queries\ISqlQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

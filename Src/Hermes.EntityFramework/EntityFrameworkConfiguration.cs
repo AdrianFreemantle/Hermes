@@ -35,9 +35,9 @@ namespace Hermes.EntityFramework
 
             containerBuilder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<AggregateRepository>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

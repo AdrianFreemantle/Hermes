@@ -9,17 +9,17 @@ namespace Hermes.EntityFramework
 {
     public static class OrderedQueryableExtensions
     {
-        public static PagedResult<TEntity> ToPagedResult<TEntity>(this IOrderedQueryable<TEntity> queryExpression, int pageNumber, int pageSize)
+        public static Hermes.Queries.PagedResult<TEntity> ToPagedResult<TEntity>(this IOrderedQueryable<TEntity> queryExpression, int pageNumber, int pageSize)
         {
             List<TEntity> results = queryExpression
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
                 .Take(pageSize)
                 .ToList();
 
-            return new PagedResult<TEntity>(results, pageNumber, pageSize, queryExpression.Count());
+            return new Hermes.Queries.PagedResult<TEntity>(results, pageNumber, pageSize, queryExpression.Count());
         }
 
-        public static PagedResult<TResult> ToPagedResult<TEntity, TResult>(this IOrderedQueryable<TEntity> queryExpression, Converter<TEntity, TResult> Converter, int pageNumber, int pageSize)
+        public static Hermes.Queries.PagedResult<TResult> ToPagedResult<TEntity, TResult>(this IOrderedQueryable<TEntity> queryExpression, Converter<TEntity, TResult> Converter, int pageNumber, int pageSize)
         {
             List<TResult> results = queryExpression
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
@@ -27,7 +27,7 @@ namespace Hermes.EntityFramework
                 .ToList()
                 .ConvertAll(Converter);
 
-            return new PagedResult<TResult>(results, pageNumber, pageSize, queryExpression.Count());
+            return new Hermes.Queries.PagedResult<TResult>(results, pageNumber, pageSize, queryExpression.Count());
         }
 
         private static int NumberOfRecordsToSkip(int pageNumber, int selectSize)

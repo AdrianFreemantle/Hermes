@@ -1,32 +1,36 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class DatabaseQuery : ISqlQuery, ISqlCommand
+    public class DatabaseQuery
     {
-        private readonly DbContext context;
- 
+        private readonly IContextFactory contextFactory;
+        protected DbContext Context;
+
         public DatabaseQuery(IContextFactory contextFactory)
         {
-            context = contextFactory.GetContext();
-
-            context.Configuration.AutoDetectChangesEnabled = false;
-            context.Configuration.LazyLoadingEnabled = false;
-            context.Configuration.ProxyCreationEnabled = false;
+            this.contextFactory = contextFactory;
         }
 
-        public List<TDto> SqlQuery<TDto>(string sqlQuery, params object[] parameters)
+        public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
-            return context.Database.SqlQuery<TDto>(sqlQuery, parameters).ToList();
+            GetDbContext();
+
+            return new EntityFrameworkRepository<TEntity>(Context);
         }
 
-        public void SqlCommand(string sqlQuery, params object[] parameters)
+        protected DbContext GetDbContext()
         {
-            context.Database.ExecuteSqlCommand(sqlQuery, parameters);
+            if (Context == null)
+            {
+                Context = contextFactory.GetContext();
+                Context.Configuration.AutoDetectChangesEnabled = false;
+                Context.Configuration.LazyLoadingEnabled = false;
+                Context.Configuration.ProxyCreationEnabled = false;
+            }
+
+            return Context;
         }
     }
 }
