@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Core Hermes messaging libraries.</description>
     <dependencies>
-      <dependency id="Autofac" version="3.1.5" />
+      <dependency id="Autofac" version="3.3.1" />
       <dependency id="CommonServiceLocator" version="1.0" />
       <dependency id="Newtonsoft.Json" version="6.0.2" />
       <dependency id="Hermes.Core"/>
