@@ -6,25 +6,16 @@ using Hermes.Queries;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class EntityQuery<TEntity, TResult>
+    public abstract class EntityQuery<TEntity, TResult>
         where TEntity : class, new()
         where TResult : class, new()
     {
         private readonly IQueryable<TEntity> query;
         private int pageSize = 10;
 
-        protected readonly Converter<TEntity, TResult> Converter;
-
-        public EntityQuery(DatabaseQuery databaseQuery, Func<TEntity, TResult> converter)
+        protected EntityQuery(DatabaseQuery databaseQuery)
         {
             query = databaseQuery.GetQueryable<TEntity>();
-            Converter = new Converter<TEntity, TResult>(converter);
-        }
-
-        public EntityQuery(DatabaseQuery databaseQuery)
-        {
-            query = databaseQuery.GetQueryable<TEntity>();
-            Converter = Mapper;
         }
 
         protected virtual IQueryable<TEntity> QueryWrapper(IQueryable<TEntity> queryable)
@@ -32,10 +23,7 @@ namespace Hermes.EntityFramework.Queries
             return query;
         }
 
-        protected virtual TResult Mapper(TEntity entity)
-        {
-            throw new NotImplementedException("Either pass in a conversion function in the constructor or override the Mapper function.");
-        }
+        protected abstract TResult Mapper(TEntity entity);
 
         public void SetPageSize(int size)
         {
@@ -47,7 +35,7 @@ namespace Hermes.EntityFramework.Queries
         {
             return query
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
         }
 
         public List<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate)
@@ -55,7 +43,7 @@ namespace Hermes.EntityFramework.Queries
             return query
                 .Where(queryPredicate)
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
         }
 
         public TResult FetchSingle(Expression<Func<TEntity, bool>> queryPredicate)
@@ -64,7 +52,7 @@ namespace Hermes.EntityFramework.Queries
                 .Where(queryPredicate))
                 .Single();
 
-            return Converter.Invoke(result);
+            return Mapper(result);
         }
 
         public TResult FetchSingleOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
@@ -73,7 +61,7 @@ namespace Hermes.EntityFramework.Queries
                 .Where(queryPredicate))
                 .SingleOrDefault();
 
-            return result != null ? Converter.Invoke(result) : null;
+            return result != null ? Mapper(result) : null;
         }
 
         public TResult FetchFirst(Expression<Func<TEntity, bool>> queryPredicate)
@@ -82,7 +70,7 @@ namespace Hermes.EntityFramework.Queries
                 .Where(queryPredicate))
                 .First();
 
-            return Converter.Invoke(result);
+            return Mapper(result);
         }
 
         public TResult FetchFirstOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
@@ -91,7 +79,7 @@ namespace Hermes.EntityFramework.Queries
                 .Where(queryPredicate))
                 .FirstOrDefault();
 
-            return result != null ? Converter.Invoke(result) : null;
+            return result != null ? Mapper(result) : null;
         }
 
         public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy)
@@ -105,7 +93,7 @@ namespace Hermes.EntityFramework.Queries
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
                 .Take(pageSize))
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
@@ -117,7 +105,7 @@ namespace Hermes.EntityFramework.Queries
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
                 .Take(pageSize))
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
@@ -134,7 +122,7 @@ namespace Hermes.EntityFramework.Queries
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
                 .Take(pageSize))
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
@@ -149,7 +137,7 @@ namespace Hermes.EntityFramework.Queries
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
                 .Take(pageSize))
                 .ToList()
-                .ConvertAll(Converter);
+                .ConvertAll(Mapper);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
