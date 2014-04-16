@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using Hermes.Attributes;
+using Hermes.Reflection;
 
 namespace Hermes
 {
@@ -22,7 +23,7 @@ namespace Hermes
             }
 
             return description;
-        }
+        }        
 
         public static bool HasIgnoreForSelectListAttribute(this Enum value)
         {

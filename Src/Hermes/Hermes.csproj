@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="EnumConverter.cs" />
     <Compile Include="GzipCompressor.cs" />
     <Compile Include="ContentTypes.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
