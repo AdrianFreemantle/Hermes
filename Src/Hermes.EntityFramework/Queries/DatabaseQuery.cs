@@ -1,4 +1,6 @@
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Hermes.EntityFramework.Queries
@@ -29,8 +31,14 @@ namespace Hermes.EntityFramework.Queries
                 Context.Configuration.LazyLoadingEnabled = false;
                 Context.Configuration.ProxyCreationEnabled = false;
             }
-
+            
             return Context;
+        }
+
+        public DbRawSqlQuery<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
+        {
+            var context = GetDbContext();
+            return context.Database.SqlQuery<T>(sql, parameters);
         }
     }
 }
