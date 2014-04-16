@@ -22,6 +22,7 @@ namespace Hermes.Messaging.EndPoints
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
             Settings.IsSendOnly = true;
+            Settings.IsLocalEndpoint = true;
             Settings.AutoSubscribeEvents = false;
             Settings.RootContainer = containerBuilder.BuildContainer();
             Settings.FlushQueueOnStartup = true;

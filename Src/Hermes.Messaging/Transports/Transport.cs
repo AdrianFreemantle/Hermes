@@ -6,6 +6,8 @@ using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Pipes;
+using Microsoft.Practices.ServiceLocation;
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Transports
 {
@@ -112,10 +114,17 @@ namespace Hermes.Messaging.Transports
         public void SendMessage(OutgoingMessageContext outgoingMessageContext)
         {
             var currentContext = (IncomingMessageContext)CurrentMessage;
-            
-            if (currentContext.Equals(IncomingMessageContext.Null))
+
+            if (Settings.IsLocalEndpoint)
             {
-                DispatchOutgoingMessage(outgoingMessageContext);
+                DispatchOutgoingMessage(outgoingMessageContext, ServiceLocator.Current);
+            }
+            else if (currentContext.Equals(IncomingMessageContext.Null))
+            {
+                using (var scope = container.BeginLifetimeScope())
+                {
+                    DispatchOutgoingMessage(outgoingMessageContext, scope);
+                }
             }
             else
             {
@@ -129,13 +138,10 @@ namespace Hermes.Messaging.Transports
             currentContext.Enqueue(outgoingMessageContext);
         }
 
-        protected virtual void DispatchOutgoingMessage(OutgoingMessageContext outgoingMessageContext)
+        private void DispatchOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IServiceLocator scope)
         {
-            using (var scope = container.BeginLifetimeScope())
-            {
-                outgoingMessageContext.SetUserId(Settings.UserIdResolver);
-                outgoingMessageContext.Process(outgoingPipeline, scope);
-            }
+            outgoingMessageContext.SetUserId(Settings.UserIdResolver);
+            outgoingMessageContext.Process(outgoingPipeline, scope);
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Hermes.Messaging.Configuration
         public static bool UseDistributedTransaction { get; internal set; }
         public static bool FlushQueueOnStartup { get; internal set; }
         public static bool IsSendOnly { get; internal set; }
+        public static bool IsLocalEndpoint { get; internal set; }
         internal static int SecondLevelRetryAttempts { get; set; }
         public static int FirstLevelRetryAttempts { get; internal set; }
         public static bool IsClientEndpoint { get; internal set; }
