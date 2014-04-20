@@ -65,7 +65,6 @@
   <ItemGroup>
     <Compile Include="OrmLiteConfiguration.cs" />
     <Compile Include="OrmLiteUnitOfWork.cs" />
-    <Compile Include="OrmLiteProcessManagerPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

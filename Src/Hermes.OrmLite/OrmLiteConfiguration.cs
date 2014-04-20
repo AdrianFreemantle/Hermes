@@ -30,7 +30,6 @@ namespace Hermes.OrmLite
             var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
             containerBuilder.RegisterSingleton(new OrmLiteConnectionFactory(connectionString, SqlServerDialect.Provider));
             containerBuilder.RegisterType<OrmLiteUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<OrmLiteProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }
