@@ -115,11 +115,7 @@ namespace Hermes.Messaging.Transports
         {
             var currentContext = (IncomingMessageContext)CurrentMessage;
 
-            if (Settings.IsLocalEndpoint)
-            {
-                DispatchOutgoingMessage(outgoingMessageContext, ServiceLocator.Current);
-            }
-            else if (currentContext.Equals(IncomingMessageContext.Null))
+            if (currentContext.Equals(IncomingMessageContext.Null))
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
