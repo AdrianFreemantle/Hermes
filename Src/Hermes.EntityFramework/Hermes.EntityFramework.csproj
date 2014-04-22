@@ -74,6 +74,7 @@
     <Compile Include="IPersistenceAudit.cs" />
     <Compile Include="IQueryableRepository.cs" />
     <Compile Include="IRepositoryFactory.cs" />
+    <Compile Include="ISequentiaGuidlId.cs" />
     <Compile Include="KeyValueStore\KeyValueEntity.cs" />
     <Compile Include="KeyValueStore\KeyValueEntityConfiguration.cs" />
     <Compile Include="KeyValueStore\KeyValueStorePersister.cs" />
