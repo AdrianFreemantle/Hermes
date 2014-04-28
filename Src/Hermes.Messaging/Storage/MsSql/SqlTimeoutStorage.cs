@@ -140,7 +140,7 @@ namespace Hermes.Messaging.Storage.MsSql
             {
                 connection.Open();
 
-                using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+                using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 using (var command = new SqlCommand(String.Format(SqlCommands.Remove, Address.Local), connection, transaction))
                 {
                     command.Parameters.Add(new SqlParameter("correlationId", correlationId));

@@ -10,10 +10,12 @@ namespace Hermes.EntityFramework.ProcessManagager
     public class ProcessManagerPersister : IPersistProcessManagers
     {
         private readonly EntityFrameworkUnitOfWork unitOfWork;
+        private readonly IPersistTimeouts timeoutStore;
 
-        public ProcessManagerPersister(EntityFrameworkUnitOfWork unitOfWork)
+        public ProcessManagerPersister(EntityFrameworkUnitOfWork unitOfWork, IPersistTimeouts timeoutStore)
         {
             this.unitOfWork = unitOfWork;
+            this.timeoutStore = timeoutStore;
             unitOfWork.BeginTransaction(IsolationLevel.Serializable);
         }
 
@@ -40,6 +42,7 @@ namespace Hermes.EntityFramework.ProcessManagager
             var repository = unitOfWork.GetRepository<T>();
             var entity = repository.Get(processId);
             repository.Remove(entity);
+            timeoutStore.Remove(processId);
         }
 
         public void Update<T>(T state) where T : class, IContainProcessManagerData, new()
