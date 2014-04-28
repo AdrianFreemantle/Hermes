@@ -34,7 +34,7 @@ namespace Hermes.EntityFramework
 
         public void Rollback()
         {
-            if (Transaction != null)
+            if (Transaction != null && Transaction.UnderlyingTransaction.Connection != null)
             {
                 Transaction.Rollback();
             }
@@ -65,7 +65,9 @@ namespace Hermes.EntityFramework
 
         public void BeginTransaction(IsolationLevel isolationLevel)
         {
-            Transaction = GetDatabase().BeginTransaction(isolationLevel);
+            var database = GetDatabase();
+            database.Connection.Open();
+            Transaction = database.BeginTransaction(isolationLevel);
         }
 
         public void CommitTransation()

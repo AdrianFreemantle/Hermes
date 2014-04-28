@@ -18,7 +18,6 @@ namespace Hermes.EntityFramework
         {
         }
 
-
         public virtual int SaveLookupTableChanges(params Type[] lookupTypes)
         {
             SaveLookups(lookupTypes);
