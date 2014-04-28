@@ -142,7 +142,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
                 using (var command = new SqlCommand(String.Format(SqlCommands.Remove, Address.Local), connection))
                 {
-                    command.Parameters.Add(new SqlParameter("correlationId", correlationId));
+                    command.Parameters.Add(new SqlParameter("@CorrelationId", correlationId));
                     command.ExecuteNonQuery();
                 }
             }
