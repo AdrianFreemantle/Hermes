@@ -65,7 +65,7 @@ namespace Hermes.Messaging.Pipeline
             var context = new OutgoingMessageContext
             {
                 correlationId = correlationId,
-                OutgoingMessageType = MessageType.Command,
+                OutgoingMessageType = MessageType.Defer,
                 outgoingMessage = message,
                 destination = address
             };
