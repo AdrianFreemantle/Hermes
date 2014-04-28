@@ -80,9 +80,10 @@ namespace Hermes.Messaging.ProcessManagement
 
             if (IsNew && IsComplete)
             {
-                ProcessManagerPersistence.Create(State);
+                return;
             }
-            else if (IsNew)
+
+            if (IsNew)
             {
                 ProcessManagerPersistence.Create(State);
             }
