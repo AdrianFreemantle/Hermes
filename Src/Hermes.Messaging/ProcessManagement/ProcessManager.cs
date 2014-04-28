@@ -5,17 +5,23 @@ namespace Hermes.Messaging.ProcessManagement
 {
     public abstract class ProcessManager
     {
-        protected internal abstract void Save();
+        public bool IsComplete { get; protected set; }
+        public bool IsNew { get; protected set; }
+        public IMessageBus Bus { get; set; }
+        public IPersistProcessManagers ProcessManagerPersistence { get; set; }
+        internal abstract void Save();
+        internal abstract Guid Id { get; }
     }
 
     public abstract class ProcessManager<T> : ProcessManager, IProcessManager<T> where T : class, IContainProcessManagerData, new()
     {
-        public IPersistProcessManagers ProcessManagerPersistence { get; set; }
-        public IMessageBus Bus { get; set; }
         public T State { get; protected set; }
-        protected internal bool IsComplete { get; protected set; }
-        protected internal bool IsNew { get; protected set; }
 
+        internal override Guid Id
+        {
+            get { return State.Id; }
+        }
+        
         protected virtual void Begin()
         {
             Begin(SequentialGuid.New());
@@ -74,7 +80,22 @@ namespace Hermes.Messaging.ProcessManagement
             }
         }
 
-        protected internal override void Save()
+        protected void Send(object command)
+        {
+            Bus.Send(State.Id, command);
+        }
+
+        protected void Publish(object @event)
+        {
+            Bus.Publish(State.Id, @event);
+        }
+
+        protected void Timeout(TimeSpan timeSpan, object command)
+        {
+            Bus.Defer(timeSpan, State.Id, command);
+        }
+
+        internal override void Save()
         {
             State.Version++;
 

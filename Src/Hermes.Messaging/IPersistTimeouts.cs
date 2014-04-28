@@ -9,7 +9,7 @@ namespace Hermes.Messaging
     {
         void Add(TimeoutData timeout);
         void Purge();
-        //void Add(Guid correlationId, TimeSpan timeToLive, object[] messages, IDictionary<string, string> headers);
         bool TryFetchNextTimeout(out TimeoutData timeoutData);
+        void Remove(Guid correlationId);
     }
 }

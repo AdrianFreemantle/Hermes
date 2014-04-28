@@ -132,7 +132,23 @@ namespace Hermes.Messaging.Storage.MsSql
                     }
                 }
             }
-        }        
+        }
+
+        public void Remove(Guid correlationId)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+                using (var command = new SqlCommand(String.Format(SqlCommands.Remove, Address.Local), connection, transaction))
+                {
+                    command.Parameters.Add(new SqlParameter("correlationId", correlationId));
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+            }
+        }
 
         private TimeoutData FoundTimeoutData(SqlDataReader dataReader)
         {

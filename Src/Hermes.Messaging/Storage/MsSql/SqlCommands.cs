@@ -76,6 +76,10 @@
               DELETE FROM message 
               OUTPUT deleted.Id, deleted.CorrelationId, deleted.Destination, deleted.Expires, deleted.Headers, deleted.Body;";
 
+        public const string Remove =
+            @"DELETE FROM [timeout].[{0}] t
+              WHERE t.CorrelationId = @correlationId";
+
         public const string Purge =
             @"IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[timeout].[{0}]') AND type in (N'U'))
               BEGIN

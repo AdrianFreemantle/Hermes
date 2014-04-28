@@ -29,7 +29,7 @@ namespace Hermes.Messaging.Transports
                 TryHandleMessage(message, serviceLocator, messageHandlerDetail, contracts, handlers);
             }
 
-            SaveProcessManagers(handlers);
+            SaveProcessManagers(handlers, serviceLocator);
         }
 
         protected virtual void TryHandleMessage(object message, IServiceLocator serviceLocator, HandlerCacheItem messageHandlerDetail, IEnumerable<Type> contracts, List<object> handlers)
@@ -46,8 +46,10 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        protected virtual void SaveProcessManagers(IEnumerable<object> handlers)
+        protected virtual void SaveProcessManagers(IEnumerable<object> handlers, IServiceLocator serviceLocator)
         {
+            var timeoutStore = serviceLocator.GetInstance<IPersistTimeouts>();
+
             foreach (var handler in handlers)
             {
                 var processManager = handler as ProcessManager;
@@ -55,7 +57,16 @@ namespace Hermes.Messaging.Transports
                 if (processManager != null)
                 {
                     processManager.Save();
+                    RemoveOustandingTimeoutMessages(processManager, timeoutStore);
                 }
+            }
+        }
+
+        private static void RemoveOustandingTimeoutMessages(ProcessManager processManager, IPersistTimeouts timeoutStore)
+        {
+            if (processManager.IsComplete)
+            {
+                timeoutStore.Remove(processManager.Id);
             }
         }
     }
