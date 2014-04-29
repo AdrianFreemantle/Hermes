@@ -25,14 +25,14 @@ namespace Hermes.EntityFramework
             return DbSet.Find(id);
         }
 
-        public void Add(TEntity newEntity)
+        public TEntity Add(TEntity newEntity)
         {
-            DbSet.Add(newEntity);
+            return DbSet.Add(newEntity);
         }
 
-        public void Remove(TEntity entity)
+        public TEntity Remove(TEntity entity)
         {
-            DbSet.Remove(entity);
+            return DbSet.Remove(entity);
         }
 
         public IEnumerator<TEntity> GetEnumerator()

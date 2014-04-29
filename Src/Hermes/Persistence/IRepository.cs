@@ -3,7 +3,7 @@
     public interface IRepository<TEntity> where TEntity : class 
     {
         TEntity Get(object id);
-        void Add(TEntity newEntity);
-        void Remove(TEntity entity);
+        TEntity Add(TEntity newEntity);
+        TEntity Remove(TEntity entity);
     }
 }
