@@ -53,9 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="Compression\CompressedObject.cs" />
+    <Compile Include="Compression\CompressionOption.cs" />
     <Compile Include="SingleGlobalInstance.cs" />
     <Compile Include="EnumConverter.cs" />
-    <Compile Include="GzipCompressor.cs" />
+    <Compile Include="Compression\GzipCompressor.cs" />
     <Compile Include="ContentTypes.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
     <Compile Include="DeterministicGuid.cs" />

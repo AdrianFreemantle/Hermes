@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using Hermes.Serialization;
 
-namespace Hermes
+namespace Hermes.Compression
 {
     public static class GzipCompressor
     {
