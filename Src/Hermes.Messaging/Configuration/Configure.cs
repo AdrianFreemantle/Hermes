@@ -164,9 +164,6 @@ namespace Hermes
 
         private static void StartServices()
         {
-            if (Settings.IsSendOnly)
-                return;
-
             var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
 
             foreach (var startableObject in startableObjects)
