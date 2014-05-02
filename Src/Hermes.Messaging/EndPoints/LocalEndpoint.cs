@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
@@ -8,7 +9,7 @@ using Hermes.Pipes;
 
 namespace Hermes.Messaging.EndPoints
 {
-    public abstract class LocalEndpoint<TContainerBuilder> : IDisposable
+    public abstract class LocalEndpoint<TContainerBuilder> : IService
         where TContainerBuilder : IContainerBuilder, new()
     {
         private readonly Configure configuration;
@@ -62,6 +63,18 @@ namespace Hermes.Messaging.EndPoints
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void Run(CancellationToken token)
+        {
+            configuration.Start();
+
+            while (!token.IsCancellationRequested)
+            {
+                Thread.Sleep(100);
+            }
+
+            configuration.Stop();
         }
 
         protected virtual void Dispose(bool disposing)
