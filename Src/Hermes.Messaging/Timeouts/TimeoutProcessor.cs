@@ -68,7 +68,9 @@ namespace Hermes.Messaging.Timeouts
         public void Stop()
         {
             Logger.Verbose("Stopping Timeout Processor");
-            tokenSource.Cancel();
+
+            if(tokenSource != null)
+                tokenSource.Cancel();
         }
 
         private void WorkerAction(object obj)

@@ -55,7 +55,8 @@ namespace Hermes.Messaging.Transports
 
         public void Stop()
         {
-            tokenSource.Cancel();
+            if(tokenSource != null)
+                tokenSource.Cancel();
         }
 
         public void WorkerAction(object obj)
