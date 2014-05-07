@@ -5,14 +5,12 @@ using System.Transactions;
 
 using Hermes.Backoff;
 using Hermes.Failover;
-using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports
 {  
     public class Receiver : IReceiveMessages
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Receiver));
         private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(100, TimeSpan.FromSeconds(30));
 
         private CancellationTokenSource tokenSource;
