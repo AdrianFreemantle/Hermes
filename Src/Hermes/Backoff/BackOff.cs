@@ -11,7 +11,7 @@ namespace Hermes.Backoff
         private TimeSpan currentDelayTime;
 
         public BackOff()
-            : this(new ExponentialBackOffStrategy(), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30))
+            : this(new ExponentialBackOffStrategy(), TimeSpan.FromMilliseconds(1), TimeSpan.FromSeconds(30))
         {
         }
 

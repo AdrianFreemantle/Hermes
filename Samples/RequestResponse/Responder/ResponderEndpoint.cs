@@ -16,19 +16,22 @@ namespace Responder
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
+                .FirstLevelRetryPolicy(3)
                 .UseJsonSerialization()
-                .FirstLevelRetryPolicy(3, TimeSpan.FromSeconds(1))
                 .UseSqlTransport()
-                .UseSqlStorage()                
                 .DefineMessageAs(IsMessage)
+                .DefineCommandAs(IsCommand)
                 .RegisterMessageRoute<AdditionResult>(Address.Parse("Requestor"));
-
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
         }
 
         private static bool IsMessage(Type type)
         {
             return typeof(IMessage).IsAssignableFrom(type) && type.Namespace.StartsWith("RequestResponseMessages");
+        }
+
+        private static bool IsCommand(Type type)
+        {
+            return typeof(ICommand).IsAssignableFrom(type) && type.Namespace.StartsWith("RequestResponseMessages");
         }
     }
 }

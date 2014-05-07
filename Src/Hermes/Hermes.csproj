@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="Failover\CircuitBreaker.cs" />
     <Compile Include="Compression\CompressedObject.cs" />
     <Compile Include="Compression\CompressionOption.cs" />
     <Compile Include="CronSchedule\Cron.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="CronSchedule\Fields\MonthField.cs" />
     <Compile Include="CronSchedule\ScheduleTime.cs" />
     <Compile Include="CronSchedule\SpecialCharacters.cs" />
+    <Compile Include="Failover\CriticalError.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
     <Compile Include="SingleGlobalInstance.cs" />
     <Compile Include="EnumConverter.cs" />
@@ -122,7 +124,7 @@
     <Compile Include="Persistence\IUnitOfWork.cs" />
     <Compile Include="Reflection\PropertyBag.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
-    <Compile Include="Retry.cs" />
+    <Compile Include="Failover\Retry.cs" />
     <Compile Include="SequentialGuid.cs" />
     <Compile Include="Mandate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

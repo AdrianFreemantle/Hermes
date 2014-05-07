@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 using Hermes.Backoff;
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 
@@ -11,7 +12,8 @@ namespace Hermes.Messaging.Timeouts
 {
     public class TimeoutProcessor : IAmStartable
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(TimeoutProcessor)); 
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(TimeoutProcessor));
+        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(100, TimeSpan.FromSeconds(30));
 
         private CancellationTokenSource tokenSource;
         private readonly IPersistTimeouts timeoutStore;
@@ -30,10 +32,29 @@ namespace Hermes.Messaging.Timeouts
             if(Settings.IsSendOnly)
                 return;
 
-            tokenSource = new CancellationTokenSource();
             Logger.Verbose("Starting Timeout Processor");
+
+            tokenSource = new CancellationTokenSource();
+            StartThread();
+        }
+
+        private void StartThread()
+        {
             CancellationToken token = tokenSource.Token;
             Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+            Task.Factory
+                .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
+                .ContinueWith(t =>
+                {
+                    t.Exception.Handle(ex =>
+                    {
+                        circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to process timeout message.", ex));
+                        return true;
+                    });
+
+                    StartThread();
+                }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private void PurgeQueueIfRequired()

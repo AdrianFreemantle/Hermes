@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
@@ -20,10 +20,11 @@ namespace Hermes
         static Configure()
         {
             Instance = new Configure();
-        }
+        }    
 
         private Configure()
-        {         
+        {
+            CriticalError.OnCriticalError += OnCriticalError;
         }
 
         internal static Configure ClientEndpoint(string endpointName, IContainerBuilder builder)
@@ -219,6 +220,11 @@ namespace Hermes
             {
                 startableObject.Stop();
             }
+        }
+
+        private void OnCriticalError(CriticalErrorEventArgs e)
+        {
+            Stop();
         }
     }
 }

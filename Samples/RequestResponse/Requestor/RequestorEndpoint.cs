@@ -13,16 +13,15 @@ namespace Requestor
     public class RequestorEndpoint : ClientEndpoint<AutofacAdapter>
     {
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
-        {            
+        {
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
+
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport()
-                .UseSqlStorage()
                 .DefineCommandAs(IsCommand)
                 .DefineMessageAs(IsMessage)
                 .RegisterMessageRoute<AddNumbers>(Address.Parse("Responder"));
-
-            ConsoleWindowLogger.MinimumLogLevel = ConsoleWindowLogger.LogLevel.Info;
         }
 
         private static bool IsCommand(Type type)

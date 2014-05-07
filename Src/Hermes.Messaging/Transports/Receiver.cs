@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 using Hermes.Backoff;
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 
@@ -12,6 +13,7 @@ namespace Hermes.Messaging.Transports
     public class Receiver : IReceiveMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(Receiver));
+        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(100, TimeSpan.FromSeconds(30));
 
         private CancellationTokenSource tokenSource;
         private readonly IDequeueMessages dequeueStrategy;
@@ -24,7 +26,7 @@ namespace Hermes.Messaging.Transports
 
         public void Start(Action<TransportMessage> handleMessage)
         {
-            this.messageReceived = handleMessage;
+            messageReceived = handleMessage;
             tokenSource = new CancellationTokenSource();
 
             for (int i = 0; i < Settings.NumberOfWorkers; i++)
@@ -36,7 +38,19 @@ namespace Hermes.Messaging.Transports
         private void StartThread()
         {
             CancellationToken token = tokenSource.Token;
-            Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+            Task.Factory
+                .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
+                .ContinueWith(t =>
+                {
+                    t.Exception.Handle(ex =>
+                    {
+                        circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to dequeue messages.", ex));
+                        return true;
+                    });
+
+                    StartThread();
+                }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         public void Stop()
@@ -51,28 +65,11 @@ namespace Hermes.Messaging.Transports
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                DequeueNextMessage(backoff);
-            }
-        }
-
-        private void DequeueNextMessage(BackOff backoff)
-        {
-            bool foundWork = false;
-
-            try
-            {
-                foundWork = DequeueWork();
-            }
-            catch (Exception ex)
-            {
-                Logger.Fatal("Error while attempting to dequeue work: {0}", ex.GetFullExceptionMessage());
-            }
-            finally
-            {
+                bool foundWork = DequeueWork();
                 SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
             }
         }
-
+        
         private bool DequeueWork()
         {
             using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))

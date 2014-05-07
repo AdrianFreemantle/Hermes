@@ -37,7 +37,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
             }
             catch (Exception ex)
             {
-                Logger.Fatal("Error while attempting to dequeue message: {0}", ex.GetFullExceptionMessage());
+                Logger.Error("Error while attempting to dequeue message: {0}", ex.GetFullExceptionMessage());
                 return TransportMessage.Undefined;
             }
         }

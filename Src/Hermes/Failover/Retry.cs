@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
+using Hermes.Backoff;
 
-namespace Hermes
+namespace Hermes.Failover
 {
     [DebuggerStepThrough]
     public static class Retry
     {
-        public static void Action(Action action, int retryAttempts, TimeSpan retryDelay)
+        public static void Action(Action action, Action<Exception> onRetry, int retryAttempts)
         {
-            Action(action, (arg1) => { }, retryAttempts, retryDelay);
+            Action(action, (arg1) => { }, retryAttempts, new BackOff());
         }
 
-        public static void Action(Action action, Action<Exception> onRetry, int retryAttempts, TimeSpan retryDelay)
+        public static void Action(Action action, int retryAttempts, BackOff backOff)
+        {
+            Action(action, (arg1) => { }, retryAttempts, backOff);
+        }
+
+        public static void Action(Action action, Action<Exception> onRetry, int retryAttempts, BackOff backoff)
         {
             Mandate.ParameterNotNull(action, "action");
+            Mandate.ParameterNotNull(backoff, "backoff");
+
+            backoff.Reset();
 
             int retryCount = retryAttempts;
 
@@ -33,7 +41,7 @@ namespace Hermes
                     }
 
                     onRetry(ex);
-                    Thread.Sleep(retryDelay);
+                    backoff.Delay();
                 }
             } while (retryCount-- > 0);
         }

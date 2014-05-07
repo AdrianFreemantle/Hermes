@@ -15,6 +15,8 @@ namespace Requestor
 
         private static void Main(string[] args)
         {
+            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+
             using (var requestor = new RequestorEndpoint())
             {
                 logger = LogFactory.BuildLogger(typeof(Program));
@@ -33,6 +35,7 @@ namespace Requestor
                 logger.Info("Adding numbers {0} and {1}", x, y);
                 messageBus.Send(new AddNumbers { X = x, Y = y }).Register().Wait();// wait for response
                 Thread.Sleep(50); //small sleep gives the handler a chance to print its result before we send the next command
+                Console.ReadKey();
             }
         }
     }
