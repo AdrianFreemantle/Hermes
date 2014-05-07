@@ -7,23 +7,23 @@ namespace Hermes.Messaging.Configuration
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (CurrentUser));
 
-        public static Guid GetCurrentUserId()
+        public static string GetCurrentUserName()
         {
             try
             {
-                if (Settings.UserIdResolver == null)
+                if (Settings.UserNameResolver == null)
                 {
-                    return Guid.Empty;
+                    return string.Empty;
                 }
 
-                return Settings.UserIdResolver();
+                return Settings.UserNameResolver();
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.GetFullExceptionMessage());
             }
 
-            return Guid.Empty;
+            return String.Empty;
         }
     }
 }

@@ -70,10 +70,10 @@ namespace Hermes.EntityFramework
         protected virtual void AdjustUsers(DbEntityEntry<IPersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
-                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserId().ToString();
+                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
 
             if (entity.State == EntityState.Modified)
-                entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserId().ToString();
+                entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
         }
 
         protected virtual void AdjustTimestamps(DbEntityEntry<IPersistenceAudit> entity)

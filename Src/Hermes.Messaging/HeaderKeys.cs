@@ -15,6 +15,6 @@
         public const string ControlMessageHeader = "Hermes.ControlMessage";
         public const string ReturnErrorCode = "Hermes.ReturnErrorCode";
         public const string ProcessingEndpoint = "Hermes.ProcessingEndpoint";
-        public const string UserId = "Hermes.ProcessingEndpoint";
+        public const string UserName = "Hermes.UserName";
     }
 }

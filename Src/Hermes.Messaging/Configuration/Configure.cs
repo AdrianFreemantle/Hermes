@@ -139,9 +139,9 @@ namespace Hermes
             return this;
         }
 
-        public IConfigureEndpoint UserIdResolver(Func<Guid> resolveUserIdAction)
+        public IConfigureEndpoint UserIdResolver(Func<string> userNameResolver)
         {
-            Settings.UserIdResolver = resolveUserIdAction;
+            Settings.UserNameResolver = userNameResolver;
             return this;
         }
 

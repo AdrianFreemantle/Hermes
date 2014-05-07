@@ -44,7 +44,7 @@ namespace Hermes.Messaging.Configuration
         internal static Func<Type, bool> IsMessageType { get; set; }
         internal static Func<Type, bool> IsCommandType { get; set; }
         internal static Func<Type, bool> IsEventType { get; set; }
-        internal static Func<Guid> UserIdResolver { get; set; }
+        internal static Func<string> UserNameResolver { get; set; }
 
         public static IContainer RootContainer
         {

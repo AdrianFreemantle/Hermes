@@ -130,13 +130,13 @@ namespace Hermes.Messaging.Transports
 
         protected virtual void EnqueOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IncomingMessageContext currentContext)
         {
-            outgoingMessageContext.SetUserId(currentContext.UserId);
+            outgoingMessageContext.SetUserName(currentContext.UserName);
             currentContext.Enqueue(outgoingMessageContext);
         }
 
         private void DispatchOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IServiceLocator scope)
         {
-            outgoingMessageContext.SetUserId(Settings.UserIdResolver);
+            outgoingMessageContext.SetUserName(Settings.UserNameResolver);
             outgoingMessageContext.Process(outgoingPipeline, scope);
         }
     }

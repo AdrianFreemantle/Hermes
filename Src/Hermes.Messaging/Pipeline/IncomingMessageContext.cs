@@ -44,9 +44,9 @@ namespace Hermes.Messaging.Pipeline
             get { return TransportMessage.ReplyToAddress; }
         }
 
-        public Guid UserId
+        public string UserName
         {
-            get { return GetUserId(); }
+            get { return GetUserName(); }
         } 
 
         protected IncomingMessageContext()
@@ -83,14 +83,14 @@ namespace Hermes.Messaging.Pipeline
             pipeline.Invoke(this);
         }
 
-        public Guid GetUserId()
+        public string GetUserName()
         {
-            if (TransportMessage.Headers.ContainsKey(HeaderKeys.UserId))
+            if (TransportMessage.Headers.ContainsKey(HeaderKeys.UserName))
             {
-                return Guid.Parse(TransportMessage.Headers[HeaderKeys.UserId]);
+                return TransportMessage.Headers[HeaderKeys.UserName];
             }
 
-            return Guid.Empty;
+            return String.Empty;
         }
 
         public bool IsControlMessage()

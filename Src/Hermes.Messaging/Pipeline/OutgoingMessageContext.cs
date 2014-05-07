@@ -12,6 +12,8 @@ namespace Hermes.Messaging.Pipeline
 {
     public class OutgoingMessageContext
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (OutgoingMessageContext));
+
         private readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
         private readonly Guid messageId;
         private object outgoingMessage;
@@ -185,22 +187,27 @@ namespace Hermes.Messaging.Pipeline
             buildHeaderFunction = buildHeader;
         }
 
-        public void SetUserId(Guid userId)
+        public void SetUserName(string userName)
         {
-            if(userId == Guid.Empty)
+            if (String.IsNullOrWhiteSpace(userName))
                 return;
 
-            AddHeader(new HeaderValue(HeaderKeys.UserId, userId.ToString()));
+            AddHeader(new HeaderValue(HeaderKeys.UserName, userName));
         }
 
-        public void SetUserId(Func<Guid> userIdResolver)
+        public void SetUserName(Func<string> userNameResolver)
         {
-            if (userIdResolver == null)
-            {
+            if (userNameResolver == null)
                 return;
-            }
 
-            SetUserId(userIdResolver());
+            try
+            {
+                SetUserName(userNameResolver());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error while attempting to resolve the user name : {0}", ex.GetFullExceptionMessage());
+            }
         }
 
         public override string ToString()

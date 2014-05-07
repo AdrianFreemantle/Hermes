@@ -9,7 +9,7 @@ namespace Hermes.Messaging
     {
         Guid MessageId { get; }
         Guid CorrelationId { get; }
-        Guid UserId { get; }
+        string UserName { get; }
         Address ReplyToAddress { get; }
     }
 }

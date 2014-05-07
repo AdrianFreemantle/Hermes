@@ -14,6 +14,6 @@ namespace Hermes.Messaging
         IConfigureEndpoint DefineCommandAs(Func<Type, bool> isCommandRule);
         IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule);
         IConfigureEndpoint SendOnlyEndpoint();
-        IConfigureEndpoint UserIdResolver(Func<Guid> resolveUserIdAction);
+        IConfigureEndpoint UserIdResolver(Func<string> resolveUserName);
     }
 }
