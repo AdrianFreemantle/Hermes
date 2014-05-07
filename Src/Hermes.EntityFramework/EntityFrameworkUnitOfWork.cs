@@ -46,14 +46,14 @@ namespace Hermes.EntityFramework
             }
         }
 
-        public IQueryableRepository<TEntity> GetRepository<TEntity>() where TEntity : class, new()
+        public IDbSet<TEntity> GetRepository<TEntity>() where TEntity : class, new()
         {
-            GetDbContext();
+            var context = GetDbContext();
 
-            return new EntityFrameworkRepository<TEntity>(Context);
+            return context.Set<TEntity>();
         }
 
-        protected DbContext GetDbContext()
+        public DbContext GetDbContext()
         {
             return Context ?? (Context = contextFactory.GetContext());
         }

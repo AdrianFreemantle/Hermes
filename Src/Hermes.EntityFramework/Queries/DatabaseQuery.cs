@@ -17,9 +17,14 @@ namespace Hermes.EntityFramework.Queries
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
-            GetDbContext();
+            var context = GetDbContext();
+            return context.Set<TEntity>();
+        }
 
-            return new EntityFrameworkRepository<TEntity>(Context);
+        public DbRawSqlQuery<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
+        {
+            var context = GetDbContext();
+            return context.Database.SqlQuery<T>(sql, parameters);
         }
 
         protected DbContext GetDbContext()
@@ -31,14 +36,8 @@ namespace Hermes.EntityFramework.Queries
                 Context.Configuration.LazyLoadingEnabled = false;
                 Context.Configuration.ProxyCreationEnabled = false;
             }
-            
-            return Context;
-        }
 
-        public DbRawSqlQuery<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
-        {
-            var context = GetDbContext();
-            return context.Database.SqlQuery<T>(sql, parameters);
+            return Context;
         }
     }
 }

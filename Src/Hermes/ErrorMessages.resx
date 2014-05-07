@@ -117,7 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DateTimeFormatError" xml:space="preserve">
+    <value>The scheduled date is invalid. Unable to create a DateTime for {0}.</value>
+  </data>
+  <data name="EndsWithMatchAllError" xml:space="preserve">
+    <value>An expression-field may not end with a * character.</value>
+  </data>
   <data name="EnvironmentNotConfigured" xml:space="preserve">
     <value>"You must first configure the environment settings before attempting to configure the Bus"</value>
+  </data>
+  <data name="ExpressionFieldCountError" xml:space="preserve">
+    <value>The provided cron expression must contain 5 fields.</value>
+  </data>
+  <data name="ExpressionFieldFormatError" xml:space="preserve">
+    <value>A value in the expression field is incorrectly formatted.</value>
+  </data>
+  <data name="InvalidCharacterError" xml:space="preserve">
+    <value>An invalid character was detected in the expression-field value.</value>
+  </data>
+  <data name="NoScheduleFound" xml:space="preserve">
+    <value>"A schedule could not be resolved. Check that the date is in fact reachable e.g. February 31 can never be scheduled."</value>
+  </data>
+  <data name="OnlyIncrementSeperatorError" xml:space="preserve">
+    <value>An expression-field may not only contain a / character.</value>
+  </data>
+  <data name="OnlyRangeSeperatorError" xml:space="preserve">
+    <value>An expression-field may not only contain a - character.</value>
+  </data>
+  <data name="OutOfRangeError" xml:space="preserve">
+    <value>The provided value of {0} is larger than the maximum allowed value of {1} for this field.</value>
+  </data>
+  <data name="StartsOrEndsWithIncrementError" xml:space="preserve">
+    <value>An expression-field may not end or start with with a / character.</value>
+  </data>
+  <data name="StartsOrEndsWithRangeError" xml:space="preserve">
+    <value>An expression-field may not end or start with with a - character.</value>
   </data>
 </root>

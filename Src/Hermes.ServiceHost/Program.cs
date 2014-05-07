@@ -5,6 +5,7 @@ using System.Reflection;
 using Hermes.Logging;
 
 using Topshelf;
+using log4net.Config;
 
 namespace Hermes.ServiceHost
 {
@@ -37,8 +38,8 @@ namespace Hermes.ServiceHost
             }
             else
             {
-                LogFactory.BuildLogger = type => new TraceLogger(type);
-                TraceLogger.MinimumLogLevel = LogLevel.Debug;
+                XmlConfigurator.Configure();
+                LogFactory.BuildLogger = type => new Log4NetLogger(type);
             }
 
             Logger = LogFactory.BuildLogger(typeof (Program));

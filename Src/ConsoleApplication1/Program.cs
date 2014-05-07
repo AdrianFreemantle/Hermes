@@ -39,14 +39,23 @@ namespace ConsoleApplication1
 
         private static void PrintMetrics(PerformanceMetricEventArgs e)
         {
+            Console.WriteLine("================================================================================");
+
+            Console.WriteLine("[Total MSG: {0}] [ATTD: {1} ] [ATTP: {2}]", 
+                e.PerformanceMetric.Count, 
+                e.PerformanceMetric.AverageTimeToDelivery, 
+                e.PerformanceMetric.AverageTimeToProcess);
+
             foreach (var metric in e.PerformanceMetric.GetEndpointPerformance())
             {
                 Console.WriteLine("[Endpoint: {0}] [MSG: {1}] [MSG/S: {2}] [ATTD: {3} ] [ATTP: {4}]",
-                                  metric.Endpoint, metric.TotalMessagesProcessed,
-                                  (metric.TotalMessagesProcessed / 10),
-                                  metric.AverageTimeToDeliver,
-                                  metric.AverageTimeToProcess);
+                                  metric.Endpoint, 
+                                  metric.TotalMessagesProcessed,
+                                  (metric.TotalMessagesProcessed / e.MonitorPeriod.Seconds),
+                                  metric.AverageTimeToDeliver.Milliseconds,
+                                  metric.AverageTimeToProcess.Milliseconds);
             }
+            
         }
     }
 }

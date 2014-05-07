@@ -2,15 +2,13 @@
 
 namespace Hermes.Logging
 {
-    public class TraceLogger : ILog
+    public class DebugLogger : ILog
     {
-        private static readonly object Sync = new object();
-        private readonly ConsoleColor originalColor = Console.ForegroundColor;
         private readonly Type typeToLog;
 
         public static LogLevel MinimumLogLevel { get; set; }
 
-        public TraceLogger(Type typeToLog)
+        public DebugLogger(Type typeToLog)
         {
             this.typeToLog = typeToLog;
         }
@@ -53,7 +51,7 @@ namespace Hermes.Logging
 
         private void Log(string message, params object[] values)
         {
-            System.Diagnostics.Trace.WriteLine(message.FormatMessage(typeToLog, values));
+            System.Diagnostics.Debug.WriteLine(message.FormatMessage(typeToLog, values));
         }
     }
 }

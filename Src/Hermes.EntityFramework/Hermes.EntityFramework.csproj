@@ -62,9 +62,9 @@
     <Compile Include="ConcurrencyException.cs" />
     <Compile Include="DatabaseExtensions.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="DbSetExtensions.cs" />
     <Compile Include="EntityFrameworkConfiguration.cs" />
     <Compile Include="EnumWrapper.cs" />
-    <Compile Include="EntityFrameworkRepository.cs" />
     <Compile Include="ContextFactory.cs" />
     <Compile Include="EntityFrameworkUnitOfWork.cs" />
     <Compile Include="EntityTypeConfigurationExtensions.cs" />
