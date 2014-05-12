@@ -11,7 +11,7 @@ namespace Hermes
             var currentException = ex;
 
             exceptionMessage.AppendLine();
-            exceptionMessage.AppendLine("===================== EXCPTIONS =====================");
+            exceptionMessage.AppendLine("===================== EXECPTIONS =====================");
 
             do
             {
