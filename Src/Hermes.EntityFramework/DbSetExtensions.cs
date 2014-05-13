@@ -20,25 +20,5 @@ namespace Hermes.EntityFramework
         {
             return source.Local.SingleOrDefault(predicate) ?? source.SingleOrDefault(predicate) ?? source.Create();
         }
-
-        public static TEntity FirstOrDefault<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
-        {
-            return source.Local.FirstOrDefault(predicate) ?? source.FirstOrDefault(predicate);
-        }
-
-        public static TEntity SingleOrDefault<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
-        {
-            return source.Local.SingleOrDefault(predicate) ?? source.SingleOrDefault(predicate);
-        }
-
-        public static TEntity First<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
-        {
-            return source.Local.FirstOrDefault(predicate) ?? source.First(predicate);
-        }
-
-        public static TEntity Single<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
-        {
-            return source.Local.SingleOrDefault(predicate) ?? source.Single(predicate);
-        }
     }
 }
