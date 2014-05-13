@@ -64,6 +64,7 @@
     <Compile Include="DbContextExtensions.cs" />
     <Compile Include="DbSetExtensions.cs" />
     <Compile Include="EntityFrameworkConfiguration.cs" />
+    <Compile Include="EntityValidationException.cs" />
     <Compile Include="EnumWrapper.cs" />
     <Compile Include="ContextFactory.cs" />
     <Compile Include="EntityFrameworkUnitOfWork.cs" />

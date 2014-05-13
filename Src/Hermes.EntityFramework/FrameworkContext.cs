@@ -39,6 +39,10 @@ namespace Hermes.EntityFramework
             {
                 throw new ConcurrencyException(ex);
             }
+            catch (DbEntityValidationException ex)
+            {
+                throw new EntityValidationException(ex);
+            }
         }
 
         protected virtual void SaveLookups(params Type[] lookupTypesToSave)
