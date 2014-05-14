@@ -33,15 +33,15 @@ namespace Hermes.EntityFramework.Queries
 
         public virtual List<TResult> FetchAll()
         {
-            return query
+            return QueryWrapper(query)
                 .ToList()
                 .ConvertAll(Mapper);
         }
 
         public List<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return query
-                .Where(queryPredicate)
+            return QueryWrapper(query
+                .Where(queryPredicate))
                 .ToList()
                 .ConvertAll(Mapper);
         }
