@@ -31,8 +31,10 @@ namespace Hermes.EntityFramework
 
             foreach (var dbValidationError in dbEntityValidationResult.ValidationErrors)
             {
-                string error = String.Format("  Property {0} on entity {1} has validtion error : {2}", dbValidationError.PropertyName, dbValidationError.ErrorMessage,
-                                             entityName);
+                var propertyName = dbValidationError.PropertyName;
+                var validationError = dbValidationError.ErrorMessage;
+                string error = String.Format("  Property {0} on entity {1} has validtion error : {2}", propertyName, entityName, validationError);
+
                 stringBuilder.AppendLine(error);
             }
         }
