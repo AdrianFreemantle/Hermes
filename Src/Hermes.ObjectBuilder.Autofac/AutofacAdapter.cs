@@ -10,7 +10,7 @@ using Autofac.Builder;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
-
+using Hermes.Queries;
 using Microsoft.Practices.ServiceLocation;
 
 using IContainer = Hermes.Ioc.IContainer;
@@ -55,24 +55,6 @@ namespace Hermes.ObjectBuilder.Autofac
         public virtual IContainer BeginLifetimeScope()
         {
             return new AutofacAdapter(LifetimeScope.BeginLifetimeScope());
-        }
-
-        public void RegisterMessageHandlers(IEnumerable<Assembly> assemblies)
-        {
-            if (assemblies == null)
-            {
-                return;
-            }
-
-            var builder = new ContainerBuilder();
-
-            builder.RegisterAssemblyTypes(assemblies.ToArray())
-                   .AsClosedTypesOf(typeof (IHandleMessage<>))
-                   .InstancePerLifetimeScope()
-                   .PropertiesAutowired()
-                   .AsImplementedInterfaces();  
-            
-            builder.Update(LifetimeScope.ComponentRegistry);
         }
 
         public void RegisterModule(IRegisterDependencies module)

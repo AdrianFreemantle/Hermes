@@ -6,6 +6,7 @@ using System.Reflection;
 
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
+using Hermes.Queries;
 using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration
@@ -18,10 +19,17 @@ namespace Hermes.Messaging.Configuration
             {
                 IEnumerable<Type> messageTypes = GetMesageTypes(scanner);
                 ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes(scanner);
+                ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes(scanner);
+
 
                 foreach (var messageHandlerType in messageHandlerTypes)
                 {
                     containerBuilder.RegisterType(messageHandlerType, DependencyLifecycle.InstancePerUnitOfWork);
+                }
+
+                foreach (var queryHandlerType in queryHandlerTypes)
+                {
+                    containerBuilder.RegisterType(queryHandlerType, DependencyLifecycle.InstancePerUnitOfWork);
                 }
                 
                 foreach (var messageType in messageTypes)
@@ -64,6 +72,15 @@ namespace Hermes.Messaging.Configuration
                 scanner.Types.Where(
                     t => t.GetInterfaces()
                           .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IHandleMessage<>)))
+                       .Distinct(new TypeComparer()).ToArray();
+        }
+
+        private static ICollection<Type> GetQueryHandlerTypes(AssemblyScanner scanner)
+        {
+            return
+                scanner.Types.Where(
+                    t => t.GetInterfaces()
+                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>)))
                        .Distinct(new TypeComparer()).ToArray();
         }
 

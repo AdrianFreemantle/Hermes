@@ -20,6 +20,8 @@ namespace Hermes.Messaging.Configuration
         private static bool autoSubscribeEvents = true;
         private static IContainer rootContainer;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
+        private static Func<string> userNameResolver = () => String.Empty;
+
 
         private static int numberOfWorkers = 1;
 
@@ -41,10 +43,10 @@ namespace Hermes.Messaging.Configuration
         internal static int SecondLevelRetryAttempts { get; set; }
         public static int FirstLevelRetryAttempts { get; internal set; }
         public static bool IsClientEndpoint { get; internal set; }
+        public static bool SubsribeToDomainEvents { get; internal set; }
         internal static Func<Type, bool> IsMessageType { get; set; }
         internal static Func<Type, bool> IsCommandType { get; set; }
         internal static Func<Type, bool> IsEventType { get; set; }
-        internal static Func<string> UserNameResolver { get; set; }
 
         public static IContainer RootContainer
         {
@@ -57,6 +59,12 @@ namespace Hermes.Messaging.Configuration
             }
 
             internal set { rootContainer = value; }
+        }
+
+        public static Func<string> UserNameResolver
+        {
+            get { return userNameResolver; }
+            internal set { userNameResolver = value; }
         }
 
         public static int NumberOfWorkers

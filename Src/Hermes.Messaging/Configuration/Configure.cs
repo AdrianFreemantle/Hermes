@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hermes.Domain;
 using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Messaging;
@@ -208,6 +209,9 @@ namespace Hermes
 
             foreach (var eventType in HandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
+                if (typeof (IDomainEvent).IsAssignableFrom(eventType) && !Settings.SubsribeToDomainEvents)
+                        continue;
+
                 Settings.Subscriptions.Subscribe(eventType);
             }
         }
