@@ -24,6 +24,8 @@ namespace Hermes.Messaging.EndPoints
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
             Settings.RootContainer = containerBuilder.BuildContainer();
+            var bus = Settings.RootContainer.GetInstance<IMessageBus>();
+            Settings.UserNameResolver = () => bus.CurrentMessage.UserName;
         }
 
         protected abstract void ConfigureEndpoint(IConfigureWorker configuration);
