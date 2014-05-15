@@ -1,12 +1,6 @@
-﻿using System;
-
-namespace Hermes.EntityFramework
+﻿namespace Hermes.EntityFramework
 {
-    public interface IPersistenceAudit
+    public interface IPersistenceAudit : ITimestampPersistenceAudit, IUserNamePersistenceAudit
     {
-        string ModifiedBy { get; set; }
-        string CreatedBy { get; set; }
-        DateTime ModifiedTimestamp { get; set; }
-        DateTime CreatedTimestamp { get; set; }
     }
 }

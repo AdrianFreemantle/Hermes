@@ -62,16 +62,18 @@ namespace Hermes.EntityFramework
 
         protected virtual void UpdateEntityAuditData()
         {
-            var changedEntities = ChangeTracker.Entries<IPersistenceAudit>().ToList();
-
-            foreach (var entry in changedEntities)
+            foreach (var entry in ChangeTracker.Entries<ITimestampPersistenceAudit>())
             {
                 AdjustTimestamps(entry);
+            }
+
+            foreach (var entry in ChangeTracker.Entries<IUserNamePersistenceAudit>())
+            {
                 AdjustUsers(entry);
             }
         }
 
-        protected virtual void AdjustUsers(DbEntityEntry<IPersistenceAudit> entity)
+        protected virtual void AdjustUsers(DbEntityEntry<IUserNamePersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
                 entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
@@ -80,7 +82,7 @@ namespace Hermes.EntityFramework
                 entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
         }
 
-        protected virtual void AdjustTimestamps(DbEntityEntry<IPersistenceAudit> entity)
+        protected virtual void AdjustTimestamps(DbEntityEntry<ITimestampPersistenceAudit> entity)
         {
             if (entity.State == EntityState.Added)
                 entity.Entity.CreatedTimestamp = entity.Entity.ModifiedTimestamp = DateTime.Now;
