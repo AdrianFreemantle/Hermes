@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using System.Reflection;
 using Hermes.Failover;
 using Hermes.Logging;
@@ -13,10 +14,10 @@ namespace Hermes.ServiceHost
     {
         private static ILog logger;
         private static HostableService hostableService;
+        private static Configuration configuration;
 
         static void Main(string[] args)
         {
-            ConfigureLogging();
             ConfigureServiceHost();
             RunHostedService();
         }
@@ -28,7 +29,8 @@ namespace Hermes.ServiceHost
 
             hostableService = HostFactory.GetHostableService();
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", hostableService.GetConfigurationFilePath());
-            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConfigureLogging();
         }
 
         private static void ConfigureLogging()
@@ -40,7 +42,8 @@ namespace Hermes.ServiceHost
             }
             else
             {
-                XmlConfigurator.Configure();
+                var configFileInfo = new FileInfo(configuration.FilePath);
+                XmlConfigurator.Configure(configFileInfo);
                 LogFactory.BuildLogger = type => new Log4NetLogger(type);
             }
 

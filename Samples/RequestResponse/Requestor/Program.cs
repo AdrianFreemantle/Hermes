@@ -21,6 +21,7 @@ namespace Requestor
             {
                 logger = LogFactory.BuildLogger(typeof(Program));
                 requestor.Start();
+                Console.ReadKey();
                 SendRequests(requestor.MessageBus);
             }
         }
