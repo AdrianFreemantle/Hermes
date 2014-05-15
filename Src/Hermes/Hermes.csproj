@@ -72,6 +72,7 @@
     <Compile Include="CronSchedule\SpecialCharacters.cs" />
     <Compile Include="Failover\CriticalError.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
+    <Compile Include="Serialization\SerializerExtensions.cs" />
     <Compile Include="SingleGlobalInstance.cs" />
     <Compile Include="EnumConverter.cs" />
     <Compile Include="Compression\GzipCompressor.cs" />
