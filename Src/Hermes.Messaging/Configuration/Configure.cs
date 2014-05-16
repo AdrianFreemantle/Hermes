@@ -176,8 +176,21 @@ namespace Hermes
 
         private static void RunInitializers()
         {
-            var intializers = Settings.RootContainer.GetAllInstances<INeedToInitializeSomething>();
+            var intializers = Settings.RootContainer.GetAllInstances<INeedToInitializeSomething>().ToArray();
 
+            var orderedInitalizers = intializers
+                .Where(something => something.HasAttribute<InitializationOrderAttribute>())
+                .OrderBy(i => i.GetCustomAttributes<InitializationOrderAttribute>().First().Order);
+
+            var unorderedInitalizers = intializers
+                .Where(something => !something.HasAttribute<InitializationOrderAttribute>());
+
+            RunIntializers(orderedInitalizers);
+            RunIntializers(unorderedInitalizers);
+        }
+
+        private static void RunIntializers(IEnumerable<INeedToInitializeSomething> intializers)
+        {
             foreach (var init in intializers)
             {
                 init.Initialize();
