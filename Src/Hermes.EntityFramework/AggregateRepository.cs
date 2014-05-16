@@ -39,6 +39,12 @@ namespace Hermes.EntityFramework
             PublishEvents(aggregate);
         }
 
+        public void Remove(IAggregate aggregate)
+        {
+            keyValueStore.Remove(aggregate.Identity);
+            PublishEvents(aggregate);
+        }
+
         private void PublishEvents(IAggregate aggregate)
         {
             var events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();

@@ -75,7 +75,7 @@
     <Compile Include="ILookupTable.cs" />
     <Compile Include="IPersistenceAudit.cs" />
     <Compile Include="IRepositoryFactory.cs" />
-    <Compile Include="ISequentiaGuidId.cs" />
+    <Compile Include="ISequentialGuidId.cs" />
     <Compile Include="IUserNamePersistenceAudit.cs" />
     <Compile Include="KeyValueStore\KeyValueEntity.cs" />
     <Compile Include="KeyValueStore\KeyValueEntityConfiguration.cs" />

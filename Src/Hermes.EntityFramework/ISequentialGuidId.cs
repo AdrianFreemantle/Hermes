@@ -2,7 +2,7 @@
 
 namespace Hermes.EntityFramework
 {
-    public interface ISequentiaGuidId
+    public interface ISequentialGuidId
     {
         Guid Id { get; set; }
     }

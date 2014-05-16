@@ -101,7 +101,7 @@ namespace Hermes.EntityFramework
 
         protected virtual void ValidateId(DbEntityEntry entity)
         {
-            if(entity.Entity is ISequentiaGuidId && (entity.State == EntityState.Added || entity.State == EntityState.Modified))
+            if(entity.Entity is ISequentialGuidId && (entity.State == EntityState.Added || entity.State == EntityState.Modified))
             {
                 object entityKey = GetPrimaryKeyValue(entity);
 
