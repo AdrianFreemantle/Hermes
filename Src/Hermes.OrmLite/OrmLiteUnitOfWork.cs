@@ -8,6 +8,7 @@ using ServiceStack.OrmLite;
 
 namespace Hermes.OrmLite
 {
+    [Obsolete("No longer supported", true)]
     public class OrmLiteUnitOfWork : IUnitOfWork
     {
         private readonly List<Action<IDbConnection>> actions = new List<Action<IDbConnection>>();

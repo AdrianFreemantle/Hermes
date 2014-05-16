@@ -1,10 +1,12 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Hermes.Ioc;
 using Hermes.Messaging;
 using ServiceStack.OrmLite;
 
 namespace Hermes.OrmLite
 {
+    [Obsolete("No longer supported", true)]
     public static class OrmLiteConfiguration
     {
         public static IConfigureEndpoint UseOrmLite(this IConfigureEndpoint config, string connectionStringName)
@@ -16,6 +18,7 @@ namespace Hermes.OrmLite
         }
     }
 
+    [Obsolete("No longer supported", true)]
     public sealed class OrmLiteConfigurationRegistrar : IRegisterDependencies
     {
         private readonly string connectionStringName;

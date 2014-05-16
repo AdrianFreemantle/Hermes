@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 
 namespace Hermes.Messaging
 {
@@ -7,5 +6,13 @@ namespace Hermes.Messaging
     {
         void Execute(object command);
         void Raise(object @event);
+    }
+
+    public static class InMemoryBusExtensions
+    {
+        public static Task ExecuteAsync(this IInMemoryBus localBus, object command)
+        {
+            return Task.Factory.StartNew(o => localBus.Execute(command), command);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
