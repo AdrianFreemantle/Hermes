@@ -65,6 +65,7 @@
     <Compile Include="Configuration\MessageHandlerCache\HandlerCache.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
     <Compile Include="Configuration\ComponentScanner.cs" />
+    <Compile Include="InitializationOrderAttribute.cs" />
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
