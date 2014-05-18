@@ -66,8 +66,6 @@ namespace Hermes.EntityFramework
                 PublishEvents(events);
 
             } while (events.Any());
-
-            PublishEvents(events);
         }
 
         private void PublishEvents(IEnumerable<object> events)
