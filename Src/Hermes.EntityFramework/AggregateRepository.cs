@@ -38,21 +38,21 @@ namespace Hermes.EntityFramework
         public void Add(IAggregate aggregate)
         {
             IMemento memento = aggregate.GetSnapshot();
-            keyValueStore.Add(memento.Identity, memento);
             PublishEvents(aggregate);
+            keyValueStore.Add(memento.Identity, memento);
         }
 
         public void Update(IAggregate aggregate)
         {
             IMemento memento = aggregate.GetSnapshot();
-            keyValueStore.Update(memento.Identity, memento);
             PublishEvents(aggregate);
+            keyValueStore.Update(memento.Identity, memento);
         }
 
         public void Remove(IAggregate aggregate)
         {
-            keyValueStore.Remove(aggregate.Identity);
             PublishEvents(aggregate);
+            keyValueStore.Remove(aggregate.Identity);
         }
 
         private void PublishEvents(IAggregate aggregate)
