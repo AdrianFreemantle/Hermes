@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Hermes.Domain;
 using Hermes.Messaging;
 using Hermes.Persistence;
@@ -11,6 +12,8 @@ namespace Hermes.EntityFramework
         private readonly IKeyValueStore keyValueStore;
         private readonly IInMemoryBus inMemoryBus;
 
+        private readonly Dictionary<IIdentity, IAggregate> aggregateCache = new Dictionary<IIdentity, IAggregate>();
+
         public AggregateRepository(IKeyValueStore keyValueStore, IInMemoryBus inMemoryBus)
         {
             this.keyValueStore = keyValueStore;
@@ -19,9 +22,16 @@ namespace Hermes.EntityFramework
 
         public TAggregate Get<TAggregate>(IIdentity id) where TAggregate : class, IAggregate
         {
+            if (aggregateCache.ContainsKey(id))
+            {
+                return (TAggregate)aggregateCache[id];
+            }
+
             var memento = keyValueStore.Get(id) as IMemento;
             var aggregate = ObjectFactory.CreateInstance<TAggregate>(id);
             aggregate.RestoreSnapshot(memento);
+            aggregateCache.Add(id, aggregate);
+
             return aggregate;
         }
 
@@ -47,14 +57,25 @@ namespace Hermes.EntityFramework
 
         private void PublishEvents(IAggregate aggregate)
         {
-            var events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
+            object[] events;
 
+            do
+            {
+                events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
+                aggregate.ClearUncommittedEvents();
+                PublishEvents(events);
+
+            } while (events.Any());
+
+            PublishEvents(events);
+        }
+
+        private void PublishEvents(IEnumerable<object> events)
+        {
             foreach (var e in events)
             {
                 inMemoryBus.Raise(e);
             }
-
-            aggregate.ClearUncommittedEvents();
         }
     }
 }
