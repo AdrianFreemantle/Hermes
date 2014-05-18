@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Failover\CircuitBreaker.cs" />
     <Compile Include="Compression\CompressedObject.cs" />
     <Compile Include="Compression\CompressionOption.cs" />
@@ -72,9 +73,10 @@
     <Compile Include="CronSchedule\SpecialCharacters.cs" />
     <Compile Include="Failover\CriticalError.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
+    <Compile Include="Persistence\ILookupTable.cs" />
     <Compile Include="Serialization\SerializerExtensions.cs" />
     <Compile Include="SingleGlobalInstance.cs" />
-    <Compile Include="EnumConverter.cs" />
+    <Compile Include="Enums\EnumConverter.cs" />
     <Compile Include="Compression\GzipCompressor.cs" />
     <Compile Include="ContentTypes.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
@@ -96,7 +98,7 @@
     <Compile Include="Reflection\TypeMapper.cs" />
     <Compile Include="Reflection\ObjectFactory.cs" />
     <Compile Include="Reflection\AssemblyScanner.cs" />
-    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="Enums\EnumExtensions.cs" />
     <Compile Include="Attributes\IgnoreForSelectListAttribute.cs" />
     <Compile Include="ErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>

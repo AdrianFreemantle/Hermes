@@ -1,17 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-
 using Hermes.Persistence;
-using Hermes.Reflection;
 
-namespace Hermes.EntityFramework
+namespace Hermes.Enums
 {
     /// <summary>
     /// a Generic lookup table wrapper for Enum lookup table values
     /// </summary>
     /// <typeparam name="TEnum">The enum type to be wrapped</typeparam>
     public abstract class EnumWrapper<TEnum> : ILookupTable
-        where TEnum : struct, IComparable, IFormattable, IConvertible 
+        where TEnum : struct, IComparable, IFormattable, IConvertible
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public virtual int Id { get; protected set; }

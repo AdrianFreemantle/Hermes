@@ -15,7 +15,6 @@ namespace Hermes.Domain
 
         public IIdentity Identity { get; set; }
 
-
         private readonly IReadOnlyCollection<EventHandlerProperties> eventHandlers;
 
         protected EntityBase(IIdentity identity)

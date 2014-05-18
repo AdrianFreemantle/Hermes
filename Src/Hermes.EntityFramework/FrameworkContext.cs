@@ -4,6 +4,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using Hermes.Messaging.Configuration;
+using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {

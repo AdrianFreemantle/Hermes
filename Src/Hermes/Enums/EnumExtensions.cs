@@ -2,27 +2,22 @@
 using System.ComponentModel;
 using System.Reflection;
 using Hermes.Attributes;
-using Hermes.Reflection;
 
-namespace Hermes
+namespace Hermes.Enums
 {
     public static class EnumExtensions
     {
         public static string GetDescription(this Enum value)
         {
-            var description = string.Empty;
-
             try
             {
                 var field = GetEnumFieldInfo(value);
-                description = GetFieldDescription(field);
+                return GetFieldDescription(field);
             }
             catch (Exception)
             {
-                description = "Error! Unable to find a name for this field.";
+                return "Error! Unable to find a name for this field.";
             }
-
-            return description;
         }        
 
         public static bool HasIgnoreForSelectListAttribute(this Enum value)
@@ -70,5 +65,5 @@ namespace Hermes
 
             return (attr != null);
         }
-    } 
+    }
 }

@@ -8,8 +8,8 @@ namespace Hermes.Domain
 {
     internal static class EntityEventHandlerCache
     {
-        private static readonly ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
-        private static readonly Dictionary<Type, IReadOnlyCollection<EventHandlerProperties>> eventHandlers = new Dictionary<Type, IReadOnlyCollection<EventHandlerProperties>>();
+        private static readonly ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();
+        private static readonly Dictionary<Type, IReadOnlyCollection<EventHandlerProperties>> EventHandlers = new Dictionary<Type, IReadOnlyCollection<EventHandlerProperties>>();
 
         public static IReadOnlyCollection<EventHandlerProperties> ScanEntity(EntityBase entityBase)
         {
@@ -17,29 +17,29 @@ namespace Hermes.Domain
 
             try
             {
-                readerWriterLock.EnterReadLock();
+                ReaderWriterLock.EnterReadLock();
                 
-                if (eventHandlers.ContainsKey(entityType))
+                if (EventHandlers.ContainsKey(entityType))
                 {
-                    return eventHandlers[entityType];
+                    return EventHandlers[entityType];
                 }
             }
             finally 
             {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
 
             ScanTypeForHandlers(entityType);
-            return eventHandlers[entityType];
+            return EventHandlers[entityType];
         }
 
         private static void ScanTypeForHandlers(Type entityType)
         {
-            readerWriterLock.EnterWriteLock();
+            ReaderWriterLock.EnterWriteLock();
 
             try
             {
-                if (eventHandlers.ContainsKey(entityType))
+                if (EventHandlers.ContainsKey(entityType))
                 {
                     return;
                 }
@@ -48,7 +48,7 @@ namespace Hermes.Domain
             }
             finally
             {
-                readerWriterLock.ExitWriteLock();
+                ReaderWriterLock.ExitWriteLock();
             }
         }
 
@@ -67,7 +67,7 @@ namespace Hermes.Domain
                                  select
                                      new { MethodInfo = method, FirstParameter = method.GetParameters()[0] };
 
-            eventHandlers[entityType] = matchedMethods.Select(method => EventHandlerProperties.CreateFromMethodInfo(method.MethodInfo, entityType)).ToArray();
+            EventHandlers[entityType] = matchedMethods.Select(method => EventHandlerProperties.CreateFromMethodInfo(method.MethodInfo, entityType)).ToArray();
         }
     }
 }

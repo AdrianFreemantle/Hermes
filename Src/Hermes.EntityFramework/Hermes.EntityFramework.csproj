@@ -65,14 +65,12 @@
     <Compile Include="DbSetExtensions.cs" />
     <Compile Include="EntityFrameworkConfiguration.cs" />
     <Compile Include="EntityValidationException.cs" />
-    <Compile Include="EnumWrapper.cs" />
     <Compile Include="ContextFactory.cs" />
     <Compile Include="EntityFrameworkUnitOfWork.cs" />
     <Compile Include="EntityTypeConfigurationExtensions.cs" />
     <Compile Include="FrameworkContext.cs" />
     <Compile Include="IContextFactory.cs" />
     <Compile Include="ITimestampPersistenceAudit.cs" />
-    <Compile Include="ILookupTable.cs" />
     <Compile Include="IPersistenceAudit.cs" />
     <Compile Include="IRepositoryFactory.cs" />
     <Compile Include="ISequentialGuidId.cs" />

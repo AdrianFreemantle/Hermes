@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using Hermes.Enums;
 using Hermes.Failover;
 using Hermes.Logging;
 
