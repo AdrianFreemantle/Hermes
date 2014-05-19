@@ -61,10 +61,10 @@ namespace Hermes.Messaging.Configuration
             internal set { rootContainer = value; }
         }
 
-        public static Func<string> UserNameResolver
+        internal static Func<string> UserNameResolver
         {
             get { return userNameResolver; }
-            internal set { userNameResolver = value; }
+            set { userNameResolver = value; }
         }
 
         public static int NumberOfWorkers

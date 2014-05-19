@@ -39,16 +39,12 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private void AddUserName(Dictionary<string, string> headers)
         {
-            if (Settings.UserNameResolver == null)
-                return;
+            string userName;
 
-            try
+            if (CurrentUser.GetCurrentUserName(out userName))
             {
-                headers.Add(HeaderKeys.UserName, Settings.UserNameResolver());
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error while attempting to resolve the user name : {0}", ex.GetFullExceptionMessage());
+                headers.Add(HeaderKeys.UserName, userName);
+
             }
         }
 

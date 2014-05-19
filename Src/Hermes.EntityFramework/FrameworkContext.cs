@@ -76,11 +76,16 @@ namespace Hermes.EntityFramework
 
         protected virtual void AdjustUsers(DbEntityEntry<IUserNamePersistenceAudit> entity)
         {
+            string userName;
+
+            if (!CurrentUser.GetCurrentUserName(out userName))
+                userName = "Error resolving user name";
+
             if (entity.State == EntityState.Added)
-                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
+                entity.Entity.CreatedBy = entity.Entity.ModifiedBy = userName;
 
             if (entity.State == EntityState.Modified)
-                entity.Entity.ModifiedBy = CurrentUser.GetCurrentUserName();
+                entity.Entity.ModifiedBy = userName;
         }
 
         protected virtual void AdjustTimestamps(DbEntityEntry<ITimestampPersistenceAudit> entity)
