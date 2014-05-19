@@ -187,29 +187,6 @@ namespace Hermes.Messaging.Pipeline
             buildHeaderFunction = buildHeader;
         }
 
-        public void SetUserName(string userName)
-        {
-            if (String.IsNullOrWhiteSpace(userName))
-                return;
-
-            AddHeader(new HeaderValue(HeaderKeys.UserName, userName));
-        }
-
-        public void SetUserName(Func<string> userNameResolver)
-        {
-            if (userNameResolver == null)
-                return;
-
-            try
-            {
-                SetUserName(userNameResolver());
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error while attempting to resolve the user name : {0}", ex.GetFullExceptionMessage());
-            }
-        }
-
         public override string ToString()
         {
             return String.Format("{0} : {1}", messageId, GetMessageContractsString());

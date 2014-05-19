@@ -63,11 +63,11 @@ namespace Hermes.Messaging.Pipeline
 
         public IncomingMessageContext(object localMessage, IServiceLocator serviceLocator)
         {
-            TransportMessage = TransportMessage.Undefined;
             Message = localMessage;
             ServiceLocator = serviceLocator;
             messageId = SequentialGuid.New();
 
+            TransportMessage = new TransportMessage(messageId, messageId, Address.Local, TimeSpan.MaxValue, new Dictionary<string, string>(), new byte[0]);
             outgoingMessages = BuildOutgoingMessageUnitOfWork(serviceLocator);
         }
 

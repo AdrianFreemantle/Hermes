@@ -6,7 +6,6 @@ using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Pipes;
-using Microsoft.Practices.ServiceLocation;
 using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Transports
@@ -119,25 +118,13 @@ namespace Hermes.Messaging.Transports
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
-                    DispatchOutgoingMessage(outgoingMessageContext, scope);
+                    outgoingMessageContext.Process(outgoingPipeline, scope);
                 }
             }
             else
             {
-                EnqueOutgoingMessage(outgoingMessageContext, currentContext);
+                currentContext.Enqueue(outgoingMessageContext);
             }
         }        
-
-        protected virtual void EnqueOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IncomingMessageContext currentContext)
-        {
-            outgoingMessageContext.SetUserName(currentContext.UserName);
-            currentContext.Enqueue(outgoingMessageContext);
-        }
-
-        private void DispatchOutgoingMessage(OutgoingMessageContext outgoingMessageContext, IServiceLocator scope)
-        {
-            outgoingMessageContext.SetUserName(Settings.UserNameResolver);
-            outgoingMessageContext.Process(outgoingPipeline, scope);
-        }
     }
 }
