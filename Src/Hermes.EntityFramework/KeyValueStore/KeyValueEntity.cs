@@ -25,10 +25,10 @@ namespace Hermes.EntityFramework.KeyValueStore
         [Timestamp] 
         public byte[] TimeStamp { get; set; }
 
-        [Required, StringLength(128)] 
+        [StringLength(120)] 
         public string ModifiedBy { get; set; }
 
-        [Required, StringLength(128)] 
+        [StringLength(120)] 
         public string CreatedBy { get; set; }
        
         public DateTime ModifiedTimestamp { get; set; }

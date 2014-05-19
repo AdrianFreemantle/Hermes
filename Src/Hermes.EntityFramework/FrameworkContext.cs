@@ -7,9 +7,11 @@ using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
-{
+{   
     public abstract class FrameworkContext : DbContext
     {
+        public IHermesSystemClock SystemClock { get; set; }
+
         protected FrameworkContext()
         {
         }
@@ -90,11 +92,13 @@ namespace Hermes.EntityFramework
 
         protected virtual void AdjustTimestamps(DbEntityEntry<ITimestampPersistenceAudit> entity)
         {
+            var localTime = SystemClock.UtcNow.LocalDateTime;
+
             if (entity.State == EntityState.Added)
-                entity.Entity.CreatedTimestamp = entity.Entity.ModifiedTimestamp = DateTime.Now;
+                entity.Entity.CreatedTimestamp = entity.Entity.ModifiedTimestamp = localTime;
 
             if (entity.State == EntityState.Modified)
-                entity.Entity.ModifiedTimestamp = DateTime.Now;
+                entity.Entity.ModifiedTimestamp = localTime;
         }
 
         protected virtual void ValidateIds()

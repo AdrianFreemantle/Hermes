@@ -72,6 +72,7 @@
     <Compile Include="CronSchedule\ScheduleTime.cs" />
     <Compile Include="CronSchedule\SpecialCharacters.cs" />
     <Compile Include="Failover\CriticalError.cs" />
+    <Compile Include="HermesSystemClock.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
     <Compile Include="Persistence\ILookupTable.cs" />
     <Compile Include="Serialization\SerializerExtensions.cs" />

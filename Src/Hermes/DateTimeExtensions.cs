@@ -5,7 +5,7 @@ namespace Hermes
 {
     public static class DateTimeExtensions
     {
-        const string Format = "yyyy-MM-dd HH:mm:ss:ffffff Z";
+        public const string Format = "yyyy-MM-dd HH:mm:ss:ffffff Z";
 
         /// <summary>
         /// Converts the <see cref="DateTime"/> to a <see cref="string"/> suitable for transport over the wire

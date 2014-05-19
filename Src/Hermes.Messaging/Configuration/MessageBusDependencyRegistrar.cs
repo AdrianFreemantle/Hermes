@@ -38,6 +38,8 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<SendMessageModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<UnitOfWorkModule>(DependencyLifecycle.InstancePerUnitOfWork);
 
+            containerBuilder.RegisterType<HermesSystemClock>(DependencyLifecycle.InstancePerUnitOfWork);
+
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
             var outgoingPipeline = new ModulePipeFactory<OutgoingMessageContext>()
