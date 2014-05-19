@@ -1,37 +1,30 @@
 ﻿using System;
+using System.Threading;
 using Hermes.Logging;
 
 namespace Hermes
 {
-    public interface IHermesSystemClock
-    {
-        DateTimeOffset UtcNow { get; }
-    }
-
-    public class HermesSystemClock : IHermesSystemClock
+    public static class HermesSystemClock 
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (HermesSystemClock));
-        protected Func<DateTimeOffset> ResolveUtcNow;
 
-        public DateTimeOffset UtcNow { get; protected set; }
+        private static readonly ThreadLocal<Func<DateTimeOffset>> CurrentResolver = new ThreadLocal<Func<DateTimeOffset>>();
 
-        public HermesSystemClock()
-        {
-            ResolveUtcNow = () => new DateTimeOffset();
-        }
+        public static DateTimeOffset UtcNow { get { return ResolveCurrentUtcTime(); } }
 
-        public void SetUtcResolver(Func<DateTimeOffset> resolveUtcNow)
+        public static void SetUtcResolver(Func<DateTimeOffset> resolveUtcNow)
         {
             Mandate.ParameterNotNull(resolveUtcNow, "resolveUtcNow");
 
-            ResolveUtcNow = resolveUtcNow;
+            CurrentResolver.Value = resolveUtcNow;
         }
 
-        protected virtual DateTimeOffset ResolveCurrentUtcTime()
+        private static DateTimeOffset ResolveCurrentUtcTime()
         {
             try
             {
-                return ResolveUtcNow();
+                var resolver = CurrentResolver.Value ?? (() => new DateTimeOffset());
+                return resolver();
             }
             catch(Exception ex)
             {

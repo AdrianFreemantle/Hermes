@@ -10,8 +10,6 @@ namespace Hermes.EntityFramework
 {   
     public abstract class FrameworkContext : DbContext
     {
-        public IHermesSystemClock SystemClock { get; set; }
-
         protected FrameworkContext()
         {
         }
@@ -92,7 +90,7 @@ namespace Hermes.EntityFramework
 
         protected virtual void AdjustTimestamps(DbEntityEntry<ITimestampPersistenceAudit> entity)
         {
-            var localTime = SystemClock.UtcNow.LocalDateTime;
+            var localTime = HermesSystemClock.UtcNow.LocalDateTime;
 
             if (entity.State == EntityState.Added)
                 entity.Entity.CreatedTimestamp = entity.Entity.ModifiedTimestamp = localTime;
