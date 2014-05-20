@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,13 +14,13 @@ namespace Hermes.EntityFramework.KeyValueStore
     {
         private readonly Encoding encoding = Encoding.UTF8;
 
-        private readonly IRepositoryFactory repositoryFactory;
         private readonly ISerializeObjects serializer;
+        private readonly IDbSet<KeyValueEntity> repository;
 
         public KeyValueStorePersister(IRepositoryFactory repositoryFactory, ISerializeObjects serializer)
         {
-            this.repositoryFactory = repositoryFactory;
             this.serializer = serializer;
+            repository = repositoryFactory.GetRepository<KeyValueEntity>();
         }
 
         string ToHash(dynamic key)
@@ -33,8 +35,6 @@ namespace Hermes.EntityFramework.KeyValueStore
             Mandate.ParameterNotNull(value, "Please provide a non null value to store.");
 
             string hash = ToHash(key);
-
-            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
 
             var entity = new KeyValueEntity
             {
@@ -52,19 +52,16 @@ namespace Hermes.EntityFramework.KeyValueStore
             Mandate.ParameterNotNull(key, "Please provide a non-null key");
             Mandate.ParameterNotNull(value, "Please provide a non-null value to update.");
 
-            string hash = ToHash(key);
-            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
-
+            var entity = GetEntity(key);
             entity.Value = Serialize(value);
             entity.ValueType = value.GetType().AssemblyQualifiedName;
-        }
+        }        
 
         public object Get(dynamic key)
         {
-            string hash = ToHash(key);
-            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
+            Mandate.ParameterNotNull(key, "Please provide a non-null key");
+
+            var entity = GetEntity(key);
 
             if (entity == null)
             {
@@ -76,9 +73,9 @@ namespace Hermes.EntityFramework.KeyValueStore
 
         public void Remove(dynamic key)
         {
-            string hash = ToHash(key);
-            var repository = repositoryFactory.GetRepository<KeyValueEntity>();
-            var entity = repository.First(valueEntity => valueEntity.Hash == hash);
+            Mandate.ParameterNotNull(key, "Please provide a non-null key");
+
+            var entity = GetEntity(key);
 
             if (entity == null)
             {
@@ -86,6 +83,19 @@ namespace Hermes.EntityFramework.KeyValueStore
             }
 
             repository.Remove(entity);
+        }
+
+        private KeyValueEntity GetEntity(dynamic key)
+        {
+            try
+            {
+                string hash = ToHash(key);
+                return repository.FirstOrDefault(valueEntity => valueEntity.Hash == hash) ?? repository.First(valueEntity => valueEntity.Hash == hash);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new KeyNotFoundException(String.Format("No value was found in the key-value-store that matches key {0}", key.ToString()));
+            }
         }
 
         public object Deserialize(byte[] body, Type objectType)
