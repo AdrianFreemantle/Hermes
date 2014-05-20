@@ -92,16 +92,17 @@ namespace Hermes.EntityFramework
 
         private void ProcessCommitAction(AggregateCommitAction action)
         {
-            var aggregate = aggregateCache[action.Identity];
 
             switch (action.ActionType)
             {
                 case AggregateCommitAction.CommitActionType.Add:
-                    keyValueStore.Add(action.Identity, aggregate.GetSnapshot());
+                    var addSnapshot = aggregateCache[action.Identity].GetSnapshot();
+                    keyValueStore.Add(action.Identity, addSnapshot);
                     break;
 
                 case AggregateCommitAction.CommitActionType.Update:
-                    keyValueStore.Update(action.Identity, aggregate.GetSnapshot());
+                    var updateSnapshot = aggregateCache[action.Identity].GetSnapshot();
+                    keyValueStore.Update(action.Identity, updateSnapshot);
                     break;
 
                 case AggregateCommitAction.CommitActionType.Remove:
