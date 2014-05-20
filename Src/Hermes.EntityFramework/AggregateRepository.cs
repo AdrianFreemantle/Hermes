@@ -14,7 +14,7 @@ namespace Hermes.EntityFramework
         private readonly IKeyValueStore keyValueStore;
         private readonly IInMemoryBus inMemoryBus;
 
-        private readonly Dictionary<IIdentity, IAggregate> aggregateCache = new Dictionary<IIdentity, IAggregate>();
+        private readonly Dictionary<string, IAggregate> aggregateCache = new Dictionary<string, IAggregate>();
         private readonly HashSet<AggregateCommitAction> aggregateCommitActions = new HashSet<AggregateCommitAction>(); 
 
         public AggregateRepository(IKeyValueStore keyValueStore, IInMemoryBus inMemoryBus)
@@ -25,15 +25,15 @@ namespace Hermes.EntityFramework
 
         public TAggregate Get<TAggregate>(IIdentity id) where TAggregate : class, IAggregate
         {
-            if (aggregateCache.ContainsKey(id))
+            if (aggregateCache.ContainsKey(id.ToString()))
             {
-                return (TAggregate)aggregateCache[id];
+                return (TAggregate)aggregateCache[id.ToString()];
             }
 
             var memento = keyValueStore.Get(id) as IMemento;
             var aggregate = ObjectFactory.CreateInstance<TAggregate>(id);
             aggregate.RestoreSnapshot(memento);
-            aggregateCache.Add(id, aggregate);
+            aggregateCache.Add(id.ToString(), aggregate);
 
             return aggregate;
         }
@@ -91,7 +91,7 @@ namespace Hermes.EntityFramework
 
         private void ProcessCommitAction(AggregateCommitAction action)
         {
-            var aggregate = aggregateCache[action.Identity];
+            var aggregate = aggregateCache[action.Identity.ToString()];
 
             switch (action.ActionType)
             {
