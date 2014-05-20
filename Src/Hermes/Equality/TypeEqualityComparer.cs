@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace Hermes.Reflection
+namespace Hermes.Equality
 {
     /// <summary>
     /// For use in Linq queries 
     /// </summary>
-    public class TypeComparer : IEqualityComparer<Type>
+    public class TypeEqualityComparer : IEqualityComparer<Type>
     {
         public bool Equals(Type x, Type y)
         {

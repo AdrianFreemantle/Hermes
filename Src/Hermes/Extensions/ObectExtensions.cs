@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// ReSharper disable CheckNamespace
 namespace Hermes
+// ReSharper restore CheckNamespace
 {
     public static class ObectExtensions
     {

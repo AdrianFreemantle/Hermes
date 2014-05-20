@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Hermes.Equality;
 using Hermes.Logging;
-using Hermes.Reflection;
-
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
@@ -52,7 +50,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
 
         public IEnumerable<Type> GetHandledMessageContracts()
         {
-            return actionDetails.Select(action => action.MessageContract).Distinct(new TypeComparer());
+            return actionDetails.Select(action => action.MessageContract).Distinct(new TypeEqualityComparer());
         }
 
         public bool Equals(HandlerCacheItem other)

@@ -23,7 +23,7 @@ namespace Hermes
         {
             try
             {
-                var resolver = CurrentResolver.Value ?? (() => new DateTimeOffset());
+                var resolver = CurrentResolver.Value ?? (() => DateTimeOffset.UtcNow);
                 return resolver();
             }
             catch(Exception ex)

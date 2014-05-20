@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-
+using Hermes.Equality;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
 using Hermes.Queries;
@@ -72,7 +72,7 @@ namespace Hermes.Messaging.Configuration
                 scanner.Types.Where(
                     t => t.GetInterfaces()
                           .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IHandleMessage<>)))
-                       .Distinct(new TypeComparer()).ToArray();
+                       .Distinct(new TypeEqualityComparer()).ToArray();
         }
 
         private static ICollection<Type> GetQueryHandlerTypes(AssemblyScanner scanner)
@@ -81,7 +81,7 @@ namespace Hermes.Messaging.Configuration
                 scanner.Types.Where(
                     t => t.GetInterfaces()
                           .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>)))
-                       .Distinct(new TypeComparer()).ToArray();
+                       .Distinct(new TypeEqualityComparer()).ToArray();
         }
 
         private static Action<object, object> GetHandlerAction(Type typeThatImplementsHandler, Type messageType)

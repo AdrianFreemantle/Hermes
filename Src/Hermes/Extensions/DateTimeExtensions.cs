@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
 
+// ReSharper disable CheckNamespace
 namespace Hermes
+// ReSharper restore CheckNamespace
 {
     public static class DateTimeExtensions
     {

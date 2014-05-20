@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Hermes.Equality;
 using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
@@ -57,7 +57,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
         {
             return handlerDetails
                 .SelectMany(handler => handler.GetHandledMessageContracts())
-                .Distinct(new TypeComparer());
+                .Distinct(new TypeEqualityComparer());
         }
     }
 }
