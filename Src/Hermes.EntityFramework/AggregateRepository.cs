@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Hermes.Domain;
 using Hermes.Messaging;
@@ -7,12 +9,13 @@ using Hermes.Reflection;
 
 namespace Hermes.EntityFramework
 {
-    public class AggregateRepository : IAggregateRepository
+    public class AggregateRepository : IAggregateRepository, IUnitOfWork
     {
         private readonly IKeyValueStore keyValueStore;
         private readonly IInMemoryBus inMemoryBus;
 
         private readonly Dictionary<IIdentity, IAggregate> aggregateCache = new Dictionary<IIdentity, IAggregate>();
+        private readonly HashSet<AggregateCommitAction> aggregateCommitActions = new HashSet<AggregateCommitAction>(); 
 
         public AggregateRepository(IKeyValueStore keyValueStore, IInMemoryBus inMemoryBus)
         {
@@ -37,22 +40,20 @@ namespace Hermes.EntityFramework
 
         public void Add(IAggregate aggregate)
         {
-            IMemento memento = aggregate.GetSnapshot();
             PublishEvents(aggregate);
-            keyValueStore.Add(memento.Identity, memento);
+            aggregateCommitActions.Add(AggregateCommitAction.Add(aggregate.Identity));
         }
 
         public void Update(IAggregate aggregate)
         {
-            IMemento memento = aggregate.GetSnapshot();
             PublishEvents(aggregate);
-            keyValueStore.Update(memento.Identity, memento);
+            aggregateCommitActions.Add(AggregateCommitAction.Update(aggregate.Identity));
         }
 
         public void Remove(IAggregate aggregate)
         {
             PublishEvents(aggregate);
-            keyValueStore.Remove(aggregate.Identity);
+            aggregateCommitActions.Add(AggregateCommitAction.Remove(aggregate.Identity));
         }
 
         private void PublishEvents(IAggregate aggregate)
@@ -64,7 +65,6 @@ namespace Hermes.EntityFramework
                 events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
                 aggregate.ClearUncommittedEvents();
                 PublishEvents(events);
-
             } while (events.Any());
         }
 
@@ -74,6 +74,48 @@ namespace Hermes.EntityFramework
             {
                 inMemoryBus.Raise(e);
             }
+        }
+
+        public void Commit()
+        {
+            foreach (var action in aggregateCommitActions)
+            {
+                ProcessCommitAction(action);
+            }
+        }        
+
+        public void Rollback()
+        {
+            Dispose();
+        }
+
+        private void ProcessCommitAction(AggregateCommitAction action)
+        {
+            var aggregate = aggregateCache[action.Identity];
+
+            switch (action.ActionType)
+            {
+                case AggregateCommitAction.CommitActionType.Add:
+                    keyValueStore.Add(action.Identity, aggregate.GetSnapshot());
+                    break;
+
+                case AggregateCommitAction.CommitActionType.Update:
+                    keyValueStore.Update(action.Identity, aggregate.GetSnapshot());
+                    break;
+
+                case AggregateCommitAction.CommitActionType.Remove:
+                    keyValueStore.Remove(action.Identity);
+                    break;
+
+                default:
+                    throw new InvalidOperationException(String.Format("The commit action {0} is not handled by the repository", action.ActionType));
+            }
+        }
+
+        public void Dispose()
+        {
+            aggregateCache.Clear();
+            aggregateCommitActions.Clear();
         }
     }
 }
