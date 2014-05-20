@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Data.Entity;
-
+using Hermes.Messaging;
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {
+    [UnitOfWorkCommitOrder(Order = Int32.MaxValue)]
     public class EntityFrameworkUnitOfWork : IUnitOfWork, IRepositoryFactory
     {
         private readonly IContextFactory contextFactory;

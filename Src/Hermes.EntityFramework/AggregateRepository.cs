@@ -9,6 +9,7 @@ using Hermes.Reflection;
 
 namespace Hermes.EntityFramework
 {
+    [UnitOfWorkCommitOrder(Order = 1)]
     public class AggregateRepository : IAggregateRepository, IUnitOfWork
     {
         private readonly IKeyValueStore keyValueStore;

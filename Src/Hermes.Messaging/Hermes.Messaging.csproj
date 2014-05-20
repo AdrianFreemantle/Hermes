@@ -92,6 +92,7 @@
     <Compile Include="INeedToInitializeSomething.cs" />
     <Compile Include="Pipeline\OutgoingMessageContext.cs" />
     <Compile Include="Pipeline\Modules\UnitOfWorkModule.cs" />
+    <Compile Include="UnitOfWorkCommitOrderAttribute.cs" />
     <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
     <Compile Include="Callbacks\CompletionResult.cs" />
