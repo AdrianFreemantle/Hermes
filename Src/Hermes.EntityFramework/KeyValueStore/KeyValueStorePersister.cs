@@ -90,7 +90,7 @@ namespace Hermes.EntityFramework.KeyValueStore
             try
             {
                 string hash = ToHash(key);
-                return repository.FirstOrDefault(valueEntity => valueEntity.Hash == hash) ?? repository.First(valueEntity => valueEntity.Hash == hash);
+                return repository.Local.FirstOrDefault(valueEntity => valueEntity.Hash == hash) ?? repository.First(valueEntity => valueEntity.Hash == hash);
             }
             catch (InvalidOperationException ex)
             {
