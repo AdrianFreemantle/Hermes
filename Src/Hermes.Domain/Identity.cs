@@ -42,7 +42,7 @@ namespace Hermes.Domain
                 return (dynamic)unsafeString.ToUriSafeString();
             }
 
-            return id;
+            return identity;
         }
 
         public virtual string GetTag()
