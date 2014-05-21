@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Hermes.Domain
 {
@@ -17,7 +18,7 @@ namespace Hermes.Domain
         [DataMember]
         private readonly T id;
 
-        protected T Id
+        public T Id
         {
             get { return id; }
         }
@@ -29,7 +30,19 @@ namespace Hermes.Domain
         protected Identity(T id)
         {
             VerifyIdentityType(id);
-            this.id = id;
+            this.id = GetSafeIdentity(id);
+        }
+
+        private T GetSafeIdentity(T identity)
+        {
+            var unsafeString = identity as string;
+
+            if (unsafeString != null)
+            {
+                return (dynamic)unsafeString.ToUriSafeString();
+            }
+
+            return id;
         }
 
         public virtual string GetTag()

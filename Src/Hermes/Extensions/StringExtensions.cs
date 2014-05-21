@@ -47,5 +47,10 @@ namespace Hermes
         {
             return characters.Any(value.ToList().Remove);
         }
+
+        public static string ToUriSafeString(this string value)
+        {
+            return Regex.Replace(value, "[^a-zA-Z0-9]", "-");
+        }
     }
 }
