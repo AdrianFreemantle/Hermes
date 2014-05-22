@@ -11,11 +11,11 @@ namespace Hermes.EntityFramework
     {
         public static T ExecuteScalarCommand<T>(this Database database, string command, params object[] parameters)
         {
-            using (var dbContextTransaction = database.BeginTransaction())
+            using (DbContextTransaction dbContextTransaction = database.BeginTransaction())
             {
                 try
                 {
-                    var result = ExecuteScalar<T>(database, command, parameters);
+                    var result = ExecuteScalar<T>(dbContextTransaction, database, command, parameters);
                     dbContextTransaction.Commit();
                     return result;
                 }
@@ -27,9 +27,10 @@ namespace Hermes.EntityFramework
             }
         }
 
-        private static T ExecuteScalar<T>(Database database, string command, IEnumerable<object> parameters)
+        private static T ExecuteScalar<T>(DbContextTransaction dbContextTransaction, Database database, string command, IEnumerable<object> parameters)
         {
             DbCommand cmd = database.Connection.CreateCommand();
+            cmd.Transaction = dbContextTransaction.UnderlyingTransaction;
             cmd.CommandText = command;
             cmd.CommandType = CommandType.Text;
             

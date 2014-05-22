@@ -2,15 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-
 using Autofac;
 using Autofac.Builder;
 
 using Hermes.Ioc;
 using Hermes.Logging;
-using Hermes.Messaging;
-using Hermes.Queries;
 using Microsoft.Practices.ServiceLocation;
 
 using IContainer = Hermes.Ioc.IContainer;
