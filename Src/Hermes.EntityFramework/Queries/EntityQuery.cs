@@ -48,36 +48,32 @@ namespace Hermes.EntityFramework.Queries
 
         public TResult FetchSingle(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            var result = QueryWrapper(query
-                .Where(queryPredicate))
-                .Single();
+            var result = QueryWrapper(query)
+                .Single(queryPredicate);
 
             return Mapper(result);
         }
 
         public TResult FetchSingleOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            var result = QueryWrapper(query
-                .Where(queryPredicate))
-                .SingleOrDefault();
+            var result = QueryWrapper(query)
+                .SingleOrDefault(queryPredicate);
 
             return result != null ? Mapper(result) : null;
         }
 
         public TResult FetchFirst(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            var result = QueryWrapper(query
-                .Where(queryPredicate))
-                .First();
+            var result = QueryWrapper(query)
+                .First(queryPredicate);
 
             return Mapper(result);
         }
 
         public TResult FetchFirstOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            var result = QueryWrapper(query
-                .Where(queryPredicate))
-                .FirstOrDefault();
+            var result = QueryWrapper(query)
+                .FirstOrDefault(queryPredicate);
 
             return result != null ? Mapper(result) : null;
         }
