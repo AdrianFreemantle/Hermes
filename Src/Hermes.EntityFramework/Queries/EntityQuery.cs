@@ -18,12 +18,19 @@ namespace Hermes.EntityFramework.Queries
             query = databaseQuery.GetQueryable<TEntity>();
         }
 
+        protected abstract TResult Mapper(TEntity entity);
+
         protected virtual IQueryable<TEntity> QueryWrapper(IQueryable<TEntity> queryable)
         {
             return query;
         }
 
-        protected abstract TResult Mapper(TEntity entity);
+        private List<TResult> ExecuteQuery(IQueryable<TEntity> queryable)
+        {
+            return QueryWrapper(queryable)
+                .ToList()
+                .ConvertAll(Mapper);
+        }
 
         public void SetPageSize(int size)
         {
@@ -33,17 +40,12 @@ namespace Hermes.EntityFramework.Queries
 
         public virtual List<TResult> FetchAll()
         {
-            return QueryWrapper(query)
-                .ToList()
-                .ConvertAll(Mapper);
+            return ExecuteQuery(query);
         }
 
         public List<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return QueryWrapper(query
-                .Where(queryPredicate))
-                .ToList()
-                .ConvertAll(Mapper);
+            return ExecuteQuery(query.Where(queryPredicate));
         }
 
         public TResult FetchSingle(Expression<Func<TEntity, bool>> queryPredicate)
@@ -85,11 +87,11 @@ namespace Hermes.EntityFramework.Queries
 
         public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
         {
-            List<TResult> results = QueryWrapper(GetOrderedQuery(orderBy, order)
+            var orderedQuery = GetOrderedQuery(orderBy, order)
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
-                .Take(pageSize))
-                .ToList()
-                .ConvertAll(Mapper);
+                .Take(pageSize);
+
+            List<TResult> results = ExecuteQuery(orderedQuery);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
@@ -97,11 +99,11 @@ namespace Hermes.EntityFramework.Queries
         public virtual PagedResult<TResult> FetchPage<TProperty, TProperty1>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy,
                                                                              Expression<Func<TEntity, TProperty1>> thenOrderBy, OrderBy order)
         {
-            List<TResult> results = QueryWrapper(GetOrderedQuery(orderBy, thenOrderBy, order)
+            var orderedQuery = GetOrderedQuery(orderBy, thenOrderBy, order)
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
-                .Take(pageSize))
-                .ToList()
-                .ConvertAll(Mapper);
+                .Take(pageSize);
+
+            List<TResult> results = ExecuteQuery(orderedQuery);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
@@ -113,12 +115,12 @@ namespace Hermes.EntityFramework.Queries
 
         public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
         {
-            List<TResult> results = QueryWrapper(GetOrderedQuery(orderBy, order)
+            var orderedQuery = GetOrderedQuery(orderBy, order)
                 .Where(queryPredicate)
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
-                .Take(pageSize))
-                .ToList()
-                .ConvertAll(Mapper);
+                .Take(pageSize);
+
+            List<TResult> results = ExecuteQuery(orderedQuery);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
@@ -128,12 +130,12 @@ namespace Hermes.EntityFramework.Queries
                                                                              Expression<Func<TEntity, TProperty1>> thenOrderBy,
                                                                              OrderBy order)
         {
-            List<TResult> results = QueryWrapper(GetOrderedQuery(orderBy, thenOrderBy, order)
+            var orderedQuery = GetOrderedQuery(orderBy, thenOrderBy, order)
                 .Where(queryPredicate)
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
-                .Take(pageSize))
-                .ToList()
-                .ConvertAll(Mapper);
+                .Take(pageSize);
+
+            List<TResult> results = ExecuteQuery(orderedQuery);
 
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
