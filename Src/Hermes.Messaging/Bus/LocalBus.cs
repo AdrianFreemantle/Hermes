@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hermes.Ioc;
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
@@ -12,6 +13,8 @@ namespace Hermes.Messaging.Bus
 {
     public class LocalBus : IInMemoryBus
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (LocalBus));
+
         private readonly IContainer container;
         private readonly ITransportMessages messageTransport;
         private readonly IDispatchMessagesToHandlers dispatcher;
@@ -42,6 +45,8 @@ namespace Hermes.Messaging.Bus
 
         protected virtual void ProcessCommand(object message)
         {
+            Logger.Verbose("Executing : {0}", message);
+
             try
             {
                 using (IContainer childContainer = container.BeginLifetimeScope())
@@ -61,6 +66,7 @@ namespace Hermes.Messaging.Bus
         void IInMemoryBus.Raise(object @event)
         {
             MessageRuleValidation.ValidateIsEventType(@event);
+            Logger.Verbose("Raising : {0}", @event);
             dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
         }
     }
