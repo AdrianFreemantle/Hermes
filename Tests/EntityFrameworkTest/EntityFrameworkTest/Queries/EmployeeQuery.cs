@@ -46,7 +46,7 @@ namespace EntityFrameworkTest.Queries
             return query.Include(e => e.Company);
         }
 
-        protected override Expression<Func<Employee, EmployeeDto>> MappingSelector()
+        protected override Expression<Func<Employee, EmployeeDto>> Selector()
         {
             return employee => new EmployeeDto
             {

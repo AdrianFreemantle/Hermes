@@ -22,7 +22,12 @@ namespace Hermes.EntityFramework.Queries
             queryable = databaseQuery.GetQueryable<TEntity>();
         }
 
-        protected abstract Expression<Func<TEntity, TResult>> MappingSelector();
+        protected abstract Expression<Func<TEntity, TResult>> Selector();
+
+        protected virtual Func<TResult, TResult> Mapper()
+        {
+            return result => result;
+        }
 
         protected virtual IQueryable<TEntity> QueryWrapper(IQueryable<TEntity> query)
         {
@@ -31,17 +36,17 @@ namespace Hermes.EntityFramework.Queries
 
         private IEnumerable<TResult> ExecuteQuery()
         {
-            return QueryWrapper(queryable).Select(MappingSelector());
+            return QueryWrapper(queryable).Select(Selector()).ToArray().Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(IQueryable<TEntity> query)
         {
-            return QueryWrapper(query).Select(MappingSelector());
+            return QueryWrapper(query).Select(Selector()).ToArray().Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return QueryWrapper(queryable.Where(queryPredicate)).Select(MappingSelector());
+            return QueryWrapper(queryable.Where(queryPredicate)).Select(Selector()).ToArray().Select(Mapper());
         }
 
         public void SetPageSize(int size)
@@ -50,7 +55,7 @@ namespace Hermes.EntityFramework.Queries
             pageSize = size;
         }
 
-        public virtual List<TResult> FetchAll()
+        public List<TResult> FetchAll()
         {
             return ExecuteQuery().ToList();
         }
@@ -80,12 +85,12 @@ namespace Hermes.EntityFramework.Queries
             return ExecuteQuery(queryPredicate).FirstOrDefault();
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy)
+        public PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy)
         {
             return FetchPage(pageNumber, orderBy, OrderBy.Ascending);
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
+        public PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
         {
             var orderedQuery = GetOrderedQuery(orderBy, order)
                 .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
@@ -96,7 +101,7 @@ namespace Hermes.EntityFramework.Queries
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty, TProperty1>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy,
+        public PagedResult<TResult> FetchPage<TProperty, TProperty1>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy,
                                                                              Expression<Func<TEntity, TProperty1>> thenOrderBy, OrderBy order)
         {
             var orderedQuery = GetOrderedQuery(orderBy, thenOrderBy, order)
@@ -108,12 +113,12 @@ namespace Hermes.EntityFramework.Queries
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount());
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy)
+        public PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy)
         {
             return FetchPage(pageNumber, queryPredicate, orderBy, OrderBy.Ascending);
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
+        public PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
         {
             var orderedQuery = GetOrderedQuery(orderBy, order)
                 .Where(queryPredicate)
@@ -125,7 +130,7 @@ namespace Hermes.EntityFramework.Queries
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
 
-        public virtual PagedResult<TResult> FetchPage<TProperty, TProperty1>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate,
+        public PagedResult<TResult> FetchPage<TProperty, TProperty1>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate,
                                                                              Expression<Func<TEntity, TProperty>> orderBy,
                                                                              Expression<Func<TEntity, TProperty1>> thenOrderBy,
                                                                              OrderBy order)
@@ -140,22 +145,22 @@ namespace Hermes.EntityFramework.Queries
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
 
-        public virtual int GetCount(Expression<Func<TEntity, bool>> queryPredicate)
+        public int GetCount(Expression<Func<TEntity, bool>> queryPredicate)
         {
             return queryable.Count(queryPredicate);
         }
 
-        public virtual int GetCount()
+        public int GetCount()
         {
             return queryable.Count();
         }
 
-        public virtual bool Any(Expression<Func<TEntity, bool>> queryPredicate)
+        public bool Any(Expression<Func<TEntity, bool>> queryPredicate)
         {
             return queryable.Any(queryPredicate);
         }
 
-        public virtual bool Any()
+        public bool Any()
         {
             return queryable.Any();
         }
