@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Entity;
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Persistence;
 
@@ -9,10 +10,14 @@ namespace Hermes.EntityFramework
     [UnitOfWorkCommitOrder(Order = Int32.MaxValue)]
     public class EntityFrameworkUnitOfWork : IUnitOfWork, IRepositoryFactory
     {
+        internal protected static readonly ILog Logger = LogFactory.BuildLogger(typeof(EntityFrameworkUnitOfWork));
+
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
         protected DbContextTransaction Transaction;
         private bool disposed;
+
+        public static bool EnableDebugTrace { get; set; }
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
@@ -56,7 +61,17 @@ namespace Hermes.EntityFramework
 
         public DbContext GetDbContext()
         {
-            return Context ?? (Context = contextFactory.GetContext());
+            if (Context == null)
+            {
+                Context = contextFactory.GetContext();
+
+                if (EnableDebugTrace)
+                {
+                    Context.Database.Log = s => Logger.Info(s);
+                }
+            }
+
+            return Context;
         }
 
         public Database GetDatabase()

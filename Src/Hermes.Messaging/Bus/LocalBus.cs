@@ -45,7 +45,7 @@ namespace Hermes.Messaging.Bus
 
         protected virtual void ProcessCommand(object message)
         {
-            Logger.Verbose("Executing : {0}", message);
+            Logger.Info("Executing : {0}", message);
 
             try
             {
@@ -66,7 +66,7 @@ namespace Hermes.Messaging.Bus
         public void Raise(object @event)
         {
             MessageRuleValidation.ValidateIsEventType(@event);
-            Logger.Verbose("Raising : {0}", @event);
+            Logger.Info("Raising : {0}", @event);
             dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
         }
     }

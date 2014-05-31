@@ -2,13 +2,17 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
+using Hermes.Logging;
 
 namespace Hermes.EntityFramework.Queries
 {
     public class DatabaseQuery
     {
+        internal protected static readonly ILog Logger = LogFactory.BuildLogger(typeof(DatabaseQuery));
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
+
+        public static bool EnableDebugTrace { get; set; }
 
         public DatabaseQuery(IContextFactory contextFactory)
         {
@@ -18,6 +22,12 @@ namespace Hermes.EntityFramework.Queries
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
             var context = GetDbContext();
+
+            if (EnableDebugTrace)
+            {
+                context.Database.Log = s => Logger.Info(s);
+            }
+
             return context.Set<TEntity>();
         }
 
