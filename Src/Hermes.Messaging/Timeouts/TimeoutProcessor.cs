@@ -103,13 +103,13 @@ namespace Hermes.Messaging.Timeouts
 
         private bool ProcessNextTimeout()
         {
-            TimeoutData timeoutData;
+            ITimeoutData timeoutData;
 
             if (timeoutStore.TryFetchNextTimeout(out timeoutData))
             {
                 Logger.Debug("Sending expired message: {0} to {1}", timeoutData.MessageId, timeoutData.DestinationAddress);
-            
-                var transportMessage = timeoutData.ToTransportmessage();
+
+                var transportMessage = TimeoutData.ToTransportmessage(timeoutData);
                 transportMessage.Headers[HeaderKeys.SentTime] = DateTime.UtcNow.ToWireFormattedString();
                 messageSender.Send(transportMessage, Address.Parse(timeoutData.DestinationAddress));
                 return true;

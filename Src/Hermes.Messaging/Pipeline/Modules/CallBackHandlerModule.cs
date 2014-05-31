@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Hermes.Logging;
+using Hermes.Messaging.Callbacks;
 using Hermes.Pipes;
 
 namespace Hermes.Messaging.Pipeline.Modules

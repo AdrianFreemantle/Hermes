@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Timeouts
 {
-    public class TimeoutData 
+    public class TimeoutData : ITimeoutData
     {
         public Guid MessageId { get; set; }
         public string DestinationAddress { get; set; }
@@ -43,17 +42,17 @@ namespace Hermes.Messaging.Timeouts
             return string.Format("{0} - Expires:{1}", MessageId, Expires);
         }
 
-        public TransportMessage ToTransportmessage()
+        public static TransportMessage ToTransportmessage(ITimeoutData timeoutData)
         {
             var replyToAddress = Address.Local;
 
-            if (Headers != null && Headers.ContainsKey(HeaderKeys.OriginalReplyToAddress))
+            if (timeoutData.Headers != null && timeoutData.Headers.ContainsKey(HeaderKeys.OriginalReplyToAddress))
             {
-                replyToAddress = Address.Parse(Headers[HeaderKeys.OriginalReplyToAddress]);
-                Headers.Remove(HeaderKeys.OriginalReplyToAddress);
+                replyToAddress = Address.Parse(timeoutData.Headers[HeaderKeys.OriginalReplyToAddress]);
+                timeoutData.Headers.Remove(HeaderKeys.OriginalReplyToAddress);
             }
 
-            return new TransportMessage(MessageId, CorrelationId, replyToAddress, TimeSpan.MaxValue, Headers, Body);
+            return new TransportMessage(timeoutData.MessageId, timeoutData.CorrelationId, replyToAddress, TimeSpan.MaxValue, timeoutData.Headers, timeoutData.Body);
         }
     }
 }

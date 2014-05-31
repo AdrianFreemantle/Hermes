@@ -61,7 +61,7 @@ namespace Hermes.Messaging.Storage.MsSql
             }
         }
 
-        public void Add(TimeoutData timeout)
+        public void Add(ITimeoutData timeout)
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -93,7 +93,7 @@ namespace Hermes.Messaging.Storage.MsSql
             Add(timeoutData);
         }
 
-        private SqlCommand BuildAddCommand(SqlConnection connection, TimeoutData timoutData)
+        private SqlCommand BuildAddCommand(SqlConnection connection, ITimeoutData timoutData)
         {
             var command = connection.CreateCommand();
             command.CommandText = String.Format(SqlCommands.AddTimeout, Address.Local);
@@ -117,7 +117,7 @@ namespace Hermes.Messaging.Storage.MsSql
             return command;
         }
 
-        public bool TryFetchNextTimeout(out TimeoutData timeoutData)
+        public bool TryFetchNextTimeout(out ITimeoutData timeoutData)
         {
             using (var connection = new SqlConnection(connectionString))
             {

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-
 using Hermes.Reflection;
 
 namespace Hermes.Domain
@@ -94,6 +92,7 @@ namespace Hermes.Domain
             version++;
             source.UpdateEventDetails(@event, this);
             changes.Add(@event);
+            DomainEvent.Raise(@event);
         }
 
         internal protected override bool ApplyEvent(IDomainEvent @event, ApplyEventAs applyAs)

@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-
 using Hermes.Messaging.Timeouts;
 
 namespace Hermes.Messaging
 {
     public interface IPersistTimeouts
     {
-        void Add(TimeoutData timeout);
+        void Add(ITimeoutData timeout);
         void Purge();
-        bool TryFetchNextTimeout(out TimeoutData timeoutData);
+        bool TryFetchNextTimeout(out ITimeoutData timeoutData);
         void Remove(Guid correlationId);
     }
 }

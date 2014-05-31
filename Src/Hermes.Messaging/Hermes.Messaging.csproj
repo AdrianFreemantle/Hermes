@@ -54,6 +54,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Callbacks\IManageCallbacks.cs" />
+    <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="Configuration\CurrentUser.cs" />
     <Compile Include="EndPoints\LocalEndpoint.cs" />
     <Compile Include="IConfigureWorker.cs" />
@@ -64,8 +66,8 @@
     <Compile Include="Configuration\MessageHandlerCache\ActionCacheItem.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCache.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
-    <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="InitializationOrderAttribute.cs" />
+    <Compile Include="InMemoryBusExtensions.cs" />
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
@@ -78,6 +80,9 @@
     <Compile Include="Pipeline\Modules\DispatchMessagesModule.cs" />
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
     <Compile Include="MessageExtensions.cs" />
+    <Compile Include="Timeouts\TimeoutData.cs" />
+    <Compile Include="Transports\IPublishMessages.cs" />
+    <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />
     <Compile Include="Pipeline\Modules\MessageMutatorModule.cs" />
     <Compile Include="Transports\OutgoingMessageUnitOfWork.cs" />
@@ -86,52 +91,26 @@
     <Compile Include="Transports\SqlTransport\SqlMessageSender.cs" />
     <Compile Include="Transports\SqlTransport\SqlQueueCreator.cs" />
     <Compile Include="Transports\SqlTransport\SqlTransportConfiguration.cs" />
-    <Compile Include="IMutateIncommingMessages.cs" />
-    <Compile Include="IMutateOutgoingMessages.cs" />
     <Compile Include="Pipeline\IncomingMessageContext.cs" />
-    <Compile Include="INeedToInitializeSomething.cs" />
     <Compile Include="Pipeline\OutgoingMessageContext.cs" />
     <Compile Include="Pipeline\Modules\UnitOfWorkModule.cs" />
     <Compile Include="UnitOfWorkCommitOrderAttribute.cs" />
     <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
-    <Compile Include="Callbacks\CompletionResult.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
     <Compile Include="Configuration\EnvironmentConfigurationException.cs" />
     <Compile Include="IConfigureEndpoint.cs" />
-    <Compile Include="Configuration\RuntimeEnvironment.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="HeaderKeys.cs" />
-    <Compile Include="ICallback.cs" />
-    <Compile Include="IManageCallbacks.cs" />
-    <Compile Include="Address.cs" />
     <Compile Include="Transports\HeaderValue.cs" />
-    <Compile Include="IDispatchMessagesToHandlers.cs" />
-    <Compile Include="IHandleMessage.cs" />
-    <Compile Include="IInMemoryBus.cs" />
-    <Compile Include="IManageSubscriptions.cs" />
-    <Compile Include="IMessageBus.cs" />
-    <Compile Include="IMessageContext.cs" />
-    <Compile Include="IReceiveMessages.cs" />
-    <Compile Include="ISerializeMessages.cs" />
-    <Compile Include="ITransportMessages.cs" />
     <Compile Include="Transports\MessageRuleValidation.cs" />
     <Compile Include="Storage\MsSql\SqlCommands.cs" />
     <Compile Include="Storage\MsSql\SqlSubscriptionStorage.cs" />
     <Compile Include="Storage\MsSql\SqlTimeoutStorage.cs" />
-    <Compile Include="Transports\TransportMessage.cs" />
     <Compile Include="ProcessManagement\ProcessManager.cs" />
-    <Compile Include="IRegisterMessageRoute.cs" />
-    <Compile Include="IRouteMessageToEndpoint.cs" />
     <Compile Include="Routing\RouteAlreadyDefinedException.cs" />
     <Compile Include="Routing\RouteNotDefinedException.cs" />
-    <Compile Include="IContainProcessManagerData.cs" />
-    <Compile Include="IPersistProcessManagers.cs" />
-    <Compile Include="IProcessManager.cs" />
-    <Compile Include="IPersistTimeouts.cs" />
-    <Compile Include="IStoreSubscriptions.cs" />
-    <Compile Include="Timeouts\TimeoutData.cs" />
     <Compile Include="Configuration\MessageBusDependencyRegistrar.cs" />
     <Compile Include="Timeouts\TimeoutProcessor.cs" />
     <Compile Include="Bus\MessageBus.cs" />
@@ -144,10 +123,6 @@
     <Compile Include="Bus\StorageDrivenPublisher.cs" />
     <Compile Include="Transports\Receiver.cs" />
     <Compile Include="Bus\SubscriptionManager.cs" />
-    <Compile Include="ICreateQueues.cs" />
-    <Compile Include="IDequeueMessages.cs" />
-    <Compile Include="IPublishMessages.cs" />
-    <Compile Include="ISendMessages.cs" />
     <Compile Include="Wcf\QueryService.cs" />
     <Compile Include="EndPoints\WorkerEndpoint.cs" />
   </ItemGroup>

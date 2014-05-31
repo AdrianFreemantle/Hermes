@@ -5,7 +5,6 @@ using Hermes.EntityFramework.ProcessManagager;
 using Hermes.EntityFramework.Queries;
 using Hermes.Ioc;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 
 namespace Hermes.EntityFramework
 {

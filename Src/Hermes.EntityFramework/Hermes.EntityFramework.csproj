@@ -95,7 +95,7 @@
       <Name>Hermes.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hermes.Messaging\Hermes.Messaging.csproj">
-      <Project>{AC67EFD9-6B5B-4A85-B310-BCB6821339CD}</Project>
+      <Project>{ac67efd9-6b5b-4a85-b310-bcb6821339cd}</Project>
       <Name>Hermes.Messaging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hermes\Hermes.csproj">

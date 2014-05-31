@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Hermes.Messaging.Callbacks;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 

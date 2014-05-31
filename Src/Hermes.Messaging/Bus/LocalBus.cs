@@ -26,7 +26,7 @@ namespace Hermes.Messaging.Bus
             this.container = container;
         }
 
-        void IInMemoryBus.Execute(object command)
+        public void Execute(object command)
         {
             Mandate.ParameterNotNull(command, "command");
 
@@ -63,7 +63,7 @@ namespace Hermes.Messaging.Bus
             
         }
 
-        void IInMemoryBus.Raise(object @event)
+        public void Raise(object @event)
         {
             MessageRuleValidation.ValidateIsEventType(@event);
             Logger.Verbose("Raising : {0}", @event);

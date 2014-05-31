@@ -2,12 +2,6 @@
 
 namespace Hermes.Messaging
 {
-    public interface IInMemoryBus
-    {
-        void Execute(object command);
-        void Raise(object @event);
-    }
-
     public static class InMemoryBusExtensions
     {
         public static Task ExecuteAsync(this IInMemoryBus localBus, object command)

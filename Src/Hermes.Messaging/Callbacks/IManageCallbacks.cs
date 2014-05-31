@@ -1,8 +1,7 @@
 ﻿using System;
 using Hermes.Messaging.Pipeline;
-using Hermes.Messaging.Transports;
 
-namespace Hermes.Messaging
+namespace Hermes.Messaging.Callbacks
 {
     public interface IManageCallbacks
     {

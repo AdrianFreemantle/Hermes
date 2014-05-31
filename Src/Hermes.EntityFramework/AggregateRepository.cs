@@ -13,15 +13,13 @@ namespace Hermes.EntityFramework
     public class AggregateRepository : IAggregateRepository, IUnitOfWork
     {
         private readonly IKeyValueStore keyValueStore;
-        private readonly IInMemoryBus inMemoryBus;
 
         private readonly Dictionary<IIdentity, IAggregate> aggregateCache = new Dictionary<IIdentity, IAggregate>();
         private readonly HashSet<AggregateCommitAction> aggregateCommitActions = new HashSet<AggregateCommitAction>(); 
 
-        public AggregateRepository(IKeyValueStore keyValueStore, IInMemoryBus inMemoryBus)
+        public AggregateRepository(IKeyValueStore keyValueStore)
         {
             this.keyValueStore = keyValueStore;
-            this.inMemoryBus = inMemoryBus;
         }
 
         public TAggregate Get<TAggregate>(IIdentity id) where TAggregate : class, IAggregate
@@ -41,41 +39,18 @@ namespace Hermes.EntityFramework
 
         public void Add(IAggregate aggregate)
         {
-            PublishEvents(aggregate);
             aggregateCache[aggregate.Identity] = aggregate;
             aggregateCommitActions.Add(AggregateCommitAction.Add(aggregate.Identity));
         }
 
         public void Update(IAggregate aggregate)
         {
-            PublishEvents(aggregate);
             aggregateCommitActions.Add(AggregateCommitAction.Update(aggregate.Identity));
         }
 
         public void Remove(IAggregate aggregate)
         {
-            PublishEvents(aggregate);
             aggregateCommitActions.Add(AggregateCommitAction.Remove(aggregate.Identity));
-        }
-
-        private void PublishEvents(IAggregate aggregate)
-        {
-            object[] events;
-
-            do
-            {
-                events = aggregate.GetUncommittedEvents().Cast<object>().ToArray();
-                aggregate.ClearUncommittedEvents();
-                PublishEvents(events);
-            } while (events.Any());
-        }
-
-        private void PublishEvents(IEnumerable<object> events)
-        {
-            foreach (var e in events)
-            {
-                inMemoryBus.Raise(e);
-            }
         }
 
         public void Commit()
@@ -84,7 +59,20 @@ namespace Hermes.EntityFramework
             {
                 ProcessCommitAction(action);
             }
-        }        
+
+            foreach (IAggregate aggregate in aggregateCache.Values)
+            {
+                SaveEvents(aggregate);
+            }
+        }
+
+        private void SaveEvents(IAggregate aggregate)
+        {
+            IDomainEvent[] events = aggregate.GetUncommittedEvents().ToArray();
+            aggregate.ClearUncommittedEvents();
+
+            //todo save events to event store
+        }
 
         public void Rollback()
         {

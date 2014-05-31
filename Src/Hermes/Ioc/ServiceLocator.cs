@@ -8,7 +8,7 @@ namespace Hermes.Ioc
 {
     public class ServiceLocator : ServiceLocatorImplBase
     {
-        private static readonly ThreadLocal<ServiceLocator> instance = new ThreadLocal<ServiceLocator>();
+        private static readonly ThreadLocal<ServiceLocator> Instance = new ThreadLocal<ServiceLocator>();
         private static readonly object SyncRoot = new Object();
         private IServiceLocator serviceProvider;
 
@@ -24,18 +24,18 @@ namespace Hermes.Ioc
 
         private static ServiceLocator GetInstance()
         {
-            if (!instance.IsValueCreated)
+            if (!Instance.IsValueCreated)
             {
                 lock (SyncRoot)
                 {
-                    if (!instance.IsValueCreated)
+                    if (!Instance.IsValueCreated)
                     {
-                        instance.Value = new ServiceLocator();
+                        Instance.Value = new ServiceLocator();
                     }
                 }
             }
 
-            return instance.Value;
+            return Instance.Value;
         }
 
         public void SetCurrentLifetimeScope(IServiceLocator provider)
