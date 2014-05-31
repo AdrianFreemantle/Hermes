@@ -1,7 +1,7 @@
 using System.Data.Entity;
-using IntegrationTest.Client.Persistence;
+using LocalBus.Persistence;
 
-namespace IntegrationTest.Client.Wireup
+namespace LocalBus.Wireup
 {
     public class DataBaseCreationPolicy : DropCreateDatabaseAlways<LocalBusTestContext>
     {

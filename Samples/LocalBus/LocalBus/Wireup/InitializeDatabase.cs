@@ -4,9 +4,9 @@ using System.Linq;
 using Hermes.EntityFramework;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-using IntegrationTest.Client.Persistence;
+using LocalBus.Persistence;
 
-namespace IntegrationTest.Client.Wireup
+namespace LocalBus.Wireup
 {
     public class InitializeDatabase : INeedToInitializeSomething
     {

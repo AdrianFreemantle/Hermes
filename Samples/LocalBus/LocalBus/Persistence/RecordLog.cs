@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace IntegrationTest.Client.Persistence
+namespace LocalBus.Persistence
 {
     public class RecordLog
     {

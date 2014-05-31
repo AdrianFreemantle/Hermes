@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using Contracts;
 using Hermes;
 
-namespace IntegrationTest.Client.Contracts
+namespace LocalBus.Contracts
 {
     public class AddRecordToDatabase : ICommand
     {

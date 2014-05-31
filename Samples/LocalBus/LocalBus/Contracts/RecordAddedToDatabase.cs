@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Contracts;
 
-namespace IntegrationTest.Client.Contracts
+namespace LocalBus.Contracts
 {
     public class RecordAddedToDatabase : IRecordAddedToDatabase_V2
     {
         public Guid RecordId { get; private set; }
         public List<Guid> RandomData { get; private set; }
+        public int RecordNumber { get; private set; }
 
-        public RecordAddedToDatabase(Guid recordId)
+        public RecordAddedToDatabase(Guid recordId, int recordNumber)
         {
             RecordId = recordId;
+            RecordNumber = recordNumber;
 
             RandomData = new List<Guid>();
 

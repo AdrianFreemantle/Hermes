@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 
-namespace IntegrationTest.Client.Persistence
+namespace LocalBus.Persistence
 {
     public class LocalBusTestContext : DbContext
     {

@@ -1,30 +1,26 @@
 ﻿using System;
 using Contracts;
-using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using LocalBus.Contracts;
-using LocalBus.Persistence;
 
-namespace LocalBus
+namespace Remote.Endpoint
 {
-    public class LocalEndpoint : LocalEndpoint<AutofacAdapter>
+    public class Endpoint : LocalEndpoint<AutofacAdapter>
     {
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Verbose;
 
             configuration
                 .UseJsonSerialization()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .UseSqlTransport() //we still need the transport so certain dependencies can be resolved and so that we can send async messages
-                .ConfigureEntityFramework<LocalBusTestContext>("LocalBusTest"); ;
+                .UseSqlTransport(); //we still need the transport so certain dependencies can be resolved and so that we can send async messages
         }
 
         private static bool IsCommand(Type type)
@@ -36,5 +32,5 @@ namespace LocalBus
         {
             return typeof(IEvent).IsAssignableFrom(type);
         }
-    }    
+    }
 }

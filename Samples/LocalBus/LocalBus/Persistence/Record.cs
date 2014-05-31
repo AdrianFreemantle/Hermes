@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace IntegrationTest.Client.Persistence
+namespace LocalBus.Persistence
 {
     public class Record
     {

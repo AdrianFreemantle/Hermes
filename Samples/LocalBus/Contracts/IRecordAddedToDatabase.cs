@@ -1,6 +1,6 @@
 using System;
 
-namespace IntegrationTest.Client.Contracts
+namespace Contracts
 {
     public interface IRecordAddedToDatabase : IEvent
     {

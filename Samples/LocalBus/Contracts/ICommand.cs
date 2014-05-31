@@ -1,4 +1,4 @@
-namespace IntegrationTest.Client.Contracts
+namespace Contracts
 {
     public interface ICommand
     {

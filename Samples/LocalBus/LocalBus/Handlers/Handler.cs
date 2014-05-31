@@ -1,9 +1,12 @@
-﻿using Hermes.EntityFramework;
+﻿using System;
+using Contracts;
+using Hermes;
+using Hermes.EntityFramework;
 using Hermes.Messaging;
-using IntegrationTest.Client.Contracts;
-using IntegrationTest.Client.Persistence;
+using LocalBus.Contracts;
+using LocalBus.Persistence;
 
-namespace IntegrationTest.Client.Handlers
+namespace LocalBus.Handlers
 {
     public class Handler
             : IHandleMessage<AddRecordToDatabase>
@@ -11,17 +14,18 @@ namespace IntegrationTest.Client.Handlers
             , IHandleMessage<IRecordAddedToDatabase_V2>
     {
         private readonly IRepositoryFactory repositoryFactory;
-        private readonly IInMemoryBus messageBus;
+        private readonly IInMemoryEventBus localEventBus;
+        private readonly IMessageBus messageBus;
 
-        public Handler(IRepositoryFactory repositoryFactory, IInMemoryBus messageBus)
+        public Handler(IRepositoryFactory repositoryFactory, IInMemoryEventBus localEventBus, IMessageBus messageBus)
         {
             this.repositoryFactory = repositoryFactory;
+            this.localEventBus = localEventBus;
             this.messageBus = messageBus;
         }
 
         public void Handle(AddRecordToDatabase message)
         {
-            System.Threading.Thread.Sleep(10);
             var repository = repositoryFactory.GetRepository<Record>();
 
             repository.Add(
@@ -31,7 +35,7 @@ namespace IntegrationTest.Client.Handlers
                     RecordNumber = message.RecordNumber
                 });
 
-            messageBus.Raise(new RecordAddedToDatabase(message.RecordId));
+            localEventBus.Raise(new RecordAddedToDatabase(message.RecordId, message.RecordNumber));
         }
 
         public void Handle(IRecordAddedToDatabase message)
@@ -42,7 +46,11 @@ namespace IntegrationTest.Client.Handlers
 
         public void Handle(IRecordAddedToDatabase_V2 message)
         {
-            System.Threading.Thread.Sleep(10);
+            if (message.RecordNumber % 100 == 0)
+            {
+                messageBus.Publish(new ErrorOccured("This should never be delivered"));
+                throw new HermesTestingException();
+            }
         }
     }
 }
