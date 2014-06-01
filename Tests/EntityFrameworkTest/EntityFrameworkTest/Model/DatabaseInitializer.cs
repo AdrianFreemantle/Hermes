@@ -7,7 +7,7 @@ namespace EntityFrameworkTest.Model
     {
         protected override void Seed(EntityFrameworkTestContext context)
         {
-            var acme = context.Companies.Add(new Company
+            var google = context.Companies.Add(new Company
             {
                 Id = SequentialGuid.New(),
                 Name = "Google"
@@ -23,27 +23,34 @@ namespace EntityFrameworkTest.Model
             {
                 Id = SequentialGuid.New(),
                 Name = "Joe Smith",
-                CompanyId = acme.Id,
+                CompanyId = google.Id,
             });
 
             context.Employees.Add(new Employee
             {
                 Id = SequentialGuid.New(),
                 Name = "Sally Smith",
-                CompanyId = acme.Id,
+                CompanyId = google.Id,
             });
 
             context.Employees.Add(new Employee
             {
                 Id = SequentialGuid.New(),
                 Name = "Billy Bob",
-                CompanyId = acme.Id,
+                CompanyId = google.Id,
             });
 
             context.Employees.Add(new Employee
             {
                 Id = SequentialGuid.New(),
                 Name = "Sandra Jones",
+                CompanyId = amazon.Id,
+            });
+
+            context.Employees.Add(new Employee
+            {
+                Id = SequentialGuid.New(),
+                Name = "Peter Jones",
                 CompanyId = amazon.Id,
             });
         }

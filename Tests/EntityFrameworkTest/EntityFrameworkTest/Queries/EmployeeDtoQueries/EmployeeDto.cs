@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EntityFrameworkTest.Queries
+﻿namespace EntityFrameworkTest.Queries.EmployeeDtoQueries
 {
     public class EmployeeDto
     {

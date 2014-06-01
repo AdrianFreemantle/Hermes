@@ -22,31 +22,28 @@ namespace Hermes.EntityFramework.Queries
             queryable = databaseQuery.GetQueryable<TEntity>();
         }
 
-        protected abstract Expression<Func<TEntity, TResult>> Selector();
+        protected abstract Expression<Func<TEntity, dynamic>> Selector();
 
-        protected virtual Func<TResult, TResult> Mapper()
-        {
-            return result => result;
-        }
+        protected abstract Func<dynamic, TResult> Mapper();
 
-        protected virtual IQueryable<TEntity> QueryWrapper(IQueryable<TEntity> query)
+        protected virtual IQueryable<TEntity> Includes(IQueryable<TEntity> query)
         {
-            return queryable;
+            return query;
         }
 
         private IEnumerable<TResult> ExecuteQuery()
         {
-            return QueryWrapper(queryable).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable).Select(Selector()).ToArray().Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(IQueryable<TEntity> query)
         {
-            return QueryWrapper(query).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(query).Select(Selector()).ToArray().Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return QueryWrapper(queryable.Where(queryPredicate)).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable.Where(queryPredicate)).Select(Selector()).ToArray().Select(Mapper());
         }
 
         public void SetPageSize(int size)

@@ -1,16 +1,12 @@
-﻿using System;
-using EntityFrameworkTest.Model;
-using EntityFrameworkTest.Queries;
+﻿using System.Linq;
+using EntityFrameworkTest.Queries.ComanyDtoQueries;
+using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
+using EntityFrameworkTest.Queries.EmployeeDtoQueries;
 using Hermes.EntityFramework;
 using Hermes.EntityFramework.Queries;
 using Hermes.Logging;
-using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-using Hermes.Messaging.EndPoints;
-using Hermes.Messaging.Transports.SqlTransport;
-using Hermes.ObjectBuilder.Autofac;
 using Hermes.Queries;
-using Hermes.Serialization.Json;
 
 namespace EntityFrameworkTest
 {
@@ -28,46 +24,34 @@ namespace EntityFrameworkTest
 
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
-                var queryService = scope.GetInstance<EmployeeQuery>();
+                var dynamicCompanyQuery = scope.GetInstance<DynamicCompanyQueryService>();
+                var dtoCompanyQuery = scope.GetInstance<DtoCompanyQueryService>();
+                var dtoEmployeeQueryService = scope.GetInstance<DtoEmployeeQueryService>();
 
-                EmployeeDto[] all = queryService.Answer(new FetchAllEmployeesForCompany
+                dynamic google = dynamicCompanyQuery.FetchAll(company => company.Name == "Google").Single();
+                CompanyDto amazon = dtoCompanyQuery.FetchAll(company => company.Name == "Amazon").Single();
+                EmployeeDto billy = dtoEmployeeQueryService.FetchAll(employee => employee.Name == "Billy Bob").Single();
+
+                EmployeeDto[] empDtoAll = dtoEmployeeQueryService.Answer(new FetchAllEmployeesForCompany
                 {
                     CompanyName = "Google"
                 });
 
-                EmployeeDto single = queryService.Answer(new FetchEmployeeWithName
+                EmployeeDto empDtoSingle = dtoEmployeeQueryService.Answer(new FetchEmployeeWithName
                 {
                     Name = "Billy Bob"
                 });
 
-                PagedResult<EmployeeDto> page = queryService.Answer(new FetchEmployeesWithNameLike
+                PagedResult<EmployeeDto> empDtoPage = dtoEmployeeQueryService.Answer(new FetchEmployeesWithNameLike
                 {
                     Name = "Smith"
                 });
 
-                EmployeeDto first = queryService.Answer(new FetchFirstEmployeeWithNameLike
+                EmployeeDto empDtoFirst = dtoEmployeeQueryService.Answer(new FetchFirstEmployeeWithNameLike
                 {
                     Name = "Smith"
                 });
-
             }
-        }
-    }
-
-    public class Endpoint : LocalEndpoint<AutofacAdapter>
-    {
-        protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
-        {
-            configuration
-                .UseJsonSerialization()
-                .UserNameResolver(GetCurrentUserName)
-                .UseSqlTransport("SqlTransport")
-                .ConfigureEntityFramework<EntityFrameworkTestContext>("EntityFrameworkTest");
-        }
-
-        private static string GetCurrentUserName()
-        {
-            return Environment.UserName;
         }
     }
 }
