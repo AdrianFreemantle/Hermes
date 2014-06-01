@@ -84,6 +84,7 @@
     <Compile Include="OrderedQueryableExtensions.cs" />
     <Compile Include="Queries\EntityQuery.cs" />
     <Compile Include="Queries\DatabaseQuery.cs" />
+    <Compile Include="Queries\IEntityQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

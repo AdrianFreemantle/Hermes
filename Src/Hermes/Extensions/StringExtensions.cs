@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 // ReSharper disable CheckNamespace
-namespace Hermes
+namespace System
 // ReSharper restore CheckNamespace
 {
     public static class StringExtensions

@@ -2,7 +2,7 @@
 using System.Globalization;
 
 // ReSharper disable CheckNamespace
-namespace Hermes
+namespace System
 // ReSharper restore CheckNamespace
 {
     public static class DateTimeExtensions
@@ -25,6 +25,11 @@ namespace Hermes
         public static DateTime ToUtcDateTime(this string wireFormattedString)
         {
             return DateTime.ParseExact(wireFormattedString, Format, CultureInfo.InvariantCulture).ToUniversalTime();
+        }
+
+        public static string ToDisplayString(this DateTime dateTime)
+        {
+            return dateTime.ToString("dd/mm/yyyy HH:mm");
         }
     }
 }

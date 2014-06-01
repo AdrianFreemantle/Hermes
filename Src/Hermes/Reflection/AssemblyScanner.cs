@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Hermes.Equality;
 using Hermes.Logging;
 
 namespace Hermes.Reflection
@@ -101,17 +102,34 @@ namespace Hermes.Reflection
             }
         }
 
-        public IEnumerable<Type> GetConcreteTypesOf<TAbstract>()
+        public ICollection<Type> GetConcreteTypesOf<TAbstract>()
         {
-            var abstractType = typeof(TAbstract);
+            return GetConcreteTypesOf(typeof (TAbstract));
+        }
 
+        public ICollection<Type> GetConcreteTypesOf(Type abstractType)
+        {
             if (!abstractType.IsAbstract)
             {
                 return new Type[0];
             }
 
-            return types.Where(t => abstractType.IsAssignableFrom(t) && t != abstractType && !t.IsAbstract);
+            return types.Where(t => abstractType.IsAssignableFrom(t) && t != abstractType && !t.IsAbstract).ToArray();
         }
+
+        public ICollection<Type> GetTypesImplementingGenericInterface(Type openGenericInterface)
+        {
+            if (!openGenericInterface.IsGenericType || !openGenericInterface.IsInterface)
+            {
+                return new Type[0];
+            }
+
+            return types.Where(
+                t => t.GetInterfaces()
+                      .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface))
+                        .Distinct(new TypeEqualityComparer()).ToArray();
+        }
+
 
         ~AssemblyScanner()
         {
