@@ -15,7 +15,7 @@ namespace EntityFrameworkTest.Queries.ComanyDtoQueries
         {
         }
 
-        protected override IQueryable<Company> QueryWrapper(IQueryable<Company> query)
+        protected override IQueryable<Company> Includes(IQueryable<Company> query)
         {
             return query.Include(company => company.Employees);
         }

@@ -20,7 +20,7 @@ namespace EntityFrameworkTest.Queries.EmployeeDtoQueries
             
         }
 
-        protected override IQueryable<Model.Employee> QueryWrapper(IQueryable<Model.Employee> query)
+        protected override IQueryable<Model.Employee> Includes(IQueryable<Model.Employee> query)
         {
             return query.Include(e => e.Company);
         }
@@ -53,7 +53,6 @@ namespace EntityFrameworkTest.Queries.EmployeeDtoQueries
         {
             return FetchPage(1, queryPredicate: e => e.Name.Contains(query.Name), orderBy: e => e.Name);
         }
-
 
         public EmployeeDto Answer(FetchFirstEmployeeWithNameLike query)
         {
