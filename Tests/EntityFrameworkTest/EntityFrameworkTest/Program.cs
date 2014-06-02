@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using EntityFrameworkTest.Queries.ComanyDtoQueries;
 using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
 using EntityFrameworkTest.Queries.EmployeeDtoQueries;
@@ -25,32 +26,12 @@ namespace EntityFrameworkTest
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
                 var dynamicCompanyQuery = scope.GetInstance<DynamicCompanyQueryService>();
-                var dtoCompanyQuery = scope.GetInstance<DtoCompanyQueryService>();
-                var dtoEmployeeQueryService = scope.GetInstance<DtoEmployeeQueryService>();
 
-                dynamic google = dynamicCompanyQuery.FetchAll(company => company.Name == "Google").Single();
-                CompanyDto amazon = dtoCompanyQuery.FetchAll(company => company.Name == "Amazon").Single();
-                EmployeeDto billy = dtoEmployeeQueryService.FetchAll(employee => employee.Name == "Billy Bob").Single();
+                dynamic google = dynamicCompanyQuery.FetchSingle(company => company.Name == "Google");
 
-                EmployeeDto[] empDtoAll = dtoEmployeeQueryService.Answer(new FetchAllEmployeesForCompany
-                {
-                    CompanyName = "Google"
-                });
+                List<dynamic> companiesMoreThanThreeEmps = dynamicCompanyQuery.FetchAll(company => company.Employees.Count >= 3);
 
-                EmployeeDto empDtoSingle = dtoEmployeeQueryService.Answer(new FetchEmployeeWithName
-                {
-                    Name = "Billy Bob"
-                });
-
-                PagedResult<EmployeeDto> empDtoPage = dtoEmployeeQueryService.Answer(new FetchEmployeesWithNameLike
-                {
-                    Name = "Smith"
-                });
-
-                EmployeeDto empDtoFirst = dtoEmployeeQueryService.Answer(new FetchFirstEmployeeWithNameLike
-                {
-                    Name = "Smith"
-                });
+                var sandraComapny = dynamicCompanyQuery.FetchFirst(company => company.Employees.Any(employee => employee.Name.Contains("Sandra")));
             }
         }
     }
