@@ -127,7 +127,7 @@
     <value>"You must first configure the environment settings before attempting to configure the Bus"</value>
   </data>
   <data name="ExpressionFieldCountError" xml:space="preserve">
-    <value>The provided cron expression must contain 5 fields.</value>
+    <value>The provided cron expression must contain {0} fields.</value>
   </data>
   <data name="ExpressionFieldFormatError" xml:space="preserve">
     <value>A value in the expression field is incorrectly formatted.</value>

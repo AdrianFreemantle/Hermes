@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.CronSchedule.Fields
+namespace Hermes.Scheduling.Fields
 {
     internal class CronValue : IEquatable<CronValue>
     {       

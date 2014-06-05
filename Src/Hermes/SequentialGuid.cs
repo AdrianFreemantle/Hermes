@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace Hermes
+// ReSharper disable CheckNamespace
+namespace System
+// ReSharper restore CheckNamespace
 {
     /// <summary>
     /// An identity generator that creates sequential <see cref="System.Guid"/> values 

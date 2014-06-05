@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Hermes.CronSchedule
+namespace Hermes.Scheduling
 {
     internal enum ValidationOption
     {

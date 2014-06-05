@@ -1,20 +1,21 @@
-﻿using Hermes.CronSchedule.Fields;
+﻿using Hermes.Scheduling.Fields;
 
-namespace Hermes.CronSchedule
+namespace Hermes.Scheduling
 {
     //  CRON EXPRESSION
     //  ────────────────────────────────────────────────────────────────────────────────
-    //  ┌────┬────┬────┬────┬───── Cron Field-Expressions
-    //  |    |    |    |    | 
-    //  ┴    ┴    ┴    ┴    ┴   
-    //  *    *    *    *    *  ├── Cron Expression
-    //  ┬    ┬    ┬    ┬    ┬
-    //  │    │    │    │    │
-    //  │    │    │    │    └───── day of week (0 - 6) (0 = Sunday) (Mon - Sun) (Monday - Sunday)
-    //  │    │    │    └────────── month (1 - 12) (1 = January) (Jan - Dec) (January - December)
-    //  │    │    └─────────────── day of month (1 - 31)
-    //  │    └──────────────────── hour (0 - 23)
-    //  └───────────────────────── min (0 - 59)
+    //  ┌────┬────┬────┬────┬────┬─ Cron Field-Expressions
+    //  |    |    |    |    |    |
+    //  ┴    ┴    ┴    ┴    ┴    ┴
+    //  *    *    *    *    *    *  ├── Cron Expression
+    //  ┬    ┬    ┬    ┬    ┬    ┬
+    //  │    │    │    │    │    │
+    //  │    │    │    │    │    └── day of week (0 - 6) (0 = Sunday) (Mon - Sun) (Monday - Sunday)
+    //  │    │    │    │    └─────── month (1 - 12) (1 = January) (Jan - Dec) (January - December)
+    //  │    │    │    └──────────── day of month (1 - 31)
+    //  │    │    └───────────────── hour (0 - 23)
+    //  │    └────────────────────── min (0 - 59)
+    //  └─────────────────────────── sec (0 - 59) 
     //
     //  ALLOWED SPECIAL CHARACTERS
     //  ────────────────────────────────────────────────────────────────────────────────
@@ -40,13 +41,14 @@ namespace Hermes.CronSchedule
    
     public class Cron
     {
-        private const int MinuteIndex = 0;
-        private const int HourIndex = 1;
-        private const int DayOfMonthIndex = 2;
-        private const int MonthIndex = 3;
-        private const int DayOfWeekIndex = 4;
+        private const int SecondIndex = 0;
+        private const int MinuteIndex = 1;
+        private const int HourIndex = 2;
+        private const int DayOfMonthIndex = 3;
+        private const int MonthIndex = 4;
+        private const int DayOfWeekIndex = 5;
 
-        private const int RequiredFieldCount = 5;
+        private const int RequiredFieldCount = 6;
 
         private Cron()
         {
@@ -67,7 +69,7 @@ namespace Hermes.CronSchedule
 
             if (splitExpression.Length != RequiredFieldCount)
             {
-                throw new CronException(ErrorMessages.ExpressionFieldCountError);
+                throw new CronException(string.Format(ErrorMessages.ExpressionFieldCountError, RequiredFieldCount));
             }
 
             return splitExpression;
@@ -75,13 +77,14 @@ namespace Hermes.CronSchedule
 
         private static CronSchedule BuildCronSchedule(string[] fieldExpressions)
         {
+            var secondField = new SecondField(fieldExpressions[SecondIndex]);
             var minuteField = new MinuteField(fieldExpressions[MinuteIndex]);
             var hourField = new HourField(fieldExpressions[HourIndex]);
             var dayOfMonthField = new DayOfMonthField(fieldExpressions[DayOfMonthIndex]);
             var monthField = new MonthField(fieldExpressions[MonthIndex]);
             var dayOfWeek = new DayOfWeekField(fieldExpressions[DayOfWeekIndex]);
 
-            return new CronSchedule(minuteField, hourField, dayOfMonthField, monthField, dayOfWeek);
+            return new CronSchedule(secondField, minuteField, hourField, dayOfMonthField, monthField, dayOfWeek);
         }
     }
 }

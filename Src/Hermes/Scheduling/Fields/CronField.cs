@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Hermes.CronSchedule.Fields.FieldValue;
+using Hermes.Scheduling.Fields.FieldValue;
 
-namespace Hermes.CronSchedule.Fields
+namespace Hermes.Scheduling.Fields
 {
     internal abstract class CronField : ICronField
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Hermes.CronSchedule
+namespace Hermes.Scheduling
 {
     [Serializable]
     public class CronException : Exception

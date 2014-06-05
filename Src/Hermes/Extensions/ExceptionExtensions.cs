@@ -2,7 +2,7 @@
 using System.Text;
 
 // ReSharper disable CheckNamespace
-namespace Hermes
+namespace System
 // ReSharper restore CheckNamespace
 {
     public static class ExceptionExtensions
@@ -13,7 +13,7 @@ namespace Hermes
             var currentException = ex;
 
             exceptionMessage.AppendLine();
-            exceptionMessage.AppendLine("===================== EXECPTIONS =====================");
+            exceptionMessage.AppendLine("===================== EXCEPTIONS =====================");
 
             do
             {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.Messaging.Configuration
+namespace Hermes
 {
     public static class RuntimeEnvironment
     {

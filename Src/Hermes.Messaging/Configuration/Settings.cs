@@ -22,6 +22,20 @@ namespace Hermes.Messaging.Configuration
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
         private static Func<string> userNameResolver = () => String.Empty;
 
+        public static bool UseDistributedTransaction { get; internal set; }
+        public static bool FlushQueueOnStartup { get; internal set; }
+        public static bool IsSendOnly { get; internal set; }
+        public static bool IsLocalEndpoint { get; internal set; }
+
+        public static int FirstLevelRetryAttempts { get; internal set; }
+        public static bool IsClientEndpoint { get; internal set; }
+        public static bool SubsribeToDomainEvents { get; internal set; }
+
+        internal static int SecondLevelRetryAttempts { get; set; }
+        internal static Func<Type, bool> IsMessageType { get; set; }
+        internal static Func<Type, bool> IsCommandType { get; set; }
+        internal static Func<Type, bool> IsEventType { get; set; }
+
 
         private static int numberOfWorkers = 1;
 
@@ -34,19 +48,7 @@ namespace Hermes.Messaging.Configuration
             IsCommandType = type => false;
             IsEventType = type => false;
             UseDistributedTransaction = true;
-        }        
-
-        public static bool UseDistributedTransaction { get; internal set; }
-        public static bool FlushQueueOnStartup { get; internal set; }
-        public static bool IsSendOnly { get; internal set; }
-        public static bool IsLocalEndpoint { get; internal set; }
-        internal static int SecondLevelRetryAttempts { get; set; }
-        public static int FirstLevelRetryAttempts { get; internal set; }
-        public static bool IsClientEndpoint { get; internal set; }
-        public static bool SubsribeToDomainEvents { get; internal set; }
-        internal static Func<Type, bool> IsMessageType { get; set; }
-        internal static Func<Type, bool> IsCommandType { get; set; }
-        internal static Func<Type, bool> IsEventType { get; set; }
+        }
 
         public static IContainer RootContainer
         {

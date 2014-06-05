@@ -29,16 +29,13 @@ namespace Hermes.Messaging.Bus
         public void Execute(object command)
         {
             Mandate.ParameterNotNull(command, "command");
+            MessageRuleValidation.ValidateIsCommandType(command);
 
             if (!Settings.IsClientEndpoint)
-            {
                 throw new InvalidOperationException("Only a client endpoint may use IInMemoryBus to execute a command.");
-            }
 
             if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
-            {
                 throw new InvalidOperationException("A command may not be executed while another command is being processed.");
-            }
 
             ProcessCommand(command);
         }
@@ -60,7 +57,6 @@ namespace Hermes.Messaging.Bus
             {
                 ServiceLocator.Current.SetCurrentLifetimeScope(null); 
             }
-            
         }
 
         public void Raise(object @event)

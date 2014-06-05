@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-using Hermes.Messaging.Configuration;
-
 namespace Hermes.Messaging
 {
     ///<summary>

@@ -1,4 +1,4 @@
-﻿namespace Hermes
+﻿namespace Hermes.Serialization
 {
     public static class ContentTypes
     {

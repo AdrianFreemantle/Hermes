@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.CronSchedule.Fields.FieldValue
+namespace Hermes.Scheduling.Fields.FieldValue
 {
     internal class CronRange
     {

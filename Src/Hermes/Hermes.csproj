@@ -52,26 +52,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="ScheduledWorkerService.cs" />
+    <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Equality\CompareObjects.cs" />
     <Compile Include="Failover\CircuitBreaker.cs" />
     <Compile Include="Compression\CompressedObject.cs" />
     <Compile Include="Compression\CompressionOption.cs" />
-    <Compile Include="CronSchedule\Cron.cs" />
-    <Compile Include="CronSchedule\CronException.cs" />
-    <Compile Include="CronSchedule\CronSchedule.cs" />
-    <Compile Include="CronSchedule\Fields\CronField.cs" />
-    <Compile Include="CronSchedule\Fields\CronValue.cs" />
-    <Compile Include="CronSchedule\Fields\DayOfMonthField.cs" />
-    <Compile Include="CronSchedule\Fields\DayOfWeekField.cs" />
-    <Compile Include="CronSchedule\Fields\FieldValue\CronRange.cs" />
-    <Compile Include="CronSchedule\Fields\FieldValue\CronValueExpression.cs" />
-    <Compile Include="CronSchedule\Fields\HourField.cs" />
-    <Compile Include="CronSchedule\Fields\ICronField.cs" />
-    <Compile Include="CronSchedule\Fields\MinuteField.cs" />
-    <Compile Include="CronSchedule\Fields\MonthField.cs" />
-    <Compile Include="CronSchedule\ScheduleTime.cs" />
-    <Compile Include="CronSchedule\SpecialCharacters.cs" />
+    <Compile Include="Scheduling\Cron.cs" />
+    <Compile Include="Scheduling\CronException.cs" />
+    <Compile Include="Scheduling\CronSchedule.cs" />
+    <Compile Include="Scheduling\Fields\CronField.cs" />
+    <Compile Include="Scheduling\Fields\CronValue.cs" />
+    <Compile Include="Scheduling\Fields\DayOfMonthField.cs" />
+    <Compile Include="Scheduling\Fields\DayOfWeekField.cs" />
+    <Compile Include="Scheduling\Fields\FieldValue\CronRange.cs" />
+    <Compile Include="Scheduling\Fields\FieldValue\CronValueExpression.cs" />
+    <Compile Include="Scheduling\Fields\HourField.cs" />
+    <Compile Include="Scheduling\Fields\ICronField.cs" />
+    <Compile Include="Scheduling\Fields\MinuteField.cs" />
+    <Compile Include="Scheduling\Fields\MonthField.cs" />
+    <Compile Include="Scheduling\ScheduleTime.cs" />
+    <Compile Include="Scheduling\SpecialCharacters.cs" />
     <Compile Include="Failover\CriticalError.cs" />
     <Compile Include="HermesSystemClock.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
@@ -109,7 +111,7 @@
     <Compile Include="SingleGlobalInstance.cs" />
     <Compile Include="Enums\EnumConverter.cs" />
     <Compile Include="Compression\GzipCompressor.cs" />
-    <Compile Include="ContentTypes.cs" />
+    <Compile Include="Serialization\ContentTypes.cs" />
     <Compile Include="DataAnnotationValidator.cs" />
     <Compile Include="DeterministicGuid.cs" />
     <Compile Include="IService.cs" />
@@ -165,7 +167,7 @@
     <Compile Include="Serialization\ISerializeObjects.cs" />
     <Compile Include="Serialization\MessageSerializationBinder.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="TestError.cs" />
+    <Compile Include="HermesTestingException.cs" />
     <Compile Include="TransactionScopeUtils.cs" />
     <Compile Include="Equality\TypeEqualityComparer.cs" />
   </ItemGroup>
@@ -173,6 +175,7 @@
     <EmbeddedResource Include="ErrorMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

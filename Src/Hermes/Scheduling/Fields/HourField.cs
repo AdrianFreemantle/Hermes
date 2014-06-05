@@ -1,4 +1,4 @@
-namespace Hermes.CronSchedule.Fields
+namespace Hermes.Scheduling.Fields
 {
     internal class HourField : CronField
     {

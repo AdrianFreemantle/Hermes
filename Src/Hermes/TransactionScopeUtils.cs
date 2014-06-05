@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Transactions;
 
-namespace Hermes
+// ReSharper disable CheckNamespace
+namespace System.Transactions
+// ReSharper restore CheckNamespace
 {
     public class TransactionScopeUtils
     {

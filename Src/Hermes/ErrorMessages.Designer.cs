@@ -88,7 +88,7 @@ namespace Hermes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided cron expression must contain 5 fields..
+        ///   Looks up a localized string similar to The provided cron expression must contain {0} fields..
         /// </summary>
         internal static string ExpressionFieldCountError {
             get {

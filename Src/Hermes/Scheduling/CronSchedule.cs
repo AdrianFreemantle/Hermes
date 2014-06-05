@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Globalization;
-using Hermes.CronSchedule.Fields;
+using Hermes.Scheduling.Fields;
 
-namespace Hermes.CronSchedule
+namespace Hermes.Scheduling
 {
     public class CronSchedule
     {
         const int MaxDayInMonthFixAttempts = 12 * 10; //12 months * 10 ; means we check if the date can be found up to 10 years in the future.
 
+        internal SecondField SecondField { get; private set; }
         internal MinuteField MinuteField { get; private set; }
         internal HourField HourField { get; private set; }
         internal DayOfMonthField DayOfMonthField { get; private set; }
@@ -19,8 +20,9 @@ namespace Hermes.CronSchedule
             get { return CultureInfo.InvariantCulture.Calendar; }
         }
 
-        internal CronSchedule(MinuteField minuteField, HourField hourField, DayOfMonthField dayOfMonthField, MonthField monthField, DayOfWeekField dayOfWeek)
+        internal CronSchedule(SecondField secondField, MinuteField minuteField, HourField hourField, DayOfMonthField dayOfMonthField, MonthField monthField, DayOfWeekField dayOfWeek)
         {
+            SecondField = secondField;
             MinuteField = minuteField;
             HourField = hourField;
             DayOfMonthField = dayOfMonthField;
@@ -30,13 +32,14 @@ namespace Hermes.CronSchedule
 
         public DateTime GetNextOccurrence(DateTime baseTime)
         {
-            var nextScheduleTime = new ScheduleTime(baseTime.AddMinutes(1));
+            var nextScheduleTime = new ScheduleTime(baseTime.AddSeconds(1));
 
             return GetNextOccurrence(nextScheduleTime);
         }
 
         private DateTime GetNextOccurrence(ScheduleTime nextScheduleTime)
         {
+            CalculateNextScheduledSecond(nextScheduleTime);
             CalculateNextScheduledMinute(nextScheduleTime);
             CalculateNextScheduledHour(nextScheduleTime);
             CalculateNextScheduledDay(nextScheduleTime);
@@ -174,6 +177,44 @@ namespace Hermes.CronSchedule
                 next.Hour = scheduledHour.Value;
             }
         }
+       
+        private void CalculateNextScheduledMinute(ScheduleTime next)
+        {
+            CronValue scheduledMinute = MinuteField.GetNext(next.Minute);
+
+            if (scheduledMinute == CronValue.Wrapped)
+            {
+                WrapToNextHour(next);
+            }
+            else if (scheduledMinute.Value > next.Minute)
+            {
+                SetStartOfMinute(next, scheduledMinute);
+            }
+            else
+            {
+                next.Minute = scheduledMinute.Value;
+            }
+        }
+
+        private void CalculateNextScheduledSecond(ScheduleTime next)
+        {
+            CronValue scheduledSecond = SecondField.GetNext(next.Second);
+
+            if (scheduledSecond == CronValue.Wrapped)
+            {
+                WrapToNextMinute(next);
+            }
+            else
+            {
+                next.Second = scheduledSecond.Value;
+            }
+        }
+
+        private void SetStartOfMinute(ScheduleTime next, CronValue scheduledMinute)
+        {
+            next.Minute = scheduledMinute.Value;
+            next.Second = SecondField.GetFirst().Value;
+        }
 
         private void SetStartOfHour(ScheduleTime next, CronValue scheduledHour)
         {
@@ -188,24 +229,16 @@ namespace Hermes.CronSchedule
             next.Minute = MinuteField.GetFirst().Value;
         }
 
-        private void CalculateNextScheduledMinute(ScheduleTime next)
-        {
-            CronValue scheduledMinute = MinuteField.GetNext(next.Minute);
-
-            if (scheduledMinute == CronValue.Wrapped)
-            {
-                WrapToNextHour(next);
-            }
-            else
-            {
-                next.Minute = scheduledMinute.Value;
-            }
-        }
-
         private void WrapToNextHour(ScheduleTime next)
         {
             next.Hour++;
             next.Minute = MinuteField.GetFirst().Value;
+        }
+
+        private void WrapToNextMinute(ScheduleTime next)
+        {
+            next.Minute++;
+            next.Second = SecondField.GetFirst().Value;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Hermes.CronSchedule.Fields.FieldValue
+namespace Hermes.Scheduling.Fields.FieldValue
 {
     internal class CronValueExpression
     {
