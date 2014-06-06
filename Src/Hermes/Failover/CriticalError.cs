@@ -57,6 +57,10 @@ namespace Hermes.Failover
                 {
                     OnCriticalError(new CriticalErrorEventArgs(message, exception));
                 }
+                else
+                {
+                    Environment.FailFast(String.Format("{0}\n{1}", message, exception.GetFullExceptionMessage()), exception);
+                }
             }
             catch (Exception ex)
             {

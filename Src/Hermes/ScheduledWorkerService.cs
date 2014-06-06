@@ -65,12 +65,17 @@ namespace Hermes
                 {
                     t.Exception.Handle(ex =>
                     {
-                        circuitBreaker.Execute(() => CriticalError.Raise(String.Format("Fatal error in scheduled worker service {0}.", GetType().Name), ex));
+                        circuitBreaker.Execute(() => OnCircuitBreakerTriped(ex));
                         return true;
                     });
 
                     StartThread();
                 }, TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+        protected virtual void OnCircuitBreakerTriped(Exception ex)
+        {
+            CriticalError.Raise(String.Format("Fatal error in scheduled worker service {0}.", GetType().Name), ex);
         }
 
         protected virtual CircuitBreaker IntializeCircuitBreaker()
