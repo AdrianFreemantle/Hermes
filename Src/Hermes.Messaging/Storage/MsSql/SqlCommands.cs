@@ -56,15 +56,14 @@
                      [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
                  ) ON [PRIMARY];        
            
-                 CREATE CLUSTERED INDEX [Index_RowVersion] ON [timeout].[{0}]
-                 (
-                    [RowVersion] ASC
-                 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                 CREATE CLUSTERED INDEX [Index_RowVersion] ON [timeout].[{0}] ([RowVersion] ASC)
+                 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-                 CREATE INDEX [Index_Expires] ON [timeout].[{0}]
-                 (
-                    [Expires] ASC
-                 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                 CREATE UNIQUE NONCLUSTERED INDEX [Index_Id] ON [timeout].[{0}] ([ID] ASC)
+                 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]'
+
+                 CREATE INDEX [Index_Expires] ON [timeout].[{0}] ([Expires] ASC)
+                 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
              END";
 
         public const string AddTimeout =

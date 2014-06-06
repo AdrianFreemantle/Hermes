@@ -56,6 +56,7 @@ namespace Hermes.Messaging.Pipeline.Modules
 
                 if (messageType != null)
                 {
+                    Logger.Debug("Deserializing message contract {0} for message {1}", messageType.Name, input);
                     var message = messageSerializer.Deserialize(input.TransportMessage.Body, messageType);
                     input.SetMessage(message);
                     return;

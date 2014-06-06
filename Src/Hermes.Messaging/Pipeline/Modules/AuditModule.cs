@@ -29,6 +29,7 @@ namespace Hermes.Messaging.Pipeline.Modules
                 return true;
             }
 
+            Logger.Debug("Message {0} will not be sent to audit queue", input);
             return false;
         }
 

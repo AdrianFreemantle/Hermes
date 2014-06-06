@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports.SqlTransport;
@@ -12,7 +12,9 @@ using Hermes.Messaging.Serialization;
 namespace Hermes.Messaging.Storage.MsSql
 {
     public class SqlTimeoutStorage : IPersistTimeouts
-    {       
+    {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SqlTimeoutStorage));
+
         private readonly ISerializeObjects objectSerializer;
         private readonly ISerializeMessages messageSerializer;
         private readonly string connectionString;
@@ -63,7 +65,10 @@ namespace Hermes.Messaging.Storage.MsSql
 
         public void Add(ITimeoutData timeout)
         {
+            Logger.Debug("Adding timeout {0}", timeout.MessageId);
+
             using (var connection = new SqlConnection(connectionString))
+            using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 connection.Open();
 
@@ -71,6 +76,8 @@ namespace Hermes.Messaging.Storage.MsSql
                 {
                     command.ExecuteNonQuery();
                 }
+
+                transaction.Commit();
             }
         }
 
@@ -120,6 +127,7 @@ namespace Hermes.Messaging.Storage.MsSql
         public bool TryFetchNextTimeout(out ITimeoutData timeoutData)
         {
             using (var connection = new SqlConnection(connectionString))
+            using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 connection.Open();
 
@@ -128,15 +136,21 @@ namespace Hermes.Messaging.Storage.MsSql
                     using (var dataReader = command.ExecuteReader())
                     {
                         timeoutData = FoundTimeoutData(dataReader);
-                        return timeoutData != null;
                     }
                 }
+
+                transaction.Commit();                        
             }
+
+            return timeoutData != null;
         }
 
         public void Remove(Guid correlationId)
         {
+            Logger.Debug("Removing timeouts with correlation id {0}", correlationId);
+
             using (var connection = new SqlConnection(connectionString))
+            using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 connection.Open();
 
@@ -145,6 +159,8 @@ namespace Hermes.Messaging.Storage.MsSql
                     command.Parameters.Add(new SqlParameter("@CorrelationId", correlationId));
                     command.ExecuteNonQuery();
                 }
+
+                transaction.Commit();
             }
         }
 

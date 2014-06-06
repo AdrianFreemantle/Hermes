@@ -20,19 +20,20 @@
               IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[queue].[{0}]') AND type in (N'U'))
                   BEGIN
                     CREATE TABLE [queue].[{0}](
-	                    [Id] [uniqueidentifier] NOT NULL,
-	                    [CorrelationId] [varchar](255) NULL,
+                        [Id] [uniqueidentifier] NOT NULL,
+                        [CorrelationId] [varchar](255) NULL,
                         [ReplyTo] [varchar](450) NULL,
-	                    [Expires] [datetime] NULL,
-	                    [Headers] [varchar](max) NOT NULL,
-	                    [Body] [varbinary](max) NULL,
-	                    [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
+                        [Expires] [datetime] NULL,
+                        [Headers] [varchar](max) NOT NULL,
+                        [Body] [varbinary](max) NULL,
+                        [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
                     ) ON [PRIMARY];                    
 
-                    CREATE CLUSTERED INDEX [Index_RowVersion] ON [queue].[{0}] 
-                    (
-	                    [RowVersion] ASC
-                    )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+                    CREATE CLUSTERED INDEX [Index_RowVersion] ON [queue].[{0}] ([RowVersion] ASC)
+                    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+                    CREATE UNIQUE NONCLUSTERED INDEX [Index_Id] ON [queue].[{0}] ([ID] ASC)
+                    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]'
                END";
 
         public const string PurgeQueue =

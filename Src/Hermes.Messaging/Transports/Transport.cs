@@ -89,6 +89,7 @@ namespace Hermes.Messaging.Transports
                 {
                     currentMessageBeingProcessed.Value = incomingContext;
                     incomingContext.Process(incomingPipeline);
+                    Logger.Debug("Committing Transaction Scope");
                     scope.Complete();
                 }
             }
@@ -118,11 +119,13 @@ namespace Hermes.Messaging.Transports
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
+                    Logger.Debug("Sending message {0}", outgoingMessageContext);
                     outgoingMessageContext.Process(outgoingPipeline, scope);
                 }
             }
             else
             {
+                Logger.Debug("Enqueuing message {0}", outgoingMessageContext);
                 currentContext.Enqueue(outgoingMessageContext);
             }
         }        

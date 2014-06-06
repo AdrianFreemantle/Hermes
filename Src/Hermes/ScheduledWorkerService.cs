@@ -7,57 +7,6 @@ using Hermes.Scheduling;
 
 namespace Hermes
 {
-    public class MyTimespanScheduledWorker : ScheduledWorkerService
-    {
-        private readonly IInMemoryBus inMemoryBus;
-
-        public MyTimespanScheduledWorker(IInMemoryBus inMemoryBus) 
-            : base(TimeSpan.FromSeconds(30)) // run every thirty seconds
-        {
-            this.inMemoryBus = inMemoryBus;
-        }
-
-        protected override void DoWork()
-        {
-            try
-            {
-                //fetch data
-                //execute command on inMemoryBus for each action
-            }
-            catch (Exception ex)
-            {
-                //NB only handle exceptions you can actually recover from, else throw                               
-                throw;
-            }
-        }
-    }
-
-
-    public class MyCronScheduledWorker : ScheduledWorkerService
-    {
-        private readonly IInMemoryBus inMemoryBus;
-
-        public MyCronScheduledWorker(IInMemoryBus inMemoryBus)
-            : base(Cron.Parse("0 * 8-17 1,2,3,4,5,6,7 * Monday")) // run every thirty seconds
-        {
-            this.inMemoryBus = inMemoryBus;
-        }
-
-        protected override void DoWork()
-        {
-            try
-            {
-                //fetch data
-                //execute command on inMemoryBus for each action
-            }
-            catch (Exception ex)
-            {
-                //NB only handle exceptions you can actually recover from, else throw                               
-                throw;
-            }
-        }
-    }
-
     public abstract class ScheduledWorkerService : IAmStartable, IDisposable
     {
         private static readonly TimeSpan SixHunderedMilliseconds = TimeSpan.FromMilliseconds(600);

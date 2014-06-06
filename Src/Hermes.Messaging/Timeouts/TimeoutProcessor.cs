@@ -13,7 +13,7 @@ namespace Hermes.Messaging.Timeouts
     public class TimeoutProcessor : IAmStartable
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(TimeoutProcessor));
-        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(100, TimeSpan.FromSeconds(30));
+        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(1, TimeSpan.FromSeconds(30));
 
         private CancellationTokenSource tokenSource;
         private readonly IPersistTimeouts timeoutStore;

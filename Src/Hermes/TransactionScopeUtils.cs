@@ -17,7 +17,7 @@ namespace System.Transactions
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TransactionManager.MaximumTimeout
+                Timeout = TimeSpan.FromSeconds(10)
             };
 
             return new TransactionScope(scopeOption, transactionOptions);

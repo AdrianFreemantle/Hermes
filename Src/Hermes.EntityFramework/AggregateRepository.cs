@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Hermes.Domain;
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Persistence;
 using Hermes.Reflection;
@@ -12,8 +13,9 @@ namespace Hermes.EntityFramework
     [UnitOfWorkCommitOrder(Order = 1)]
     public class AggregateRepository : IAggregateRepository, IUnitOfWork
     {
-        private readonly IKeyValueStore keyValueStore;
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (AggregateRepository));
 
+        private readonly IKeyValueStore keyValueStore;
         private readonly Dictionary<IIdentity, IAggregate> aggregateCache = new Dictionary<IIdentity, IAggregate>();
         private readonly HashSet<AggregateCommitAction> aggregateCommitActions = new HashSet<AggregateCommitAction>(); 
 
@@ -87,15 +89,18 @@ namespace Hermes.EntityFramework
                 case AggregateCommitAction.CommitActionType.Add:
                     var addSnapshot = aggregateCache[action.Identity].GetSnapshot();
                     keyValueStore.Add(action.Identity, addSnapshot);
+                    Logger.Debug("Adding aggregate {0}", action.Identity);
                     break;
 
                 case AggregateCommitAction.CommitActionType.Update:
                     var updateSnapshot = aggregateCache[action.Identity].GetSnapshot();
                     keyValueStore.Update(action.Identity, updateSnapshot);
+                    Logger.Debug("Updating aggregate {0}", action.Identity);
                     break;
 
                 case AggregateCommitAction.CommitActionType.Remove:
                     keyValueStore.Remove(action.Identity);
+                    Logger.Debug("Removing aggregate {0}", action.Identity);
                     break;
 
                 default:

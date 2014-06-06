@@ -28,6 +28,7 @@ namespace Hermes.EntityFramework
         {
             if (Transaction != null)
             {
+                Logger.Debug("Commiting DbContextTransaction as part of unit-of-work commit");
                 Transaction.Commit();
             }
 
@@ -81,6 +82,7 @@ namespace Hermes.EntityFramework
 
         public void BeginTransaction(IsolationLevel isolationLevel)
         {
+            Logger.Debug("Starting DbContextTransaction with isolation level : {0}", isolationLevel);
             var database = GetDatabase();
             database.Connection.Open();
             Transaction = database.BeginTransaction(isolationLevel);
@@ -88,6 +90,8 @@ namespace Hermes.EntityFramework
 
         public void CommitTransation()
         {
+            Logger.Debug("Commiting DbContextTransaction");
+
             if (Transaction == null)
             {
                 throw new NullReferenceException("A has not been started and can therefore not be committed");

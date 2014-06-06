@@ -5,13 +5,15 @@ using System.Transactions;
 
 using Hermes.Backoff;
 using Hermes.Failover;
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports
 {  
     public class Receiver : IReceiveMessages
     {
-        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(100, TimeSpan.FromSeconds(30));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (Receiver));
+        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(1, TimeSpan.FromSeconds(30));
 
         private CancellationTokenSource tokenSource;
         private readonly IDequeueMessages dequeueStrategy;
@@ -79,6 +81,7 @@ namespace Hermes.Messaging.Transports
                 }
                 finally
                 {
+                    Logger.Debug("Commiting transaction scope");
                     scope.Complete();
                 }
             }

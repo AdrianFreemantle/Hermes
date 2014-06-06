@@ -19,24 +19,33 @@ namespace Hermes.Messaging.Pipeline.Modules
         }
 
         public bool Process(OutgoingMessageContext input, Func<bool> next)
-        {
-            Logger.Debug("Mutating message body in message {0}", input);
-            MutateMessage(input.OutgoingMessage);
+        {            
+            MutateMessage(input);
             return next();
         }
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
-            MutateMessage(input.Message);
+            MutateMessage(input);
             return next();
         }
 
-        private void MutateMessage(object message)
+        private void MutateMessage(IncomingMessageContext input)
         {
             foreach (var mutator in messageMutators)
             {
-                mutator.Mutate(message);
+                Logger.Debug("{0} is Mutating message body on incomming message {1}", mutator.GetType().Name, input);
+                mutator.Mutate(input.Message);
             }
-        }        
+        }
+
+        private void MutateMessage(OutgoingMessageContext output)
+        {
+            foreach (var mutator in messageMutators)
+            {
+                Logger.Debug("{0} is Mutating message body on outgoing message {1}", mutator.GetType().Name, output);
+                mutator.Mutate(output.OutgoingMessage);
+            }
+        }
     }
 }

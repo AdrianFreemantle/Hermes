@@ -21,6 +21,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
         public void Send(TransportMessage transportMessage, Address address)
         {
             using (var connection = new SqlConnection(connectionString))
+            using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 connection.Open();
 
@@ -28,6 +29,8 @@ namespace Hermes.Messaging.Transports.SqlTransport
                 {
                     command.ExecuteNonQuery();
                 }
+
+                transaction.Commit();
             }
         }        
 
