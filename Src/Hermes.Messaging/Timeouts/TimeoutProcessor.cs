@@ -27,10 +27,10 @@ namespace Hermes.Messaging.Timeouts
 
         public void Start()
         {
-            PurgeQueueIfRequired();
-
             if(Settings.IsSendOnly)
                 return;
+
+            PurgeQueueIfRequired();
 
             Logger.Verbose("Starting Timeout Processor");
 

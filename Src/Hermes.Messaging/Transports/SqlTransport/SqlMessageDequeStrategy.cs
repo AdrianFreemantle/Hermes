@@ -44,13 +44,16 @@ namespace Hermes.Messaging.Transports.SqlTransport
 
         private TransportMessage TryDequeue()
         {
+
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-
-                using (var command = new SqlCommand(DequeueSql, connection))
+                using(var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                using (var command = new SqlCommand(DequeueSql, connection, transaction))
                 {
-                    return FetchNextMessage(command);
+                    var message = FetchNextMessage(command);
+                    transaction.Commit();
+                    return message;
                 }
             }
         }

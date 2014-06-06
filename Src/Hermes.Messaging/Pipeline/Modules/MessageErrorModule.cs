@@ -39,6 +39,9 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private void HandleError(IncomingMessageContext input, Exception ex)
         {
+            if(Settings.IsSendOnly)
+                return;
+
             int firstLevelRetryCount = GetRetryCount(input, HeaderKeys.FirstLevelRetryCount);
             int secondLevelRetryCount = GetRetryCount(input, HeaderKeys.SecondLevelRetryCount);
 
