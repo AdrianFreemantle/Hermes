@@ -13,7 +13,7 @@ namespace Hermes.Messaging.Transports
     public class Receiver : IReceiveMessages
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (Receiver));
-        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(1, TimeSpan.FromSeconds(30));
+        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(Settings.CircuitBreakerThreshold, Settings.CircuitBreakerReset);
 
         private CancellationTokenSource tokenSource;
         private readonly IDequeueMessages dequeueStrategy;

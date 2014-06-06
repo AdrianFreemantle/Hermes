@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Failover;
-using Hermes.Messaging;
 using Hermes.Scheduling;
 
 namespace Hermes
@@ -76,7 +75,7 @@ namespace Hermes
 
         protected virtual CircuitBreaker IntializeCircuitBreaker()
         {
-            return new CircuitBreaker(10, TimeSpan.FromSeconds(10));
+            return new CircuitBreaker(2, TimeSpan.FromSeconds(10));
         }
 
         public void Stop()

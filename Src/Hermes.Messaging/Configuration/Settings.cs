@@ -31,6 +31,8 @@ namespace Hermes.Messaging.Configuration
         public static bool IsClientEndpoint { get; internal set; }
         public static bool SubsribeToDomainEvents { get; internal set; }
 
+        internal static TimeSpan CircuitBreakerReset { get; set; }
+        internal static int CircuitBreakerThreshold { get; set; }
         internal static int SecondLevelRetryAttempts { get; set; }
         internal static Func<Type, bool> IsMessageType { get; set; }
         internal static Func<Type, bool> IsCommandType { get; set; }
@@ -43,6 +45,8 @@ namespace Hermes.Messaging.Configuration
         {
             SecondLevelRetryAttempts = 0;
             FirstLevelRetryAttempts = 0;
+            CircuitBreakerReset = TimeSpan.FromSeconds(30);
+            CircuitBreakerThreshold = 2;
 
             IsMessageType = type => false;
             IsCommandType = type => false;
@@ -79,7 +83,7 @@ namespace Hermes.Messaging.Configuration
         {
             get { return autoSubscribeEvents; }
             internal set { autoSubscribeEvents = value; }
-        }
+        }        
 
         public static TimeSpan SecondLevelRetryDelay
         {
