@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Hermes.Enums;
 using Hermes.Failover;
@@ -36,7 +37,9 @@ namespace Hermes.ServiceHost
 
         private static void ConfigureLogging()
         {
-            if (Environment.UserInteractive)
+            string useLogFile = ConfigurationManager.AppSettings.Get("hermes:useLogFile");
+
+            if (Environment.UserInteractive && !useLogFile.Equals("true"))
             {
                 LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
                 ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
@@ -74,19 +77,27 @@ namespace Hermes.ServiceHost
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var exception = ((Exception)e.ExceptionObject);
-            OnCriticalError("Hermes Service Host is shutting down due an unhandled exception.", exception);
+            CriticalError.Raise("Hermes Service Host is shutting down due an unhandled exception.", (Exception)e.ExceptionObject);
         }
 
         private static void OnCriticalError(string message, Exception exception)
         {
-            if (Environment.UserInteractive)
-            {
-                Console.WriteLine("Hermes Service Host is shutting down due to a fatal error. Press any key to exit.");
-                Console.ReadKey();
-            }
+            string log = String.Format("{0}\n{1}", message, exception.GetFullExceptionMessage());
 
-            Environment.FailFast(String.Format("{0}\n{1}", message, exception.GetFullExceptionMessage()), exception);
+            try
+            {
+                logger.Fatal(log);
+            }
+            finally 
+            {
+                if (Environment.UserInteractive)
+                {
+                    Console.WriteLine("Hermes Service Host is shutting down due to a fatal error. Press any key to exit.");
+                    Console.ReadKey();
+                }
+
+                Environment.FailFast(log, exception);
+            }
         }
     }
 }

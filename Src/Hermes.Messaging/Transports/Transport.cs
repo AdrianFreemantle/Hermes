@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Transactions;
-
+using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
@@ -85,30 +85,14 @@ namespace Hermes.Messaging.Transports
         {
             try
             {
-                using (var scope = StartTransactionScope())
-                {
-                    currentMessageBeingProcessed.Value = incomingContext;
-                    incomingContext.Process(incomingPipeline);
-                    Logger.Debug("Committing Transaction Scope");
-                    scope.Complete();
-                }
+                currentMessageBeingProcessed.Value = incomingContext;
+                incomingContext.Process(incomingPipeline);
+                FaultSimulator.Trigger();
             }
             finally
             {
-                currentMessageBeingProcessed.Value = IncomingMessageContext.Null;  
+                currentMessageBeingProcessed.Value = IncomingMessageContext.Null;
             }
-        }
-
-        protected virtual TransactionScope StartTransactionScope()
-        {
-            if (Settings.UseDistributedTransaction)
-            {
-                Logger.Debug("Beginning a transaction scope with option[Required]");
-                return TransactionScopeUtils.Begin(TransactionScopeOption.Required);
-            }
-            
-            Logger.Debug("Beginning a transaction scope with option[Suppress]");
-            return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
         }
 
         public void SendMessage(OutgoingMessageContext outgoingMessageContext)

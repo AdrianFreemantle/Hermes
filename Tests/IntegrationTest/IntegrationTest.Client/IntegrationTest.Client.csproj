@@ -47,11 +47,11 @@
     </Reference>
     <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.7.6\lib\net45\Hermes.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.0.7.31\lib\net45\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.7.6\lib\net45\Hermes.Domain.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.0.7.31\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -59,15 +59,15 @@
     </Reference>
     <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.7.6\lib\net45\Hermes.Messaging.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.0.7.31\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.7.6\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.0.7.31\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.7.6\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.0.7.31\lib\net45\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -88,6 +88,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InitializeDatabase.cs" />
     <Compile Include="RequestorEndpoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -102,6 +103,10 @@
     <ProjectReference Include="..\IntegrationTest.Contracts\IntegrationTest.Contracts.csproj">
       <Project>{affa1eaf-20bc-46e5-913a-4dbf466f312c}</Project>
       <Name>IntegrationTest.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IntegrationTests.PersistenceModel\IntegrationTests.PersistenceModel.csproj">
+      <Project>{78a22b43-6d1b-4a46-8e2a-e25930b5456a}</Project>
+      <Name>IntegrationTests.PersistenceModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

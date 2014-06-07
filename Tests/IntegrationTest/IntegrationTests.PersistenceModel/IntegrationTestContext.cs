@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using Hermes.EntityFramework;
 
 namespace IntegrationTests.PersistenceModel
 {
-    public class IntegrationTestContext : DbContext 
+    public class IntegrationTestContext : FrameworkContext 
     {
         public IDbSet<Record> Records { get; set; }
         public IDbSet<RecordLog> RecordLogs { get; set; }
@@ -21,16 +22,14 @@ namespace IntegrationTests.PersistenceModel
         }
     }
 
-    public class DatabaseInitializer : DropCreateDatabaseAlways<IntegrationTestContext>
-    {
-    }
-
-    public class Record
+    public class Record : ITimestampPersistenceAudit 
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public virtual Guid Id { get; set; }
         public virtual int RecordNumber { get; set; }
         public virtual ICollection<RecordLog> RecordLogs { get; set; }
+        public virtual DateTime ModifiedTimestamp { get; set; }
+        public virtual DateTime CreatedTimestamp { get; set; }
     }
 
     public class RecordLog

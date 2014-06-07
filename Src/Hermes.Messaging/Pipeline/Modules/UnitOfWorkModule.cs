@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Transactions;
+using Hermes.Failover;
 using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 using Hermes.Pipes;
 
@@ -20,22 +22,30 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
+            using (var scope = StartTransactionScope())
+            {
+                var result = ProcessMessage(input, next);
+                scope.Complete();
+                return result;
+            }
+        }
+
+        private bool ProcessMessage(IncomingMessageContext input, Func<bool> next)
+        {
             try
             {
-                if (next())
-                {
-                    CommitUnitsOfWork(input);
-                    return true;
-                }
-                
+                next();
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Error on message {0} {1}", input.TransportMessage.MessageId, ex.GetFullExceptionMessage());
                 RollBackUnitsOfWork(input);
+                input.TransportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
                 return false;
             }
-            catch
-            {
-                RollBackUnitsOfWork(input);
-                throw;
-            }            
+
+            CommitUnitsOfWork(input);
+            return true;
         }
 
         private void CommitUnitsOfWork(IncomingMessageContext input)
@@ -44,6 +54,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             {
                 Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
                 unitOfWork.Commit();
+                FaultSimulator.Trigger();
             }
 
             input.CommitOutgoingMessages();
@@ -54,6 +65,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             {
                 Logger.Debug("Rollback of {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
                 unitOfWork.Rollback();
+                FaultSimulator.Trigger();
             }
         }
 
@@ -63,6 +75,18 @@ namespace Hermes.Messaging.Pipeline.Modules
                 .Where(something => something.HasAttribute<InitializationOrderAttribute>())
                 .OrderBy(i => i.GetCustomAttributes<InitializationOrderAttribute>().First().Order)
                 .Union(unitsOfWork.Where(i => !i.HasAttribute<InitializationOrderAttribute>()));
+        }
+
+        protected virtual TransactionScope StartTransactionScope()
+        {
+            if (Settings.UseDistributedTransaction)
+            {
+                Logger.Debug("Beginning a transaction scope with option[Required]");
+                return TransactionScopeUtils.Begin(TransactionScopeOption.Required);
+            }
+
+            Logger.Debug("Beginning a transaction scope with option[Suppress]");
+            return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
         }
     }
 }

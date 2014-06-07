@@ -1,5 +1,6 @@
 ﻿using System;
 using Hermes.Logging;
+using Hermes.Messaging;
 
 namespace Hermes.Failover
 {
@@ -34,7 +35,7 @@ namespace Hermes.Failover
         {
             onCriticalErrorAction = onCriticalError;
         }
-
+        
         /// <summary>
         /// Execute the configured Critical error action.
         /// </summary>

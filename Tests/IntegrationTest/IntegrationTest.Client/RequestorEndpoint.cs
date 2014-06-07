@@ -1,12 +1,15 @@
 ﻿using System;
+using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 
 using IntegrationTest.Contracts;
+using IntegrationTests.PersistenceModel;
 
 namespace IntegrationTest.Client
 {
@@ -23,7 +26,10 @@ namespace IntegrationTest.Client
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
-                .SendOnlyEndpoint();
+                .SendOnlyEndpoint()
+                .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
+
+            Settings.SetMessageCounterHeader = true;
         }
 
         private static bool IsCommand(Type type)

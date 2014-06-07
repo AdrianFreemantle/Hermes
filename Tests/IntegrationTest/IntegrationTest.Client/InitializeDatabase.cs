@@ -6,7 +6,7 @@ using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using IntegrationTests.PersistenceModel;
 
-namespace IntegrationTest.Endpoint
+namespace IntegrationTest.Client
 {
     public class InitializeDatabase : INeedToInitializeSomething
     {
@@ -25,4 +25,9 @@ namespace IntegrationTest.Endpoint
             }
         }
     }
+
+    public class DatabaseInitializer : DropCreateDatabaseAlways<IntegrationTestContext>
+    {
+    }
+
 }

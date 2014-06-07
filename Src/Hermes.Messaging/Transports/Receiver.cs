@@ -45,6 +45,12 @@ namespace Hermes.Messaging.Transports
                 {
                     t.Exception.Handle(ex =>
                     {
+                        if (ex is TransactionInDoubtException)
+                        {
+                            CriticalError.Raise("Receiver's transaction is in doubt", ex);
+                            return false;
+                        }
+
                         circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to dequeue messages.", ex));
                         return true;
                     });
@@ -70,20 +76,15 @@ namespace Hermes.Messaging.Transports
                 SlowDownPollingIfNoWorkAvailable(foundWork, backoff);
             }
         }
-        
+
         private bool DequeueWork()
         {
             using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))
             {
-                try
-                {
-                    return TryDequeueWork();
-                }
-                finally
-                {
-                    Logger.Debug("Commiting transaction scope");
-                    scope.Complete();
-                }
+                var result = TryDequeueWork();
+                Logger.Debug("Commiting transaction scope");
+                scope.Complete();
+                return result;
             }
         }
 

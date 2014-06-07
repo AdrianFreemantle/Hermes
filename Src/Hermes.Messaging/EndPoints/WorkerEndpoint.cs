@@ -33,13 +33,13 @@ namespace Hermes.Messaging.EndPoints
         protected virtual void ConfigurePipeline(TContainerBuilder containerBuilder)
         {
             var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
-                    .Add<MessageErrorModule>()
-                    .Add<AuditModule>()
-                    .Add<ExtractMessagesModule>()
-                    .Add<MessageMutatorModule>()
-                    .Add<UnitOfWorkModule>()
-                    .Add<DispatchMessagesModule>()
-                    .Add<CallBackHandlerModule>();
+                .Add<AuditModule>()
+                .Add<MessageErrorModule>()
+                .Add<ExtractMessagesModule>()
+                .Add<MessageMutatorModule>()
+                .Add<UnitOfWorkModule>()
+                .Add<DispatchMessagesModule>()
+                .Add<CallBackHandlerModule>();
 
             containerBuilder.RegisterSingleton(incomingPipeline);
         }

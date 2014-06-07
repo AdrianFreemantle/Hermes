@@ -72,6 +72,7 @@
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
     <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
+    <Compile Include="ScheduledWorkerService.cs" />
     <Compile Include="Serialization\MessageSerializationExtensions.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCacheItem.cs" />
@@ -95,7 +96,6 @@
     <Compile Include="Pipeline\OutgoingMessageContext.cs" />
     <Compile Include="Pipeline\Modules\UnitOfWorkModule.cs" />
     <Compile Include="UnitOfWorkCommitOrderAttribute.cs" />
-    <Compile Include="Wcf\CommandService.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
@@ -123,7 +123,6 @@
     <Compile Include="Bus\StorageDrivenPublisher.cs" />
     <Compile Include="Transports\Receiver.cs" />
     <Compile Include="Bus\SubscriptionManager.cs" />
-    <Compile Include="Wcf\QueryService.cs" />
     <Compile Include="EndPoints\WorkerEndpoint.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
-    <Compile Include="ScheduledWorkerService.cs" />
+    <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Equality\CompareObjects.cs" />

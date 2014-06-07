@@ -33,7 +33,11 @@ namespace IntegrationTest.Client
 
             Parallel.For(0, range.Length,
                 new ParallelOptions { MaxDegreeOfParallelism = processorCount }, 
-                i => bus.Send(new AddRecordToDatabase(i)));
+                i =>
+                {
+                    var command = new AddRecordToDatabase(i);
+                    bus.Send(command.RecordId, command);
+                });
 
             stopwatch.Stop();
             Console.WriteLine(TimeSpan.FromTicks(stopwatch.ElapsedTicks));

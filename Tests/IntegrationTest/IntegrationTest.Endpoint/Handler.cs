@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Hermes;
 using Hermes.EntityFramework;
 using Hermes.Messaging;
@@ -14,9 +15,9 @@ namespace IntegrationTest.Endpoint
         , IHandleMessage<IRecordAddedToDatabase_V2>
     {
         private readonly IRepositoryFactory repositoryFactory;
-        private readonly IInMemoryBus messageBus;
+        private readonly IMessageBus messageBus;
 
-        public Handler(IRepositoryFactory repositoryFactory, IInMemoryBus messageBus)
+        public Handler(IRepositoryFactory repositoryFactory, IMessageBus messageBus)
         {
             this.repositoryFactory = repositoryFactory;
             this.messageBus = messageBus;
@@ -24,7 +25,6 @@ namespace IntegrationTest.Endpoint
 
         public void Handle(AddRecordToDatabase message)
         {
-            System.Threading.Thread.Sleep(10);
             var repository = repositoryFactory.GetRepository<Record>();
 
             repository.Add(new Record
@@ -33,7 +33,7 @@ namespace IntegrationTest.Endpoint
                     RecordNumber = message.RecordNumber
                 });
 
-            messageBus.Raise(new RecordAddedToDatabase(message.RecordId));
+            messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
         }
 
         public void Handle(IRecordAddedToDatabase message)
@@ -45,10 +45,6 @@ namespace IntegrationTest.Endpoint
 
         public void Handle(IRecordAddedToDatabase_V2 message)
         {
-            if (DateTime.Now.Ticks % 5 == 0)
-            {
-                throw new HermesTestingException();
-            }
         }
     }
 }

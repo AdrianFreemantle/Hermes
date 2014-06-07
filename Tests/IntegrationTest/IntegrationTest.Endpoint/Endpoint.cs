@@ -2,12 +2,14 @@
 using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using IntegrationTest.Contracts;
 using IntegrationTests.PersistenceModel;
+using log4net.Config;
 
 namespace IntegrationTest.Endpoint
 {
@@ -15,17 +17,21 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
+            XmlConfigurator.Configure();
+            LogFactory.BuildLogger = type => new Log4NetLogger(type);
 
             configuration
                 .FirstLevelRetryPolicy(0)
-                .SecondLevelRetryPolicy(100, TimeSpan.FromSeconds(5))
+                .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .NumberOfWorkers(Environment.ProcessorCount)
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
+
+            Settings.CircuitBreakerThreshold = 200;
+            Settings.EnableFaultSimulation(0.1M);
         }
 
         private static bool IsCommand(Type type)

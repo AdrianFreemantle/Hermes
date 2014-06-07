@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
@@ -21,15 +21,17 @@ namespace Hermes.Messaging.Pipeline.Modules
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             DateTime receivedTime = DateTime.UtcNow;
-            
+
+            Logger.Verbose("Starting processing chain for message {0}", input);
+
             if (next())
             {
                 SendToAuditQueue(input.TransportMessage, receivedTime);
-                Logger.Debug("Message {0} sent to audit queue", input);
+                Logger.Verbose("Completed processing chain for message {0}", input);
+                FaultSimulator.Trigger();
                 return true;
             }
 
-            Logger.Debug("Message {0} will not be sent to audit queue", input);
             return false;
         }
 

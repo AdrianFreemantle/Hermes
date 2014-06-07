@@ -16,5 +16,6 @@
         public const string ReturnErrorCode = "Hermes.ReturnErrorCode";
         public const string ProcessingEndpoint = "Hermes.ProcessingEndpoint";
         public const string UserName = "Hermes.UserName";
+        public const string SentMessageCounter = "Hermes.SentMessageCounter";
     }
 }

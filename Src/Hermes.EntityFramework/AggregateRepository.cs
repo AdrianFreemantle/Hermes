@@ -83,7 +83,6 @@ namespace Hermes.EntityFramework
 
         private void ProcessCommitAction(AggregateCommitAction action)
         {
-
             switch (action.ActionType)
             {
                 case AggregateCommitAction.CommitActionType.Add:

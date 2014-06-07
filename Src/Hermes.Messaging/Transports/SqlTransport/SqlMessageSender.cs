@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using Hermes.Failover;
 using Hermes.Messaging.Configuration;
 using Hermes.Serialization;
 
@@ -29,6 +30,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
                     {
                         command.Transaction = transaction;
                         command.ExecuteNonQuery();
+                        FaultSimulator.Trigger();
                     }
 
                     transaction.Commit();

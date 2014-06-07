@@ -49,6 +49,12 @@ namespace Hermes.Messaging.Timeouts
                 {
                     t.Exception.Handle(ex =>
                     {
+                        if (ex is TransactionInDoubtException)
+                        {
+                            CriticalError.Raise("Receiver's transaction is in doubt", ex);
+                            return false;
+                        }
+
                         circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to process timeout message.", ex));
                         return true;
                     });

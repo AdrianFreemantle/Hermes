@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Transactions;
+using Hermes.Failover;
 using Hermes.Ioc;
+using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
 using Microsoft.Practices.ServiceLocation;
@@ -9,6 +13,7 @@ namespace Hermes.Messaging.Pipeline
 {
     public class IncomingMessageContext : IMessageContext, IEquatable<IMessageContext>, IEquatable<IncomingMessageContext>
     {
+        public static readonly ILog Logger = LogFactory.BuildLogger(typeof (IncomingMessageContext));
         public TransportMessage TransportMessage { get; private set; }
         public IServiceLocator ServiceLocator { get; private set; }
 
@@ -79,8 +84,26 @@ namespace Hermes.Messaging.Pipeline
 
         public void Process(ModulePipeFactory<IncomingMessageContext> incomingPipeline)
         {
-            var pipeline = incomingPipeline.Build(ServiceLocator);
-            pipeline.Invoke(this);
+            using (var scope = StartTransactionScope())
+            {
+                var pipeline = incomingPipeline.Build(ServiceLocator);
+                pipeline.Invoke(this);
+                Logger.Debug("Committing Transaction Scope");
+                FaultSimulator.Trigger();
+                scope.Complete();
+            }
+        }
+
+        protected virtual TransactionScope StartTransactionScope()
+        {
+            if (Settings.UseDistributedTransaction)
+            {
+                Logger.Debug("Beginning a transaction scope with option[Required]");
+                return TransactionScopeUtils.Begin(TransactionScopeOption.Required);
+            }
+
+            Logger.Debug("Beginning a transaction scope with option[Suppress]");
+            return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
         }
 
         public string GetUserName()

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-
+using Hermes.Failover;
 using Hermes.Ioc;
 
 namespace Hermes.Messaging.Configuration
@@ -12,9 +12,8 @@ namespace Hermes.Messaging.Configuration
     public static class Settings
     {
         private const string EndpointNameSpace = ".Endpoint";
-
+        private static int numberOfWorkers = 1;
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
-
         private static readonly Address ErrorAddress = Address.Parse("Error");
         private static readonly Address AuditAddress = Address.Parse("Audit");
         private static bool autoSubscribeEvents = true;
@@ -22,24 +21,23 @@ namespace Hermes.Messaging.Configuration
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
         private static Func<string> userNameResolver = () => String.Empty;
 
-        public static bool UseDistributedTransaction { get; internal set; }
-        public static bool FlushQueueOnStartup { get; internal set; }
-        public static bool IsSendOnly { get; internal set; }
-        public static bool IsLocalEndpoint { get; internal set; }
-
-        public static int FirstLevelRetryAttempts { get; internal set; }
-        public static bool IsClientEndpoint { get; internal set; }
-        public static bool SubsribeToDomainEvents { get; internal set; }
-
-        internal static TimeSpan CircuitBreakerReset { get; set; }
-        internal static int CircuitBreakerThreshold { get; set; }
         internal static int SecondLevelRetryAttempts { get; set; }
         internal static Func<Type, bool> IsMessageType { get; set; }
         internal static Func<Type, bool> IsCommandType { get; set; }
         internal static Func<Type, bool> IsEventType { get; set; }
 
+        public static bool UseDistributedTransaction { get; internal set; }
+        public static bool FlushQueueOnStartup { get; internal set; }
+        public static bool IsSendOnly { get; internal set; }
+        public static bool IsLocalEndpoint { get; internal set; }
+        public static int FirstLevelRetryAttempts { get; internal set; }
+        public static bool IsClientEndpoint { get; internal set; }
+        public static bool SubsribeToDomainEvents { get; internal set; }
 
-        private static int numberOfWorkers = 1;
+        public static TimeSpan CircuitBreakerReset { get; set; }
+        public static int CircuitBreakerThreshold { get; set; }
+        public static bool SetMessageCounterHeader { get; set; }
+
 
         static Settings()
         {
@@ -65,6 +63,11 @@ namespace Hermes.Messaging.Configuration
             }
 
             internal set { rootContainer = value; }
+        }
+
+        public static void EnableFaultSimulation(decimal percentageChance)
+        {
+            FaultSimulator.SetPercetageChanceOfErrorBeingThrown(percentageChance);
         }
 
         internal static Func<string> UserNameResolver

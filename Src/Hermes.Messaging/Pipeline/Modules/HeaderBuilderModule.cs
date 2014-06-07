@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-
+using System.Threading;
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
@@ -12,6 +14,7 @@ namespace Hermes.Messaging.Pipeline.Modules
     public class HeaderBuilderModule : IModule<OutgoingMessageContext>
     {
         private readonly static ILog Logger = LogFactory.BuildLogger(typeof(HeaderBuilderModule));
+        private long sentMessageCounter = 0;
 
         public bool Process(OutgoingMessageContext input, Func<bool> next)
         {
@@ -24,12 +27,23 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             var headers = new Dictionary<string, string>();
 
+            AddSentMessageCount(headers);
+
             ConvertHeaderValues(context.Headers, headers);
             AddMessageTypeToHeader(context.OutgoingMessage, headers);
             AddUserName(headers);
             SetSentTime(headers);
 
             return headers;
+        }
+
+        private void AddSentMessageCount(Dictionary<string, string> headers)
+        {
+            if (Settings.SetMessageCounterHeader)
+            {
+                var sentCount = Interlocked.Increment(ref sentMessageCounter);
+                headers.Add(HeaderKeys.SentMessageCounter, sentCount.ToString(CultureInfo.InvariantCulture));
+            }
         }
 
         private static void SetSentTime(Dictionary<string, string> headers)

@@ -2,13 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Failover;
+using Hermes.Logging;
 using Hermes.Scheduling;
 
-namespace Hermes
+namespace Hermes.Messaging
 {
     public abstract class ScheduledWorkerService : IAmStartable, IDisposable
     {
-        private static readonly TimeSpan SixHunderedMilliseconds = TimeSpan.FromMilliseconds(600);
+        protected readonly ILog Logger;
+
         private static readonly TimeSpan TenMilliseconds = TimeSpan.FromMilliseconds(10);
 
         private readonly object syncLock = new object();
@@ -22,15 +24,31 @@ namespace Hermes
 
         protected abstract void DoWork();
 
+        protected ScheduledWorkerService()
+        {
+            timespanSchedule = TimeSpan.FromSeconds(10);
+        }
+
         protected ScheduledWorkerService(CronSchedule cronSchedule)
         {
             Mandate.ParameterNotNull(cronSchedule, "cronSchedule");
+           
+            Logger = LogFactory.BuildLogger(GetType());
             this.cronSchedule = cronSchedule;
         }
 
         protected ScheduledWorkerService(TimeSpan timespanSchedule)
         {
             Mandate.ParameterNotDefaut(timespanSchedule, "timespanSchedule");
+            
+            Logger = LogFactory.BuildLogger(GetType());
+            
+            if (timespanSchedule > TenMilliseconds)
+            {
+                Logger.Warn("A scheduled worker has a minimum allowed schedule of 10 millisecconds. The default minimum will be used.");
+                timespanSchedule = TenMilliseconds;
+            }
+            
             this.timespanSchedule = timespanSchedule;
         }
 
@@ -75,7 +93,8 @@ namespace Hermes
 
         protected virtual void OnCircuitBreakerTriped(Exception ex)
         {
-            CriticalError.Raise(String.Format("Fatal error in scheduled worker service {0}.", GetType().Name), ex);
+            var log = String.Format("Fatal error in scheduled worker service {0}.", GetType().Name);
+            CriticalError.Raise(log, ex);
         }
 
         protected virtual CircuitBreaker IntializeCircuitBreaker()
@@ -102,8 +121,8 @@ namespace Hermes
             {
                 if (nextRunTime <= DateTime.Now)
                 {
-                    DoWork();
                     nextRunTime = GetNextOccurrence();
+                    DoWork();
                 }
 
                 Sleep();
@@ -122,11 +141,7 @@ namespace Hermes
 
         private void Sleep()
         {
-            if (cronSchedule != null || timespanSchedule > SixHunderedMilliseconds)
-            {
-                Thread.Sleep(SixHunderedMilliseconds); //minimum granularity for cron is one second, so we sleep just longer than half that time to avoid triggering twice in a schedule.
-            }
-            else if (timespanSchedule > TenMilliseconds) 
+            if (cronSchedule == null)
             {
                 Thread.Sleep(TenMilliseconds);
             }

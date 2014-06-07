@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Serialization;
@@ -38,13 +38,12 @@ namespace Hermes.Messaging.Transports.SqlTransport
             catch (Exception ex)
             {
                 Logger.Error("Error while attempting to dequeue message: {0}", ex.GetFullExceptionMessage());
-                return TransportMessage.Undefined;
+                throw;
             }
         }
 
         private TransportMessage TryDequeue()
         {
-
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -53,6 +52,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
                 {
                     var message = FetchNextMessage(command);
                     transaction.Commit();
+                    FaultSimulator.Trigger();
                     return message;
                 }
             }
@@ -76,6 +76,8 @@ namespace Hermes.Messaging.Transports.SqlTransport
                     var replyToAddress = dataReader.GetString(ReplyToAddressIndex);
                     var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(HeadersIndex));
                     var body = dataReader.IsDBNull(BodyIndex) ? null : dataReader.GetSqlBinary(BodyIndex).Value;
+
+                    Logger.Debug("Dequeued message {0}", messageId);
 
                     return new TransportMessage(messageId, correlationId, Address.Parse(replyToAddress), timeTolive, headers, body);
                 }

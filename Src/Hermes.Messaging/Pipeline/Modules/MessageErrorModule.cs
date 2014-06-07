@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
@@ -24,20 +25,32 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                Logger.Verbose("Starting processing chain for message {0}", input);
-                next();
-                Logger.Verbose("Completed processing chain for message {0}", input);
+                if (next())
+                {  
+                    return true;
+                }
+
+                HandleError(input);
+                FaultSimulator.Trigger();
+                return false;
             }
             catch(Exception ex)
             {
-                HandleError(input, ex);
+                HandleException(input, ex);
+                FaultSimulator.Trigger();
                 return false;
             }
-
-            return true;
         }
 
-        private void HandleError(IncomingMessageContext input, Exception ex)
+        private void HandleException(IncomingMessageContext input, Exception ex)
+        {
+            string errorDetails = ex.GetFullExceptionMessage();
+            Logger.Error("Processing failed for message {0}. {1}", input.TransportMessage.MessageId, errorDetails);
+            input.TransportMessage.Headers[HeaderKeys.FailureDetails] = errorDetails;
+            HandleError(input);
+        }
+
+        private void HandleError(IncomingMessageContext input)
         {
             if(Settings.IsSendOnly)
                 return;
@@ -47,15 +60,15 @@ namespace Hermes.Messaging.Pipeline.Modules
 
             if (firstLevelRetryCount >= Settings.FirstLevelRetryAttempts && secondLevelRetryCount >= Settings.SecondLevelRetryAttempts)
             {
-                SendToErrorQueue(input.TransportMessage, ex);
+                SendToErrorQueue(input.TransportMessage);
             }
             else if (firstLevelRetryCount < Settings.FirstLevelRetryAttempts)
             {
-                FirstLevelRetry(input.TransportMessage, ++firstLevelRetryCount, ex);
+                FirstLevelRetry(input.TransportMessage, ++firstLevelRetryCount);
             }
             else
             {
-                SecondLevelRetry(input.TransportMessage, ++secondLevelRetryCount, ex);
+                SecondLevelRetry(input.TransportMessage, ++secondLevelRetryCount);
             }
         }
 
@@ -71,16 +84,16 @@ namespace Hermes.Messaging.Pipeline.Modules
             return 0;
         }
 
-        protected virtual void FirstLevelRetry(TransportMessage transportMessage, int retryCount, Exception ex)
+        protected virtual void FirstLevelRetry(TransportMessage transportMessage, int retryCount)
         {
-            Logger.Warn("First level retry on message {0} : attempt {1} {2}", transportMessage.MessageId, retryCount, ex.GetFullExceptionMessage());
+            Logger.Warn("First level retry on message {0} : attempt {1}", transportMessage.MessageId, retryCount);
             transportMessage.Headers[HeaderKeys.FirstLevelRetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
             MessageSender.Send(transportMessage, Address.Local);
         }
 
-        protected virtual void SecondLevelRetry(TransportMessage transportMessage, int retryCount, Exception ex)
+        protected virtual void SecondLevelRetry(TransportMessage transportMessage, int retryCount)
         {
-            Logger.Warn("Second level retry on message {0} : attempt {1} {2}", transportMessage.MessageId, retryCount, ex.GetFullExceptionMessage());
+            Logger.Warn("Second level retry on message {0} : attempt {1}", transportMessage.MessageId, retryCount);
             transportMessage.Headers[HeaderKeys.FirstLevelRetryCount] = (0).ToString(CultureInfo.InvariantCulture);
             transportMessage.Headers[HeaderKeys.SecondLevelRetryCount] = (retryCount).ToString(CultureInfo.InvariantCulture);
             transportMessage.Headers[HeaderKeys.TimeoutExpire] = DateTime.UtcNow.Add(Settings.SecondLevelRetryDelay).ToWireFormattedString();
@@ -94,12 +107,11 @@ namespace Hermes.Messaging.Pipeline.Modules
             TimeoutStore.Add(new TimeoutData(transportMessage));
         }
 
-        protected virtual void SendToErrorQueue(TransportMessage transportMessage, Exception ex)
+        protected virtual void SendToErrorQueue(TransportMessage transportMessage)
         {
-            Logger.Error("Processing failed for message {0}. Sending to error queue {1}", transportMessage.MessageId, ex.GetFullExceptionMessage());
+            Logger.Error("Processing failed for message {0}. Sending to error queue.", transportMessage.MessageId);
             transportMessage.Headers[HeaderKeys.ProcessingEndpoint] = Address.Local.ToString();
-            transportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
             MessageSender.Send(transportMessage, Settings.ErrorEndpoint);
-        }        
+        } 
     }
 }

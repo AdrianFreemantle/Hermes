@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Builder;
-
+using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Microsoft.Practices.ServiceLocation;
