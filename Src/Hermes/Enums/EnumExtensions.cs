@@ -16,7 +16,7 @@ namespace Hermes.Enums
             }
             catch (Exception)
             {
-                return "Error! Unable to find a name for this field.";
+                return String.Format("Error: Value {0} is undefined.", ((int)(dynamic)value));
             }
         }        
 

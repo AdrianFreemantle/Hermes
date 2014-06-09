@@ -26,7 +26,8 @@ namespace Hermes.Messaging.Pipeline.Modules
             try
             {
                 if (next())
-                {  
+                {
+                    FaultSimulator.Trigger();
                     return true;
                 }
 
