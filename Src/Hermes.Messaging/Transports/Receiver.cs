@@ -82,7 +82,6 @@ namespace Hermes.Messaging.Transports
             using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Required))
             {
                 var result = TryDequeueWork();
-                Logger.Debug("Commiting transaction scope");
                 scope.Complete();
                 return result;
             }

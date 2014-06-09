@@ -37,7 +37,7 @@ namespace Hermes.ServiceHost
 
         private static void ConfigureLogging()
         {
-            string useLogFile = ConfigurationManager.AppSettings.Get("hermes:useLogFile");
+            string useLogFile = ConfigurationManager.AppSettings.Get("hermes:useLogFile") ?? "false";
 
             if (Environment.UserInteractive && !useLogFile.Equals("true"))
             {

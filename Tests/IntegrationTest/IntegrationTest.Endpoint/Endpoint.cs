@@ -1,6 +1,5 @@
 ﻿using System;
 using Hermes.EntityFramework;
-using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
@@ -9,7 +8,6 @@ using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
 using IntegrationTest.Contracts;
 using IntegrationTests.PersistenceModel;
-using log4net.Config;
 
 namespace IntegrationTest.Endpoint
 {
@@ -17,9 +15,6 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            XmlConfigurator.Configure();
-            LogFactory.BuildLogger = type => new Log4NetLogger(type);
-
             configuration
                 .FirstLevelRetryPolicy(0)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
