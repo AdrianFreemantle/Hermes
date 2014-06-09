@@ -37,9 +37,11 @@ namespace Hermes.ServiceHost
 
         private static void ConfigureLogging()
         {
-            string useLogFile = ConfigurationManager.AppSettings.Get("hermes:useLogFile") ?? "false";
+            bool useLogFile = false;
 
-            if (Environment.UserInteractive && !useLogFile.Equals("true"))
+            useLogFile = GetUseLogFileSetting();
+
+            if (Environment.UserInteractive && useLogFile)
             {
                 LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
                 ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
@@ -52,6 +54,18 @@ namespace Hermes.ServiceHost
             }
 
             logger = LogFactory.BuildLogger(typeof (Program));
+        }
+
+        private static bool GetUseLogFileSetting()
+        {
+            var appSettings = (AppSettingsSection)configuration.GetSection("appSettings");
+
+            if (appSettings.Settings.AllKeys.Any(s => s.Equals("hermes:useLogFile")))
+            {
+                return appSettings.Settings["hermes:useLogFile"].Value == "true";
+            }
+
+            return false;
         }
 
         private static void RunHostedService()

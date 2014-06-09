@@ -99,5 +99,20 @@ namespace Hermes.Enums
         {
             return !(enumeration == wrapper);
         }
+
+        public static implicit operator int(EnumWrapper<TEnum> wrapper)
+        {
+            return wrapper.Id;
+        }
+
+        public static implicit operator string(EnumWrapper<TEnum> wrapper)
+        {
+            return wrapper.Description;
+        }
+
+        public static implicit operator TEnum(EnumWrapper<TEnum> wrapper)
+        {
+            return wrapper.Enum;
+        }
     }
 }
