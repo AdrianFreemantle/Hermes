@@ -41,7 +41,7 @@ namespace Hermes.ServiceHost
 
             useLogFile = GetUseLogFileSetting();
 
-            if (Environment.UserInteractive && useLogFile)
+            if (Environment.UserInteractive && !useLogFile)
             {
                 LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
                 ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
