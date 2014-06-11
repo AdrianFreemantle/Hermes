@@ -70,7 +70,7 @@ namespace Hermes.EntityFramework
 
         private void SaveEvents(IAggregate aggregate)
         {
-            IDomainEvent[] events = aggregate.GetUncommittedEvents().ToArray();
+            IAggregateEvent[] events = aggregate.GetUncommittedEvents().ToArray();
             aggregate.ClearUncommittedEvents();
 
             //todo save events to event store

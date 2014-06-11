@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
+    <Compile Include="Messaging\IDomainEvent.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Equality\CompareObjects.cs" />

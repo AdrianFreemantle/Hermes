@@ -2,7 +2,7 @@
 
 namespace Hermes.Domain.Tests
 {
-    public class EntityEvent : IDomainEvent
+    public class EntityEvent : IAggregateEvent
     {
         [AggregateId]
         public Guid TestAggregateId { get; protected set; }

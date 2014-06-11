@@ -73,6 +73,10 @@
       <Project>{0AAB1D40-4A95-4893-8127-694AEED84258}</Project>
       <Name>Hermes.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hermes\Hermes.csproj">
+      <Project>{2266CC77-210B-48DB-8FA9-29C4CB432C1A}</Project>
+      <Name>Hermes</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

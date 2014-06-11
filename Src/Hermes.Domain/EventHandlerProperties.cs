@@ -37,7 +37,7 @@ namespace Hermes.Domain
         }
 
         //[DebuggerStepThrough]
-        public void InvokeHandler(IDomainEvent e, EntityBase entity)
+        public void InvokeHandler(IAggregateEvent e, EntityBase entity)
         {
             if (eventMutatesEntityState)
             {
@@ -45,7 +45,7 @@ namespace Hermes.Domain
             }
         }
 
-        public bool EventIsOwnedByEntity(IDomainEvent e, EntityBase entity)
+        public bool EventIsOwnedByEntity(IAggregateEvent e, EntityBase entity)
         {
             if (entity.GetType() != entityType)
                 return false;
@@ -65,12 +65,12 @@ namespace Hermes.Domain
             }
         }
 
-        public bool CanHandleEvent(IDomainEvent e)
+        public bool CanHandleEvent(IAggregateEvent e)
         {
             return e.GetType() == eventType;
         }
 
-        public void UpdateEventDetails(IDomainEvent e, IAggregate aggregate, EntityBase source)
+        public void UpdateEventDetails(IAggregateEvent e, IAggregate aggregate, EntityBase source)
         {
             versionProperty.SetValue(e, aggregate.GetVersion());
             aggregateIdentityProperty.SetValue(e, aggregate.Identity.GetId());

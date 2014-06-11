@@ -54,7 +54,7 @@ namespace Hermes.Domain
 
         private static void GetEventHandlers(Type entityType)
         {            
-            Type eventBaseType = typeof(IDomainEvent);
+            Type eventBaseType = typeof(IAggregateEvent);
 
             var methodsToMatch = entityType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 

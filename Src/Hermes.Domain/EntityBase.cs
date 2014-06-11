@@ -23,7 +23,7 @@ namespace Hermes.Domain
             eventHandlers = EntityEventHandlerCache.ScanEntity(this);
         }
 
-        internal protected void RaiseEvent(IDomainEvent @event)  
+        internal protected void RaiseEvent(IAggregateEvent @event)  
         {
             if (ApplyEvent(@event, ApplyEventAs.New))
             {
@@ -34,12 +34,12 @@ namespace Hermes.Domain
             throw new EventHandlerNotFoundException(this, @event);
         }
 
-        bool IEntity.ApplyEvent(IDomainEvent @event)
+        bool IEntity.ApplyEvent(IAggregateEvent @event)
         {
             return ApplyEvent(@event, ApplyEventAs.Historical);
         }
 
-        internal protected virtual bool ApplyEvent(IDomainEvent @event, ApplyEventAs applyEventAs)
+        internal protected virtual bool ApplyEvent(IAggregateEvent @event, ApplyEventAs applyEventAs)
         {
             try
             {
@@ -61,9 +61,9 @@ namespace Hermes.Domain
             return false;
         }
 
-        internal protected abstract void SaveEvent(IDomainEvent @event, EntityBase source);
+        internal protected abstract void SaveEvent(IAggregateEvent @event, EntityBase source);
 
-        internal void UpdateEventDetails(IDomainEvent @event, IAggregate aggregate)
+        internal void UpdateEventDetails(IAggregateEvent @event, IAggregate aggregate)
         {
             var handler = eventHandlers.First(h => h.CanHandleEvent(@event));
             handler.UpdateEventDetails(@event, aggregate, this);

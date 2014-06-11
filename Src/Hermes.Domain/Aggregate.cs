@@ -9,7 +9,7 @@ namespace Hermes.Domain
     public abstract class Aggregate : EntityBase, IAggregate
     {
         private int version;
-        private readonly HashSet<IDomainEvent> changes = new HashSet<IDomainEvent>();
+        private readonly HashSet<IAggregateEvent> changes = new HashSet<IAggregateEvent>();
         protected readonly HashSet<Entity> Entities = new HashSet<Entity>();
 
         protected Aggregate(IIdentity identity) 
@@ -17,7 +17,7 @@ namespace Hermes.Domain
         {
         }
 
-        IEnumerable<IDomainEvent> IAggregate.GetUncommittedEvents()
+        IEnumerable<IAggregateEvent> IAggregate.GetUncommittedEvents()
         {
             return changes.ToArray();
         }
@@ -32,7 +32,7 @@ namespace Hermes.Domain
             return version;
         }
 
-        void IAggregate.LoadFromHistory(IEnumerable<IDomainEvent> domainEvents)
+        void IAggregate.LoadFromHistory(IEnumerable<IAggregateEvent> domainEvents)
         {
             foreach (var @event in domainEvents)
             {
@@ -87,15 +87,15 @@ namespace Hermes.Domain
             return GetAll<TEntity>().Where(predicate).ToArray();
         }
 
-        internal protected override void SaveEvent(IDomainEvent @event, EntityBase source)
+        internal protected override void SaveEvent(IAggregateEvent @event, EntityBase source)
         {
             version++;
             source.UpdateEventDetails(@event, this);
             changes.Add(@event);
-            DomainEvent.Raise(@event);
+            AggregateEventBus.Raise(@event);
         }
 
-        internal protected override bool ApplyEvent(IDomainEvent @event, ApplyEventAs applyAs)
+        internal protected override bool ApplyEvent(IAggregateEvent @event, ApplyEventAs applyAs)
         {
             if (base.ApplyEvent(@event, applyAs))
             {

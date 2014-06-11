@@ -52,14 +52,14 @@
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
     <Compile Include="AggregateIdAttribute.cs" />
-    <Compile Include="DomainEvent.cs" />
+    <Compile Include="AggregateEventBus.cs" />
     <Compile Include="DomainEventAggregateIdException.cs" />
     <Compile Include="DomainEventEntityIdException.cs" />
     <Compile Include="DomainEventException.cs" />
     <Compile Include="EntityEventHandlerCache.cs" />
     <Compile Include="EntityIdAttribute.cs" />
     <Compile Include="EventHandlerProperties.cs" />
-    <Compile Include="IDomainEvent.cs" />
+    <Compile Include="IAggregateEvent.cs" />
     <Compile Include="DomainException.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityBase.cs" />

@@ -12,7 +12,7 @@ namespace Hermes.Domain
 
         private static string GetErrorMessage(Type eventType)
         {
-            return String.Format("Domain event {0} should implement {1}", eventType.FullName, typeof(IDomainEvent).FullName);
+            return String.Format("Aggregate event {0} should implement {1}", eventType.FullName, typeof(IAggregateEvent).FullName);
         }
     }
 }
