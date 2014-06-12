@@ -16,17 +16,17 @@ namespace IntegrationTest.Endpoint
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
-                .FirstLevelRetryPolicy(0)
+                .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(Environment.ProcessorCount)
+                .NumberOfWorkers(1)
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
 
             Settings.CircuitBreakerThreshold = 200;
-            Settings.EnableFaultSimulation(0.1M);
+            //Settings.EnableFaultSimulation(0.00M);
         }
 
         private static bool IsCommand(Type type)

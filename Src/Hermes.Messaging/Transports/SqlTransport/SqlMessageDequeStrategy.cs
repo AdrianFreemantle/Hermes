@@ -47,12 +47,9 @@ namespace Hermes.Messaging.Transports.SqlTransport
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using(var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
-                using (var command = new SqlCommand(DequeueSql, connection, transaction))
+                using (var command = new SqlCommand(DequeueSql, connection))
                 {
                     var message = FetchNextMessage(command);
-                    transaction.Commit();
-                    FaultSimulator.Trigger();
                     return message;
                 }
             }

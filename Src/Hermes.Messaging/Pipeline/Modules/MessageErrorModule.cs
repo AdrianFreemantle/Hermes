@@ -25,17 +25,11 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                if (next())
-                {
-                    FaultSimulator.Trigger();
-                    return true;
-                }
-
-                HandleError(input);
+                var result = next();
                 FaultSimulator.Trigger();
-                return false;
+                return result;
             }
-            catch (UnitOfWorkException)
+            catch (UnitOfWorkRollbackException)
             {
                 throw;
             }

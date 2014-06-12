@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Transactions;
 using Hermes.Failover;
 using Hermes.Logging;
@@ -22,11 +23,17 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
-            using (var scope = StartTransactionScope())
+            try
             {
-                var result = ProcessMessage(input, next);
-                scope.Complete();
-                return result;
+                return ProcessMessage(input, next);
+            }
+            catch (UnitOfWorkRollbackException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 
@@ -34,38 +41,30 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                next();
+                var result = next();
+                CommitUnitsOfWork(input);
+                return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Error("Error on message {0} {1}", input.TransportMessage.MessageId, ex.GetFullExceptionMessage());
                 RollBackUnitsOfWork(input);
                 input.TransportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
                 throw;
             }
-
-            CommitUnitsOfWork(input);
-            return true;
         }
 
         private void CommitUnitsOfWork(IncomingMessageContext input)
         {
-            try
+            foreach (var unitOfWork in OrderedUnitsOfWork())
             {
-                foreach (var unitOfWork in OrderedUnitsOfWork())
-                {
-                    Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
-                    unitOfWork.Commit();
-                }
-
-                input.CommitOutgoingMessages();
-
+                Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
+                unitOfWork.Commit();
                 FaultSimulator.Trigger();
             }
-            catch (Exception ex)
-            {
-                throw new UnitOfWorkException(ex.Message, ex);
-            }
+
+            input.CommitOutgoingMessages();
+            FaultSimulator.Trigger();
         }
 
         private void RollBackUnitsOfWork(IncomingMessageContext input)
@@ -81,7 +80,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
             catch (Exception ex)
             {
-                throw new UnitOfWorkException(ex.Message, ex);
+                throw new UnitOfWorkRollbackException(ex.Message, ex);
             }
         }
 
@@ -103,6 +102,31 @@ namespace Hermes.Messaging.Pipeline.Modules
 
             Logger.Debug("Beginning a transaction scope with option[Suppress]");
             return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
+        }
+    }
+
+    [Serializable]
+    public class UnitOfWorkRollbackException : Exception
+    {
+        public UnitOfWorkRollbackException()
+        {
+        }
+
+        public UnitOfWorkRollbackException(string message)
+            : base(message)
+        {
+        }
+
+        public UnitOfWorkRollbackException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        protected UnitOfWorkRollbackException(
+            SerializationInfo info,
+            StreamingContext context)
+            : base(info, context)
+        {
         }
     }
 }

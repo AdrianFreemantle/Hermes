@@ -24,16 +24,9 @@ namespace Hermes.Messaging.Transports.SqlTransport
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                using (var command = BuildSendCommand(connection, transportMessage, address))
                 {
-                    using (var command = BuildSendCommand(connection, transportMessage, address))
-                    {
-                        command.Transaction = transaction;
-                        command.ExecuteNonQuery();
-                        FaultSimulator.Trigger();
-                    }
-
-                    transaction.Commit();
+                    command.ExecuteNonQuery();
                 }
             }
         }        
