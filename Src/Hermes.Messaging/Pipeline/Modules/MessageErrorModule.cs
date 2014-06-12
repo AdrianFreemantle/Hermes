@@ -35,7 +35,11 @@ namespace Hermes.Messaging.Pipeline.Modules
                 FaultSimulator.Trigger();
                 return false;
             }
-            catch(Exception ex)
+            catch (UnitOfWorkException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 HandleException(input, ex);
                 FaultSimulator.Trigger();

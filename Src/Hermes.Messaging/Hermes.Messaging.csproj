@@ -71,6 +71,7 @@
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
+    <Compile Include="Pipeline\Modules\UnitOfWorkException.cs" />
     <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
     <Compile Include="ScheduledWorkerService.cs" />
     <Compile Include="Serialization\MessageSerializationExtensions.cs" />

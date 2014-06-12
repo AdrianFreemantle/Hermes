@@ -41,7 +41,7 @@ namespace Hermes.Messaging.Pipeline.Modules
                 Logger.Error("Error on message {0} {1}", input.TransportMessage.MessageId, ex.GetFullExceptionMessage());
                 RollBackUnitsOfWork(input);
                 input.TransportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
-                return false;
+                throw;
             }
 
             CommitUnitsOfWork(input);
@@ -50,22 +50,38 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private void CommitUnitsOfWork(IncomingMessageContext input)
         {
-            foreach (var unitOfWork in OrderedUnitsOfWork())
+            try
             {
-                Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
-                unitOfWork.Commit();
+                foreach (var unitOfWork in OrderedUnitsOfWork())
+                {
+                    Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
+                    unitOfWork.Commit();
+                }
+
+                input.CommitOutgoingMessages();
+
                 FaultSimulator.Trigger();
             }
-
-            input.CommitOutgoingMessages();
+            catch (Exception ex)
+            {
+                throw new UnitOfWorkException(ex.Message, ex);
+            }
         }
+
         private void RollBackUnitsOfWork(IncomingMessageContext input)
         {
-            foreach (var unitOfWork in OrderedUnitsOfWork().Reverse())
+            try
             {
-                Logger.Debug("Rollback of {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
-                unitOfWork.Rollback();
-                FaultSimulator.Trigger();
+                foreach (var unitOfWork in OrderedUnitsOfWork().Reverse())
+                {
+                    Logger.Debug("Rollback of {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
+                    unitOfWork.Rollback();
+                    FaultSimulator.Trigger();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UnitOfWorkException(ex.Message, ex);
             }
         }
 
