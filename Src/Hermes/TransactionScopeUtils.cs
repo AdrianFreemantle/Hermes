@@ -7,6 +7,17 @@ namespace System.Transactions
 {
     public class TransactionScopeUtils
     {
+        public static TimeSpan Timeout { get; set; }
+
+        static TransactionScopeUtils()
+        {
+            #if DEBUG
+            Timeout = TimeSpan.FromMinutes(5);
+            #else
+            Timeout = TimeSpan.FromMinutes(1);
+            #endif
+        }
+
         public static TransactionScope Begin()
         {
             return Begin(TransactionScopeOption.Required);
@@ -17,7 +28,7 @@ namespace System.Transactions
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromMinutes(5)
+                Timeout = Timeout
             };
 
             return new TransactionScope(scopeOption, transactionOptions);
