@@ -13,6 +13,8 @@ namespace Hermes.Messaging
 
         private static readonly TimeSpan TenMilliseconds = TimeSpan.FromMilliseconds(10);
 
+        protected readonly bool RunImmediatelyOnStartup = true;
+
         private readonly object syncLock = new object();
         private readonly CronSchedule cronSchedule;
         private readonly TimeSpan timespanSchedule;
@@ -20,36 +22,37 @@ namespace Hermes.Messaging
         private CancellationTokenSource tokenSource;
         private bool disposed;
 
-        public virtual bool RunImmediatelyOnStartup { get; set; }
-
         protected abstract void DoWork();
 
-        protected ScheduledWorkerService()
+        protected ScheduledWorkerService(bool runImmediatelyOnStartup)
         {
+            RunImmediatelyOnStartup = runImmediatelyOnStartup;
             timespanSchedule = TimeSpan.FromSeconds(10);
         }
 
-        protected ScheduledWorkerService(CronSchedule cronSchedule)
+        protected ScheduledWorkerService(CronSchedule cronSchedule, bool runImmediatelyOnStartup)
         {
             Mandate.ParameterNotNull(cronSchedule, "cronSchedule");
            
             Logger = LogFactory.BuildLogger(GetType());
             this.cronSchedule = cronSchedule;
+            RunImmediatelyOnStartup = runImmediatelyOnStartup;
         }
 
-        protected ScheduledWorkerService(TimeSpan timespanSchedule)
+        protected ScheduledWorkerService(TimeSpan timespanSchedule, bool runImmediatelyOnStartup)
         {
             Mandate.ParameterNotDefaut(timespanSchedule, "timespanSchedule");
             
             Logger = LogFactory.BuildLogger(GetType());
             
-            if (timespanSchedule > TenMilliseconds)
+            if (timespanSchedule < TenMilliseconds)
             {
-                Logger.Warn("A scheduled worker has a minimum allowed schedule of 10 millisecconds. The default minimum will be used.");
+                Logger.Warn("A scheduled worker has a minimum allowed schedule of {0} millisecconds. The default minimum will be used.", TenMilliseconds.Milliseconds);
                 timespanSchedule = TenMilliseconds;
             }
             
             this.timespanSchedule = timespanSchedule;
+            RunImmediatelyOnStartup = runImmediatelyOnStartup;
         }
 
         ~ScheduledWorkerService()
@@ -99,7 +102,7 @@ namespace Hermes.Messaging
 
         protected virtual CircuitBreaker IntializeCircuitBreaker()
         {
-            return new CircuitBreaker(2, TimeSpan.FromSeconds(10));
+            return new CircuitBreaker(2, TimeSpan.FromSeconds(30));
         }
 
         public void Stop()
@@ -125,7 +128,7 @@ namespace Hermes.Messaging
                     DoWork();
                 }
 
-                Sleep();
+                Thread.Sleep(TenMilliseconds);
             }
         }
 
@@ -137,18 +140,6 @@ namespace Hermes.Messaging
             }
             
             return cronSchedule.GetNextOccurrence(DateTime.Now);
-        }
-
-        private void Sleep()
-        {
-            if (cronSchedule == null)
-            {
-                Thread.Sleep(TenMilliseconds);
-            }
-            else
-            {
-                Thread.Sleep(timespanSchedule);
-            }
         }
 
         public void Dispose()
