@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Transactions;
 using Hermes.Failover;
 using Hermes.Logging;
@@ -102,31 +101,6 @@ namespace Hermes.Messaging.Pipeline.Modules
 
             Logger.Debug("Beginning a transaction scope with option[Suppress]");
             return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
-        }
-    }
-
-    [Serializable]
-    public class UnitOfWorkRollbackException : Exception
-    {
-        public UnitOfWorkRollbackException()
-        {
-        }
-
-        public UnitOfWorkRollbackException(string message)
-            : base(message)
-        {
-        }
-
-        public UnitOfWorkRollbackException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-
-        protected UnitOfWorkRollbackException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
         }
     }
 }
