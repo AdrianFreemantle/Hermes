@@ -14,7 +14,6 @@ namespace Hermes.Messaging
         protected bool RunImmediatelyOnStartup;
 
         private static readonly TimeSpan TenMilliseconds = TimeSpan.FromMilliseconds(10);
-        private static readonly TimeSpan OneSecond = TimeSpan.FromSeconds(1);
 
         private CronSchedule cronSchedule;
         private TimeSpan timespanSchedule;
@@ -27,13 +26,14 @@ namespace Hermes.Messaging
         protected ScheduledWorkerService()
         {      
             Logger = LogFactory.BuildLogger(GetType());
-            timespanSchedule = OneSecond;
+            timespanSchedule = TimeSpan.FromMinutes(1);
             RunImmediatelyOnStartup = true;
         }
 
         public void SetSchedule(CronSchedule schedule)
         {
             Mandate.ParameterNotNull(schedule, "schedule");
+
             cronSchedule = schedule;
         }
 

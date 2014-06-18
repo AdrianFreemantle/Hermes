@@ -86,5 +86,15 @@ namespace Hermes.Scheduling
 
             return new CronSchedule(secondField, minuteField, hourField, dayOfMonthField, monthField, dayOfWeek);
         }
+
+        public static CronSchedule EveryMinuteBetweenEightAndFiveOnWeekDays()
+        {
+            return Parse("0 * * 8-17 * * Monday-Friday");
+        }
+
+        public static CronSchedule EveryMinute()
+        {
+            return Parse("0 * * * * *");
+        }
     }
 }
