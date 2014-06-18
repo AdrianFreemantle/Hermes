@@ -9,50 +9,43 @@ namespace Hermes.Messaging
 {
     public abstract class ScheduledWorkerService : IAmStartable, IDisposable
     {
+        private readonly object syncLock = new object();
         protected readonly ILog Logger;
+        protected bool RunImmediatelyOnStartup;
 
         private static readonly TimeSpan TenMilliseconds = TimeSpan.FromMilliseconds(10);
+        private static readonly TimeSpan OneSecond = TimeSpan.FromSeconds(1);
 
-        protected readonly bool RunImmediatelyOnStartup = true;
-
-        private readonly object syncLock = new object();
-        private readonly CronSchedule cronSchedule;
-        private readonly TimeSpan timespanSchedule;
+        private CronSchedule cronSchedule;
+        private TimeSpan timespanSchedule;
         private CircuitBreaker circuitBreaker;
         private CancellationTokenSource tokenSource;
         private bool disposed;
 
         protected abstract void DoWork();
 
-        protected ScheduledWorkerService(bool runImmediatelyOnStartup)
-        {
-            RunImmediatelyOnStartup = runImmediatelyOnStartup;
-            timespanSchedule = TimeSpan.FromSeconds(10);
+        protected ScheduledWorkerService()
+        {      
+            Logger = LogFactory.BuildLogger(GetType());
+            timespanSchedule = OneSecond;
+            RunImmediatelyOnStartup = true;
         }
 
-        protected ScheduledWorkerService(CronSchedule cronSchedule, bool runImmediatelyOnStartup)
+        public void SetSchedule(CronSchedule schedule)
         {
-            Mandate.ParameterNotNull(cronSchedule, "cronSchedule");
-           
-            Logger = LogFactory.BuildLogger(GetType());
-            this.cronSchedule = cronSchedule;
-            RunImmediatelyOnStartup = runImmediatelyOnStartup;
+            Mandate.ParameterNotNull(schedule, "schedule");
+            cronSchedule = schedule;
         }
 
-        protected ScheduledWorkerService(TimeSpan timespanSchedule, bool runImmediatelyOnStartup)
+        public void SetSchedule(TimeSpan timeSpan)
         {
-            Mandate.ParameterNotDefaut(timespanSchedule, "timespanSchedule");
-            
-            Logger = LogFactory.BuildLogger(GetType());
-            
             if (timespanSchedule < TenMilliseconds)
             {
                 Logger.Warn("A scheduled worker has a minimum allowed schedule of {0} millisecconds. The default minimum will be used.", TenMilliseconds.Milliseconds);
                 timespanSchedule = TenMilliseconds;
             }
-            
-            this.timespanSchedule = timespanSchedule;
-            RunImmediatelyOnStartup = runImmediatelyOnStartup;
+
+            timespanSchedule = timeSpan;
         }
 
         ~ScheduledWorkerService()
