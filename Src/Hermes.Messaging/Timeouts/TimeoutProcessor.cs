@@ -32,7 +32,7 @@ namespace Hermes.Messaging.Timeouts
 
             PurgeQueueIfRequired();
 
-            Logger.Verbose("Starting Timeout Processor");
+            Logger.Info("Starting Timeout Processor");
 
             tokenSource = new CancellationTokenSource();
             StartThread();
@@ -73,7 +73,7 @@ namespace Hermes.Messaging.Timeouts
 
         public void Stop()
         {
-            Logger.Verbose("Stopping Timeout Processor");
+            Logger.Info("Stopping Timeout Processor");
 
             if(tokenSource != null)
                 tokenSource.Cancel();

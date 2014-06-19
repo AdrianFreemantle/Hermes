@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
 using Hermes.Logging;
@@ -16,8 +17,6 @@ namespace Hermes.EntityFramework
         protected DbContext Context;
         protected DbContextTransaction Transaction;
         private bool disposed;
-
-        public static bool EnableDebugTrace { get; set; }
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
@@ -65,11 +64,7 @@ namespace Hermes.EntityFramework
             if (Context == null)
             {
                 Context = contextFactory.GetContext();
-
-                if (EnableDebugTrace)
-                {
-                    Context.Database.Log = s => Logger.Info(s);
-                }
+                Context.Database.Log = s => Logger.Debug(s);
             }
 
             return Context;

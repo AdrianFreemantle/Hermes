@@ -45,6 +45,7 @@ namespace Hermes.EntityFramework.Queries
                 Context.Configuration.AutoDetectChangesEnabled = false;
                 Context.Configuration.LazyLoadingEnabled = false;
                 Context.Configuration.ProxyCreationEnabled = false;
+                Context.Database.Log = s => Logger.Debug(s);
             }
 
             return Context;

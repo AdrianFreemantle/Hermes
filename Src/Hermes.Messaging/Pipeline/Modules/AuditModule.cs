@@ -22,12 +22,12 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             DateTime receivedTime = DateTime.UtcNow;
 
-            Logger.Verbose("Starting processing chain for message {0}", input);
+            Logger.Info("Starting processing chain for message {0}", input);
 
             if (next())
             {
                 SendToAuditQueue(input.TransportMessage, receivedTime);
-                Logger.Verbose("Completed processing chain for message {0}", input);
+                Logger.Info("Completed processing chain for message {0}", input);
                 FaultSimulator.Trigger();
                 return true;
             }

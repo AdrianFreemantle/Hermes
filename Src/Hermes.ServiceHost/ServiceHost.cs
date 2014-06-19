@@ -40,7 +40,7 @@ namespace Hermes.ServiceHost
 
             try
             {
-                Logger.Verbose("Starting service {0}", serviceType.FullName);
+                Logger.Info("Starting service {0}", serviceType.FullName);
                 var service = (IService)ObjectFactory.CreateInstance(serviceType);
                 Task.Factory.StartNew(() => service.Run(tokenSource.Token), tokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
             }
@@ -55,7 +55,7 @@ namespace Hermes.ServiceHost
         {
             lock (syncLock)
             {
-                Logger.Verbose("Sending termination signal to services.");
+                Logger.Info("Sending termination signal to services.");
                 tokenSource.Cancel();
             }
         }

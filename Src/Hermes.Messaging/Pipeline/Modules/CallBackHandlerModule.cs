@@ -18,7 +18,7 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
-            Logger.Verbose("Attempting to dispatch message {0} to registered callbacks.", input);
+            Logger.Info("Attempting to dispatch message {0} to registered callbacks.", input);
             callBackManager.HandleCallback(input);
             return next();
         }
