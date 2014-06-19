@@ -13,12 +13,6 @@ namespace Hermes.Logging
             this.typeToLog = typeToLog;
         }
 
-        public virtual void Verbose(string message, params object[] values)
-        {
-            if (MinimumLogLevel <= LogLevel.Verbose)
-                Log(message, values);
-        }
-
         public virtual void Debug(string message, params object[] values)
         {
             if (MinimumLogLevel <= LogLevel.Debug)

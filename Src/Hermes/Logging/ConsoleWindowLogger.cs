@@ -5,7 +5,6 @@ namespace Hermes.Logging
     public enum LogLevel
     {
         Debug,
-        Verbose,
         Info,
         Warn,
         Error,
@@ -24,12 +23,6 @@ namespace Hermes.Logging
         public ConsoleWindowLogger(Type typeToLog)
         {
             this.typeToLog = typeToLog;
-        }
-
-        public virtual void Verbose(string message, params object[] values)
-        {
-            if(MinimumLogLevel <= LogLevel.Verbose)
-                Log(ConsoleColor.DarkGreen, message, values);
         }
 
         public virtual void Debug(string message, params object[] values)
