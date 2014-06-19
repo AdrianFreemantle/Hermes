@@ -12,8 +12,6 @@ namespace Hermes.EntityFramework.Queries
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
 
-        public static bool EnableDebugTrace { get; set; }
-
         public DatabaseQuery(IContextFactory contextFactory)
         {
             this.contextFactory = contextFactory;
@@ -22,11 +20,7 @@ namespace Hermes.EntityFramework.Queries
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
             var context = GetDbContext();
-
-            if (EnableDebugTrace)
-            {
-                context.Database.Log = s => Logger.Info(s);
-            }
+            context.Database.Log = s => Logger.Debug(s);
 
             return context.Set<TEntity>();
         }
