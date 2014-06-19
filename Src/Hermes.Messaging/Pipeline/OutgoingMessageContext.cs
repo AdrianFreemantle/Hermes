@@ -62,7 +62,7 @@ namespace Hermes.Messaging.Pipeline
 
         public static OutgoingMessageContext BuildDeferredCommand(Address address, Guid correlationId, TimeSpan delay, object message)
         {
-            MessageRuleValidation.ValidateIsCommandType(message);
+            MessageRuleValidation.ValidateCommand(message);
 
             var context = new OutgoingMessageContext
             {
@@ -83,7 +83,7 @@ namespace Hermes.Messaging.Pipeline
 
         public static OutgoingMessageContext BuildCommand(Address address, Guid correlationId, TimeSpan timeToLive, object message)
         {
-            MessageRuleValidation.ValidateIsCommandType(message);
+            MessageRuleValidation.ValidateCommand(message);
 
             var context = new OutgoingMessageContext
             {
@@ -99,7 +99,7 @@ namespace Hermes.Messaging.Pipeline
 
         public static OutgoingMessageContext BuildEvent(Guid correlationId, object message)
         {
-            MessageRuleValidation.ValidateIsEventType(message);
+            MessageRuleValidation.ValidateEvent(message);
 
             var context = new OutgoingMessageContext
             {
@@ -113,7 +113,7 @@ namespace Hermes.Messaging.Pipeline
 
         public static OutgoingMessageContext BuildReply(IMessageContext currentMessage, object message)
         {
-            MessageRuleValidation.ValidateIsMessageType(message);
+            MessageRuleValidation.ValidateMessage(message);
 
             var context = new OutgoingMessageContext
             {

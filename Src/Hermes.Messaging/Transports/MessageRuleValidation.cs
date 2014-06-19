@@ -1,12 +1,12 @@
 ﻿using System;
-
+using System.Linq;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports
 {
     public static class MessageRuleValidation
     {
-        public static void ValidateIsCommandType(object message)
+        public static void ValidateCommand(object message)
         {
             if (message == null)
                 throw new InvalidOperationException("Cannot send a null message.");
@@ -22,9 +22,16 @@ namespace Hermes.Messaging.Transports
                     " function during endpoing configuration. Message {0} does not comply with the current rule.", message.GetType().FullName);
                 throw new InvalidOperationException(error);
             }
+
+            var results = DataAnnotationValidator.Validate(message);
+
+            if (results.Any())
+            {
+                throw new CommandValidationException(results);
+            }
         }
 
-        public static void ValidateIsEventType(object message)
+        public static void ValidateEvent(object message)
         {
             if (message == null)
                 throw new InvalidOperationException("Cannot send a null message.");
@@ -42,7 +49,7 @@ namespace Hermes.Messaging.Transports
             }
         }
 
-        public static void ValidateIsMessageType(object message)
+        public static void ValidateMessage(object message)
         {
             if (message == null)
                 throw new InvalidOperationException("Cannot send a null message.");

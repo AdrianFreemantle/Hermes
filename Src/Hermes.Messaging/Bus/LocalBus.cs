@@ -29,7 +29,7 @@ namespace Hermes.Messaging.Bus
         public void Execute(object command)
         {
             Mandate.ParameterNotNull(command, "command");
-            MessageRuleValidation.ValidateIsCommandType(command);
+            MessageRuleValidation.ValidateCommand(command);
 
             if (!Settings.IsClientEndpoint)
                 throw new InvalidOperationException("Only a client endpoint may use IInMemoryBus to execute a command.");
@@ -64,7 +64,7 @@ namespace Hermes.Messaging.Bus
             if (messageTransport.CurrentMessage.MessageId == Guid.Empty)
                 throw new InvalidOperationException("A local event may only be raised within the context of an executing local command or received message.");
 
-            MessageRuleValidation.ValidateIsEventType(@event);
+            MessageRuleValidation.ValidateEvent(@event);
             Logger.Info("Raising : {0}", @event);
             dispatcher.DispatchToHandlers(@event, ServiceLocator.Current);
         }

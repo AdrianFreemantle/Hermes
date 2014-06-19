@@ -37,6 +37,7 @@
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -83,6 +84,7 @@
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
     <Compile Include="MessageExtensions.cs" />
     <Compile Include="Timeouts\TimeoutData.cs" />
+    <Compile Include="Transports\CommandValidationException.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />

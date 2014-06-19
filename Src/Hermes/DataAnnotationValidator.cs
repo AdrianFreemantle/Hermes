@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hermes
 {
-    public class DataAnnotationValidator 
+    public static class DataAnnotationValidator 
     {
-        public List<ValidationResult> Validate(object o)
+        public static ICollection<ValidationResult> Validate(object o)
         {
             var validationResults = new List<ValidationResult>();
             var vc = new ValidationContext(o, null, null);
