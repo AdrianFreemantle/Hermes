@@ -112,6 +112,11 @@ namespace Hermes
             return this;
         }
 
+        public IConfigureEndpoint RegisterDependencies<T>() where T : IRegisterDependencies, new()
+        {
+            return RegisterDependencies(new T());
+        }
+
         public IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder)
         {
             registerationHolder.Register(containerBuilder);
