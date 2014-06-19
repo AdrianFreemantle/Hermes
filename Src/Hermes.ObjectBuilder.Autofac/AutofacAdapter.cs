@@ -56,7 +56,7 @@ namespace Hermes.ObjectBuilder.Autofac
         public void RegisterModule(IRegisterDependencies module)
         {
             module.Register(this);
-        }
+        }        
 
         public void RegisterSingleton(object instance) 
         {
@@ -72,6 +72,16 @@ namespace Hermes.ObjectBuilder.Autofac
                 .PropertiesAutowired();
 
             builder.Update(LifetimeScope.ComponentRegistry);
+        }        
+
+        public void RegisterType<T>()
+        {
+            RegisterType(typeof(T));
+        }
+
+        public void RegisterType(Type type)
+        {
+            RegisterType(type, DependencyLifecycle.InstancePerUnitOfWork);
         }
 
         public void RegisterType(Type type, DependencyLifecycle dependencyLifecycle)
