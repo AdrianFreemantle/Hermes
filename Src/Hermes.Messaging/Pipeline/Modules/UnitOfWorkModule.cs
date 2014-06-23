@@ -24,22 +24,6 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                return ProcessMessage(input, next);
-            }
-            catch (UnitOfWorkRollbackException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        private bool ProcessMessage(IncomingMessageContext input, Func<bool> next)
-        {
-            try
-            {
                 var result = next();
                 CommitUnitsOfWork(input);
                 return result;
