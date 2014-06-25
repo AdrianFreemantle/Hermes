@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessManagement", "ProcessManagement\ProcessManagement.csproj", "{A2545590-95B8-4BEF-8F0D-FFCCC16D4421}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessManagementContracts", "ProcessManagementContracts\ProcessManagementContracts.csproj", "{B1697AF6-C30D-456C-8A65-196F1F15EEB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessManagement.Client", "ProcessManagement.Client\ProcessManagement.Client.csproj", "{121E0664-05D5-4947-BC59-C35247EFCE08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2545590-95B8-4BEF-8F0D-FFCCC16D4421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2545590-95B8-4BEF-8F0D-FFCCC16D4421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2545590-95B8-4BEF-8F0D-FFCCC16D4421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2545590-95B8-4BEF-8F0D-FFCCC16D4421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1697AF6-C30D-456C-8A65-196F1F15EEB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1697AF6-C30D-456C-8A65-196F1F15EEB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1697AF6-C30D-456C-8A65-196F1F15EEB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1697AF6-C30D-456C-8A65-196F1F15EEB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{121E0664-05D5-4947-BC59-C35247EFCE08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{121E0664-05D5-4947-BC59-C35247EFCE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{121E0664-05D5-4947-BC59-C35247EFCE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{121E0664-05D5-4947-BC59-C35247EFCE08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

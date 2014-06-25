@@ -20,30 +20,18 @@ namespace Hermes.Messaging.Transports
             DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
         }
 
-        protected virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator, IEnumerable<HandlerCacheItem> handlerDetails, Type[] contracts)
+        protected virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator, ICollection<HandlerCacheItem> handlerDetails, Type[] contracts)
         {
             var handlers = new List<object>();
 
-            foreach (var messageHandlerDetail in handlerDetails)
-            {
-                TryHandleMessage(message, serviceLocator, messageHandlerDetail, contracts, handlers);
-            }
-
-            SaveProcessManagers(handlers);
-        }
-
-        protected virtual void TryHandleMessage(object message, IServiceLocator serviceLocator, HandlerCacheItem messageHandlerDetail, IEnumerable<Type> contracts, List<object> handlers)
-        {
-            try
+            foreach (HandlerCacheItem messageHandlerDetail in handlerDetails)
             {
                 Logger.Debug("Dispatching {0} to {1}", message.GetType().FullName, messageHandlerDetail.HandlerType.FullName);
                 object messageHandler = messageHandlerDetail.TryHandleMessage(serviceLocator, message, contracts);
                 handlers.Add(messageHandler);
             }
-            catch (ProcessManagerDataNotFoundException ex)
-            {
-                Logger.Warn(ex.Message);
-            }
+
+            SaveProcessManagers(handlers);
         }
 
         protected virtual void SaveProcessManagers(IEnumerable<object> handlers)

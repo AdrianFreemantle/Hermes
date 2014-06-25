@@ -16,7 +16,6 @@ namespace Hermes.EntityFramework.ProcessManagager
         {
             this.unitOfWork = unitOfWork;
             this.timeoutStore = timeoutStore;
-            unitOfWork.BeginTransaction(IsolationLevel.Serializable);
         }
 
         public T Find<T>(Expression<Func<T, bool>> expression) where T : class, IContainProcessManagerData, new()

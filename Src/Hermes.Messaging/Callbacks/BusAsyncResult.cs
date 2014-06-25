@@ -58,7 +58,7 @@ namespace Hermes.Messaging.Callbacks
 
                 hasTimedOut = true;
                 result.ErrorCode = -1;
-                result.Messages = new object[0];
+                result.Message = new object();
                 TriggerTimeoutEvent();
                 CompleteCallback();
             }
@@ -95,7 +95,7 @@ namespace Hermes.Messaging.Callbacks
                     return;
 
                 result.ErrorCode = errorCode;
-                result.Messages = message;
+                result.Message = message;
                 completed = true;
                 CompleteCallback();
             }

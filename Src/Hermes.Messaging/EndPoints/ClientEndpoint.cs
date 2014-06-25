@@ -33,6 +33,7 @@ namespace Hermes.Messaging.EndPoints
         protected virtual void ConfigurePipeline(TContainerBuilder containerBuilder)
         {
             var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
+                    .Add<EnqueuedMessageSenderModule>()
                     .Add<MessageErrorModule>()
                     .Add<ExtractMessagesModule>()
                     .Add<MessageMutatorModule>()

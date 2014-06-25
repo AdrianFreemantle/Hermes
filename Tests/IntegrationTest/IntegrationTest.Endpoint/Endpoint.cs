@@ -22,11 +22,12 @@ namespace IntegrationTest.Endpoint
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(1)
+                .NumberOfWorkers(Environment.ProcessorCount)
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
 
-            Settings.CircuitBreakerThreshold = 200;
-            //Settings.EnableFaultSimulation(0.00M);
+            Settings.CircuitBreakerThreshold = 100;
+            Settings.CircuitBreakerReset = TimeSpan.FromSeconds(10);
+            Settings.EnableFaultSimulation(0.08M);
         }
 
         private static bool IsCommand(Type type)

@@ -18,7 +18,7 @@ namespace IntegrationTest.Client
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Verbose;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
 
             configuration
                 .UseJsonSerialization()

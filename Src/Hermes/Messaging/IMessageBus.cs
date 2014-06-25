@@ -15,6 +15,7 @@ namespace Hermes.Messaging
         void Publish(Guid correlationId, object @event);
 
         void Reply(object message);
+        void Reply(Address address, Guid corrolationId, object message);
         void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;
 
         void Defer(TimeSpan delay, object command);

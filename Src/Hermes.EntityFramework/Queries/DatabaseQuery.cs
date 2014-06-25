@@ -19,9 +19,7 @@ namespace Hermes.EntityFramework.Queries
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
-            var context = GetDbContext();
-            context.Database.Log = s => Logger.Debug(s);
-
+            var context = GetDbContext();        
             return context.Set<TEntity>();
         }
 

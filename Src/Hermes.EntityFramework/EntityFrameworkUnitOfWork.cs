@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Data;
 using System.Data.Entity;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -15,8 +13,8 @@ namespace Hermes.EntityFramework
 
         private readonly IContextFactory contextFactory;
         protected DbContext Context;
-        protected DbContextTransaction Transaction;
         private bool disposed;
+        private bool committed;
 
         public EntityFrameworkUnitOfWork(IContextFactory contextFactory)
         {
@@ -25,24 +23,18 @@ namespace Hermes.EntityFramework
 
         public void Commit()
         {
-            if (Transaction != null)
-            {
-                Logger.Debug("Commiting DbContextTransaction as part of unit-of-work commit");
-                Transaction.Commit();
-            }
-
             if (Context != null)
             {
                 Context.SaveChanges();
-                Context.Database.Connection.Close();
+                committed = true;
             }
         }
 
         public void Rollback()
         {
-            if (Transaction != null && Transaction.UnderlyingTransaction.Connection != null)
+            if (committed)
             {
-                Transaction.Rollback();
+                throw new UnitOfWorkRollbackException("The entity framework unit of work has already been committed and can therefore not revert the saved changes.");
             }
 
             if (Context != null)
@@ -64,7 +56,6 @@ namespace Hermes.EntityFramework
             if (Context == null)
             {
                 Context = contextFactory.GetContext();
-                Context.Database.Log = s => Logger.Debug(s);
             }
 
             return Context;
@@ -73,28 +64,6 @@ namespace Hermes.EntityFramework
         public Database GetDatabase()
         {
             return GetDbContext().Database;
-        }
-
-        public void BeginTransaction(IsolationLevel isolationLevel)
-        {
-            Logger.Debug("Starting DbContextTransaction with isolation level : {0}", isolationLevel);
-            var database = GetDatabase();
-            database.Connection.Open();
-            Transaction = database.BeginTransaction(isolationLevel);
-        }
-
-        public void CommitTransation()
-        {
-            Logger.Debug("Commiting DbContextTransaction");
-
-            if (Transaction == null)
-            {
-                throw new NullReferenceException("A has not been started and can therefore not be committed");
-            }
-
-            Transaction.Commit();
-            Transaction.Dispose();
-            Transaction = null;
         }
 
         ~EntityFrameworkUnitOfWork()
@@ -119,12 +88,6 @@ namespace Hermes.EntityFramework
             {
                 Context.Dispose();
                 Context = null;
-            }
-
-            if (disposing && Transaction != null)
-            {
-                Transaction.Dispose();
-                Transaction = null;
             }
 
             disposed = true;

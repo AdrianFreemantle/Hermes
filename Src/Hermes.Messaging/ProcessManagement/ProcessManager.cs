@@ -101,6 +101,11 @@ namespace Hermes.Messaging.ProcessManagement
             Bus.Send(State.Id, command);
         }
 
+        protected void ReplyToOriginator(object message)
+        {
+            Bus.Reply(Address.Parse(State.Originator), State.OriginalMessageId, message);
+        }
+
         protected void Publish(object @event)
         {
             Bus.Publish(State.Id, @event);

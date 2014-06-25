@@ -5,6 +5,7 @@ using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Timeouts;
 using Hermes.Messaging.Transports;
+using Hermes.Persistence;
 using Hermes.Pipes;
 
 namespace Hermes.Messaging.Pipeline.Modules
@@ -25,9 +26,7 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             try
             {
-                var result = next();
-                FaultSimulator.Trigger();
-                return result;
+                return next();
             }
             catch (UnitOfWorkRollbackException)
             {

@@ -28,5 +28,7 @@ namespace Hermes.Messaging
         string Originator { get; set; }
 
         int Version { get; set; }
+
+        byte[] TimeStamp { get; set; }
     }
 }

@@ -33,7 +33,7 @@ namespace IntegrationTest.Endpoint
                     RecordNumber = message.RecordNumber
                 });
 
-            messageBus.Publish(new RecordAddedToDatabase(message.RecordId));
+            messageBus.Publish(message.RecordId, new RecordAddedToDatabase(message.RecordId));
         }
 
         public void Handle(IRecordAddedToDatabase message)

@@ -20,14 +20,24 @@ namespace System.Transactions
 
         public static TransactionScope Begin()
         {
-            return Begin(TransactionScopeOption.Required);
+            return Begin(TransactionScopeOption.Required, IsolationLevel.ReadCommitted);
         }
 
         public static TransactionScope Begin(TransactionScopeOption scopeOption)
         {
+            return Begin(scopeOption, IsolationLevel.ReadCommitted);
+        }
+
+        public static TransactionScope Begin(IsolationLevel isolationLevel)
+        {
+            return Begin(TransactionScopeOption.Required, isolationLevel);
+        }
+
+        public static TransactionScope Begin(TransactionScopeOption scopeOption, IsolationLevel isolationLevel)
+        {
             var transactionOptions = new TransactionOptions
             {
-                IsolationLevel = IsolationLevel.ReadCommitted,
+                IsolationLevel = isolationLevel,
                 Timeout = Timeout
             };
 

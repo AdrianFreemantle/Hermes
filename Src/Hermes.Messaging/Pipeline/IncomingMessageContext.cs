@@ -144,7 +144,7 @@ namespace Hermes.Messaging.Pipeline
             outgoingMessages.Enqueue(outgoingMessage);
         }
 
-        public void CommitOutgoingMessages()
+        public void SendOutgoingMessages()
         {
             outgoingMessages.Commit();
             outgoingMessages.Clear();

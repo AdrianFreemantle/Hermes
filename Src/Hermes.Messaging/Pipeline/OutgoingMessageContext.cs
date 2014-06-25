@@ -113,12 +113,17 @@ namespace Hermes.Messaging.Pipeline
 
         public static OutgoingMessageContext BuildReply(IMessageContext currentMessage, object message)
         {
+            return BuildReply(currentMessage.ReplyToAddress, currentMessage.CorrelationId, message);
+        }
+
+        public static OutgoingMessageContext BuildReply(Address replyToAddress, Guid corrolationId, object message)
+        {
             MessageRuleValidation.ValidateMessage(message);
 
             var context = new OutgoingMessageContext
             {
-                correlationId = currentMessage.CorrelationId,
-                destination = currentMessage.ReplyToAddress,
+                correlationId = corrolationId,
+                destination = replyToAddress,
                 OutgoingMessageType = MessageType.Reply,
                 outgoingMessage = message
             };

@@ -21,7 +21,6 @@ namespace Hermes.Messaging.Configuration
                 ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes(scanner);
                 ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes(scanner);
 
-
                 foreach (var messageHandlerType in messageHandlerTypes)
                 {
                     containerBuilder.RegisterType(messageHandlerType, DependencyLifecycle.InstancePerUnitOfWork);

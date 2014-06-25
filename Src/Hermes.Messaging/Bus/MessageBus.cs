@@ -83,6 +83,19 @@ namespace Hermes.Messaging.Bus
             return callBackManager.SetupCallback(outgoingMessage.CorrelationId);
         }
 
+        public void Reply(Address address, Guid corrolationId, object message)
+        {
+            if (corrolationId == Guid.Empty)
+                throw new InvalidOperationException("Reply was called but we have an empty correlation Id.");
+
+            if (address == Address.Undefined)
+                throw new InvalidOperationException(
+                    "Reply was called but an empty address was provided..");
+
+            var outgoingMessage = OutgoingMessageContext.BuildReply(address, corrolationId, message);
+            messageTransport.SendMessage(outgoingMessage);
+        }
+
         public void Reply(object message)
         {
             var currentMessage = messageTransport.CurrentMessage;

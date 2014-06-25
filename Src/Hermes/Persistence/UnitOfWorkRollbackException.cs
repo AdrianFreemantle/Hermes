@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Hermes.Messaging.Pipeline.Modules
+namespace Hermes.Persistence
 {
     [Serializable]
     public class UnitOfWorkRollbackException : Exception
