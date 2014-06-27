@@ -52,5 +52,10 @@ namespace System
         {
             return Regex.Replace(value, "[^a-zA-Z0-9]", "-");
         }
+
+        public static string ToAlphanumeric(this string value)
+        {
+            return Regex.Replace(value, "[^a-zA-Z0-9]", "");
+        }
     }
 }
