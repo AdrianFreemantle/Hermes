@@ -34,6 +34,8 @@ namespace Hermes.Messaging.Configuration
         public static bool IsClientEndpoint { get; internal set; }
         public static bool SubsribeToDomainEvents { get; internal set; }
 
+        public static bool UseLocalMessageStore { get; set; }
+
         public static TimeSpan CircuitBreakerReset { get; set; }
         public static int CircuitBreakerThreshold { get; set; }
         public static bool SetMessageCounterHeader { get; set; }

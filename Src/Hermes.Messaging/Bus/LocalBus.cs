@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 using ServiceLocator = Hermes.Ioc.ServiceLocator;
-
-//using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Messaging.Bus
 {

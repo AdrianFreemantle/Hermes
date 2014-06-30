@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bus\ControlBus.cs" />
     <Compile Include="Callbacks\IManageCallbacks.cs" />
     <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="Configuration\CurrentUser.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="InMemoryBusExtensions.cs" />
     <Compile Include="Pipeline\Modules\EnqueuedMessageSenderModule.cs" />
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
+    <Compile Include="Pipeline\Modules\LocalMessageStoreModule.cs" />
     <Compile Include="Pipeline\Modules\MessageSerializationModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
     <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="MessageExtensions.cs" />
     <Compile Include="Timeouts\TimeoutData.cs" />
     <Compile Include="Transports\CommandValidationException.cs" />
+    <Compile Include="Transports\HeaderValueExtensions.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />

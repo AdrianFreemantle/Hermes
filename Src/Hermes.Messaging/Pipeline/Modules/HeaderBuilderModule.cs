@@ -14,7 +14,6 @@ namespace Hermes.Messaging.Pipeline.Modules
     public class HeaderBuilderModule : IModule<OutgoingMessageContext>
     {
         private readonly static ILog Logger = LogFactory.BuildLogger(typeof(HeaderBuilderModule));
-        private long sentMessageCounter = 0;
 
         public bool Process(OutgoingMessageContext input, Func<bool> next)
         {
@@ -25,25 +24,13 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private Dictionary<string, string> BuildMessageHeaders(OutgoingMessageContext context)
         {
-            var headers = new Dictionary<string, string>();
+            var headers = context.Headers.ToDictionary();
 
-            AddSentMessageCount(headers);
-
-            ConvertHeaderValues(context.Headers, headers);
             AddMessageTypeToHeader(context.OutgoingMessage, headers);
             AddUserName(headers);
             SetSentTime(headers);
 
             return headers;
-        }
-
-        private void AddSentMessageCount(Dictionary<string, string> headers)
-        {
-            if (Settings.SetMessageCounterHeader)
-            {
-                var sentCount = Interlocked.Increment(ref sentMessageCounter);
-                headers.Add(HeaderKeys.SentMessageCounter, sentCount.ToString(CultureInfo.InvariantCulture));
-            }
         }
 
         private static void SetSentTime(Dictionary<string, string> headers)
@@ -55,18 +42,9 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             string userName;
 
-            if (CurrentUser.GetCurrentUserName(out userName))
+            if (CurrentUser.GetCurrentUserName(out userName) && !String.IsNullOrWhiteSpace(userName)) 
             {
                 headers.Add(HeaderKeys.UserName, userName);
-
-            }
-        }
-
-        private void ConvertHeaderValues(IEnumerable<HeaderValue> headerValues, Dictionary<string, string> headers)
-        {
-            foreach (var messageHeader in headerValues)
-            {
-                headers[messageHeader.Key] = messageHeader.Value;
             }
         }
 

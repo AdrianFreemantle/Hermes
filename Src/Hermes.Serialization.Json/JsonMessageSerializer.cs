@@ -5,7 +5,6 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Reflection;
 
 using Newtonsoft.Json;

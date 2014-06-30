@@ -54,6 +54,8 @@
     <Compile Include="ActionCollection.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
+    <Compile Include="Messaging\IStoreLocalMessages.cs" />
+    <Compile Include="Messaging\LocalSession.cs" />
     <Compile Include="Persistence\UnitOfWorkRollbackException.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />

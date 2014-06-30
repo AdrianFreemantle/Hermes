@@ -2,6 +2,7 @@
 using Contracts;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -14,7 +15,7 @@ namespace Remote.Endpoint
         protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Verbose;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
 
             configuration
                 .UseJsonSerialization()

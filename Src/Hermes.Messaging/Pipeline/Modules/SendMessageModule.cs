@@ -26,22 +26,21 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             switch (input.OutgoingMessageType)
             {
-                case OutgoingMessageContext.MessageType.Command:
                 case OutgoingMessageContext.MessageType.Control:
+                    SendControlMessage(input);
+                    break;
+
+                case OutgoingMessageContext.MessageType.Command:
                 case OutgoingMessageContext.MessageType.Reply:
-                    Logger.Debug("Sending message {0} to {1}", input, input.Destination);
-                    sender.Send(input.GetTransportMessage(), input.Destination);
+                    SendMessage(input);
                     break;
 
                 case OutgoingMessageContext.MessageType.Defer:
-                    var timeout = new TimeoutData(input.GetTransportMessage());
-                    Logger.Debug("Deferring message {0}", timeout);
-                    timeoutsPersister.Add(timeout);
+                    DeferMessage(input);
                     break;
 
                 case OutgoingMessageContext.MessageType.Event:
-                    Logger.Debug("Publishing message {0}", input);
-                    publisher.Publish(input);
+                    PublishMessage(input);
                     break;
 
                 default:
@@ -49,6 +48,39 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
 
             return next();
+        }
+
+        private void PublishMessage(OutgoingMessageContext input)
+        {
+            Logger.Debug("Publishing message {0}", input);
+            publisher.Publish(input);
+        }
+
+        private void DeferMessage(OutgoingMessageContext input)
+        {
+            var timeout = new TimeoutData(input.GetTransportMessage());
+            Logger.Debug("Deferring message {0}", timeout);
+            timeoutsPersister.Add(timeout);
+        }
+
+        private void SendMessage(OutgoingMessageContext input)
+        {
+            Logger.Debug("Sending message {0} to {1}", input, input.Destination);
+            sender.Send(input.GetTransportMessage(), input.Destination);
+        }
+
+        private void SendControlMessage(OutgoingMessageContext input)
+        {
+            if (input.Destination == Address.Undefined)
+            {
+                Logger.Debug("Sending control message {0} to {1}", input, input.Destination);
+                sender.Send(input.GetTransportMessage(), input.Destination);
+            }
+            else
+            {
+                Logger.Debug("Broadcasting control message {0}", input);
+                publisher.Publish(input);
+            }
         }
     }
 }

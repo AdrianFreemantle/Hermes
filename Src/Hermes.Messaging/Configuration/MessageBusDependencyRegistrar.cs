@@ -38,6 +38,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<SendMessageModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<UnitOfWorkModule>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<EnqueuedMessageSenderModule>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<LocalMessageStoreModule>(DependencyLifecycle.InstancePerUnitOfWork);
 
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 

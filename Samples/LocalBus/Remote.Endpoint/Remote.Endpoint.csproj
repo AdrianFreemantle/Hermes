@@ -35,23 +35,29 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.4.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes">
-      <HintPath>..\packages\Hermes.Core.0.5.6\lib\net45\Hermes.dll</HintPath>
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.0.10.30\lib\net45\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Domain">
-      <HintPath>..\packages\Hermes.Core.0.5.6\lib\net45\Hermes.Domain.dll</HintPath>
+    <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.0.10.30\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Messaging">
-      <HintPath>..\packages\Hermes.Messaging.0.5.6\lib\net45\Hermes.Messaging.dll</HintPath>
+    <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.10.30\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\packages\Hermes.Messaging.0.5.6\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.10.30\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\packages\Hermes.Messaging.0.5.6\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.0.10.30\lib\net45\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ServiceHost">
-      <HintPath>..\packages\Hermes.ServiceHost.0.5.6\lib\net45\Hermes.ServiceHost.exe</HintPath>
+    <Reference Include="Hermes.ServiceHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.ServiceHost.0.10.30\lib\net45\Hermes.ServiceHost.exe</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -69,8 +75,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf">
-      <HintPath>..\packages\Hermes.ServiceHost.0.5.6\lib\net45\Topshelf.dll</HintPath>
+    <Reference Include="Topshelf, Version=3.1.122.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.ServiceHost.0.10.30\lib\net45\Topshelf.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

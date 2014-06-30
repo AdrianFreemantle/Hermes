@@ -3,11 +3,11 @@ using Contracts;
 using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
+using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
 using Hermes.Serialization.Json;
-using LocalBus.Contracts;
 using LocalBus.Persistence;
 
 namespace LocalBus
@@ -18,6 +18,7 @@ namespace LocalBus
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
+            Settings.UseLocalMessageStore = true;
 
             configuration
                 .UseJsonSerialization()

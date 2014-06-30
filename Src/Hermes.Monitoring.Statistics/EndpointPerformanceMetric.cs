@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Hermes.Messaging;
 
 namespace Hermes.Monitoring.Statistics

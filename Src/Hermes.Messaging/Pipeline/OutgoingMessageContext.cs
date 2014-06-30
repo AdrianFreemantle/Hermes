@@ -146,6 +146,29 @@ namespace Hermes.Messaging.Pipeline
             return context;
         }
 
+        public static OutgoingMessageContext BuildControl(params HeaderValue[] headers)
+        {
+            return BuildControl(Address.Undefined, headers);
+        }
+
+        public static OutgoingMessageContext BuildControl(Address address, params HeaderValue[] headers)
+        {
+            var context = new OutgoingMessageContext
+            {
+                destination = address,
+                OutgoingMessageType = MessageType.Control
+            };
+
+            context.AddHeader(new HeaderValue(HeaderKeys.ControlMessageHeader, true.ToString()));
+
+            foreach (var headerValue in headers)
+            {
+                context.AddHeader(headerValue);
+            }
+
+            return context;
+        }
+
         public void Process(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline, IServiceLocator serviceLocator)
         {
             var pipeline = outgoingPipeline.Build(serviceLocator);
