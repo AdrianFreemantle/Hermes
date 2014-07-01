@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Transactions;
 using Hermes.Compression;
@@ -8,14 +10,9 @@ using Hermes.Serialization;
 
 namespace Hermes.EntityFramework.MessageStore
 {
-    public class LocalEventStore
-    {
-        
-    }
-
     public class LocalMessageStore : IStoreLocalMessages
     {
-        public void SaveSession(LocalSession session)
+        public void SaveSession(object message, Guid messageId, Dictionary<string, string> headers)
         {
             using (var transactionScope = TransactionScopeUtils.Begin(TransactionScopeOption.Suppress))
             using (var lifetimeScope = Settings.RootContainer.BeginLifetimeScope())
@@ -27,10 +24,10 @@ namespace Hermes.EntityFramework.MessageStore
 
                 messageStore.Add(new MessageStore
                 {
-                    Headers = serializer.SerializeObject(session.Headers),
-                    Message = CompressMessage(serializer, session.Message),
-                    MessageId = session.MessageId,
-                    Failed = session.Headers.ContainsKey(HeaderKeys.FailureDetails)
+                    Headers = serializer.SerializeObject(headers),
+                    Message = CompressMessage(serializer, message),
+                    MessageId = messageId,
+                    Failed = headers.ContainsKey(HeaderKeys.FailureDetails)
                 });
 
                 unitOfWork.Commit();
