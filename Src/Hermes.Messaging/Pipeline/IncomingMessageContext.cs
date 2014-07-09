@@ -68,7 +68,7 @@ namespace Hermes.Messaging.Pipeline
 
         public IncomingMessageContext(object localMessage, IServiceLocator serviceLocator)
         {
-            Message = localMessage;
+            SetMessage(localMessage);
             ServiceLocator = serviceLocator;
             messageId = SequentialGuid.New();
 
@@ -96,14 +96,14 @@ namespace Hermes.Messaging.Pipeline
 
         protected virtual TransactionScope StartTransactionScope()
         {
-            if (Settings.UseDistributedTransaction)
+            if (Settings.DisableDistributedTransactions)
             {
-                Logger.Debug("Beginning a transaction scope with option[Required]");
-                return TransactionScopeUtils.Begin(TransactionScopeOption.Required);
+                Logger.Debug("Beginning a transaction scope with option[Suppress]");
+                return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
             }
 
-            Logger.Debug("Beginning a transaction scope with option[Suppress]");
-            return TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
+            Logger.Debug("Beginning a transaction scope with option[Required]");
+            return TransactionScopeUtils.Begin(TransactionScopeOption.Required);
         }
 
         public string GetUserName()

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 
 namespace Hermes.Messaging.Transports
 {
@@ -23,9 +26,9 @@ namespace Hermes.Messaging.Transports
             return new HeaderValue(key, code.GetHashCode().ToString(CultureInfo.InvariantCulture));
         }
 
-        public static HeaderValue FromKeyValue(string key, string value)
+        public static HeaderValue FromKeyValue(KeyValuePair<string, string> keyValuePair)
         {
-            return new HeaderValue(key, value);
+            return new HeaderValue(keyValuePair.Key, keyValuePair.Value);
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Hermes.Messaging
 {
     public interface IConfigureEndpoint
     {
-        IConfigureEndpoint DontUseDistributedTransaction();
+        IConfigureEndpoint DisableHeartbeatService();
+        IConfigureEndpoint DisableDistributedTransactions();
         IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);
         IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder);
         IConfigureEndpoint RegisterDependencies<T>() where T : IRegisterDependencies, new();
@@ -16,5 +17,6 @@ namespace Hermes.Messaging
         IConfigureEndpoint DefineEventAs(Func<Type, bool> isEventRule);
         IConfigureEndpoint SendOnlyEndpoint();
         IConfigureEndpoint UserNameResolver(Func<string> resolveUserName);
+        IConfigureEndpoint EndpointName(string name);
     }
 }

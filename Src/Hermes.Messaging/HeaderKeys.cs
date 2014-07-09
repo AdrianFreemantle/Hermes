@@ -16,6 +16,11 @@
         public const string ReturnErrorCode = "Hermes.ReturnErrorCode";
         public const string ProcessingEndpoint = "Hermes.ProcessingEndpoint";
         public const string UserName = "Hermes.UserName";
-        public const string SentMessageCounter = "Hermes.SentMessageCounter";
+        public static string MonitoringPeriod = "Hermes.MonitoringPeriod";
+        public static string TotalMessagesProcessed = "Hermes.TotalMessagesProcessed";
+        public static string TotalErrorMessages = "Hermes.TotalErrorMessages";
+        public static string AverageTimeToDeliver = "Hermes.AverageTimeToDeliver";
+        public static string AverageTimeToProcess = "Hermes.AverageTimeToProcess";
+        public static string Heartbeat = "Hermes.Heartbeat";
     }
 }

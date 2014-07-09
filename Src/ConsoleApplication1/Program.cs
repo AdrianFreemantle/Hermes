@@ -55,7 +55,6 @@ namespace ConsoleApplication1
                                   metric.AverageTimeToDeliver.Milliseconds,
                                   metric.AverageTimeToProcess.Milliseconds);
             }
-            
         }
     }
 }

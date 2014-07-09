@@ -14,8 +14,11 @@ namespace Hermes.Messaging.Configuration
         private const string EndpointNameSpace = ".Endpoint";
         private static int numberOfWorkers = 1;
         private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
+        
         private static readonly Address ErrorAddress = Address.Parse("Error");
         private static readonly Address AuditAddress = Address.Parse("Audit");
+        private static readonly Address MonitoringAddress = Address.Parse("Monitoring");
+
         private static bool autoSubscribeEvents = true;
         private static IContainer rootContainer;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
@@ -26,13 +29,15 @@ namespace Hermes.Messaging.Configuration
         internal static Func<Type, bool> IsCommandType { get; set; }
         internal static Func<Type, bool> IsEventType { get; set; }
 
-        public static bool UseDistributedTransaction { get; internal set; }
+        public static bool DisableDistributedTransactions { get; internal set; }
         public static bool FlushQueueOnStartup { get; internal set; }
         public static bool IsSendOnly { get; internal set; }
         public static bool IsLocalEndpoint { get; internal set; }
         public static int FirstLevelRetryAttempts { get; internal set; }
         public static bool IsClientEndpoint { get; internal set; }
         public static bool SubsribeToDomainEvents { get; internal set; }
+        public static bool DisablePerformanceMonitoring { get; internal set; }
+        public static bool DisableHeartbeatService { get; internal set; }
 
         public static bool UseLocalMessageStore { get; set; }
 
@@ -51,7 +56,6 @@ namespace Hermes.Messaging.Configuration
             IsMessageType = type => false;
             IsCommandType = type => false;
             IsEventType = type => false;
-            UseDistributedTransaction = true;
         }
 
         public static IContainer RootContainer
@@ -106,10 +110,15 @@ namespace Hermes.Messaging.Configuration
             get { return AuditAddress; }
         }
 
+        public static Address MonitoringEndpoint
+        {
+            get { return MonitoringAddress; }
+        }
+
         public static IManageSubscriptions Subscriptions
         {
             get { return RootContainer.GetInstance<IManageSubscriptions>(); }
-        }
+        }        
 
         internal static void SetEndpointName(string endpointName)
         {

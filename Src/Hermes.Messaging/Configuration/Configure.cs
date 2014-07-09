@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hermes.Domain;
 using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Messaging;
@@ -87,9 +86,15 @@ namespace Hermes
             return this;
         }
 
-        public IConfigureEndpoint DontUseDistributedTransaction()
+        public IConfigureEndpoint DisableHeartbeatService()
         {
-            Settings.UseDistributedTransaction = false;
+            Settings.DisableHeartbeatService = true;
+            return this;
+        }
+
+        public IConfigureEndpoint DisableDistributedTransactions()
+        {
+            Settings.DisableDistributedTransactions = true;
             return this;
         }
 
@@ -109,6 +114,12 @@ namespace Hermes
         IConfigureWorker IConfigureWorker.FlushQueueOnStartup(bool flush)
         {
             Settings.FlushQueueOnStartup = flush;
+            return this;
+        }
+
+        public IConfigureWorker DisablePerformanceMonitoring()
+        {
+            Settings.DisablePerformanceMonitoring = true;
             return this;
         }
 
@@ -149,6 +160,12 @@ namespace Hermes
         public IConfigureEndpoint UserNameResolver(Func<string> userNameResolver)
         {
             Settings.UserNameResolver = userNameResolver;
+            return this;
+        }
+
+        public IConfigureEndpoint EndpointName(string name)
+        {
+            Settings.SetEndpointName(name);
             return this;
         }
 
@@ -211,6 +228,7 @@ namespace Hermes
             queueCreator.CreateQueueIfNecessary(Address.Local);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
+            queueCreator.CreateQueueIfNecessary(Settings.MonitoringEndpoint);
 
             if (Settings.FlushQueueOnStartup)
             {

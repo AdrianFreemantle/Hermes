@@ -49,7 +49,7 @@ namespace Hermes.Messaging.Configuration
                           .Where(Settings.IsCommandType)
                           .Union(scanner.Types.Where(Settings.IsEventType))
                           .Union(scanner.Types.Where(Settings.IsMessageType))
-                          .Distinct();
+                          .Distinct(new TypeEqualityComparer());
         }
 
         private static void CacheHandlersForMessageContract(Type messageContract, IEnumerable<Type> messageHandlerTypes)

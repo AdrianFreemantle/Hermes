@@ -10,6 +10,8 @@ namespace Hermes.Messaging
     public abstract class ScheduledWorkerService : IAmStartable, IDisposable
     {
         private readonly object syncLock = new object();
+        protected readonly uint WorkerThreads = 1;
+
         protected readonly ILog Logger;
         protected bool RunImmediatelyOnStartup;
 
@@ -53,8 +55,10 @@ namespace Hermes.Messaging
             Dispose(false);
         }               
 
-        public void Start()
+        public virtual void Start()
         {
+            Logger.Info("Starting {0}", GetType().Name.SplitCamelCase());
+
             if(disposed)
                 throw new ObjectDisposedException(String.Format("Unable to start service {0} as it is disposed", GetType().Name));
 
@@ -63,11 +67,19 @@ namespace Hermes.Messaging
                 if (tokenSource == null || tokenSource.IsCancellationRequested)
                 {
                     tokenSource = new CancellationTokenSource();
-                    circuitBreaker = IntializeCircuitBreaker();                    
-                    StartThread();
+                    circuitBreaker = IntializeCircuitBreaker();
+                    StartWorkers();
                 }    
             }
-        }        
+        }    
+    
+        private void StartWorkers()
+        {
+            for (int i = 0; i < WorkerThreads; i++)
+            {
+                StartThread();
+            }
+        }
 
         private void StartThread()
         {
@@ -100,6 +112,8 @@ namespace Hermes.Messaging
 
         public void Stop()
         {
+            Logger.Info("Stopping {0}", GetType().Name.SplitCamelCase());
+
             lock (syncLock)
             {
                 if (tokenSource != null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using Hermes.EntityFramework;
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
@@ -16,6 +17,7 @@ namespace IntegrationTest.Endpoint
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
+                .FlushQueueOnStartup(true)
                 .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()

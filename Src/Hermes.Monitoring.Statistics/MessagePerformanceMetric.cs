@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Hermes.Messaging;
-using Hermes.Serialization.Json;
 
 namespace Hermes.Monitoring.Statistics
 {

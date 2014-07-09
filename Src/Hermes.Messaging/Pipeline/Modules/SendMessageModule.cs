@@ -71,16 +71,8 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private void SendControlMessage(OutgoingMessageContext input)
         {
-            if (input.Destination == Address.Undefined)
-            {
-                Logger.Debug("Sending control message {0} to {1}", input, input.Destination);
-                sender.Send(input.GetTransportMessage(), input.Destination);
-            }
-            else
-            {
-                Logger.Debug("Broadcasting control message {0}", input);
-                publisher.Publish(input);
-            }
+            Logger.Debug("Sending control message {0} to {1}", input, input.Destination);
+            sender.Send(input.GetTransportMessage(), input.Destination);
         }
     }
 }

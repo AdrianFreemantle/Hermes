@@ -126,9 +126,9 @@ namespace Hermes.Messaging.Timeouts
 
         private static TransactionScope StartTransactionScope()
         {
-            return Settings.UseDistributedTransaction
-                ? TransactionScopeUtils.Begin(TransactionScopeOption.Required)
-                : TransactionScopeUtils.Begin(TransactionScopeOption.Suppress);
+            return Settings.DisableDistributedTransactions
+                ? TransactionScopeUtils.Begin(TransactionScopeOption.Suppress)
+                : TransactionScopeUtils.Begin(TransactionScopeOption.Required);
         }
     }
 }

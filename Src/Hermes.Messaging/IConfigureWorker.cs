@@ -7,5 +7,6 @@ namespace Hermes.Messaging
         IConfigureWorker SecondLevelRetryPolicy(int attempts, TimeSpan delay);
         IConfigureWorker FirstLevelRetryPolicy(int attempts);
         IConfigureWorker FlushQueueOnStartup(bool flush);
+        IConfigureWorker DisablePerformanceMonitoring();
     }
 }

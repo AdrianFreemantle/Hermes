@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-
-using Hermes.Logging;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
 using Microsoft.Practices.ServiceLocation;
@@ -12,8 +10,6 @@ namespace Hermes.Messaging.Pipeline
 {
     public class OutgoingMessageContext
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (OutgoingMessageContext));
-
         private readonly List<HeaderValue> messageHeaders = new List<HeaderValue>();
         private readonly Guid messageId;
         private object outgoingMessage;
@@ -156,7 +152,7 @@ namespace Hermes.Messaging.Pipeline
             var context = new OutgoingMessageContext
             {
                 destination = address,
-                OutgoingMessageType = MessageType.Control
+                OutgoingMessageType = MessageType.Control,
             };
 
             context.AddHeader(new HeaderValue(HeaderKeys.ControlMessageHeader, true.ToString()));
@@ -188,6 +184,9 @@ namespace Hermes.Messaging.Pipeline
 
         public IEnumerable<Type> GetMessageContracts()
         {
+            if(outgoingMessage == null)
+                return new Type[0];
+
             return outgoingMessage.GetContracts();
         }
 

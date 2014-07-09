@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Monitoring;
 
 namespace Hermes.Messaging.Transports
 {
@@ -36,6 +37,9 @@ namespace Hermes.Messaging.Transports
             if (message == null)
                 throw new InvalidOperationException("Cannot send a null message.");
 
+            if(message is IDomainEvent)
+                return;
+
             if (Settings.IsEventType == null)
             {
                 throw new InvalidOperationException("No rules have been configured for event message types. Use the DefineEventAs function during endpoint configuration to configure this rule.");
@@ -45,6 +49,7 @@ namespace Hermes.Messaging.Transports
             {
                 var error = String.Format("Publish is reserved for messages that have been defined as events using the DefineEventAs" +
                     " function during endpoing configuration. Message {0} does not comply with the current rule.", message.GetType().FullName);
+
                 throw new InvalidOperationException(error);
             }
         }
@@ -52,7 +57,7 @@ namespace Hermes.Messaging.Transports
         public static void ValidateMessage(object message)
         {
             if (message == null)
-                throw new InvalidOperationException("Cannot send a null message.");
+                throw new InvalidOperationException("Cannot send a null message.");            
 
             if (Settings.IsMessageType == null)
             {

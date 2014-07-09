@@ -34,6 +34,7 @@ namespace Hermes.Messaging.EndPoints
         {
             var incomingPipeline = new ModulePipeFactory<IncomingMessageContext>()
                 .Add<EnqueuedMessageSenderModule>()
+                .Add<PerformanceMeasurementModule>()
                 .Add<AuditModule>()
                 .Add<MessageErrorModule>()
                 .Add<ExtractMessagesModule>()

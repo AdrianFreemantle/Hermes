@@ -12,15 +12,12 @@ namespace Hermes.Messaging.Bus
             this.messageTransport = messageTransport;
         }
 
-        public void Send(Address address, params HeaderValue[] headers)
+        public void Send(Address address, HeaderValue[] headers)
         {
-            var outgoingMessage = OutgoingMessageContext.BuildControl(address, headers);
-            messageTransport.SendMessage(outgoingMessage);
-        }
+            Mandate.ParameterNotNull(address, "address");
+            Mandate.ParameterNotNullOrEmpty(headers, "headers");
 
-        public void Broadcast(params HeaderValue[] headers)
-        {
-            var outgoingMessage = OutgoingMessageContext.BuildControl(headers);
+            var outgoingMessage = OutgoingMessageContext.BuildControl(address, headers);
             messageTransport.SendMessage(outgoingMessage);
         }
     }

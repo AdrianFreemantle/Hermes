@@ -13,7 +13,7 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int NumberOfMessageToSend = 100000; 
+        const int NumberOfMessageToSend = 1000000; 
 
         static void Main(string[] args)
         {

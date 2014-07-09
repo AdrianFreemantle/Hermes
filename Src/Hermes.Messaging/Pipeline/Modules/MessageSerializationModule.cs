@@ -1,5 +1,4 @@
 ﻿using System;
-using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Pipes;
 
