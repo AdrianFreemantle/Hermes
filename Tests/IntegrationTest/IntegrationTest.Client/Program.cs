@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-
+using Hermes.Messaging.Management;
 using IntegrationTest.Contracts;
 
 namespace IntegrationTest.Client
@@ -19,13 +18,23 @@ namespace IntegrationTest.Client
         {
             int[] range = Enumerable.Range(0, NumberOfMessageToSend).ToArray();
 
-            //Thread.Sleep(10000); //give worker time to init database etc
+            //Thread.Sleep(10000); 
 
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
+
+            
 
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
             var bus = Settings.RootContainer.GetInstance<IMessageBus>();
+
+
+            var query = Settings.RootContainer.GetInstance<SqlErrorQueueQuery>();
+
+            var count = query.GetErrorCount();
+            var result = query.GetErrorMessages(1, 50);
+
+
             int processorCount = Environment.ProcessorCount;
 
             var stopwatch = new Stopwatch();

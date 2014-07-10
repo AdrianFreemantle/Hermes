@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hermes.Messaging.Monitoring.Events;
+using Hermes.Messaging.Monitoring.SystemEvents;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
@@ -12,7 +12,8 @@ namespace Hermes.Messaging.Monitoring.Pipeline
         private static readonly Dictionary<string, HeartbeatMonitor> HeartBeats = new Dictionary<string, HeartbeatMonitor>();
         private static readonly object SyncLock = new object();
         
-            public static event EndpointHeartbeatStoppedHandler OnEndpointHeartbeatStopped;
+        public static event EndpointHeartbeatStoppedHandler OnEndpointHeartbeatStopped;
+        public static event EndpointHeartbeatResumedHandler OnEndpointHeartbeatResumed;
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
@@ -41,15 +42,23 @@ namespace Hermes.Messaging.Monitoring.Pipeline
                 {
                     var monitor = new HeartbeatMonitor(endpoint.Value);
                     monitor.OnEndpointHeartbeatStopped += OnHeartbeatStopped;
+                    monitor.OnEndpointHeartbeatResumed += OnHeartbeatResumed;
                     HeartBeats[endpoint.Value] = monitor;
+                    monitor.Start();
                 }
             }
         }
 
-        private void OnHeartbeatStopped(EndpointHeartbeatStoppedEventArgs endpointHeartbeatStoppedEventArgs, object sender)
+        void OnHeartbeatResumed(EndpointHeartbeatResumedEventArgs e, object sender)
+        {
+            if (OnEndpointHeartbeatResumed != null)
+                OnEndpointHeartbeatResumed(e, sender);
+        }
+
+        private void OnHeartbeatStopped(EndpointHeartbeatStoppedEventArgs e, object sender)
         {
             if (OnEndpointHeartbeatStopped != null)
-                OnEndpointHeartbeatStopped(endpointHeartbeatStoppedEventArgs, sender);
+                OnEndpointHeartbeatStopped(e, sender);
         }
     }
 }

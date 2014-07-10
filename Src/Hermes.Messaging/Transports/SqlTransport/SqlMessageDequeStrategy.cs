@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Serialization;
@@ -12,21 +10,14 @@ namespace Hermes.Messaging.Transports.SqlTransport
     public class SqlMessageDequeStrategy : IDequeueMessages
     {
         private readonly string connectionString;
-        private readonly ISerializeObjects objectSerializer;
+        private readonly ISerializeObjects serializer;
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SqlMessageDequeStrategy));
         private static readonly string DequeueSql = String.Format(SqlCommands.Dequeue, Address.Local);
 
-        const int MessageIdIndex = 0;
-        const int CorrelationIdIndex = 1;
-        const int ReplyToAddressIndex = 2;
-        const int TimeToLiveIndex = 3;
-        const int HeadersIndex = 4;
-        const int BodyIndex = 5;
-
-        public SqlMessageDequeStrategy(ISerializeObjects objectSerializer)
+        public SqlMessageDequeStrategy(ISerializeObjects serializer)
         {
             connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
-            this.objectSerializer = objectSerializer;
+            this.serializer = serializer;
         }
 
         public TransportMessage Dequeue()
@@ -49,8 +40,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
                 connection.Open();
                 using (var command = new SqlCommand(DequeueSql, connection))
                 {
-                    var message = FetchNextMessage(command);
-                    return message;
+                    return FetchNextMessage(command);
                 }
             }
         }
@@ -61,43 +51,13 @@ namespace Hermes.Messaging.Transports.SqlTransport
             {
                 if (dataReader.Read())
                 {
-                    var timeTolive = GetTimeTolive(dataReader);
-
-                    if (timeTolive == TimeSpan.Zero)
-                    {
-                        return TransportMessage.Undefined;
-                    }
-
-                    var messageId = dataReader.GetGuid(MessageIdIndex);
-                    var correlationId = dataReader.IsDBNull(CorrelationIdIndex) ? Guid.Empty : Guid.Parse(dataReader.GetString(CorrelationIdIndex));
-                    var replyToAddress = dataReader.GetString(ReplyToAddressIndex);
-                    var headers = objectSerializer.DeserializeObject<Dictionary<string, string>>(dataReader.GetString(HeadersIndex));
-                    var body = dataReader.IsDBNull(BodyIndex) ? null : dataReader.GetSqlBinary(BodyIndex).Value;
-
-                    Logger.Debug("Dequeued message {0}", messageId);
-
-                    return new TransportMessage(messageId, correlationId, Address.Parse(replyToAddress), timeTolive, headers, body);
+                    TransportMessage message = dataReader.BuildTransportMessage(serializer);
+                    Logger.Debug("Dequeued message {0}", message.MessageId);
+                    return message;
                 }
             }
 
             return TransportMessage.Undefined;
-        }
-
-        private static TimeSpan GetTimeTolive(SqlDataReader dataReader)
-        {
-            if (dataReader.IsDBNull(TimeToLiveIndex))
-            {
-                return TimeSpan.MaxValue;
-            }
-
-            DateTime expireDateTime = dataReader.GetDateTime(TimeToLiveIndex);
-
-            if (dataReader.GetDateTime(TimeToLiveIndex) < DateTime.UtcNow)
-            {
-                return TimeSpan.Zero;
-            }
-
-            return TimeSpan.FromTicks(expireDateTime.Ticks - DateTime.UtcNow.Ticks);
         }
     }
 }

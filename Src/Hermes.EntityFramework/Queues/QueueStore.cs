@@ -24,7 +24,7 @@ namespace Hermes.EntityFramework.Queues
             return database.ExecuteScalarCommand<Guid>(command);
         }
 
-        public void Remove(string queueName, Guid id)
+        public bool TryDeque(string queueName, Guid id)
         {
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName");
             Mandate.ParameterNotDefaut(id, "id");
@@ -33,8 +33,15 @@ namespace Hermes.EntityFramework.Queues
             
             int affectedRows = database.ExecuteSqlCommand(String.Format(QueueSqlCommands.Remove, queueName.ToUriSafeString()), new SqlParameter("Id", id));
 
-            if (affectedRows != 1)
-                throw new DBConcurrencyException(String.Format("The task with Id {0} has already been claimed from queue {1}", id, queueName.ToUriSafeString()));
+            return affectedRows > 0;
+        }
+
+        public void Remove(string queueName, Guid id)
+        {
+            if(TryDeque(queueName, id))
+                return;
+
+            throw new DBConcurrencyException(String.Format("The task with Id {0} has already been claimed from queue {1}", id, queueName.ToUriSafeString()));
         }
 
         public void Enqueue(string queueName, Guid id)

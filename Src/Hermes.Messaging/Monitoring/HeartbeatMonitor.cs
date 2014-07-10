@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Timers;
 using Hermes.Logging;
-using Hermes.Messaging.Monitoring.Events;
+using Hermes.Messaging.Monitoring.SystemEvents;
 
 namespace Hermes.Messaging.Monitoring
 {
@@ -11,14 +11,15 @@ namespace Hermes.Messaging.Monitoring
         private readonly TimeSpan monitoringPeriod = TimeSpan.FromMinutes(1);
         private readonly Timer timer;
         private readonly string name;
-        private DateTime lastSeen;
+        private bool stopped = true;
+        private DateTime lastSeen = DateTime.Now;
 
         public event EndpointHeartbeatStoppedHandler OnEndpointHeartbeatStopped;
+        public event EndpointHeartbeatResumedHandler OnEndpointHeartbeatResumed;
 
         public HeartbeatMonitor(string name)
         {
             this.name = name;
-            lastSeen = DateTime.Now;
 
             timer = new Timer
             {
@@ -27,24 +28,38 @@ namespace Hermes.Messaging.Monitoring
             };
 
             timer.Elapsed += Elapsed;
-            timer.Start();
+        }
+
+        public void Start()
+        {
+            Reset();
         }
 
         public void Reset()
         {
             timer.Stop();
-            timer.Start();
-
-            lastSeen = DateTime.Now;
-            Logger.Info("Endpoint {0} heartbeat detected", name);
+            Resume();
         }
 
         void Elapsed(object sender, ElapsedEventArgs e)
         {
             Logger.Error("Endpoint {0} appears to be down", name);
+            stopped = true;
 
             if (OnEndpointHeartbeatStopped != null)
                 OnEndpointHeartbeatStopped(new EndpointHeartbeatStoppedEventArgs(name, lastSeen), this);
+        }
+
+        private void Resume()
+        {
+            if (stopped && OnEndpointHeartbeatResumed != null)
+            {
+                OnEndpointHeartbeatResumed(new EndpointHeartbeatResumedEventArgs(name, lastSeen), this);
+            }
+
+            timer.Start();
+            lastSeen = DateTime.Now;
+            stopped = false;
         }
 
         public void Dispose()

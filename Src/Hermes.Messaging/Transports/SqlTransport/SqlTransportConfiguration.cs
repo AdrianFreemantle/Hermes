@@ -2,6 +2,7 @@
 
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
+using Hermes.Messaging.Management;
 using Hermes.Messaging.Storage.MsSql;
 
 namespace Hermes.Messaging.Transports.SqlTransport
@@ -41,6 +42,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
                 containerBuilder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlSubscriptionStorage>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlTimeoutStorage>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<SqlErrorQueueQuery>(DependencyLifecycle.SingleInstance);
             }
         }
     }

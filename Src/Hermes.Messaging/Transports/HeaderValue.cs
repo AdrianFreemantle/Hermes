@@ -4,13 +4,21 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Hermes.Messaging.Transports
 {
+    [DataContract]
     public class HeaderValue
     {
+        [DataMember(Name = "Key")]
         public string Key { get; private set; }
+
+        [DataMember(Name = "Value")]
         public string Value { get; private set; }
+
+        protected HeaderValue()
+        {}
 
         public HeaderValue(string key, string value)
         {

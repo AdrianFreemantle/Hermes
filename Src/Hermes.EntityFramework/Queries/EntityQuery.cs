@@ -150,7 +150,7 @@ namespace Hermes.EntityFramework.Queries
             Mandate.ParameterCondition(pageNumber > 0, "pageNumber");
             int adjustedPageNumber = pageNumber - 1; //we adjust for the fact that sql server starts at page 0
 
-            return selectSize * adjustedPageNumber;
+            return selectSize * adjustedPageNumber + 1;
         }
     }
 }

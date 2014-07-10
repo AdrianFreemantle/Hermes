@@ -224,7 +224,7 @@ namespace Hermes
             if(Settings.IsSendOnly)
                 return;
 
-            var queueCreator = Settings.RootContainer.GetInstance<ICreateQueues>();
+            var queueCreator = Settings.RootContainer.GetInstance<ICreateMessageQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);

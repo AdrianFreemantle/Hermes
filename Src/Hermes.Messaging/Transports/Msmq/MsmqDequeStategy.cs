@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hermes.Messaging.Pipeline;
 
 namespace Hermes.Messaging.Transports.Msmq
 {
@@ -23,7 +18,7 @@ namespace Hermes.Messaging.Transports.Msmq
         }
     }
 
-    public class MsmqQueueCreator : ICreateQueues
+    public class MsmqQueueCreator : ICreateMessageQueues
     {
         public void CreateQueueIfNecessary(Address address)
         {

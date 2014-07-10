@@ -1,5 +1,4 @@
 using System;
-using Hermes.Messaging.Timeouts;
 
 namespace Hermes.Messaging
 {

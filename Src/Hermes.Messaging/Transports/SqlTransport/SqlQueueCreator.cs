@@ -4,7 +4,7 @@ using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports.SqlTransport
 {
-    public class SqlQueueCreator : ICreateQueues
+    public class SqlQueueCreator : ICreateMessageQueues
     {
         private readonly string connectionString;
 

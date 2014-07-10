@@ -41,5 +41,15 @@
               BEGIN
                     DELETE FROM [queue].[{0}]
               END";
+
+        public const string QeuryQueueCount = "SELECT COUNT([RowVersion]) FROM [queue].[{0}]";
+
+        public const string QeuryQueue =
+            @"SELECT r.Id, r.CorrelationId, r.ReplyTo, r.Expires, r.Headers, r.Body
+              FROM   (SELECT ROW_NUMBER() OVER (ORDER BY [RowVersion]) AS RowNum, *
+                      FROM [queue].[{0}]
+                     ) AS r
+              WHERE RowNum >= @start AND RowNum <= @end
+              ORDER BY [RowVersion]";
     }
 }

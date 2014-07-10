@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-using Hermes.Messaging.Transports;
-
-namespace Hermes.Messaging.Timeouts
+namespace Hermes.Messaging
 {
     public interface ITimeoutData
     {

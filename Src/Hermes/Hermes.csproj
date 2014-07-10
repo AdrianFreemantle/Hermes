@@ -85,7 +85,7 @@
     <Compile Include="Messaging\CompletionResult.cs" />
     <Compile Include="Messaging\ICallback.cs" />
     <Compile Include="Messaging\IContainProcessManagerData.cs" />
-    <Compile Include="Messaging\ICreateQueues.cs" />
+    <Compile Include="Messaging\ICreateMessageQueues.cs" />
     <Compile Include="Messaging\IDequeueMessages.cs" />
     <Compile Include="Messaging\IDispatchMessagesToHandlers.cs" />
     <Compile Include="Messaging\IHandleMessage.cs" />

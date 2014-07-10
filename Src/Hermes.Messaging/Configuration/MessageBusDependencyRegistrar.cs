@@ -42,7 +42,7 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<SendMessageModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<EnqueuedMessageSenderModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalMessageStoreModule>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<PerformanceMeasurementModule>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<PerformanceMetricsModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<HeartbeatMonitorModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<PerformanceMonitorModule>(DependencyLifecycle.SingleInstance);
 

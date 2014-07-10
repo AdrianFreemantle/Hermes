@@ -1,5 +1,5 @@
 ﻿using System;
-using Hermes.Messaging.Monitoring.Events;
+using Hermes.Messaging.Monitoring.SystemEvents;
 using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 using Hermes.Pipes;
