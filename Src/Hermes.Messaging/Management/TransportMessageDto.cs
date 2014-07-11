@@ -13,6 +13,9 @@ namespace Hermes.Messaging.Management
         public string Body { get; set; }
         public string ReplyToAddress { get; set; }
 
+        public TransportMessageDto()
+        {}
+
         public TransportMessageDto(Guid messageId, Guid correlationId, string endpoint, string body, HeaderValue[] headers)
         {
             Mandate.ParameterNotDefaut(messageId, "messageId");
