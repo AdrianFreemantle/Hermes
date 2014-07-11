@@ -42,7 +42,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
                 containerBuilder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlSubscriptionStorage>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlTimeoutStorage>(DependencyLifecycle.SingleInstance);
-                containerBuilder.RegisterType<SqlErrorQueueQuery>(DependencyLifecycle.SingleInstance);
+                containerBuilder.RegisterType<SqlErrorQueueManager>(DependencyLifecycle.SingleInstance);
             }
         }
     }

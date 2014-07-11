@@ -42,6 +42,8 @@
                     DELETE FROM [queue].[{0}]
               END";
 
+        public const string DeleteMessage = "DELETE FROM [queue].[{0}] WHERE Id = @id";
+
         public const string QeuryQueueCount = "SELECT COUNT([RowVersion]) FROM [queue].[{0}]";
 
         public const string QeuryQueue =

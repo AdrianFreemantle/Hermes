@@ -12,7 +12,7 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int NumberOfMessageToSend = 1000000; 
+        const int NumberOfMessageToSend = 10000; 
 
         static void Main(string[] args)
         {
@@ -22,35 +22,39 @@ namespace IntegrationTest.Client
 
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
 
-            
-
             var endpoint =  new RequestorEndpoint();
             endpoint.Start();
             var bus = Settings.RootContainer.GetInstance<IMessageBus>();
 
 
-            var query = Settings.RootContainer.GetInstance<SqlErrorQueueQuery>();
+            var errorQueue = Settings.RootContainer.GetInstance<IManageErrorQueues>();
 
-            var count = query.GetErrorCount();
-            var result = query.GetErrorMessages(1, 50);
+            var count = errorQueue.GetErrorCount();
+            var result = errorQueue.GetErrorMessages(1, 100);
 
+            TransportMessageDto errorMessage = result.Results.First();
 
-            int processorCount = Environment.ProcessorCount;
+            foreach (var i in result.Results)
+            {
+                errorQueue.Resend(i);
+            }
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            //int processorCount = Environment.ProcessorCount;
 
-            Parallel.For(0, range.Length,
-                new ParallelOptions { MaxDegreeOfParallelism = processorCount }, 
-                i =>
-                {
-                    var command = new AddRecordToDatabase(i);
-                    bus.Send(command.RecordId, command);
-                });
+            //var stopwatch = new Stopwatch();
+            //stopwatch.Start();
 
-            stopwatch.Stop();
-            Console.WriteLine(TimeSpan.FromTicks(stopwatch.ElapsedTicks));
-            Console.ReadKey();
+            //Parallel.For(0, range.Length,
+            //    new ParallelOptions { MaxDegreeOfParallelism = processorCount }, 
+            //    i =>
+            //    {
+            //        var command = new AddRecordToDatabase(i);
+            //        bus.Send(command.RecordId, command);
+            //    });
+
+            //stopwatch.Stop();
+            //Console.WriteLine(TimeSpan.FromTicks(stopwatch.ElapsedTicks));
+            //Console.ReadKey();
         }
     }
 }

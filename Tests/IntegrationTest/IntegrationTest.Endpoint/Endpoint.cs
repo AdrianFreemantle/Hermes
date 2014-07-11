@@ -17,7 +17,7 @@ namespace IntegrationTest.Endpoint
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             configuration
-                .FlushQueueOnStartup(true)
+                //.FlushQueueOnStartup(true)
                 .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()
@@ -29,7 +29,7 @@ namespace IntegrationTest.Endpoint
 
             Settings.CircuitBreakerThreshold = 100;
             Settings.CircuitBreakerReset = TimeSpan.FromSeconds(10);
-            Settings.EnableFaultSimulation(0.08M);
+            //Settings.EnableFaultSimulation(0.08M);
         }
 
         private static bool IsCommand(Type type)

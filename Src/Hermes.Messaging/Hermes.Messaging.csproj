@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Bus\ControlBus.cs" />
     <Compile Include="Callbacks\IManageCallbacks.cs" />
+    <Compile Include="IManageErrorQueues.cs" />
     <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="Configuration\CurrentUser.cs" />
     <Compile Include="EndPoints\ControlEndpoint.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
     <Compile Include="InitializationOrderAttribute.cs" />
     <Compile Include="InMemoryBusExtensions.cs" />
-    <Compile Include="Management\SqlQueueQuery.cs" />
+    <Compile Include="Management\SqlErrorQueueManager.cs" />
     <Compile Include="Management\TransportMessageDto.cs" />
     <Compile Include="Management\TransportMessageExtensions.cs" />
     <Compile Include="Monitoring\MonitorLoggingService.cs" />

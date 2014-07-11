@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Transactions;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
 using Hermes.Messaging.Transports.SqlTransport;
@@ -9,17 +12,20 @@ using Hermes.Queries;
 using Hermes.Serialization;
 
 namespace Hermes.Messaging.Management
-{
-    public class SqlErrorQueueQuery
+{   
+    public class SqlErrorQueueManager : IManageErrorQueues
     {
         private readonly string connectionString;
         private readonly ISerializeObjects serializer;
-        private static readonly string QueryErrorQueue = String.Format(SqlCommands.QeuryQueue, Settings.AuditEndpoint);
-        private static readonly string QeuryErrorQueueCount = String.Format(SqlCommands.QeuryQueueCount, Settings.AuditEndpoint);
+        private readonly ISendMessages messageSender;
+        private static readonly string DeleteErrorMessage = String.Format(SqlCommands.DeleteMessage, Settings.ErrorEndpoint);
+        private static readonly string QueryErrorQueue = String.Format(SqlCommands.QeuryQueue, Settings.ErrorEndpoint);
+        private static readonly string QeuryErrorQueueCount = String.Format(SqlCommands.QeuryQueueCount, Settings.ErrorEndpoint);
 
-        public SqlErrorQueueQuery(ISerializeObjects serializer)
+        public SqlErrorQueueManager(ISerializeObjects serializer, ISendMessages messageSender)
         {
             this.serializer = serializer;
+            this.messageSender = messageSender;
             connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
         }
 
@@ -29,6 +35,34 @@ namespace Hermes.Messaging.Management
             {
                 connection.Open();
                 return FetchErrorCount(connection);
+            }
+        }
+
+        public void Delete(Guid id)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var command = new SqlCommand(String.Format(DeleteErrorMessage), connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Resend(TransportMessageDto dto)
+        {
+            Dictionary<string, string> headers = dto.Headers.ToDictionary();
+            TransportMessage message = dto.ToTransportMessage(headers);
+            Address destinationAddress = Address.Parse(headers[HeaderKeys.ProcessingEndpoint]);
+
+            using (var scope = TransactionScopeUtils.Begin(IsolationLevel.ReadCommitted))
+            {
+                Delete(dto.MessageId);
+                messageSender.Send(message, destinationAddress);
+                scope.Complete();
             }
         }
 
