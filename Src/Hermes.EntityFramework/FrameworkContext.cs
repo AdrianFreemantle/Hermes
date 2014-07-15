@@ -7,7 +7,7 @@ using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
-{   
+{
     public abstract class FrameworkContext : DbContext
     {
         protected FrameworkContext()

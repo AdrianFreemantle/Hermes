@@ -63,6 +63,7 @@
     <Compile Include="AggregateRepository.cs" />
     <Compile Include="AggregateCommitAction.cs" />
     <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="ContextInitializer.cs" />
     <Compile Include="DatabaseExtensions.cs" />
     <Compile Include="DbContextExtensions.cs" />
     <Compile Include="DbSetExtensions.cs" />
