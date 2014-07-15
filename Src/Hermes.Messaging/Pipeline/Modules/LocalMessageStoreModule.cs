@@ -9,19 +9,9 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             var session = LocalSession.Begin(input);
 
-            try
-            {
-                return next();
-            }
-            catch (Exception ex)
-            {
-                session.AddErrorDetails(ex);
-                return false;
-            }
-            finally
-            {
-                session.Commit();
-            }
+            var result = next();
+            session.Commit();
+            return result;
         }
     }
 }

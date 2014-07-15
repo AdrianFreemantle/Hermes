@@ -39,14 +39,6 @@ namespace Hermes.Messaging
             return new LocalSession(messageContext);
         }
 
-        public void AddErrorDetails(Exception ex)
-        {
-            if (!Settings.UseLocalMessageStore)
-                return;
-
-            headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
-        }
-
         public void Commit()
         {
             if (!Settings.UseLocalMessageStore)
