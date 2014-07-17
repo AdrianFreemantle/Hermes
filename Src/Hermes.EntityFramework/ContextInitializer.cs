@@ -19,21 +19,16 @@ namespace Hermes.EntityFramework
         public virtual void Initialize()
         {
             Database.SetInitializer(this);
-
-            using (var scope = Settings.RootContainer.BeginLifetimeScope())
-            {
-                var contextFactory = scope.GetInstance<ContextFactory<T>>();
-                DbContext context = contextFactory.GetContext();
-                context.Database.CompatibleWithModel(false);
-            }
         }
 
         public virtual void InitializeDatabase(T context)
         {
+            using (var scope = TransactionScopeUtils.Begin(TransactionScopeOption.Suppress))
             using (new SingleGlobalInstance(30000, MutexKey))
             {
                 if (context.Database.Exists() && !context.Database.CompatibleWithModel(true))
-                    throw new IncompatibleDatabaseModelException("The database schema does not match the current model. A migration may be needed to update the database schema.");
+                    throw new IncompatibleDatabaseModelException(
+                        "The database schema does not match the current model. A migration may be needed to update the database schema.");
 
                 bool created = context.Database.CreateIfNotExists();
 
@@ -45,7 +40,9 @@ namespace Hermes.EntityFramework
                 }
 
                 context.SaveChanges();
+                scope.Complete();
             }
+
         }
 
         protected virtual void InitializeLookupTables(T context)
