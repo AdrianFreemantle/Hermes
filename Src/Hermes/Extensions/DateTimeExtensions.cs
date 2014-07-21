@@ -31,5 +31,15 @@ namespace System
         {
             return dateTime.ToString("dd/mm/yyyy HH:mm");
         }
+
+        public static DateTime FirstDayOfCurrentMonth(this DateTime current)
+        {
+            return new DateTime(current.Year, current.Month, 1);
+        }
+
+        public static DateTime FirstDayOfNextMonth(this DateTime current)
+        {
+            return new DateTime(current.AddMonths(1).Year, current.AddMonths(1).Month, 1);
+        }
     }
 }
