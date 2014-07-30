@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Transactions;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;
@@ -128,7 +126,7 @@ namespace Hermes.Messaging.Management
                 return 1;
             }
 
-            return pageNumber * resultsPerPage - 1;
+            return (pageNumber - 1) * resultsPerPage;
         }
     }
 }
