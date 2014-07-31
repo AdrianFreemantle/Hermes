@@ -18,7 +18,7 @@ namespace IntegrationTest.Endpoint
         {
             configuration
                 //.FlushQueueOnStartup(true)
-                .FirstLevelRetryPolicy(2)
+                //.FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()
                 .UseSqlTransport()
@@ -29,7 +29,7 @@ namespace IntegrationTest.Endpoint
 
             Settings.CircuitBreakerThreshold = 100;
             Settings.CircuitBreakerReset = TimeSpan.FromSeconds(10);
-            //Settings.EnableFaultSimulation(0.08M);
+            Settings.EnableFaultSimulation(1.0M);
         }
 
         private static bool IsCommand(Type type)
