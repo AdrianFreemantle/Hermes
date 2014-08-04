@@ -25,6 +25,6 @@ namespace Hermes.Messaging
         /// </summary>
         /// <param name="messageTypes"></param>
         /// <returns></returns>
-        IEnumerable<Address> GetSubscribersForMessageTypes(IEnumerable<Type> messageTypes);
+        IEnumerable<Address> GetSubscribersForMessageTypes(ICollection<Type> messageTypes);
     }
 }

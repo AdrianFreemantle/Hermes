@@ -14,7 +14,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
         private readonly Dictionary<string, SubscriptionCacheItem> subscriptionCache;
-        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(1);
         private readonly Timer timer;
         
         public SubscriptionCache()
@@ -24,15 +24,17 @@ namespace Hermes.Messaging.Storage.MsSql
             timer = new Timer
             {
                 Interval = monitoringPeriod.TotalMilliseconds,
-                AutoReset = true,
+                AutoReset = false,
             };
 
             timer.Elapsed += Elapsed;
             timer.Start();
         }
 
-        public bool TryGetSubscribers(IEnumerable<Type> contracts, out IEnumerable<Address> subscribers)
+        public bool TryGetSubscribers(ICollection<Type> contracts, out ICollection<Address> subscribers)
         {
+            Mandate.ParameterNotNull(contracts, "contracts");
+
             locker.EnterReadLock();
             subscribers = null;
 
@@ -43,7 +45,10 @@ namespace Hermes.Messaging.Storage.MsSql
                 foreach (var subscriptions in contracts.Select(GetSubscribers))
                 {
                     if (subscriptions == null)
+                    {
+                        Logger.Info("No subcriptions could be found for events contracts: {0}", String.Join(", ", contracts.Select(type => type.FullName)));
                         return false;
+                    }
 
                     allSubscriptions.AddRange(subscriptions);
                 }
@@ -107,11 +112,13 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private void RemoveCacheItemIfExpired(string key)
         {
-            if (subscriptionCache[key].HasExpired)
-            {
-                Logger.Info("Clearing expired subscription cache for event {0}", key);
-                subscriptionCache.Remove(key);
-            }
+            //bug this has been temporarily disabled while testing around integration events not being sent is concluded
+
+            //if (subscriptionCache[key].HasExpired)
+            //{
+            //    Logger.Info("Clearing expired subscription cache for event {0}", key);
+            //    subscriptionCache.Remove(key);
+            //}
         }
     }
 }

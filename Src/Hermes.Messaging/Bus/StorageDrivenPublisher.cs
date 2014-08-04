@@ -37,6 +37,7 @@ namespace Hermes.Messaging.Bus
         private Address[] GetMessageSubscribers(OutgoingMessageContext outgoingMessage)
         {
             var messageTypes = outgoingMessage.GetMessageContracts();
+
             return subscriptionStorage.GetSubscribersForMessageTypes(messageTypes)
                                       .Distinct()
                                       .ToArray();

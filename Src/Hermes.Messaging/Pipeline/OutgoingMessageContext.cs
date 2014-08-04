@@ -182,7 +182,7 @@ namespace Hermes.Messaging.Pipeline
             messageHeaders.Add(headerValue);
         }
 
-        public IEnumerable<Type> GetMessageContracts()
+        public ICollection<Type> GetMessageContracts()
         {
             if(outgoingMessage == null)
                 return new Type[0];

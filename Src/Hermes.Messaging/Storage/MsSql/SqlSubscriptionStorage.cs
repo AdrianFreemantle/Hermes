@@ -85,10 +85,10 @@ namespace Hermes.Messaging.Storage.MsSql
             }
         }
 
-        public IEnumerable<Address> GetSubscribersForMessageTypes(IEnumerable<Type> messageTypes)
+        public IEnumerable<Address> GetSubscribersForMessageTypes(ICollection<Type> messageTypes)
         {
             var contracts = messageTypes.ToArray();
-            IEnumerable<Address> subscribers;
+            ICollection<Address> subscribers;
 
             if (!subscriptionCache.TryGetSubscribers(contracts, out subscribers))
             {
