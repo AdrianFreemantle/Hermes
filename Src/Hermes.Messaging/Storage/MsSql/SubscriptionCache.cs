@@ -24,7 +24,7 @@ namespace Hermes.Messaging.Storage.MsSql
             timer = new Timer
             {
                 Interval = monitoringPeriod.TotalMilliseconds,
-                AutoReset = false,
+                AutoReset = true,
             };
 
             timer.Elapsed += Elapsed;
