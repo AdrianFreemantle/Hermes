@@ -46,7 +46,6 @@ namespace Hermes.Messaging.Storage.MsSql
                 {
                     if (subscriptions == null)
                     {
-                        Logger.Info("No subcriptions could be found for events contracts: {0}", String.Join(", ", contracts.Select(type => type.FullName)));
                         return false;
                     }
 
