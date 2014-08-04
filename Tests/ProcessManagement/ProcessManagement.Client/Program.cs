@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Hermes.Enums;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -14,24 +15,25 @@ namespace ProcessManagement.Client
         {
             var endpoint = new Endpoint();
             endpoint.Start();
+            Thread.Sleep(TimeSpan.FromSeconds(5)); // give worker endpoint time to start
 
             var reservationIds = new List<Guid>();
 
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 reservationIds.Add(SequentialGuid.New());
             }
 
             foreach (var reservationId in reservationIds)
             {
-                endpoint.MessageBus.Send(new PayForReservedSeat(reservationId));
+                endpoint.MessageBus.Send(new ReserveSeat(reservationId));
             }
 
             reservationIds.Reverse();
 
             foreach (var reservationId in reservationIds)
             {
-                endpoint.MessageBus.Send(new ReserveSeat(reservationId));
+                endpoint.MessageBus.Send(new PayForReservedSeat(reservationId));
             }
 
             Console.ReadKey();

@@ -120,7 +120,7 @@ namespace Hermes.Messaging.Storage.MsSql
                         }
                     }
 
-                    subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(30));
+                    subscriptionCache.UpdateSubscribers(messageType, subscribers, TimeSpan.FromSeconds(60));
                 }
             }
         }

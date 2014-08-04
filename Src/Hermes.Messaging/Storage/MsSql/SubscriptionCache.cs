@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using Hermes.Logging;
 using Timer = System.Timers.Timer;
 
 namespace Hermes.Messaging.Storage.MsSql
 {
     public class SubscriptionCache
     {
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (SubscriptionCache));
+
         private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
         private readonly Dictionary<string, SubscriptionCacheItem> subscriptionCache;
-        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(10);
         private readonly Timer timer;
         
         public SubscriptionCache()
@@ -64,9 +67,14 @@ namespace Hermes.Messaging.Storage.MsSql
             return subscriptionCache[contractType.FullName].Subscribers;
         }
 
-        public void UpdateSubscribers(Type contractType, IEnumerable<Address> subscribers, TimeSpan cacheValidityPeriod)
+        public void UpdateSubscribers(Type contractType, ICollection<Address> subscribers, TimeSpan cacheValidityPeriod)
         {
+            if(!subscribers.Any())
+                return;
+
             locker.EnterWriteLock();
+
+            Logger.Info("Updating subsricption cache for event {0} with subscribers: {1}", contractType.FullName, String.Join(", ", subscribers));
 
             try
             {
@@ -101,6 +109,7 @@ namespace Hermes.Messaging.Storage.MsSql
         {
             if (subscriptionCache[key].HasExpired)
             {
+                Logger.Info("Clearing expired subscription cache for event {0}", key);
                 subscriptionCache.Remove(key);
             }
         }

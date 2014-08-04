@@ -16,16 +16,17 @@ namespace ProcessManagement
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.NoLogging;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
 
             configuration
+                .FlushQueueOnStartup(true)
                 .SecondLevelRetryPolicy(20, TimeSpan.FromMinutes(1))
                 .UseJsonSerialization()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .DefineMessageAs(IsMessage)
                 .UseSqlTransport("SqlTransport")
-                .NumberOfWorkers(Environment.ProcessorCount)
+                .NumberOfWorkers(1)
                 .RegisterMessageRoute<DebitCustomerCreditCard>(Address.Parse("ProcessManagement"))
                 .RegisterMessageRoute<TimeoutReservation>(Address.Parse("ProcessManagement"))
                 .ConfigureEntityFramework<ProcessManagerContext>("ProcessManagerContext");
