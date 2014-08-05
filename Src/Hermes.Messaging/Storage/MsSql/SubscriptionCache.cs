@@ -14,7 +14,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
         private readonly Dictionary<string, SubscriptionCacheItem> subscriptionCache;
-        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(10);
         private readonly Timer timer;
         
         public SubscriptionCache()
@@ -24,7 +24,7 @@ namespace Hermes.Messaging.Storage.MsSql
             timer = new Timer
             {
                 Interval = monitoringPeriod.TotalMilliseconds,
-                AutoReset = false,
+                AutoReset = true,
             };
 
             timer.Elapsed += Elapsed;
@@ -45,15 +45,13 @@ namespace Hermes.Messaging.Storage.MsSql
                 foreach (var subscriptions in contracts.Select(GetSubscribers))
                 {
                     if (subscriptions == null)
-                    {
-                        return false;
-                    }
+                        continue;
 
                     allSubscriptions.AddRange(subscriptions);
                 }
 
                 subscribers = allSubscriptions;
-                return true;
+                return allSubscriptions.Any();
             }
             finally 
             {
