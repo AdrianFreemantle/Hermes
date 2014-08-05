@@ -36,9 +36,9 @@ namespace Hermes.Messaging.Storage.MsSql
             Mandate.ParameterNotNull(contracts, "contracts");
 
             locker.EnterReadLock();
-            subscribers = null;
 
             var allSubscriptions = new List<Address>();
+            subscribers = allSubscriptions;
             
             try
             {
@@ -50,7 +50,6 @@ namespace Hermes.Messaging.Storage.MsSql
                     allSubscriptions.AddRange(subscriptions);
                 }
 
-                subscribers = allSubscriptions;
                 return allSubscriptions.Any();
             }
             finally 
