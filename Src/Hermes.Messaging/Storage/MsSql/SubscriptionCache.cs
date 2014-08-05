@@ -108,13 +108,11 @@ namespace Hermes.Messaging.Storage.MsSql
 
         private void RemoveCacheItemIfExpired(string key)
         {
-            //bug this has been temporarily disabled while testing around integration events not being sent is concluded
-
-            //if (subscriptionCache[key].HasExpired)
-            //{
-            //    Logger.Info("Clearing expired subscription cache for event {0}", key);
-            //    subscriptionCache.Remove(key);
-            //}
+            if (subscriptionCache[key].HasExpired)
+            {
+                Logger.Info("Clearing expired subscription cache for event {0}", key);
+                subscriptionCache.Remove(key);
+            }
         }
     }
 }
