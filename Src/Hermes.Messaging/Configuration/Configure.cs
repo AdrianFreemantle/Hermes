@@ -221,14 +221,16 @@ namespace Hermes
 
         private static void CreateQueues()
         {
+            var queueCreator = Settings.RootContainer.GetInstance<ICreateMessageQueues>();
+            queueCreator.CreateQueueIfNecessary(Settings.MonitoringEndpoint);
+
+
             if(Settings.IsSendOnly)
                 return;
 
-            var queueCreator = Settings.RootContainer.GetInstance<ICreateMessageQueues>();
             queueCreator.CreateQueueIfNecessary(Address.Local);
             queueCreator.CreateQueueIfNecessary(Settings.ErrorEndpoint);
             queueCreator.CreateQueueIfNecessary(Settings.AuditEndpoint);
-            queueCreator.CreateQueueIfNecessary(Settings.MonitoringEndpoint);
 
             if (Settings.FlushQueueOnStartup)
             {
