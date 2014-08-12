@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
+    <Compile Include="Attributes\DoNotAllowDefaultValueAttribute.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
