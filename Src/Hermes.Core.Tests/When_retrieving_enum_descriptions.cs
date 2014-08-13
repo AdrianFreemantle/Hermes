@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Hermes.Attributes;
-using Hermes.Enums;
+﻿using Hermes.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Shouldly;

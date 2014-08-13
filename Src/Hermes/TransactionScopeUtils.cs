@@ -12,7 +12,7 @@ namespace System.Transactions
         static TransactionScopeUtils()
         {
             #if DEBUG
-            Timeout = TimeSpan.FromMinutes(5);
+            Timeout = TimeSpan.FromMinutes(10);
             #else
             Timeout = TimeSpan.FromMinutes(1);
             #endif
