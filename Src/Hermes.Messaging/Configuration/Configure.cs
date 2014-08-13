@@ -27,20 +27,7 @@ namespace Hermes
             CriticalError.OnCriticalError += OnCriticalError;
         }
 
-        internal static Configure ClientEndpoint(string endpointName, IContainerBuilder builder)
-        {
-            Settings.IsClientEndpoint = true;
-            ConfigureEndpoint(endpointName, builder);
-            return Instance;
-        }
-
-        internal static Configure WorkerEndpoint(string endpointName, IContainerBuilder builder)
-        {
-            ConfigureEndpoint(endpointName, builder);            
-            return Instance;
-        }
-
-        private static void ConfigureEndpoint(string endpointName, IContainerBuilder builder)
+        public static Configure Initialize(string endpointName, IContainerBuilder builder)
         {
             Mandate.ParameterNotNullOrEmpty(endpointName, "endpointName");
             Mandate.ParameterNotNull(builder, "builder");
@@ -53,6 +40,8 @@ namespace Hermes
 
             Settings.SetEndpointName(endpointName);
             Settings.RootContainer = containerBuilder.BuildContainer();
+
+            return Instance;
         }
 
         public IConfigureEndpoint DefineMessageAs(Func<Type, bool> isMessageRule)
