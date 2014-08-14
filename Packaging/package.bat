@@ -1,4 +1,4 @@
-set var=0.11.7
+set var=0.11.8
 
 d:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
 d:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%

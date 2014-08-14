@@ -19,16 +19,15 @@ namespace Hermes.Messaging.EndPoints
         {
             var containerBuilder = new TContainerBuilder();
             string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;
-            
-            Settings.IsSendOnly = true;
-            Settings.IsLocalEndpoint = true;
-            Settings.AutoSubscribeEvents = false;
-            Settings.FlushQueueOnStartup = true;
 
             configuration = Configure.Initialize(endpointName, containerBuilder);
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
-            
+
+            Settings.IsSendOnly = true;
+            Settings.IsLocalEndpoint = true;
+            Settings.AutoSubscribeEvents = false;
+            Settings.FlushQueueOnStartup = true;
             Settings.RootContainer = containerBuilder.BuildContainer();
         }
 

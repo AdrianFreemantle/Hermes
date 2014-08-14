@@ -10,7 +10,7 @@ namespace LocalBus
 {
     class Program
     {
-        static readonly int[] Iterations = Enumerable.Range(1, 10000).ToArray();
+        static readonly int[] Iterations = Enumerable.Range(1, 1000).ToArray();
 
         static void Main(string[] args)
         {

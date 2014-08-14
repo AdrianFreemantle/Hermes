@@ -20,12 +20,13 @@ namespace Hermes.Messaging.EndPoints
         protected ClientEndpoint()
         {
             var containerBuilder = new TContainerBuilder();
-            string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;
-            Settings.IsClientEndpoint = true;
-            Settings.FlushQueueOnStartup = true;
+            string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;            
             configuration = Configure.Initialize(endpointName, containerBuilder);
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
+
+            Settings.IsClientEndpoint = true;
+            Settings.FlushQueueOnStartup = true;
             Settings.RootContainer = containerBuilder.BuildContainer();
         }
 
