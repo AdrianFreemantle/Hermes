@@ -107,7 +107,7 @@ namespace Hermes.Messaging
 
         protected virtual CircuitBreaker IntializeCircuitBreaker()
         {
-            return new CircuitBreaker(2, TimeSpan.FromSeconds(30));
+            return new CircuitBreaker(50, TimeSpan.FromSeconds(30));
         }
 
         public void Stop()
