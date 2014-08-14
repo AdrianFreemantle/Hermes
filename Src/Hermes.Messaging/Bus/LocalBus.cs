@@ -28,11 +28,11 @@ namespace Hermes.Messaging.Bus
             Mandate.ParameterNotNull(command, "command");
             MessageRuleValidation.ValidateCommand(command);
 
-            if (!Settings.IsClientEndpoint)
-                throw new InvalidOperationException("Only a client endpoint may use IInMemoryBus to execute a command.");
-
             if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
                 throw new InvalidOperationException("A command may not be executed while another command is being processed.");
+
+            if (!Settings.IsSendOnly || !Settings.IsClientEndpoint)
+                throw new InvalidOperationException("Only a client or send-only endpoint may use IInMemoryBus to execute a command.");
 
             ProcessCommand(command);
         }
