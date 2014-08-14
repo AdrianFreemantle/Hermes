@@ -33,9 +33,10 @@ namespace Hermes.Messaging.Bus
 
             if (Settings.IsSendOnly || Settings.IsClientEndpoint || Settings.IsLocalEndpoint)
             {
-                ProcessCommand(command);                
+                ProcessCommand(command); 
+                return;
             }
-            
+
             throw new InvalidOperationException("Only a client endpoint or local endpoint may execute a local command.");
         }
 
