@@ -75,7 +75,7 @@ namespace Hermes.Messaging.Storage.MsSql
 
             locker.EnterWriteLock();
 
-            Logger.Info("Updating subsricption cache for event {0} with subscribers: {1}", contractType.FullName, String.Join(", ", subscribers));
+            Logger.Debug("Updating subsricption cache for event {0} with subscribers: {1}", contractType.FullName, String.Join(", ", subscribers));
 
             try
             {
@@ -110,7 +110,7 @@ namespace Hermes.Messaging.Storage.MsSql
         {
             if (subscriptionCache[key].HasExpired)
             {
-                Logger.Info("Clearing expired subscription cache for event {0}", key);
+                Logger.Debug("Clearing expired subscription cache for event {0}", key);
                 subscriptionCache.Remove(key);
             }
         }

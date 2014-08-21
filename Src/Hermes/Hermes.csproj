@@ -53,6 +53,10 @@
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
     <Compile Include="Attributes\DoNotAllowDefaultValueAttribute.cs" />
+    <Compile Include="Caching\CachedObject.cs" />
+    <Compile Include="Caching\CacheTimer.cs" />
+    <Compile Include="Caching\ObjectCache.cs" />
+    <Compile Include="Caching\ObjectCacheException.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />

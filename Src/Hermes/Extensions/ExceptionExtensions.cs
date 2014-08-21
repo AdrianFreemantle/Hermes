@@ -13,7 +13,7 @@ namespace System
             var currentException = ex;
 
             exceptionMessage.AppendLine();
-            exceptionMessage.AppendLine("===================== EXCEPTIONS =====================");
+            exceptionMessage.AppendLine("===================== EXCEPTIONS =====================\n");
 
             do
             {
@@ -25,7 +25,7 @@ namespace System
             }
             while (currentException != null);
 
-            exceptionMessage.AppendLine("==================== STACK TRACE ====================");
+            exceptionMessage.AppendLine("==================== STACK TRACE ====================\n");
             exceptionMessage.AppendLine(ex.StackTrace);
             exceptionMessage.AppendLine();
 
