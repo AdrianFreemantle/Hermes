@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using Hermes;
 using Hermes.EntityFramework;
 using Hermes.Messaging;
@@ -55,12 +50,6 @@ namespace ProcessManagement.Persistence
 
         protected void Seed(ProcessManagerContext context)
         {
-   
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

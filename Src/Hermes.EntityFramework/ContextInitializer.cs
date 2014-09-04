@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Transactions;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 
 namespace Hermes.EntityFramework
 {

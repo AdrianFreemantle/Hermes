@@ -12,7 +12,7 @@ namespace Hermes.Domain
 
         private static string GetErrorMessage(Type eventType)
         {
-            return String.Format("Domain event {0} should have a single aggregate identity property of type {1} that has attribute {2}.", eventType.FullName,  (typeof(AggregateIdAttribute).FullName));
+            return String.Format("Domain event {0} should have a single aggregate identity property that is decorated with attribute {1}.", eventType.FullName,  (typeof(AggregateIdAttribute).FullName));
         }
     }
 }
