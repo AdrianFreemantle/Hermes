@@ -75,6 +75,8 @@
     <Compile Include="IMemento.cs" />
     <Compile Include="Memento.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Testing\AggregateSpecificationException.cs" />
+    <Compile Include="Testing\AggregateTestSpecification.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes\Hermes.csproj">
