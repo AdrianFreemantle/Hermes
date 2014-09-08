@@ -60,6 +60,20 @@ namespace Hermes.Domain.Testing
             return this;
         }
 
+        protected IGiven<TAggregate> Given()
+        {
+            try
+            {
+                Aggregate = ObjectFactory.CreateInstance<TAggregate>(DefaultIdentity);
+            }
+            catch (Exception ex)
+            {
+                thrownException = ex;
+            }
+
+            return this;
+        }
+
         protected IGiven<TAggregate> Given(Expression<Func<TAggregate>> expression)
         {
             try
