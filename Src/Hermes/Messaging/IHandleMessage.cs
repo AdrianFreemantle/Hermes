@@ -2,6 +2,6 @@
 {
     public interface IHandleMessage<in TMessage> where TMessage : class 
     {
-        void Handle(TMessage message);
+        void Handle(TMessage m);
     }
 }
