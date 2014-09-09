@@ -41,7 +41,6 @@ namespace Hermes.EntityFramework
                 context.SaveChanges();
                 scope.Complete();
             }
-
         }
 
         protected virtual void InitializeLookupTables(T context)

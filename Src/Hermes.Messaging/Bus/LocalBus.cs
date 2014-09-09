@@ -61,7 +61,7 @@ namespace Hermes.Messaging.Bus
 
         public void Raise(object @event)
         {
-            if (messageTransport.CurrentMessage.MessageId == Guid.Empty)
+            if(!ServiceLocator.Current.HasServiceProvider())
                 throw new InvalidOperationException("A local event may only be raised within the context of an executing local command or received message.");
 
             MessageRuleValidation.ValidateEvent(@event);
