@@ -19,8 +19,8 @@ namespace Hermes.Messaging.Monitoring
 
             if (headers.ContainsKey(HeaderKeys.FailureDetails))
             {
-                TimeToProcess = TimeSpan.FromTicks(0);
-                TimeToDeliver = TimeSpan.FromTicks(0);
+                TimeToProcess = TimeSpan.Zero;
+                TimeToDeliver = TimeSpan.Zero;
                 Error = true;
             }
             else
