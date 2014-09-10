@@ -27,16 +27,23 @@ namespace Hermes.Messaging.Monitoring
             {
                 DateTime completedTime = headers[HeaderKeys.CompletedTime].ToUtcDateTime();
                 DateTime sentTime = headers[HeaderKeys.SentTime].ToUtcDateTime();
-                DateTime receivedTime = headers[HeaderKeys.ReceivedTime].ToUtcDateTime();
-
-                if (receivedTime < sentTime)
-                {
-                    Logger.Warn("Message {0} has sent time of {1} and a received time of {2}", context.MessageId, headers[HeaderKeys.SentTime], headers[HeaderKeys.ReceivedTime]);
-                }
+                DateTime receivedTime = headers[HeaderKeys.ReceivedTime].ToUtcDateTime();               
 
                 TimeToProcess = completedTime - receivedTime;
                 TimeToDeliver = receivedTime - sentTime;
                 Error = false;
+
+                if (TimeToDeliver < TimeSpan.Zero)
+                {
+                    Logger.Error("Message {0} has sent time of {1} and a received time of {2}", context.MessageId, headers[HeaderKeys.SentTime], headers[HeaderKeys.ReceivedTime]);
+                    TimeToDeliver = TimeSpan.Zero;
+                }
+
+                if (TimeToProcess < TimeSpan.Zero)
+                {
+                    Logger.Error("Message {0} has received time of {1} and a completed time of {2}", context.MessageId, headers[HeaderKeys.ReceivedTime], headers[HeaderKeys.CompletedTime]);
+                    TimeToDeliver = TimeSpan.Zero;
+                }
             }
         }
     }
