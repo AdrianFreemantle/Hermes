@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
 using Hermes.Messaging.ProcessManagement;
@@ -15,6 +16,9 @@ namespace Hermes.Messaging.Transports
 
         public virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
+            Mandate.ParameterNotNull(message, "message");
+            Mandate.ParameterNotNull(serviceLocator, "serviceLocator");
+
             Type[] contracts = message.GetContracts();
             HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlerDetails(contracts);
             DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
@@ -46,5 +50,26 @@ namespace Hermes.Messaging.Transports
                 }
             }
         }      
+    }
+
+    public class CommandValidator
+    {
+        public void ValidateCommand(object command, IServiceLocator serviceLocator)
+        {
+            Mandate.ParameterNotNull(command, "command");
+            Mandate.ParameterNotNull(serviceLocator, "serviceLocator");
+
+            var results = DataAnnotationValidator.Validate(command);
+
+            if (results.Any())
+                throw new CommandValidationException(results);
+
+
+            object validator;
+            var validatorType = typeof(IValidateCommand<>).MakeGenericType(command.GetType());
+
+            serviceLocator.TryGetInstance(validatorType, out validator);
+            ((dynamic)validator).Validate(command);
+        }
     }
 }

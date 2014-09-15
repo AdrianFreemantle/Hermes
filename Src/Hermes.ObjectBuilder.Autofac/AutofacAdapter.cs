@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Core.Registration;
 using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
@@ -151,29 +152,34 @@ namespace Hermes.ObjectBuilder.Autofac
 
         protected override object DoGetInstance(Type serviceType, string key)
         {
-            if (serviceType == null)
+            Mandate.ParameterNotNull(serviceType, "serviceType");
+
+            try
             {
-                throw new ArgumentNullException("serviceType");
+                return key != null
+                    ? LifetimeScope.ResolveNamed(key, serviceType)
+                    : LifetimeScope.Resolve(serviceType);
             }
-
-            object instance = key != null
-                ? LifetimeScope.ResolveNamed(key, serviceType)
-                : LifetimeScope.Resolve(serviceType);
-
-            return instance;
+            catch (ComponentNotRegisteredException ex)
+            {
+                throw new HermesComponentRegistrationException(ex.Message, ex);
+            }
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
         {
-            if (serviceType == null)
+            Mandate.ParameterNotNull(serviceType, "serviceType");
+
+            try
             {
-                throw new ArgumentNullException("serviceType");
+                var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
+                object instance = LifetimeScope.Resolve(enumerableType);
+                return ((IEnumerable)instance).Cast<object>().ToArray();
             }
-
-            var enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-            object instance = LifetimeScope.Resolve(enumerableType);
-
-            return ((IEnumerable)instance).Cast<object>().ToArray();
+            catch (ComponentNotRegisteredException ex)
+            {
+                throw new HermesComponentRegistrationException(ex.Message, ex);
+            }
         }
 
         public void Dispose()

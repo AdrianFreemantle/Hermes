@@ -22,6 +22,8 @@ namespace Hermes.Messaging.Pipeline
         
         public MessageType OutgoingMessageType { get; protected set; }
 
+        public IServiceLocator ServiceLocator { get; protected set; }
+
         public TimeSpan TimeToLive { get { return timeToLive; } }
 
         public Guid MessageId
@@ -167,6 +169,7 @@ namespace Hermes.Messaging.Pipeline
 
         public void Process(ModulePipeFactory<OutgoingMessageContext> outgoingPipeline, IServiceLocator serviceLocator)
         {
+            ServiceLocator = serviceLocator;
             var pipeline = outgoingPipeline.Build(serviceLocator);
             pipeline.Invoke(this);
         }

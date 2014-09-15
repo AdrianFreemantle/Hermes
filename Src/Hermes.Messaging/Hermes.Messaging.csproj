@@ -93,6 +93,7 @@
     <Compile Include="Monitoring\SystemEvents\EndpointHeartbeatStoppedHandler.cs" />
     <Compile Include="Monitoring\SystemEvents\EndpointPerformanceEventArgs.cs" />
     <Compile Include="Monitoring\SystemEvents\EndpointPerformanceMetricReceivedHandler.cs" />
+    <Compile Include="Pipeline\Modules\CommandValidationModule.cs" />
     <Compile Include="Pipeline\Modules\EnqueuedMessageSenderModule.cs" />
     <Compile Include="Pipeline\Modules\HeaderBuilderModule.cs" />
     <Compile Include="Pipeline\Modules\LocalMessageStoreModule.cs" />

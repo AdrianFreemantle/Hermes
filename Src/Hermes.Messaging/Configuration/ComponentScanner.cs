@@ -40,6 +40,11 @@ namespace Hermes.Messaging.Configuration
                 {
                     containerBuilder.RegisterType(intitializer, DependencyLifecycle.SingleInstance);
                 }
+
+                foreach (var intitializer in scanner.Types.Where(t => typeof(INeedToInitializeSomething).IsAssignableFrom(t) && !t.IsAbstract))
+                {
+                    containerBuilder.RegisterType(intitializer, DependencyLifecycle.SingleInstance);
+                }
             }
         }
 
@@ -70,7 +75,16 @@ namespace Hermes.Messaging.Configuration
             return
                 scanner.Types.Where(
                     t => t.GetInterfaces()
-                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IHandleMessage<>)))
+                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidateCommand<>)))
+                       .Distinct(new TypeEqualityComparer()).ToArray();
+        }
+
+        private static ICollection<Type> GetCommandValidatorTypes(AssemblyScanner scanner)
+        {
+            return
+                scanner.Types.Where(
+                    t => t.GetInterfaces()
+                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IValidateCommand<>)))
                        .Distinct(new TypeEqualityComparer()).ToArray();
         }
 
@@ -79,7 +93,7 @@ namespace Hermes.Messaging.Configuration
             return
                 scanner.Types.Where(
                     t => t.GetInterfaces()
-                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>)))
+                          .Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>) || i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
                        .Distinct(new TypeEqualityComparer()).ToArray();
         }
 

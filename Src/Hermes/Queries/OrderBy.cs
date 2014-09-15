@@ -1,4 +1,4 @@
-﻿namespace Hermes.EntityFramework.Queries
+﻿namespace Hermes.Queries
 {
     public enum OrderBy
     {

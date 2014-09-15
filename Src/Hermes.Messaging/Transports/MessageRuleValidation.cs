@@ -21,6 +21,7 @@ namespace Hermes.Messaging.Transports
             {
                 var error = String.Format("Send is reserved for messages that have been defined as commands using the DefineCommandAs" +
                     " function during endpoing configuration. Message {0} does not comply with the current rule.", message.GetType().FullName);
+
                 throw new InvalidOperationException(error);
             }
 

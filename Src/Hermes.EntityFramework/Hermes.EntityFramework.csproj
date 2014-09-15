@@ -90,7 +90,6 @@
     <Compile Include="OrderedQueryableExtensions.cs" />
     <Compile Include="Queries\EntityQuery.cs" />
     <Compile Include="Queries\DatabaseQuery.cs" />
-    <Compile Include="Queries\IEntityQuery.cs" />
     <Compile Include="Queues\QueueStore.cs" />
     <Compile Include="Queues\QueueFactory.cs" />
     <Compile Include="Queues\QueueSqlCommands.Designer.cs">
