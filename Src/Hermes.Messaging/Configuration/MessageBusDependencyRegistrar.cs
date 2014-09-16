@@ -41,10 +41,10 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<HeaderBuilderModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<SendMessageModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<EnqueuedMessageSenderModule>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<LocalMessageStoreModule>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<PerformanceMetricsModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<HeartbeatMonitorModule>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<PerformanceMonitorModule>(DependencyLifecycle.SingleInstance);
+            containerBuilder.RegisterType<CommandValidationModule>(DependencyLifecycle.SingleInstance);
 
             containerBuilder.RegisterType<UnitOfWorkModule>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
@@ -53,6 +53,7 @@ namespace Hermes.Messaging.Configuration
                 .Add<MessageMutatorModule>()
                 .Add<MessageSerializationModule>()
                 .Add<HeaderBuilderModule>()
+                .Add<CommandValidationModule>()
                 .Add<SendMessageModule>();
 
             containerBuilder.RegisterSingleton(outgoingPipeline);

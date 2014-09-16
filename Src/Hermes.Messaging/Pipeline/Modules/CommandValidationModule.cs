@@ -12,23 +12,23 @@ namespace Hermes.Messaging.Pipeline.Modules
         IModule<IncomingMessageContext>, 
         IModule<OutgoingMessageContext>
     {
+        /// <summary>
+        /// This is used for validation of commands being executed on the local bus
+        /// </summary>
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
-            if (input.IsLocalMessage || input.IsControlMessage() || !Settings.IsCommandType(input.Message.GetType()))
-                return true;
+            if (!input.IsControlMessage() && Settings.IsCommandType(input.Message.GetType()))
+                ValidateCommand(input.Message, input.ServiceLocator);
 
-            ValidateCommand(input, input.ServiceLocator);
-
-            return false;
+            return next();
         }
 
         public bool Process(OutgoingMessageContext input, Func<bool> next)
         {
             if (input.OutgoingMessageType == OutgoingMessageContext.MessageType.Command)
-                return true;
+                ValidateCommand(input.OutgoingMessage, input.ServiceLocator);
 
-            ValidateCommand(input.OutgoingMessage, input.ServiceLocator);
-            return true;
+            return next();
         }
 
         public void ValidateCommand(object command, IServiceLocator serviceLocator)
@@ -41,12 +41,20 @@ namespace Hermes.Messaging.Pipeline.Modules
             if (results.Any())
                 throw new CommandValidationException(results);
 
+            if (Settings.EnableCommandValidationClasses)
+            {
+                ValidateUsingValidatorClass(command, serviceLocator);
+            }
+        }
+
+        private static void ValidateUsingValidatorClass(object command, IServiceLocator serviceLocator)
+        {
             object validator;
-            var validatorType = typeof(IValidateCommand<>).MakeGenericType(command.GetType());
+            var validatorType = typeof (IValidateCommand<>).MakeGenericType(command.GetType());
 
             if (serviceLocator.TryGetInstance(validatorType, out validator))
             {
-                ((dynamic)validator).Validate(command);
+                ((dynamic)validator).Validate((dynamic)command);
             }
         }
     }

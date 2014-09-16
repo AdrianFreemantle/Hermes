@@ -83,8 +83,6 @@
     <Compile Include="KeyValueStore\KeyValueEntity.cs" />
     <Compile Include="KeyValueStore\KeyValueEntityConfiguration.cs" />
     <Compile Include="KeyValueStore\KeyValueStorePersister.cs" />
-    <Compile Include="MessageStore\LocalMessageStore.cs" />
-    <Compile Include="MessageStore\MessageStore.cs" />
     <Compile Include="ProcessManagager\ProcessManagerPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrderedQueryableExtensions.cs" />

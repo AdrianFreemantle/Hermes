@@ -62,7 +62,6 @@
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
-    <Compile Include="Messaging\IStoreLocalMessages.cs" />
     <Compile Include="Messaging\IValidateCommand.cs" />
     <Compile Include="Persistence\UnitOfWorkRollbackException.cs" />
     <Compile Include="Queries\IEntityQuery.cs" />

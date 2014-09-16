@@ -2,7 +2,6 @@
 using Contracts;
 using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -10,14 +9,16 @@ using Hermes.Serialization.Json;
 
 namespace Remote.Endpoint
 {
-    public class Endpoint : LocalEndpoint<AutofacAdapter>
+    public class Endpoint : WorkerEndpoint<AutofacAdapter>
     {
-        protected override void ConfigureEndpoint(IConfigureEndpoint configuration)
+        protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
 
             configuration
+                .DisableHeartbeatService()
+                .DisableMessageAudit()
                 .UseJsonSerialization()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)

@@ -9,7 +9,27 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
     {
         private static readonly List<HandlerCacheItem> HandlerDetails = new List<HandlerCacheItem>();
 
-        public static void SaveHandlerDetails(Type handlerType, Type messageContract, Action<object, object> handlerAction)
+        public static void InitializeCache(IEnumerable<Type> messageTypes, ICollection<Type> messageHandlerTypes)
+        {
+            foreach (var messageType in messageTypes)
+            {
+                CacheHandlersForMessageContract(messageType, messageHandlerTypes);
+            }
+        }
+
+        private static void CacheHandlersForMessageContract(Type messageContract, IEnumerable<Type> messageHandlerTypes)
+        {
+            foreach (Type handlerType in messageHandlerTypes)
+            {
+                if (HandlerIsCached(handlerType, messageContract))
+                    continue;
+
+                var handlerAction = HandlerFactory.BuildHandlerAction(handlerType, messageContract);
+                SaveHandlerAction(handlerType, messageContract, handlerAction);
+            }
+        }
+       
+        private static void SaveHandlerAction(Type handlerType, Type messageContract, Action<object, object> handlerAction)
         {
             if(handlerAction == null)
                 return;
@@ -25,7 +45,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
             details.AddHandlerAction(messageContract, handlerAction);
         }
 
-        public static HandlerCacheItem[] GetHandlerDetails(ICollection<Type> messageTypes)
+        public static HandlerCacheItem[] GetHandlers(ICollection<Type> messageTypes)
         {
             var result = HandlerDetails.Where(detail => messageTypes.Any(detail.ContainsHandlerFor)).Distinct().ToArray();
 
@@ -42,7 +62,7 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
             return String.Join(", ", messageTypes.Select(type => type.FullName));
         }
 
-        public static bool Contains(Type handlerType, Type messageContract)
+        public static bool HandlerIsCached(Type handlerType, Type messageContract)
         {
             return HandlerDetails.Any(detail => detail.HandlerType == handlerType && detail.ContainsHandlerFor(handlerType));
         }

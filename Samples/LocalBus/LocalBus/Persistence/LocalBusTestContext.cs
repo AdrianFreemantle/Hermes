@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using Hermes.EntityFramework.MessageStore;
 
 namespace LocalBus.Persistence
 {
@@ -7,8 +6,7 @@ namespace LocalBus.Persistence
     {
         public IDbSet<Record> Records { get; set; }
         public IDbSet<RecordLog> RecordLogs { get; set; }
-        public IDbSet<MessageStore> MessageStore { get; set; }
-
+        
         public LocalBusTestContext()
         {
         }

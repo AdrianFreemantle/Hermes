@@ -24,6 +24,9 @@ namespace Hermes.Messaging.Pipeline.Modules
 
             if (next())
             {
+                if (Settings.DisableMessageAudit)
+                    return true;
+
                 Logger.Debug("Sending message {0} to audit queue", input.MessageId);
                 SendToAuditQueue(input.TransportMessage, receivedTime);
                 FaultSimulator.Trigger();

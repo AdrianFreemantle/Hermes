@@ -21,18 +21,29 @@ namespace LocalBus
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            Parallel.ForEach(Iterations, i =>
+
+            foreach (var i in Iterations)
             {
                 try
                 {
                     bus.Execute(new AddRecordToDatabase(i + 1));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    //Console.WriteLine(ex.Message);
                 }
-            });
+            }
 
+            //Parallel.ForEach(Iterations, i =>
+            //{
+            //    try
+            //    {
+            //        bus.Execute(new AddRecordToDatabase(i + 1));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.Message);
+            //    }
+            //});
 
             stopwatch.Stop();
             Console.WriteLine(TimeSpan.FromTicks(stopwatch.ElapsedTicks));
