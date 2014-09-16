@@ -79,15 +79,6 @@ namespace Hermes.Messaging.Configuration
                        .Distinct(new TypeEqualityComparer()).ToArray();
         }
 
-        private static ICollection<Type> GetCommandValidatorTypes(AssemblyScanner scanner)
-        {
-            return
-                scanner.Types.Where(
-                    t => t.GetInterfaces()
-                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IValidateCommand<>)))
-                       .Distinct(new TypeEqualityComparer()).ToArray();
-        }
-
         private static ICollection<Type> GetQueryHandlerTypes(AssemblyScanner scanner)
         {
             return
