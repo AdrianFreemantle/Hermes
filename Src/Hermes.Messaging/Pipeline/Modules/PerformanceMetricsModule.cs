@@ -46,9 +46,13 @@ namespace Hermes.Messaging.Pipeline.Modules
                 return next();
             }
 
-            var result = next();
-            performanceMetrics.Add(input);
-            return result;
+            if (next())
+            {
+                performanceMetrics.Add(input);
+                return true;
+            }
+
+            return false;
         }
 
         void Elapsed(object sender, ElapsedEventArgs e)
