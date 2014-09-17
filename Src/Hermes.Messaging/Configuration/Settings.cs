@@ -24,11 +24,11 @@ namespace Hermes.Messaging.Configuration
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
         private static Func<string> userNameResolver = () => String.Empty;
 
-        internal static int SecondLevelRetryAttempts { get; set; }
-        internal static Func<Type, bool> IsMessageType { get; set; }
-        internal static Func<Type, bool> IsCommandType { get; set; }
-        internal static Func<Type, bool> IsEventType { get; set; }
-
+        public static int SecondLevelRetryAttempts { get; internal set; }
+        public static Func<Type, bool> IsMessageType { get; internal set; }
+        public static Func<Type, bool> IsCommandType { get; internal set; }
+        public static Func<Type, bool> IsEventType { get; internal set; }
+        
         public static bool DisableDistributedTransactions { get; internal set; }
         public static bool FlushQueueOnStartup { get; internal set; }
         public static bool IsSendOnly { get; internal set; }
@@ -38,20 +38,17 @@ namespace Hermes.Messaging.Configuration
         public static bool SubsribeToDomainEvents { get; internal set; }
         public static bool DisablePerformanceMonitoring { get; internal set; }
         public static bool DisableHeartbeatService { get; internal set; }
-
-        public static bool UseLocalMessageStore { get; set; }
-
-        public static TimeSpan CircuitBreakerReset { get; set; }
-        public static int CircuitBreakerThreshold { get; set; }
-        public static bool SetMessageCounterHeader { get; set; }
-
+        public static bool DisableMessageAudit { get; set; }
+        public static TimeSpan CircuitBreakerReset { get; internal set; }
+        public static int CircuitBreakerThreshold { get; internal set; }
+        public static bool EnableCommandValidationClasses { get; internal set; }
 
         static Settings()
         {
             SecondLevelRetryAttempts = 0;
             FirstLevelRetryAttempts = 0;
             CircuitBreakerReset = TimeSpan.FromSeconds(30);
-            CircuitBreakerThreshold = 2;
+            CircuitBreakerThreshold = 100;
 
             IsMessageType = type => false;
             IsCommandType = type => false;
@@ -118,7 +115,7 @@ namespace Hermes.Messaging.Configuration
         public static IManageSubscriptions Subscriptions
         {
             get { return RootContainer.GetInstance<IManageSubscriptions>(); }
-        }        
+        }
 
         internal static void SetEndpointName(string endpointName)
         {

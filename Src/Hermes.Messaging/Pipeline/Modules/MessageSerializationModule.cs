@@ -23,7 +23,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             return next();
         }
 
-        public byte[] SerializeMessages(object message)
+        private byte[] SerializeMessages(object message)
         {
             if (message != null)
             {

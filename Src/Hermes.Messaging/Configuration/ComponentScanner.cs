@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using Hermes.Equality;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
@@ -19,27 +17,24 @@ namespace Hermes.Messaging.Configuration
             {
                 IEnumerable<Type> messageTypes = GetMesageTypes(scanner);
                 ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes(scanner);
+                ICollection<Type> commandValidatorTypes = GetCommandValidatorTypes(scanner);
                 ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes(scanner);
+                ICollection<Type> intializerTypes = GetInitializerTypes(scanner);
 
-                foreach (var messageHandlerType in messageHandlerTypes)
-                {
-                    containerBuilder.RegisterType(messageHandlerType, DependencyLifecycle.InstancePerUnitOfWork);
-                }
+                HandlerCache.InitializeCache(messageTypes, messageHandlerTypes);
 
-                foreach (var queryHandlerType in queryHandlerTypes)
-                {
-                    containerBuilder.RegisterType(queryHandlerType, DependencyLifecycle.InstancePerUnitOfWork);
-                }
-                
-                foreach (var messageType in messageTypes)
-                {
-                    CacheHandlersForMessageContract(messageType, messageHandlerTypes);
-                }
+                RegisterTypes(containerBuilder, messageHandlerTypes, DependencyLifecycle.InstancePerUnitOfWork);
+                RegisterTypes(containerBuilder, queryHandlerTypes, DependencyLifecycle.InstancePerUnitOfWork);
+                RegisterTypes(containerBuilder, commandValidatorTypes, DependencyLifecycle.InstancePerUnitOfWork);
+                RegisterTypes(containerBuilder, intializerTypes, DependencyLifecycle.SingleInstance);
+            }
+        }
 
-                foreach (var intitializer in scanner.Types.Where(t => typeof(INeedToInitializeSomething).IsAssignableFrom(t) && !t.IsAbstract))
-                {
-                    containerBuilder.RegisterType(intitializer, DependencyLifecycle.SingleInstance);
-                }
+        private static void RegisterTypes(IContainerBuilder containerBuilder, IEnumerable<Type> types, DependencyLifecycle dependencyLifecycle)
+        {
+            foreach (var type in types)
+            {
+                containerBuilder.RegisterType(type, dependencyLifecycle);
             }
         }
 
@@ -52,64 +47,40 @@ namespace Hermes.Messaging.Configuration
                           .Distinct(new TypeEqualityComparer());
         }
 
-        private static void CacheHandlersForMessageContract(Type messageContract, IEnumerable<Type> messageHandlerTypes)
-        {
-            foreach (Type handlerType in messageHandlerTypes)
-            {
-                if (HandlerCache.Contains(handlerType, messageContract))
-                    continue;
-
-                Action<object, object> handlerAction = GetHandlerAction(handlerType, messageContract);
-
-                HandlerCache.SaveHandlerDetails(handlerType, messageContract, handlerAction);
-            }
-        }
-
         private static ICollection<Type> GetMessageHandlerTypes(AssemblyScanner scanner)
         {
             return
                 scanner.Types.Where(
-                    t => t.GetInterfaces()
-                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof (IHandleMessage<>)))
-                       .Distinct(new TypeEqualityComparer()).ToArray();
+                    t => !t.IsAbstract &&  
+                        t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessage<>)))
+                       .Distinct(new TypeEqualityComparer())
+                       .ToArray();
+        }
+
+        private static ICollection<Type> GetCommandValidatorTypes(AssemblyScanner scanner)
+        {
+            return
+                scanner.Types.Where(
+                    t => !t.IsAbstract &&
+                        t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidateCommand<>)))
+                       .Distinct(new TypeEqualityComparer())
+                       .ToArray();
         }
 
         private static ICollection<Type> GetQueryHandlerTypes(AssemblyScanner scanner)
         {
-            return
-                scanner.Types.Where(
-                    t => t.GetInterfaces()
-                          .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>)))
-                       .Distinct(new TypeEqualityComparer()).ToArray();
+            return scanner.Types.Where(
+                    t => !t.IsAbstract && 
+                        t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>) || i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
+                       .Distinct(new TypeEqualityComparer())
+                       .ToArray();
         }
 
-        private static Action<object, object> GetHandlerAction(Type typeThatImplementsHandler, Type messageType)
+        private static ICollection<Type> GetInitializerTypes(AssemblyScanner scanner)
         {
-            Type interfaceGenericType = typeof (IHandleMessage<>);
-            var interfaceType = interfaceGenericType.MakeGenericType(messageType);
-
-            if (interfaceType.IsAssignableFrom(typeThatImplementsHandler))
-            {
-                var methodInfo = typeThatImplementsHandler.GetInterfaceMap(interfaceType).TargetMethods.FirstOrDefault();                                
-
-                if (methodInfo != null)
-                {
-                    ParameterInfo firstParameter = methodInfo.GetParameters().First();
-
-                    if (firstParameter.ParameterType != messageType)
-                        return null;
-
-                    var handler = Expression.Parameter(typeof (object));
-                    var message = Expression.Parameter(typeof (object));
-
-                    var castTarget = Expression.Convert(handler, typeThatImplementsHandler);
-                    var castParam = Expression.Convert(message, methodInfo.GetParameters().First().ParameterType);
-                    var execute = Expression.Call(castTarget, methodInfo, castParam);
-                    return Expression.Lambda<Action<object, object>>(execute, handler, message).Compile();
-                }
-            }
-
-            return null;
+            return scanner.Types
+                .Where(t => typeof (INeedToInitializeSomething).IsAssignableFrom(t) && !t.IsAbstract)
+                .ToArray();
         }
     }
 }

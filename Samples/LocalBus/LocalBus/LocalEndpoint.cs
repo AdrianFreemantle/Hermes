@@ -3,7 +3,6 @@ using Contracts;
 using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -18,10 +17,11 @@ namespace LocalBus
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
-            Settings.UseLocalMessageStore = true;
 
             configuration
                 .UseJsonSerialization()
+                .DisableHeartbeatService()
+                .EnableCommandValidators()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
                 .UseSqlTransport() //we still need the transport so certain dependencies can be resolved and so that we can send async messages

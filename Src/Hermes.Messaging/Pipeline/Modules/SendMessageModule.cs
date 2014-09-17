@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Timeouts;
 using Hermes.Pipes;

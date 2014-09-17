@@ -2,33 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hermes.Equality;
-using Hermes.Reflection;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
     internal static class HandlerCache
     {
-        private static readonly List<HandlerCacheItem> handlerDetails = new List<HandlerCacheItem>();
+        private static readonly List<HandlerCacheItem> HandlerDetails = new List<HandlerCacheItem>();
 
-        public static void SaveHandlerDetails(Type handlerType, Type messageContract, Action<object, object> handlerAction)
+        public static void InitializeCache(IEnumerable<Type> messageTypes, ICollection<Type> messageHandlerTypes)
+        {
+            foreach (var messageType in messageTypes)
+            {
+                CacheHandlersForMessageContract(messageType, messageHandlerTypes);
+            }
+        }
+
+        private static void CacheHandlersForMessageContract(Type messageContract, IEnumerable<Type> messageHandlerTypes)
+        {
+            foreach (Type handlerType in messageHandlerTypes)
+            {
+                if (HandlerIsCached(handlerType, messageContract))
+                    continue;
+
+                var handlerAction = HandlerFactory.BuildHandlerAction(handlerType, messageContract);
+                SaveHandlerAction(handlerType, messageContract, handlerAction);
+            }
+        }
+       
+        private static void SaveHandlerAction(Type handlerType, Type messageContract, Action<object, object> handlerAction)
         {
             if(handlerAction == null)
                 return;
 
-            HandlerCacheItem details = handlerDetails.FirstOrDefault(detail => detail.HandlerType == handlerType);
+            HandlerCacheItem details = HandlerDetails.FirstOrDefault(detail => detail.HandlerType == handlerType);
 
             if (details == null)
             {
                 details = new HandlerCacheItem(handlerType);
-                handlerDetails.Add(details);              
+                HandlerDetails.Add(details);              
             }
 
             details.AddHandlerAction(messageContract, handlerAction);
         }
 
-        public static HandlerCacheItem[] GetHandlerDetails(ICollection<Type> messageTypes)
+        public static HandlerCacheItem[] GetHandlers(ICollection<Type> messageTypes)
         {
-            var result = handlerDetails.Where(detail => messageTypes.Any(detail.ContainsHandlerFor)).Distinct().ToArray();
+            var result = HandlerDetails.Where(detail => messageTypes.Any(detail.ContainsHandlerFor)).Distinct().ToArray();
 
             if (!result.Any())
             {
@@ -43,19 +62,19 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
             return String.Join(", ", messageTypes.Select(type => type.FullName));
         }
 
-        public static bool Contains(Type handlerType, Type messageContract)
+        public static bool HandlerIsCached(Type handlerType, Type messageContract)
         {
-            return handlerDetails.Any(detail => detail.HandlerType == handlerType && detail.ContainsHandlerFor(handlerType));
+            return HandlerDetails.Any(detail => detail.HandlerType == handlerType && detail.ContainsHandlerFor(handlerType));
         }
 
         public static IEnumerable<Type> GetAllHandlerTypes()
         {
-            return handlerDetails.Select(detail => detail.HandlerType);
+            return HandlerDetails.Select(detail => detail.HandlerType);
         }
 
         public static IEnumerable<Type> GetAllHandledMessageContracts()
         {
-            return handlerDetails
+            return HandlerDetails
                 .SelectMany(handler => handler.GetHandledMessageContracts())
                 .Distinct(new TypeEqualityComparer());
         }

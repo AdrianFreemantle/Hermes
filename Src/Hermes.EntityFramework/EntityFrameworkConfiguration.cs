@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 
 using Hermes.EntityFramework.KeyValueStore;
-using Hermes.EntityFramework.MessageStore;
 using Hermes.EntityFramework.ProcessManagager;
 using Hermes.EntityFramework.Queries;
 using Hermes.EntityFramework.Queues;
@@ -39,7 +38,6 @@ namespace Hermes.EntityFramework
             containerBuilder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<AggregateRepository>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<LocalMessageStore>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<QueueFactory>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<QueueStore>(DependencyLifecycle.InstancePerUnitOfWork);
         }

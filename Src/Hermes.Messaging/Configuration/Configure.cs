@@ -62,6 +62,12 @@ namespace Hermes
             return this;
         }
 
+        public IConfigureEndpoint DisableMessageAudit()
+        {
+            Settings.DisableMessageAudit = true;
+            return this;
+        }
+
         public IConfigureEndpoint NumberOfWorkers(int numberOfWorkers)
         {
             Settings.NumberOfWorkers = numberOfWorkers;
@@ -155,6 +161,12 @@ namespace Hermes
         public IConfigureEndpoint EndpointName(string name)
         {
             Settings.SetEndpointName(name);
+            return this;
+        }
+
+        public IConfigureEndpoint EnableCommandValidators()
+        {
+            Settings.EnableCommandValidationClasses = true;
             return this;
         }
 

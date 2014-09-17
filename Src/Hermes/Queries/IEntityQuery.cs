@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Hermes.Queries;
 
-namespace Hermes.EntityFramework.Queries
+namespace Hermes.Queries
 {
     public interface IEntityQuery<TEntity, TResult> where TEntity : class, new()
                                                     where TResult : class, new()

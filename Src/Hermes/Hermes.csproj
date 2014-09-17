@@ -58,10 +58,14 @@
     <Compile Include="Caching\ObjectCache.cs" />
     <Compile Include="Caching\ObjectCacheException.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
+    <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
+    <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
-    <Compile Include="Messaging\IStoreLocalMessages.cs" />
+    <Compile Include="Messaging\IValidateCommand.cs" />
     <Compile Include="Persistence\UnitOfWorkRollbackException.cs" />
+    <Compile Include="Queries\IEntityQuery.cs" />
+    <Compile Include="Reflection\AssemblyScannerDefaultIgnoreRules.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Equality\CompareObjects.cs" />

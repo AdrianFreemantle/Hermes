@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Hermes.Logging;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
 using Hermes.Messaging.ProcessManagement;
@@ -15,8 +14,11 @@ namespace Hermes.Messaging.Transports
 
         public virtual void DispatchToHandlers(object message, IServiceLocator serviceLocator)
         {
+            Mandate.ParameterNotNull(message, "message");
+            Mandate.ParameterNotNull(serviceLocator, "serviceLocator");
+
             Type[] contracts = message.GetContracts();
-            HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlerDetails(contracts);
+            HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlers(contracts);
             DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
         }
 

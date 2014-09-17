@@ -8,6 +8,7 @@ namespace Hermes.Messaging
     {
         IConfigureEndpoint DisableHeartbeatService();
         IConfigureEndpoint DisableDistributedTransactions();
+        IConfigureEndpoint DisableMessageAudit();
         IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);
         IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder);
         IConfigureEndpoint RegisterDependencies<T>() where T : IRegisterDependencies, new();
@@ -18,5 +19,10 @@ namespace Hermes.Messaging
         IConfigureEndpoint SendOnlyEndpoint();
         IConfigureEndpoint UserNameResolver(Func<string> resolveUserName);
         IConfigureEndpoint EndpointName(string name);
+
+        /// <summary>
+        /// Enables validation through classes which implement IValidateCommand. 
+        /// </summary>
+        IConfigureEndpoint EnableCommandValidators();
     }
 }

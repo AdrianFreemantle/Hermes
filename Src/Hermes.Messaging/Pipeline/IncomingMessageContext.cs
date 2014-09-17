@@ -15,6 +15,7 @@ namespace Hermes.Messaging.Pipeline
     {
         public static readonly ILog Logger = LogFactory.BuildLogger(typeof (IncomingMessageContext));
         public TransportMessage TransportMessage { get; private set; }
+        public bool IsLocalMessage { get; private set; }
         public IServiceLocator ServiceLocator { get; private set; }
 
         public static IMessageContext Null { get; private set; }
@@ -69,6 +70,7 @@ namespace Hermes.Messaging.Pipeline
         public IncomingMessageContext(object localMessage, IServiceLocator serviceLocator)
         {
             SetMessage(localMessage);
+            IsLocalMessage = true;
             ServiceLocator = serviceLocator;
             messageId = SequentialGuid.New();
 
@@ -136,6 +138,8 @@ namespace Hermes.Messaging.Pipeline
 
         public void SetMessage(object message)
         {
+            Mandate.ParameterNotNull(message, "message");
+
             Message = message;
         }
 
