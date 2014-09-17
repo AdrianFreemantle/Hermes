@@ -32,7 +32,7 @@ namespace Hermes.Messaging.ProcessManagement
         
         protected virtual void Begin()
         {
-            Begin(SequentialGuid.New());
+            Begin(Bus.CurrentMessage.CorrelationId);
         }
 
         protected virtual void Begin(Guid id)
@@ -62,6 +62,11 @@ namespace Hermes.Messaging.ProcessManagement
             }
         }
 
+        protected virtual void Continue()
+        {
+            Continue(Bus.CurrentMessage.CorrelationId);
+        }
+
         protected virtual void Continue(Guid id)
         {
             Logger.Debug("Continuing ProcessManager with Id {0}", id);
@@ -84,6 +89,11 @@ namespace Hermes.Messaging.ProcessManagement
             {
                 Begin();
             }
+        }
+
+        protected virtual void BeginOrContinue()
+        {
+            BeginOrContinue(Bus.CurrentMessage.CorrelationId);
         }
 
         protected virtual void BeginOrContinue(Guid id)
