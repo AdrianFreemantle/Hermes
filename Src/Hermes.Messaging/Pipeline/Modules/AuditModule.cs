@@ -24,10 +24,7 @@ namespace Hermes.Messaging.Pipeline.Modules
 
             if (next())
             {
-                if (Settings.DisableMessageAudit)
-                    return true;
-
-                Logger.Debug("Sending message {0} to audit queue", input.MessageId);
+                ProcessCompletedHeaders(input.TransportMessage, receivedTime);
                 SendToAuditQueue(input.TransportMessage, receivedTime);
                 FaultSimulator.Trigger();
                 return true;
@@ -38,9 +35,12 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         private void SendToAuditQueue(TransportMessage transportMessage, DateTime receivedTime)
         {
+            if (Settings.DisableMessageAudit)
+                return;
+
             try
             {
-                ProcessCompletedHeaders(transportMessage, receivedTime);
+                Logger.Debug("Sending message {0} to audit queue", transportMessage.MessageId);
                 messageSender.Send(transportMessage, Settings.AuditEndpoint);
             }
             catch

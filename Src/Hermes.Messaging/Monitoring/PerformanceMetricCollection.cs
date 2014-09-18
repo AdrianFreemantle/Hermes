@@ -32,11 +32,11 @@ namespace Hermes.Messaging.Monitoring
             return new PerformanceMetric(attp, attd, completedCount, errorCount);
         }
 
-        public void Add(IncomingMessageContext incomingMessage)
+        public void Add(DateTime receivedTime, IncomingMessageContext incomingMessage)
         {
             try
             {
-                var metric = new MessagePerformanceMetric(incomingMessage);
+                var metric = new MessagePerformanceMetric(receivedTime, incomingMessage);
 
                 lock (syncLock)
                 {

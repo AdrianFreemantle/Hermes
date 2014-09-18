@@ -42,13 +42,13 @@ namespace Hermes.Messaging.Pipeline.Modules
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
             if (Settings.DisablePerformanceMonitoring)
-            {
                 return next();
-            }
+
+            DateTime receivedTime = DateTime.UtcNow;
 
             if (next())
             {
-                performanceMetrics.Add(input);
+                performanceMetrics.Add(receivedTime, input);
                 return true;
             }
 
