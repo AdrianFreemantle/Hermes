@@ -10,7 +10,6 @@ namespace Hermes.EntityFramework.Queries
         where TEntity : class, new()
         where TResult : class, new()
     {
-
         private readonly IQueryable<TEntity> queryable;
         private int pageSize = 10;
 
@@ -132,7 +131,7 @@ namespace Hermes.EntityFramework.Queries
             return queryable.Any();
         }
 
-        private IQueryable<TEntity> GetOrderedQuery<TProperty>(Expression<Func<TEntity, TProperty>> orderByExpression, OrderBy order)
+        protected IQueryable<TEntity> GetOrderedQuery<TProperty>(Expression<Func<TEntity, TProperty>> orderByExpression, OrderBy order)
         {
             if (order == OrderBy.Ascending)
                 return queryable.OrderBy(orderByExpression);
@@ -143,7 +142,7 @@ namespace Hermes.EntityFramework.Queries
             throw new ArgumentException("Unknown order by type.");
         }
 
-        private int NumberOfRecordsToSkip(int pageNumber, int selectSize)
+        protected int NumberOfRecordsToSkip(int pageNumber, int selectSize)
         {
             Mandate.ParameterCondition(pageNumber > 0, "pageNumber");
             int adjustedPageNumber = pageNumber - 1; //we adjust for the fact that sql server starts at page 0
