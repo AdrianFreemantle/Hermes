@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using Hermes.Logging;
+using Hermes.Persistence;
 
 namespace Hermes.EntityFramework.Queries
 {
-    public class DatabaseQuery
+    public class DatabaseQuery : IDatabaseQuery
     {
         internal protected static readonly ILog Logger = LogFactory.BuildLogger(typeof(DatabaseQuery));
         private readonly IContextFactory contextFactory;
@@ -23,7 +24,7 @@ namespace Hermes.EntityFramework.Queries
             return context.Set<TEntity>();
         }
 
-        public DbRawSqlQuery<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
+        public IEnumerable<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
         {
             var context = GetDbContext();
             return context.Database.SqlQuery<T>(sql, parameters);

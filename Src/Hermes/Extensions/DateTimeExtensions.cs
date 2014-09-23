@@ -32,7 +32,13 @@ namespace System
             return dateTime.ToString("dd/mm/yyyy HH:mm");
         }
 
+        [Obsolete("Use FirstDayOfMonth", true)]
         public static DateTime FirstDayOfCurrentMonth(this DateTime current)
+        {
+            return new DateTime(current.Year, current.Month, 1);
+        }
+
+        public static DateTime FirstDayOfMonth(this DateTime current)
         {
             return new DateTime(current.Year, current.Month, 1);
         }
@@ -40,6 +46,12 @@ namespace System
         public static DateTime FirstDayOfNextMonth(this DateTime current)
         {
             return new DateTime(current.AddMonths(1).Year, current.AddMonths(1).Month, 1);
+        }
+
+        public static DateTime LastDayOfMonth(this DateTime date)
+        {
+            DateTime endOfMonth = date.AddMonths(1);
+            return new DateTime(endOfMonth.Year, endOfMonth.Month, 1).AddSeconds(-1);
         }
     }
 }

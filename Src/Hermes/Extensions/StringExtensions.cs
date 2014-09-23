@@ -23,7 +23,7 @@ namespace System
         {
             try
             {
-                return Regex.Match(value, @"\d+").Value;
+                return value.Where(Char.IsDigit).ToString();
             }
             catch (Exception)
             {

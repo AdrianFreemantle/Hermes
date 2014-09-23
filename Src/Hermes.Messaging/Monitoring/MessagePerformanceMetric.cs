@@ -34,13 +34,13 @@ namespace Hermes.Messaging.Monitoring
 
                 if (TimeToDeliver < TimeSpan.Zero)
                 {
-                    Logger.Error("Message {0} has sent time of {1} and a received time of {2}", context.MessageId, sentTime.ToWireFormattedString(), receivedTime.ToWireFormattedString());
+                    Logger.Warn("Message {0} has sent time of {1} and a received time of {2}", context.MessageId, sentTime.ToWireFormattedString(), receivedTime.ToWireFormattedString());
                     TimeToDeliver = TimeSpan.Zero;
                 }
 
                 if (TimeToProcess < TimeSpan.Zero)
                 {
-                    Logger.Error("Message {0} has received time of {1} and a completed time of {2}", context.MessageId, receivedTime.ToWireFormattedString(), completedTime.ToWireFormattedString());
+                    Logger.Warn("Message {0} has received time of {1} and a completed time of {2}", context.MessageId, receivedTime.ToWireFormattedString(), completedTime.ToWireFormattedString());
                     TimeToDeliver = TimeSpan.Zero;
                 }
             }
