@@ -114,6 +114,7 @@
     <EmbeddedResource Include="Queues\QueueSqlCommands.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>QueueSqlCommands.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
