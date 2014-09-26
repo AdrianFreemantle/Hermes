@@ -60,11 +60,15 @@
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
+    <Compile Include="Messaging\CommandValidationException.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
     <Compile Include="Messaging\IValidateCommand.cs" />
     <Compile Include="Persistence\IDatabaseQuery.cs" />
+    <Compile Include="Persistence\IPersistenceAudit.cs" />
     <Compile Include="Persistence\ISequentialGuidId.cs" />
+    <Compile Include="Persistence\ITimestampPersistenceAudit.cs" />
+    <Compile Include="Persistence\IUserNamePersistenceAudit.cs" />
     <Compile Include="Persistence\UnitOfWorkRollbackException.cs" />
     <Compile Include="Queries\IEntityQuery.cs" />
     <Compile Include="Reflection\AssemblyScannerDefaultIgnoreRules.cs" />
@@ -164,7 +168,6 @@
     <Compile Include="Ioc\DisposedProvider.cs" />
     <Compile Include="Ioc\IContainer.cs" />
     <Compile Include="Ioc\ServiceLocator.cs" />
-    <Compile Include="Ioc\ServiceProviderAdapter.cs" />
     <Compile Include="Ioc\IContainerBuilder.cs" />
     <Compile Include="IAmStartable.cs" />
     <Compile Include="Logging\ConsoleWindowLogger.cs" />

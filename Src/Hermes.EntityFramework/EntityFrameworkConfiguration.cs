@@ -31,15 +31,16 @@ namespace Hermes.EntityFramework
 
         public void Register(IContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterSingleton(new ContextFactory<TContext>(connectionStringName));
+            ContextFactory<TContext>.ConnectionStringName = connectionStringName;
 
-            containerBuilder.RegisterType<EntityFrameworkUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<DatabaseQuery>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<KeyValueStorePersister>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<ProcessManagerPersister>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<AggregateRepository>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<QueueFactory>(DependencyLifecycle.InstancePerUnitOfWork);
-            containerBuilder.RegisterType<QueueStore>(DependencyLifecycle.InstancePerUnitOfWork);
+            containerBuilder.RegisterType<ContextFactory<TContext>>();
+            containerBuilder.RegisterType<EntityFrameworkUnitOfWork>( );
+            containerBuilder.RegisterType<DatabaseQuery>( );
+            containerBuilder.RegisterType<KeyValueStorePersister>( );
+            containerBuilder.RegisterType<ProcessManagerPersister>( );
+            containerBuilder.RegisterType<AggregateRepository>( );
+            containerBuilder.RegisterType<QueueFactory>( );
+            containerBuilder.RegisterType<QueueStore>( );
         }
     }
 }

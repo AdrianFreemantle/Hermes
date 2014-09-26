@@ -23,7 +23,8 @@ namespace System
         {
             try
             {
-                return value.Where(Char.IsDigit).ToString();
+                var result = value.Where(Char.IsDigit).ToArray();
+                return new String(result);
             }
             catch (Exception)
             {

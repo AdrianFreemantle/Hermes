@@ -57,7 +57,7 @@ namespace Hermes.Enums
         {
             var other = obj as EnumWrapper<TEnum>;
 
-            if (other == null)
+            if (ReferenceEquals(other, null))
                 return false;
 
             return Id == other.Id;
@@ -71,34 +71,34 @@ namespace Hermes.Enums
             return Id;
         }
 
-        public static bool operator ==(EnumWrapper<TEnum> wrapper, TEnum enumeration)
-        {
-            if (wrapper == null)
-                return false;
+        //public static bool operator ==(EnumWrapper<TEnum> wrapper, TEnum enumeration)
+        //{
+        //    if (ReferenceEquals(wrapper, null))
+        //        return false;
 
-            return (wrapper.Id == (int)(dynamic)enumeration);
-        }
+        //    return (wrapper.Id == (int)(dynamic)enumeration);
+        //}
 
-        public static bool operator !=(EnumWrapper<TEnum> wrapper, TEnum enumeration)
-        {
-            if (ReferenceEquals(wrapper, null))
-                return false;
+        //public static bool operator !=(EnumWrapper<TEnum> wrapper, TEnum enumeration)
+        //{
+        //    if (ReferenceEquals(wrapper, null))
+        //        return false;
 
-            return !(wrapper.Enum.Equals(enumeration));
-        }
+        //    return !(wrapper.Enum.Equals(enumeration));
+        //}
 
-        public static bool operator ==(TEnum enumeration, EnumWrapper<TEnum> wrapper)
-        {
-            if (wrapper == null)
-                return false;
+        //public static bool operator ==(TEnum enumeration, EnumWrapper<TEnum> wrapper)
+        //{
+        //    if (ReferenceEquals(wrapper, null))
+        //        return false;
 
-            return (wrapper.Id == (int)(dynamic)enumeration);
-        }
+        //    return (wrapper.Id == (int)(dynamic)enumeration);
+        //}
 
-        public static bool operator !=(TEnum enumeration, EnumWrapper<TEnum> wrapper)
-        {
-            return !(enumeration == wrapper);
-        }
+        //public static bool operator !=(TEnum enumeration, EnumWrapper<TEnum> wrapper)
+        //{
+        //    return !(enumeration == wrapper);
+        //}
 
         public static implicit operator int(EnumWrapper<TEnum> wrapper)
         {
@@ -112,6 +112,9 @@ namespace Hermes.Enums
 
         public static implicit operator TEnum(EnumWrapper<TEnum> wrapper)
         {
+            if (ReferenceEquals(wrapper, null))
+                return default(TEnum);
+
             return wrapper.Enum;
         }
     }

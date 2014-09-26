@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes", "Hermes\Hermes.csproj", "{2266CC77-210B-48DB-8FA9-29C4CB432C1A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Serialization.Json", "Hermes.Serialization.Json\Hermes.Serialization.Json.csproj", "{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}"
@@ -31,8 +33,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Core.Tests", "Hermes.Core.Tests\Hermes.Core.Tests.csproj", "{0CADAE78-E603-483A-92CB-3E3EB99F62F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Cron.Tests", "Hermes.Cron.Tests\Hermes.Cron.Tests.csproj", "{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Management.Web.Api", "Hermes.Management.Web.Api\Hermes.Management.Web.Api.csproj", "{822A76DA-56F9-4B15-A90B-6DFAB87076D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,10 +84,6 @@ Global
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{822A76DA-56F9-4B15-A90B-6DFAB87076D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{822A76DA-56F9-4B15-A90B-6DFAB87076D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{822A76DA-56F9-4B15-A90B-6DFAB87076D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{822A76DA-56F9-4B15-A90B-6DFAB87076D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

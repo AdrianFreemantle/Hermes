@@ -27,5 +27,10 @@ namespace Hermes.Messaging.Configuration
 
             return false;
         }
+
+        public static string GetCurrentUserName()
+        {
+            return Settings.UserNameResolver();
+        }
     }
 }

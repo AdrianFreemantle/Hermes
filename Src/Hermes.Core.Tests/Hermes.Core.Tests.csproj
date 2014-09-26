@@ -58,6 +58,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DescriptionTestEnum.cs" />
+    <Compile Include="StringExtensionTests.cs" />
     <Compile Include="When_retrieving_enum_descriptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

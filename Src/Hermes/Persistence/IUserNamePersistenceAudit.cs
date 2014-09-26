@@ -1,4 +1,4 @@
-﻿namespace Hermes.EntityFramework
+﻿namespace Hermes.Persistence
 {
     public interface IUserNamePersistenceAudit
     {

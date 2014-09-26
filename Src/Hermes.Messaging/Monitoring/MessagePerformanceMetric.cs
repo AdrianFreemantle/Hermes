@@ -41,7 +41,7 @@ namespace Hermes.Messaging.Monitoring
                 if (TimeToProcess < TimeSpan.Zero)
                 {
                     Logger.Warn("Message {0} has received time of {1} and a completed time of {2}", context.MessageId, receivedTime.ToWireFormattedString(), completedTime.ToWireFormattedString());
-                    TimeToDeliver = TimeSpan.Zero;
+                    TimeToProcess = TimeSpan.Zero;
                 }
             }
         }

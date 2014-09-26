@@ -150,4 +150,24 @@ namespace Hermes.EntityFramework.Queries
             return selectSize * adjustedPageNumber;
         }
     }
+
+
+    public abstract class EntityQuery<TEntity> : EntityQuery<TEntity, object>
+        where TEntity : class, new()
+    {
+        protected EntityQuery(DatabaseQuery databaseQuery)
+            :base(databaseQuery)
+        {
+        }
+
+        protected override Expression<Func<TEntity, dynamic>> Selector()
+        {
+            return e => e;
+        }
+
+        protected override Func<dynamic, object> Mapper()
+        {
+            return o => o;
+        }
+    }
 }
