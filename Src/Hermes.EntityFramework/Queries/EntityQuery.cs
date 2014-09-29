@@ -151,7 +151,6 @@ namespace Hermes.EntityFramework.Queries
         }
     }
 
-
     public abstract class EntityQuery<TEntity> : EntityQuery<TEntity, object>
         where TEntity : class, new()
     {

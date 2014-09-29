@@ -29,6 +29,12 @@ namespace Hermes.Messaging.Monitoring
             int completedCount = CompletedCount();
             int errorCount = ErrorCount();
 
+            if (attd < TimeSpan.Zero) //due to doubles being floating points we may end up with less than zero
+                attd = TimeSpan.Zero;
+
+            if (attp < TimeSpan.Zero)
+                attp = TimeSpan.Zero;
+
             return new PerformanceMetric(attp, attd, completedCount, errorCount);
         }
 

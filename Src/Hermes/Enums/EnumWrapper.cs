@@ -71,35 +71,6 @@ namespace Hermes.Enums
             return Id;
         }
 
-        //public static bool operator ==(EnumWrapper<TEnum> wrapper, TEnum enumeration)
-        //{
-        //    if (ReferenceEquals(wrapper, null))
-        //        return false;
-
-        //    return (wrapper.Id == (int)(dynamic)enumeration);
-        //}
-
-        //public static bool operator !=(EnumWrapper<TEnum> wrapper, TEnum enumeration)
-        //{
-        //    if (ReferenceEquals(wrapper, null))
-        //        return false;
-
-        //    return !(wrapper.Enum.Equals(enumeration));
-        //}
-
-        //public static bool operator ==(TEnum enumeration, EnumWrapper<TEnum> wrapper)
-        //{
-        //    if (ReferenceEquals(wrapper, null))
-        //        return false;
-
-        //    return (wrapper.Id == (int)(dynamic)enumeration);
-        //}
-
-        //public static bool operator !=(TEnum enumeration, EnumWrapper<TEnum> wrapper)
-        //{
-        //    return !(enumeration == wrapper);
-        //}
-
         public static implicit operator int(EnumWrapper<TEnum> wrapper)
         {
             return wrapper.Id;
