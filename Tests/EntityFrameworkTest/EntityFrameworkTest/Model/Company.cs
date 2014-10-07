@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hermes.EntityFramework;
+using Hermes.Persistence;
 
 namespace EntityFrameworkTest.Model
 {

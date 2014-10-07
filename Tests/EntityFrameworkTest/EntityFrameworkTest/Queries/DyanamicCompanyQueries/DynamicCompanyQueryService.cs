@@ -7,7 +7,7 @@ using Hermes.EntityFramework.Queries;
 namespace EntityFrameworkTest.Queries.DyanamicCompanyQueries
 {
     public class DynamicCompanyQueryService 
-        : EntityQuery<Company, dynamic>
+        : EntityQuery<Company>
     {
         public DynamicCompanyQueryService(DatabaseQuery databaseQuery)
             : base(databaseQuery)
@@ -23,11 +23,6 @@ namespace EntityFrameworkTest.Queries.DyanamicCompanyQueries
                 Employees = company.Employees.Select(employee => employee.Name),
             };
 
-        }
-
-        protected override Func<dynamic, dynamic> Mapper()
-        {
-            return o => o;
         }
     }
 }

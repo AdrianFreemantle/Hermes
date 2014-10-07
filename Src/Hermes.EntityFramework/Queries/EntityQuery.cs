@@ -151,7 +151,7 @@ namespace Hermes.EntityFramework.Queries
         }
     }
 
-    public abstract class EntityQuery<TEntity> : EntityQuery<TEntity, object>
+    public abstract class EntityQuery<TEntity> : EntityQuery<TEntity, dynamic>
         where TEntity : class, new()
     {
         protected EntityQuery(DatabaseQuery databaseQuery)

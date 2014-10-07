@@ -1,5 +1,6 @@
 ﻿using System;
 using Hermes.EntityFramework;
+using Hermes.Persistence;
 
 namespace EntityFrameworkTest.Model
 {

@@ -1,13 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using EntityFrameworkTest.Queries.ComanyDtoQueries;
 using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
-using EntityFrameworkTest.Queries.EmployeeDtoQueries;
-using Hermes.EntityFramework;
-using Hermes.EntityFramework.Queries;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
-using Hermes.Queries;
 
 namespace EntityFrameworkTest
 {
@@ -17,8 +12,6 @@ namespace EntityFrameworkTest
         {
             LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Info;
-            DatabaseQuery.EnableDebugTrace = true;
-            EntityFrameworkUnitOfWork.EnableDebugTrace = true;
 
             var endpoint = new Endpoint();
             endpoint.Start();
