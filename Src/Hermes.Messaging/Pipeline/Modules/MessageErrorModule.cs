@@ -43,19 +43,21 @@ namespace Hermes.Messaging.Pipeline.Modules
         private void HandleException(IncomingMessageContext input, Exception ex)
         {
             string errorDetails = ex.GetFullExceptionMessage();
-            Logger.Error("Processing failed for message {0}. {1}", input.TransportMessage.MessageId, errorDetails);
-            input.TransportMessage.Headers[HeaderKeys.FailureDetails] = errorDetails;
-            HandleError(input);
-        }
 
-        private void HandleError(IncomingMessageContext input)
-        {
-            if(Settings.IsSendOnly)
+            if (Settings.IsSendOnly)
+            {
+                Logger.Error("Processing failed for message {0}. {1}", input.TransportMessage.MessageId, errorDetails);    
                 return;
+            }
 
             int firstLevelRetryCount = GetRetryCount(input, HeaderKeys.FirstLevelRetryCount);
             int secondLevelRetryCount = GetRetryCount(input, HeaderKeys.SecondLevelRetryCount);
 
+            HandleRetry(input, firstLevelRetryCount, secondLevelRetryCount, errorDetails);
+        }
+
+        private void HandleRetry(IncomingMessageContext input, int firstLevelRetryCount, int secondLevelRetryCount, string errorDetails)
+        {
             if (firstLevelRetryCount >= Settings.FirstLevelRetryAttempts && secondLevelRetryCount >= Settings.SecondLevelRetryAttempts)
             {
                 SendToErrorQueue(input.TransportMessage);
@@ -67,6 +69,8 @@ namespace Hermes.Messaging.Pipeline.Modules
             else
             {
                 SecondLevelRetry(input.TransportMessage, ++secondLevelRetryCount);
+                Logger.Error("Processing failed for message {0}. {1}", input.TransportMessage.MessageId, errorDetails);
+                input.TransportMessage.Headers[HeaderKeys.FailureDetails] = errorDetails;
             }
         }
 
