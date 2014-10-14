@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Transactions;
+using Hermes.Attributes;
 using Hermes.Messaging;
 
 namespace Hermes.EntityFramework

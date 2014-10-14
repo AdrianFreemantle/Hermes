@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using Hermes.Attributes;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Persistence;

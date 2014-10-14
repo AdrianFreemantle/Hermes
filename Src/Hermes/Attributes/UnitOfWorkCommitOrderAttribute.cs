@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Hermes.Messaging
+namespace Hermes.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class InitializationOrderAttribute : Attribute
+    public class UnitOfWorkCommitOrderAttribute : Attribute
     {
         public int Order { get; set; }
     }

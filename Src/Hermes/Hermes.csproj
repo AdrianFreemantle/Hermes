@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="ActionCollection.cs" />
     <Compile Include="Attributes\DoNotAllowDefaultValueAttribute.cs" />
+    <Compile Include="Attributes\InitializationOrderAttribute.cs" />
+    <Compile Include="Attributes\UnitOfWorkCommitOrderAttribute.cs" />
     <Compile Include="Caching\CachedObject.cs" />
     <Compile Include="Caching\CacheTimer.cs" />
     <Compile Include="Caching\ObjectCache.cs" />

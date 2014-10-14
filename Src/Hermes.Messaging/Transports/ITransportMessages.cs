@@ -1,9 +1,7 @@
 ﻿using System;
 using Hermes.Messaging.Pipeline;
-using Hermes.Messaging.Transports;
-using Microsoft.Practices.ServiceLocation;
 
-namespace Hermes.Messaging
+namespace Hermes.Messaging.Transports
 {
     /// <summary>
     /// Indicates the ability to transport inbound and outbound messages.

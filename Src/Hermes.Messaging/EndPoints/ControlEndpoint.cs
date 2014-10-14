@@ -4,6 +4,7 @@ using System.Threading;
 using Hermes.Ioc;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
+using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.EndPoints
 {

@@ -2,6 +2,7 @@
 using Hermes.Messaging.Callbacks;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Pipeline;
+using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Bus
 {

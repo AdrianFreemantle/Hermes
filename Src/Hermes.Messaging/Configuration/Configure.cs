@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hermes.Attributes;
 using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Messaging;

@@ -72,7 +72,6 @@
     <Compile Include="Configuration\MessageHandlerCache\ActionCacheItem.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCache.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
-    <Compile Include="InitializationOrderAttribute.cs" />
     <Compile Include="InMemoryBusExtensions.cs" />
     <Compile Include="Management\SqlErrorQueueManager.cs" />
     <Compile Include="Management\TransportMessageDto.cs" />
@@ -126,7 +125,6 @@
     <Compile Include="Pipeline\IncomingMessageContext.cs" />
     <Compile Include="Pipeline\OutgoingMessageContext.cs" />
     <Compile Include="Pipeline\Modules\UnitOfWorkModule.cs" />
-    <Compile Include="UnitOfWorkCommitOrderAttribute.cs" />
     <Compile Include="EndPoints\ClientEndpoint.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Configuration\Configure.cs" />
