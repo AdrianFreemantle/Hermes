@@ -11,20 +11,25 @@ namespace Hermes.EntityFramework
             return dbSet.Find(key);
         }
 
-        public static TEntity FirstOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
+        /// <summary>
+        /// Retrurns the first entity that can be found, if no entity is found a new unatached instance  is returned
+        /// </summary>
+        public static TEntity FirstOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
         {
-            return source.Local.FirstOrDefault(predicate) ?? source.FirstOrDefault(predicate) ?? CreateEntity(source);
-        }
-        
-        public static TEntity SingleOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class
-        {
-            return source.Local.SingleOrDefault(predicate) ?? source.SingleOrDefault(predicate) ?? CreateEntity(source);
+            return source.Local.FirstOrDefault(predicate) ?? source.FirstOrDefault(predicate) ?? CreateEntity<TEntity>();
         }
 
-        private static TEntity CreateEntity<TEntity>(IDbSet<TEntity> source) where TEntity : class
+        /// <summary>
+        /// Retrurns the first entity that can be found, if no entity is found a new unatached instance  is returned
+        /// </summary>
+        public static TEntity SingleOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
         {
-            var entity = source.Create();
-            return source.Attach(entity);
+            return source.Local.SingleOrDefault(predicate) ?? source.SingleOrDefault(predicate) ?? CreateEntity<TEntity>();
+        }
+
+        private static TEntity CreateEntity<TEntity>() where TEntity : class, new()
+        {
+            return new TEntity();
         }
     }
 }
