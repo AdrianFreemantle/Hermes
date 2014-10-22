@@ -38,6 +38,11 @@ namespace Hermes.Ioc
             return Instance.Value;
         }
 
+        public bool IsDisposed()
+        {
+            return serviceProvider is DisposedProvider;
+        }
+
         public void SetCurrentLifetimeScope(IServiceLocator provider)
         {
             serviceProvider = provider ?? new DisposedProvider();

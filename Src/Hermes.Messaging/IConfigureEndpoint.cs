@@ -8,8 +8,9 @@ namespace Hermes.Messaging
     {
         IConfigureEndpoint DisableHeartbeatService();
         IConfigureEndpoint DisableDistributedTransactions();
+        IConfigureEndpoint DisablePerformanceMonitoring();
         IConfigureEndpoint DisableMessageAudit();
-        IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);
+        IConfigureEndpoint NumberOfWorkers(int numberOfWorkers);        
         IConfigureEndpoint RegisterDependencies(IRegisterDependencies registerationHolder);
         IConfigureEndpoint RegisterDependencies<T>() where T : IRegisterDependencies, new();
         IConfigureEndpoint RegisterMessageRoute<TMessage>(Address endpointAddress);

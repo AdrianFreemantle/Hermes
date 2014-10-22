@@ -44,6 +44,24 @@ namespace Hermes.Messaging.Bus
         {
             Logger.Info("Executing : {0}", message);
 
+            if (ServiceLocator.Current.IsDisposed())
+            {
+                ProcessCommandWithNewLifetimeScope(message);
+            }
+            else
+            {
+                ProcessCommandWithExistingLifetimeScope(message);
+            }
+        }
+
+        private void ProcessCommandWithExistingLifetimeScope(object message)
+        {
+            var incomingContext = new IncomingMessageContext(message, ServiceLocator.Current);
+            messageTransport.ProcessMessage(incomingContext);
+        }
+
+        private void ProcessCommandWithNewLifetimeScope(object message)
+        {
             try
             {
                 using (IContainer childContainer = container.BeginLifetimeScope())
@@ -55,7 +73,7 @@ namespace Hermes.Messaging.Bus
             }
             finally
             {
-                ServiceLocator.Current.SetCurrentLifetimeScope(null); 
+                ServiceLocator.Current.SetCurrentLifetimeScope(null);
             }
         }
 

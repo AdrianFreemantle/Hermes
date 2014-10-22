@@ -47,7 +47,7 @@ namespace Requestor
 
         public void Handle(AdditionResult message)
         {
-            logger.Info("Result is {0}", message.CalcuationResult);
-        }
+            logger.Info("Response Result is {0}", message.CalcuationResult);
+        }        
     }
 }

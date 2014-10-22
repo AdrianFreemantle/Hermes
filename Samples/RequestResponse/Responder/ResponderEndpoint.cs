@@ -1,7 +1,5 @@
 ﻿using System;
-using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -19,8 +17,12 @@ namespace Responder
                 .FirstLevelRetryPolicy(3)
                 .UseJsonSerialization()
                 .UseSqlTransport()
+                .DisableHeartbeatService()
+                .DisableMessageAudit()
+                .DisablePerformanceMonitoring()
                 .DefineMessageAs(IsMessage)
                 .DefineCommandAs(IsCommand)
+                .DefineEventAs(IsEvent)
                 .RegisterMessageRoute<AdditionResult>(Address.Parse("Requestor"));
         }
 
@@ -33,5 +35,10 @@ namespace Responder
         {
             return typeof(ICommand).IsAssignableFrom(type) && type.Namespace.StartsWith("RequestResponseMessages");
         }
+
+        private static bool IsEvent(Type type)
+        {
+            return typeof(IEvent).IsAssignableFrom(type);
+        } 
     }
 }

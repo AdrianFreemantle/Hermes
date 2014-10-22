@@ -63,6 +63,12 @@ namespace Hermes
             return this;
         }
 
+        IConfigureEndpoint IConfigureEndpoint.DisablePerformanceMonitoring()
+        {
+            Settings.DisablePerformanceMonitoring = true;
+            return this;
+        }
+
         public IConfigureEndpoint DisableMessageAudit()
         {
             Settings.DisableMessageAudit = true;

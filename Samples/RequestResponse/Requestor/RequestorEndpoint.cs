@@ -19,6 +19,9 @@ namespace Requestor
             configuration
                 .UseJsonSerialization()
                 .UseSqlTransport()
+                .DisableHeartbeatService()
+                .DisableMessageAudit()
+                .DisablePerformanceMonitoring()
                 .DefineCommandAs(IsCommand)
                 .DefineMessageAs(IsMessage)
                 .RegisterMessageRoute<AddNumbers>(Address.Parse("Responder"));

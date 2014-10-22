@@ -6,7 +6,7 @@ using RequestResponseMessages;
 
 namespace Responder
 {
-    public class AddNumbersHandler : IHandleMessage<AddNumbers>
+    public class AddNumbersHandler : IHandleMessage<AddNumbers>, IHandleMessage<IResultCalculated>
     {
         private readonly IMessageBus bus;
         readonly ILog logger = LogFactory.BuildLogger(typeof(AddNumbersHandler));
@@ -24,6 +24,12 @@ namespace Responder
             Thread.Sleep(1000);
          
             bus.Reply(new AdditionResult { CalcuationResult = result });
+            bus.Publish(new ResultCalculated { CalcuationResult = result });
+        }
+
+        public void Handle(IResultCalculated message)
+        {
+            logger.Info("Event Result is {0}", message.CalcuationResult);
         }
     }
 }

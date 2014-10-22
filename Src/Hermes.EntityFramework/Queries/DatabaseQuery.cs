@@ -18,7 +18,7 @@ namespace Hermes.EntityFramework.Queries
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class
         {
-            var context = contextFactory.GetContext();        
+            var context = contextFactory.GetContext();
             return context.Set<TEntity>().AsNoTracking();
         }
 

@@ -13,12 +13,27 @@ namespace RequestResponseMessages
         
     }
 
+    public interface IEvent
+    {
+
+    }
+
     public interface IMessage
     {
         
     }
 
     public class AdditionResult : IMessage
+    {
+        public int CalcuationResult { get; set; }
+    }
+
+    public interface IResultCalculated : IEvent
+    {
+        int CalcuationResult { get; set; }
+    }
+
+    public class ResultCalculated : IResultCalculated
     {
         public int CalcuationResult { get; set; }
     }

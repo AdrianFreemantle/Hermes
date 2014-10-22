@@ -1,13 +1,10 @@
 ﻿using System;
-using Hermes.Logging;
 using Hermes.Messaging.Pipeline;
 
 namespace Hermes.Messaging.Monitoring
 {
     public class MessagePerformanceMetric
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof(MessagePerformanceMetric));
-
         public TimeSpan TimeToProcess { get; private set; }
         public TimeSpan TimeToDeliver { get; private set; }
         public bool Error { get; private set; }
@@ -33,16 +30,10 @@ namespace Hermes.Messaging.Monitoring
                 Error = false;
 
                 if (TimeToDeliver < TimeSpan.Zero)
-                {
-                    Logger.Warn("Message {0} has sent time of {1} and a received time of {2}", context.MessageId, sentTime.ToWireFormattedString(), receivedTime.ToWireFormattedString());
                     TimeToDeliver = TimeSpan.Zero;
-                }
 
                 if (TimeToProcess < TimeSpan.Zero)
-                {
-                    Logger.Warn("Message {0} has received time of {1} and a completed time of {2}", context.MessageId, receivedTime.ToWireFormattedString(), completedTime.ToWireFormattedString());
                     TimeToProcess = TimeSpan.Zero;
-                }
             }
         }
     }
