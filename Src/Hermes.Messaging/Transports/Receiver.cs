@@ -5,6 +5,7 @@ using System.Transactions;
 
 using Hermes.Backoff;
 using Hermes.Failover;
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports
@@ -12,6 +13,7 @@ namespace Hermes.Messaging.Transports
     public class Receiver : IReceiveMessages
     {
         private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(Settings.CircuitBreakerThreshold, Settings.CircuitBreakerReset);
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (Receiver));
 
         private CancellationTokenSource tokenSource;
         private readonly IDequeueMessages dequeueStrategy;
@@ -40,9 +42,11 @@ namespace Hermes.Messaging.Transports
             Task.Factory
                 .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
                 .ContinueWith(t =>
-                {
+                {                   
                     t.Exception.Handle(ex =>
                     {
+                        Logger.Error(ex.GetFullExceptionMessage());
+
                         if (ex is TransactionInDoubtException)
                         {
                             CriticalError.Raise("Receiver's transaction is in doubt", ex);

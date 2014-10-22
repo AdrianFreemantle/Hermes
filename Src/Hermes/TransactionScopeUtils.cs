@@ -14,7 +14,7 @@ namespace System.Transactions
             #if DEBUG
             Timeout = TimeSpan.FromMinutes(30);
             #else
-            Timeout = TimeSpan.FromMinutes(1);
+            Timeout = TimeSpan.FromMinutes(5);
             #endif
         }
 

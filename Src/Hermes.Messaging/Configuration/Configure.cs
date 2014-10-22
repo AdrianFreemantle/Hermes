@@ -119,6 +119,13 @@ namespace Hermes
             return this;
         }
 
+        public IConfigureWorker CircuitBreakerPolicy(int circuitBreakerThreshold, TimeSpan circuitBreakerReset)
+        {
+            Settings.CircuitBreakerThreshold = circuitBreakerThreshold;
+            Settings.CircuitBreakerReset = circuitBreakerReset;
+            return this;
+        }
+
         public IConfigureWorker DisablePerformanceMonitoring()
         {
             Settings.DisablePerformanceMonitoring = true;

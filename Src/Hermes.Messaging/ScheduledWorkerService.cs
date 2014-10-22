@@ -91,6 +91,7 @@ namespace Hermes.Messaging
                 {
                     t.Exception.Handle(ex =>
                     {
+                        Logger.Error(ex.GetFullExceptionMessage());
                         circuitBreaker.Execute(() => OnCircuitBreakerTriped(ex));
                         return true;
                     });

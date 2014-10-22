@@ -49,6 +49,8 @@ namespace Hermes.Messaging.Timeouts
                 {
                     t.Exception.Handle(ex =>
                     {
+                        Logger.Error(ex.GetFullExceptionMessage());
+
                         if (ex is TransactionInDoubtException)
                         {
                             CriticalError.Raise("Receiver's transaction is in doubt", ex);
