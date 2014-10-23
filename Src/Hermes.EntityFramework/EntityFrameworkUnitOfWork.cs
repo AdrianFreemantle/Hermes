@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using Hermes.Attributes;
 using Hermes.Logging;
-using Hermes.Messaging;
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
@@ -54,12 +53,7 @@ namespace Hermes.EntityFramework
 
         public DbContext GetDbContext()
         {
-            if (Context == null)
-            {
-                Context = contextFactory.GetContext();
-            }
-
-            return Context;
+            return Context ?? (Context = contextFactory.GetContext(ContextConfiguration.Transactional));
         }
 
         public Database GetDatabase()

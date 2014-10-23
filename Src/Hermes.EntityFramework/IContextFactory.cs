@@ -4,6 +4,6 @@ namespace Hermes.EntityFramework
 {
     public interface IContextFactory
     {
-        DbContext GetContext();
+        DbContext GetContext(ContextConfiguration configuration);
     }
 }

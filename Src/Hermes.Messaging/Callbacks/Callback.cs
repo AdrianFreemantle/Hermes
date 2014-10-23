@@ -184,6 +184,7 @@ namespace Hermes.Messaging.Callbacks
             }
 
             var synchronizationContext = synchronizer as SynchronizationContext;
+
             if (synchronizationContext != null)
             {
                 (this as ICallback).Register(

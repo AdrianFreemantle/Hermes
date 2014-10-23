@@ -8,8 +8,6 @@ namespace Hermes.EntityFramework
         where TContext : DbContext, new()
     {
         protected readonly ILog Logger;
-        protected DbContext Context;
-
         internal static string ConnectionStringName { get; set; }
         public static bool DebugTrace { get; set; }
 
@@ -24,26 +22,28 @@ namespace Hermes.EntityFramework
             ConnectionStringName = connectionStringName;
         }
 
-        public DbContext GetContext()
-        {
-            if (Context == null)
-                BuildContext();
-
-            return Context;
-        }
-
-        private void BuildContext()
+        public DbContext GetContext(ContextConfiguration configuration)
         {
             TContext context = String.IsNullOrWhiteSpace(ConnectionStringName)
                 ? new TContext()
                 : Activator.CreateInstance(typeof (TContext), ConnectionStringName) as TContext;
 
-            if (context != null && DebugTrace)
-            {
-                context.Database.Log = s => Logger.Debug(s);
-            }
+            ConfigureContext(context, configuration);
 
-            Context = context;
+            return context;
+        }
+
+        private void ConfigureContext(TContext context, ContextConfiguration contextConfiguration)
+        {
+            if (DebugTrace)
+                context.Database.Log = s => Logger.Debug(s);
+
+            if (contextConfiguration == ContextConfiguration.Queryable)
+            {
+                context.Configuration.LazyLoadingEnabled = false;
+                context.Configuration.ProxyCreationEnabled = false;
+                context.Configuration.AutoDetectChangesEnabled = false;
+            }
         }
     }
 }
