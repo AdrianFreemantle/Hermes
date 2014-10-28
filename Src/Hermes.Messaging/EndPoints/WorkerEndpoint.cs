@@ -21,12 +21,18 @@ namespace Hermes.Messaging.EndPoints
             var containerBuilder = new TContainerBuilder();
             string endpointName = Assembly.GetAssembly(GetType()).GetName().Name;
             configuration = Configure.Initialize(endpointName, containerBuilder);
+
             ConfigureEndpoint(configuration);
             ConfigurePipeline(containerBuilder);
 
             Settings.RootContainer = containerBuilder.BuildContainer();
-            var bus = Settings.RootContainer.GetInstance<IMessageBus>();
-            Settings.UserNameResolver = () => bus.CurrentMessage.UserName;
+
+            if (Settings.UserNameResolver == null)
+            {
+                var bus = Settings.RootContainer.GetInstance<IMessageBus>();
+                Settings.UserNameResolver = () => bus.CurrentMessage.UserName;
+
+            }
         }
 
         protected abstract void ConfigureEndpoint(IConfigureWorker configuration);

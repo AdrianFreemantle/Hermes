@@ -39,10 +39,15 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             string userName;
 
-            if (CurrentUser.GetCurrentUserName(out userName) && !String.IsNullOrWhiteSpace(userName)) 
+            if (CurrentUser.GetCurrentUserName(out userName) && !String.IsNullOrWhiteSpace(userName))
             {
                 headers.Add(HeaderKeys.UserName, userName);
             }
+            else
+            {
+                Logger.Warn("The current user name could not be resolved.");
+            }
+                
         }
 
         private void AddMessageTypeToHeader(object message, Dictionary<string, string> headers)

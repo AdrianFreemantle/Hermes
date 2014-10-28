@@ -22,7 +22,7 @@ namespace Hermes.Messaging.Configuration
         private static bool autoSubscribeEvents = true;
         private static IContainer rootContainer;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
-        private static Func<string> userNameResolver = () => String.Empty;
+        private static Func<string> userNameResolver;
 
         public static int SecondLevelRetryAttempts { get; internal set; }
         public static Func<Type, bool> IsMessageType { get; internal set; }

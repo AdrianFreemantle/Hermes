@@ -13,24 +13,30 @@ namespace Hermes.Messaging.Configuration
 
             try
             {
-                if (Settings.UserNameResolver != null)
+                if (Settings.UserNameResolver == null)
                 {
-                    userName = Settings.UserNameResolver();
+                    Logger.Warn("Settings.UserNameResolver has not been configured.");
+                    return false;
                 }
+
+                userName = Settings.UserNameResolver();
 
                 return true;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.GetFullExceptionMessage());
+                return false;
             }
-
-            return false;
         }
 
         public static string GetCurrentUserName()
         {
-            return Settings.UserNameResolver();
+            string userName;
+
+            GetCurrentUserName(out userName);
+
+            return userName;
         }
     }
 }

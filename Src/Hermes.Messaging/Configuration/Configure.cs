@@ -40,7 +40,7 @@ namespace Hermes
             busRegistrar.Register(containerBuilder);           
 
             Settings.SetEndpointName(endpointName);
-            Settings.RootContainer = containerBuilder.BuildContainer();
+            Settings.RootContainer = containerBuilder.BuildContainer();            
 
             return Instance;
         }

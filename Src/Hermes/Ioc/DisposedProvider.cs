@@ -9,12 +9,12 @@ namespace Hermes.Ioc
     {
         protected override object DoGetInstance(Type serviceType, string key)
         {
-            throw new ObjectDisposedException("Unable to resolve service {0} as the service provider is currently disposed.", serviceType.FullName);
+            throw new ObjectDisposedException(String.Format("Unable to resolve service {0} as the service provider is currently disposed.", serviceType.FullName));
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
         {
-            throw new ObjectDisposedException("Unable to resolve service {0} as the service provider is currently disposed.", serviceType.FullName);
+            throw new ObjectDisposedException(String.Format("Unable to resolve service {0} as the service provider is currently disposed.", serviceType.FullName));
         }
     }
 }
