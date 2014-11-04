@@ -20,6 +20,10 @@ namespace Hermes.Ioc
                 service = serviceLocator.GetInstance(serviceType);
                 return service != null;
             }
+            catch (ActivationException)
+            {
+                return false;
+            }
             catch (HermesComponentRegistrationException)
             {
                 return false;
@@ -39,6 +43,10 @@ namespace Hermes.Ioc
             {
                 services = serviceLocator.GetAllInstances(serviceType);
                 return true;
+            }
+            catch (ActivationException)
+            {
+                return false;
             }
             catch (HermesComponentRegistrationException)
             {
