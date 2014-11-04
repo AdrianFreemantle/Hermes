@@ -18,7 +18,7 @@ namespace Hermes.Ioc
             try
             {
                 service = serviceLocator.GetInstance(serviceType);
-                return true;
+                return service != null;
             }
             catch (HermesComponentRegistrationException)
             {
