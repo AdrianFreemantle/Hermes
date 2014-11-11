@@ -4,6 +4,7 @@ using System.Linq;
 using Hermes.Attributes;
 using Hermes.Failover;
 using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 using Hermes.Pipes;
 
@@ -12,7 +13,7 @@ namespace Hermes.Messaging.Pipeline.Modules
     public class UnitOfWorkModule : IModule<IncomingMessageContext>
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(UnitOfWorkModule));
-        private readonly ICollection<IUnitOfWork> unitsOfWork;        
+        private readonly ICollection<IUnitOfWork> unitsOfWork;
 
         public UnitOfWorkModule(IEnumerable<IUnitOfWork> unitsOfWork)
         {
@@ -29,6 +30,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
             catch (Exception ex)
             {
+                SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while commiting unit of work.", ex));
                 Logger.Error("Error on message {0} {1}", input.TransportMessage.MessageId, ex.GetFullExceptionMessage());
                 RollBackUnitsOfWork(input);
                 input.TransportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();

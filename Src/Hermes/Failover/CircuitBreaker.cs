@@ -41,5 +41,5 @@ namespace Hermes.Failover
         {
             timer.Dispose();
         }
-    }
+    }    
 }

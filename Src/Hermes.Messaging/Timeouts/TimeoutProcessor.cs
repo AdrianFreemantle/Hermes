@@ -13,7 +13,6 @@ namespace Hermes.Messaging.Timeouts
     public class TimeoutProcessor : IAmStartable
     {
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(TimeoutProcessor));
-        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(Settings.CircuitBreakerThreshold, Settings.CircuitBreakerReset);
 
         private CancellationTokenSource tokenSource;
         private readonly IPersistTimeouts timeoutStore;
@@ -51,13 +50,13 @@ namespace Hermes.Messaging.Timeouts
                     {
                         Logger.Error(ex.GetFullExceptionMessage());
 
-                        if (ex is TransactionInDoubtException)
+                        if (ex is TransactionException)
                         {
-                            CriticalError.Raise("Receiver's transaction is in doubt", ex);
+                            CriticalError.Raise("Distributed Transaction Error", ex);
                             return false;
                         }
 
-                        circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to process timeout message.", ex));
+                        SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to process timeout message.", ex));
                         return true;
                     });
 

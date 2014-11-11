@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Failover;
 using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Scheduling;
 
 namespace Hermes.Messaging
@@ -19,7 +20,6 @@ namespace Hermes.Messaging
 
         private CronSchedule cronSchedule;
         private TimeSpan timespanSchedule;
-        private CircuitBreaker circuitBreaker;
         private CancellationTokenSource tokenSource;
         private bool disposed;
 
@@ -67,7 +67,6 @@ namespace Hermes.Messaging
                 if (tokenSource == null || tokenSource.IsCancellationRequested)
                 {
                     tokenSource = new CancellationTokenSource();
-                    circuitBreaker = IntializeCircuitBreaker();
                     StartWorkers();
                 }    
             }
@@ -92,7 +91,7 @@ namespace Hermes.Messaging
                     t.Exception.Handle(ex =>
                     {
                         Logger.Error(ex.GetFullExceptionMessage());
-                        circuitBreaker.Execute(() => OnCircuitBreakerTriped(ex));
+                        SytemCircuitBreaker.Execute(() => OnCircuitBreakerTriped(ex));
                         return true;
                     });
 
@@ -104,11 +103,6 @@ namespace Hermes.Messaging
         {
             var log = String.Format("Fatal error in scheduled worker service {0}.", GetType().Name);
             CriticalError.Raise(log, ex);
-        }
-
-        protected virtual CircuitBreaker IntializeCircuitBreaker()
-        {
-            return new CircuitBreaker(50, TimeSpan.FromSeconds(30));
         }
 
         public void Stop()

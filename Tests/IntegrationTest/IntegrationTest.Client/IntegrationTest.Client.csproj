@@ -34,8 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.4.0\lib\net40\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -45,29 +46,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.10.96\lib\net45\Hermes.dll</HintPath>
+    <Reference Include="Hermes">
+      <HintPath>..\packages\Hermes.Core.3.2.11\lib\net45\Hermes.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.10.96\lib\net45\Hermes.Domain.dll</HintPath>
+    <Reference Include="Hermes.Domain">
+      <HintPath>..\packages\Hermes.Core.3.2.11\lib\net45\Hermes.Domain.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Hermes.EntityFramework.0.4.18-TestBuild\lib\net45\Hermes.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.10.96\lib\net45\Hermes.Messaging.dll</HintPath>
+    <Reference Include="Hermes.Messaging">
+      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.Messaging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.10.96\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    <Reference Include="Hermes.ObjectBuilder.Autofac">
+      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.10.96\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+    <Reference Include="Hermes.Serialization.Json">
+      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -75,8 +76,9 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using Hermes;
-using Hermes.EntityFramework;
+﻿using Hermes.EntityFramework;
 using Hermes.Messaging;
 using IntegrationTest.Contracts;
 

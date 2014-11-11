@@ -22,7 +22,6 @@ namespace Hermes.Messaging.Configuration
         private static bool autoSubscribeEvents = true;
         private static IContainer rootContainer;
         private static TimeSpan secondLevelRetryDelay = TimeSpan.FromSeconds(50);
-        private static Func<string> userNameResolver;
 
         public static int SecondLevelRetryAttempts { get; internal set; }
         public static Func<Type, bool> IsMessageType { get; internal set; }
@@ -42,13 +41,14 @@ namespace Hermes.Messaging.Configuration
         public static TimeSpan CircuitBreakerReset { get; internal set; }
         public static int CircuitBreakerThreshold { get; internal set; }
         public static bool EnableCommandValidationClasses { get; internal set; }
+        public static Func<string> UserNameResolver { get; internal set; }
 
         static Settings()
         {
             SecondLevelRetryAttempts = 0;
             FirstLevelRetryAttempts = 0;
             CircuitBreakerReset = TimeSpan.FromSeconds(30);
-            CircuitBreakerThreshold = 100;
+            CircuitBreakerThreshold = 10;
 
             IsMessageType = type => false;
             IsCommandType = type => false;
@@ -73,11 +73,6 @@ namespace Hermes.Messaging.Configuration
             FaultSimulator.SetPercetageChanceOfErrorBeingThrown(percentageChance);
         }
 
-        internal static Func<string> UserNameResolver
-        {
-            get { return userNameResolver; }
-            set { userNameResolver = value; }
-        }
 
         public static int NumberOfWorkers
         {

@@ -12,7 +12,6 @@ namespace Hermes.Messaging.Transports
 {  
     public class Receiver : IReceiveMessages
     {
-        private readonly CircuitBreaker circuitBreaker = new CircuitBreaker(Settings.CircuitBreakerThreshold, Settings.CircuitBreakerReset);
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof (Receiver));
 
         private CancellationTokenSource tokenSource;
@@ -47,13 +46,13 @@ namespace Hermes.Messaging.Transports
                     {
                         Logger.Error(ex.GetFullExceptionMessage());
 
-                        if (ex is TransactionInDoubtException)
+                        if (ex is TransactionException)
                         {
-                            CriticalError.Raise("Receiver's transaction is in doubt", ex);
+                            CriticalError.Raise("Distributed Transaction Error", ex);
                             return false;
                         }
 
-                        circuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to dequeue messages.", ex));
+                        SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to dequeue messages.", ex));
                         return true;
                     });
 

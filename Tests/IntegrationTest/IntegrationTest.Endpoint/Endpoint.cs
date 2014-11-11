@@ -2,7 +2,6 @@
 using Hermes.EntityFramework;
 using Hermes.Logging;
 using Hermes.Messaging;
-using Hermes.Messaging.Configuration;
 using Hermes.Messaging.EndPoints;
 using Hermes.Messaging.Transports.SqlTransport;
 using Hermes.ObjectBuilder.Autofac;
@@ -16,20 +15,18 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Warn;
+
             configuration
-                //.FlushQueueOnStartup(true)
-                //.FirstLevelRetryPolicy(2)
+                .FlushQueueOnStartup(true)
+                .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
-                .NumberOfWorkers(Environment.ProcessorCount)
+                //.NumberOfWorkers(Environment.ProcessorCount)
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
-
-            Settings.CircuitBreakerThreshold = 100;
-            Settings.CircuitBreakerReset = TimeSpan.FromSeconds(10);
-            Settings.EnableFaultSimulation(1.0M);
         }
 
         private static bool IsCommand(Type type)

@@ -25,7 +25,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             if (next())
             {
                 ProcessCompletedHeaders(input.TransportMessage, receivedTime);
-                SendToAuditQueue(input.TransportMessage, receivedTime);
+                SendToAuditQueue(input.TransportMessage);
                 FaultSimulator.Trigger();
                 return true;
             }
@@ -33,7 +33,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             return false;
         }
 
-        private void SendToAuditQueue(TransportMessage transportMessage, DateTime receivedTime)
+        private void SendToAuditQueue(TransportMessage transportMessage)
         {
             if (Settings.DisableMessageAudit)
                 return;

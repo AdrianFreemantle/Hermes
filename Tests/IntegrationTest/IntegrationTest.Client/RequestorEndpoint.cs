@@ -28,8 +28,6 @@ namespace IntegrationTest.Client
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
                 .SendOnlyEndpoint()
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
-
-            Settings.SetMessageCounterHeader = true;
         }
 
         private static bool IsCommand(Type type)

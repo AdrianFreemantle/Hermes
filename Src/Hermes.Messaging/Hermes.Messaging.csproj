@@ -109,6 +109,7 @@
     <Compile Include="Pipeline\Modules\DispatchMessagesModule.cs" />
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
     <Compile Include="MessageExtensions.cs" />
+    <Compile Include="SytemCircuitBreaker.cs" />
     <Compile Include="Timeouts\TimeoutData.cs" />
     <Compile Include="Transports\HeaderValueExtensions.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
