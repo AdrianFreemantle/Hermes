@@ -1,5 +1,6 @@
 ﻿using System;
 using Hermes.EntityFramework;
+using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.EndPoints;
@@ -15,17 +16,20 @@ namespace IntegrationTest.Endpoint
     {
         protected override void ConfigureEndpoint(IConfigureWorker configuration)
         {
-            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Warn;
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
 
             configuration
-                .FlushQueueOnStartup(true)
+                .FlushQueueOnStartup(true)                
+                .CircuitBreakerPolicy(100, TimeSpan.FromSeconds(1))
                 .FirstLevelRetryPolicy(2)
                 .SecondLevelRetryPolicy(10, TimeSpan.FromSeconds(5))
+                .DisableHeartbeatService()
                 .UseJsonSerialization()
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
+                .RegisterDependencies<DependencyRegistrar>()
                 .DefineEventAs(IsEvent)
-                //.NumberOfWorkers(Environment.ProcessorCount)
+                .NumberOfWorkers(Environment.ProcessorCount)
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");
         }
 
@@ -37,6 +41,14 @@ namespace IntegrationTest.Endpoint
         private static bool IsEvent(Type type)
         {
             return typeof(IEvent).IsAssignableFrom(type);
+        }
+    }
+
+    public class DependencyRegistrar : IRegisterDependencies
+    {
+        public void Register(IContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<RecordCountWorker>(DependencyLifecycle.SingleInstance);
         }
     }
 }

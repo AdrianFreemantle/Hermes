@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using Hermes.EntityFramework;
@@ -11,6 +12,7 @@ namespace IntegrationTests.PersistenceModel
     {
         public IDbSet<Record> Records { get; set; }
         public IDbSet<RecordLog> RecordLogs { get; set; }
+        public IDbSet<RecordCount> RecordCounts { get; set; }
 
         public IntegrationTestContext()
         {
@@ -39,5 +41,17 @@ namespace IntegrationTests.PersistenceModel
         public virtual int Id { get; set; }
         public virtual Guid RecordId { get; set; }
         public virtual Record Record { get; set; }
+    }
+
+    public class RecordCount
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public virtual Guid Id { get; set; }
+
+        [Required]
+        public virtual int NumberOfRecords { get; set; }
+
+        [Timestamp]
+        public virtual byte[] TimeStamp { get; set; }
     }
 }

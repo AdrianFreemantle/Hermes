@@ -30,36 +30,10 @@ namespace Hermes.Messaging.Transports
 
             for (int i = 0; i < Settings.NumberOfWorkers; i++)
             {
-                StartThread();
+                WorkerTask.Start(WorkerAction, tokenSource.Token);
             }
         }
-
-        private void StartThread()
-        {
-            CancellationToken token = tokenSource.Token;
-
-            Task.Factory
-                .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
-                .ContinueWith(t =>
-                {                   
-                    t.Exception.Handle(ex =>
-                    {
-                        Logger.Error(ex.GetFullExceptionMessage());
-
-                        if (ex is TransactionException)
-                        {
-                            CriticalError.Raise("Distributed Transaction Error", ex);
-                            return false;
-                        }
-
-                        SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to dequeue messages.", ex));
-                        return true;
-                    });
-
-                    StartThread();
-                }, TaskContinuationOptions.OnlyOnFaulted);
-        }
-
+    
         public void Stop()
         {
             if(tokenSource != null)

@@ -154,6 +154,7 @@
     <Compile Include="Transports\Receiver.cs" />
     <Compile Include="Bus\SubscriptionManager.cs" />
     <Compile Include="EndPoints\WorkerEndpoint.cs" />
+    <Compile Include="WorkerTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes.Domain\Hermes.Domain.csproj">

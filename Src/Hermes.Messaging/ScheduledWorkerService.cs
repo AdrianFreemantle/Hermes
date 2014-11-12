@@ -76,33 +76,8 @@ namespace Hermes.Messaging
         {
             for (int i = 0; i < WorkerThreads; i++)
             {
-                StartThread();
+                WorkerTask.Start(WorkerAction, tokenSource.Token);
             }
-        }
-
-        private void StartThread()
-        {
-            CancellationToken token = tokenSource.Token;
-
-            Task.Factory
-                .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
-                .ContinueWith(t =>
-                {
-                    t.Exception.Handle(ex =>
-                    {
-                        Logger.Error(ex.GetFullExceptionMessage());
-                        SytemCircuitBreaker.Execute(() => OnCircuitBreakerTriped(ex));
-                        return true;
-                    });
-
-                    StartThread();
-                }, TaskContinuationOptions.OnlyOnFaulted);
-        }
-
-        protected virtual void OnCircuitBreakerTriped(Exception ex)
-        {
-            var log = String.Format("Fatal error in scheduled worker service {0}.", GetType().Name);
-            CriticalError.Raise(log, ex);
         }
 
         public void Stop()

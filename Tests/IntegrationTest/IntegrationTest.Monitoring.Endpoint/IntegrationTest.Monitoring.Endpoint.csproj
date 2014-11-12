@@ -37,27 +37,27 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes">
-      <HintPath>..\packages\Hermes.Core.3.2.11\lib\net45\Hermes.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.2.15\lib\net45\Hermes.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.Domain">
-      <HintPath>..\packages\Hermes.Core.3.2.11\lib\net45\Hermes.Domain.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.2.15\lib\net45\Hermes.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.Messaging">
-      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.Messaging.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.2.15\lib\net45\Hermes.Messaging.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.2.15\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\packages\Hermes.Messaging.3.2.11\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.2.15\lib\net45\Hermes.Serialization.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Hermes.ServiceHost">
-      <HintPath>..\packages\Hermes.ServiceHost.3.2.11\lib\net45\Hermes.ServiceHost.exe</HintPath>
+      <HintPath>..\packages\Hermes.ServiceHost.3.2.15\lib\net45\Hermes.ServiceHost.exe</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
@@ -79,7 +79,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Topshelf">
-      <HintPath>..\packages\Hermes.ServiceHost.3.2.11\lib\net45\Topshelf.dll</HintPath>
+      <HintPath>..\packages\Hermes.ServiceHost.3.2.15\lib\net45\Topshelf.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

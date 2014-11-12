@@ -16,7 +16,7 @@ namespace Hermes.Logging
                     MessageFormat,
                     DateTime.UtcNow,
                     typeToLog.Name,
-                    string.Format(CultureInfo.InvariantCulture, message, values));
+                    String.Format(CultureInfo.InvariantCulture, message, values));
             }
             catch (Exception ex)
             {

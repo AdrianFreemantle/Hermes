@@ -25,6 +25,7 @@ namespace IntegrationTest.Client
                 .UseSqlTransport()
                 .DefineCommandAs(IsCommand)
                 .DefineEventAs(IsEvent)
+                .UserNameResolver(() => "SomeUser")
                 .RegisterMessageRoute<AddRecordToDatabase>(Address.Parse("IntegrationTest"))
                 .SendOnlyEndpoint()
                 .ConfigureEntityFramework<IntegrationTestContext>("IntegrationTest");

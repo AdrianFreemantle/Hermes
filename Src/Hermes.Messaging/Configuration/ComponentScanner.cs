@@ -71,7 +71,7 @@ namespace Hermes.Messaging.Configuration
         {
             return scanner.Types.Where(
                     t => !t.IsAbstract && 
-                        t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IAnswerQuery<,>) || i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
+                        t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
                        .Distinct(new TypeEqualityComparer())
                        .ToArray();
         }

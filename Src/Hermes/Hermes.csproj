@@ -147,8 +147,6 @@
     <Compile Include="Pipes\ModulePipeFactory.cs" />
     <Compile Include="Pipes\FilterPipe.cs" />
     <Compile Include="Pipes\IFilter.cs" />
-    <Compile Include="Queries\IAnswerQuery.cs" />
-    <Compile Include="Queries\IReturn.cs" />
     <Compile Include="Reflection\TypeMapper.cs" />
     <Compile Include="Reflection\ObjectFactory.cs" />
     <Compile Include="Reflection\AssemblyScanner.cs" />

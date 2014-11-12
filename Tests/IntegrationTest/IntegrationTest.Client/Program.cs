@@ -13,13 +13,13 @@ namespace IntegrationTest.Client
 {
     class Program
     {
-        const int NumberOfMessageToSend = 100000; 
+        const int NumberOfMessageToSend = 10000; 
 
         static void Main(string[] args)
         {
             int[] range = Enumerable.Range(0, NumberOfMessageToSend).ToArray();
 
-            Thread.Sleep(10000); 
+            Thread.Sleep(5000); 
 
             ConsoleWindowLogger.MinimumLogLevel = LogLevel.Fatal;
 

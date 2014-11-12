@@ -60,8 +60,8 @@ namespace Hermes.Logging
             lock (Sync)
             {
                 Console.ForegroundColor = color;
-                Console.WriteLine(message.FormatMessage(this.typeToLog, values));
-                Console.ForegroundColor = this.originalColor;
+                Console.WriteLine(message.FormatMessage(typeToLog, values));
+                Console.ForegroundColor = originalColor;
             }
         }
     }

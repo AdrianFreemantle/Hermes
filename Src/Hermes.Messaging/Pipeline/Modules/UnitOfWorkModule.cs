@@ -30,8 +30,7 @@ namespace Hermes.Messaging.Pipeline.Modules
             }
             catch (Exception ex)
             {
-                SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while commiting unit of work.", ex));
-                Logger.Error("Error on message {0} {1}", input.TransportMessage.MessageId, ex.GetFullExceptionMessage());
+                SytemCircuitBreaker.Trigger(ex);
                 RollBackUnitsOfWork(input);
                 input.TransportMessage.Headers[HeaderKeys.FailureDetails] = ex.GetFullExceptionMessage();
                 throw;

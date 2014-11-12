@@ -34,34 +34,7 @@ namespace Hermes.Messaging.Timeouts
             Logger.Info("Starting Timeout Processor");
 
             tokenSource = new CancellationTokenSource();
-            StartThread();
-        }
-
-        private void StartThread()
-        {
-            CancellationToken token = tokenSource.Token;
-            Task.Factory.StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-
-            Task.Factory
-                .StartNew(WorkerAction, token, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
-                .ContinueWith(t =>
-                {
-                    t.Exception.Handle(ex =>
-                    {
-                        Logger.Error(ex.GetFullExceptionMessage());
-
-                        if (ex is TransactionException)
-                        {
-                            CriticalError.Raise("Distributed Transaction Error", ex);
-                            return false;
-                        }
-
-                        SytemCircuitBreaker.Execute(() => CriticalError.Raise("Fatal error while attempting to process timeout message.", ex));
-                        return true;
-                    });
-
-                    StartThread();
-                }, TaskContinuationOptions.OnlyOnFaulted);
+            WorkerTask.Start(WorkerAction, tokenSource.Token);
         }
 
         private void PurgeQueueIfRequired()
