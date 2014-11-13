@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Web.UI;
 using Hermes.Logging;
 using Hermes.Scheduling;
 
@@ -24,7 +25,23 @@ namespace Hermes.Messaging.ProcessManagement
 
     public abstract class ProcessManager<T> : ProcessManager, IProcessManager<T> where T : class, IContainProcessManagerData, new()
     {
-        public T State { get; protected set; }
+        private T state;
+
+        public T State
+        {
+            get
+            {
+                if (state == null)
+                    throw new ProcessManagerNotInitializedException(this);
+
+                return state;
+            }
+
+            protected internal set
+            {
+                state = value;
+            }
+        }
 
         internal override Guid Id
         {

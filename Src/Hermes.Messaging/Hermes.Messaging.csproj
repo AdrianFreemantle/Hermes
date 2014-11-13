@@ -100,6 +100,7 @@
     <Compile Include="Pipeline\Modules\PerformanceMetricsModule.cs" />
     <Compile Include="Pipeline\Modules\SendMessageModule.cs" />
     <Compile Include="ProcessManagement\ProcessManagerDataNotFoundException.cs" />
+    <Compile Include="ProcessManagement\ProcessManagerNotInitializedException.cs" />
     <Compile Include="ScheduledWorkerService.cs" />
     <Compile Include="Serialization\MessageSerializationExtensions.cs" />
     <Compile Include="Storage\MsSql\SubscriptionCache.cs" />
