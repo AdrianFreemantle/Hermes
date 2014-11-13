@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Hermes.Logging;
+using Hermes.Scheduling;
 
 namespace Hermes.Messaging.ProcessManagement
 {
@@ -124,6 +125,15 @@ namespace Hermes.Messaging.ProcessManagement
         protected void Timeout(TimeSpan timeSpan, object command)
         {
             Bus.Defer(timeSpan, State.Id, command);
+        }
+
+        protected void Timeout(TimeSpan timeSpan, CronSchedule schedule, object command)
+        {
+            DateTime futureDate = DateTime.Now.Add(timeSpan);
+            DateTime timeoutDate = schedule.GetNextOccurrence(futureDate);
+            TimeSpan timeoutTime = timeoutDate - DateTime.Now;
+
+            Bus.Defer(timeoutTime, State.Id, command);
         }
 
         internal override void Save()

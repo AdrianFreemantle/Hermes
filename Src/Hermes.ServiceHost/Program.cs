@@ -108,7 +108,7 @@ namespace Hermes.ServiceHost
                 {
                     Console.WriteLine("Hermes Service Host is shutting down due to a fatal error. Press any key to exit.");
                     Console.ReadKey();
-                    Environment.Exit((int)exitCode);
+                    Environment.Exit(-1);
                 }
 
                 Environment.FailFast(log, exception);
