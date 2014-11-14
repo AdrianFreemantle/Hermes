@@ -36,11 +36,6 @@ namespace Hermes.Messaging.ProcessManagement
 
                 return state;
             }
-
-            protected internal set
-            {
-                state = value;
-            }
         }
 
         internal override Guid Id
@@ -57,7 +52,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Beginning ProcessManager with Id {0}", id);
 
-            State = new T
+            state = new T
             {
                 Id = id,
                 OriginalMessageId = Bus.CurrentMessage.MessageId,
@@ -72,7 +67,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Attempting to continue ProcessManager through an expression.");
 
-            State = ProcessManagerPersistence.Find(expression);
+            state = ProcessManagerPersistence.Find(expression);
 
             if (State == null)
             {
@@ -89,7 +84,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Continuing ProcessManager with Id {0}", id);
 
-            State = ProcessManagerPersistence.Get<T>(id);
+            state = ProcessManagerPersistence.Get<T>(id);
 
             if (State == null)
             {
@@ -101,7 +96,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Attempting to begin or continue a ProcessManager through an expression.");
 
-            State = ProcessManagerPersistence.Find(expression);
+            state = ProcessManagerPersistence.Find(expression);
 
             if (State == null)
             {
@@ -116,7 +111,7 @@ namespace Hermes.Messaging.ProcessManagement
 
         protected virtual void BeginOrContinue(Guid id)
         {
-            State = ProcessManagerPersistence.Get<T>(id);
+            state = ProcessManagerPersistence.Get<T>(id);
 
             if (State == null)
             {
