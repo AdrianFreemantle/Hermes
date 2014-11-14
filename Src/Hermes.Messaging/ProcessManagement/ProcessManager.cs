@@ -69,7 +69,7 @@ namespace Hermes.Messaging.ProcessManagement
 
             state = ProcessManagerPersistence.Find(expression);
 
-            if (State == null)
+            if (state == null)
             {
                 throw new ProcessManagerDataNotFoundException(this);
             }
@@ -86,7 +86,7 @@ namespace Hermes.Messaging.ProcessManagement
 
             state = ProcessManagerPersistence.Get<T>(id);
 
-            if (State == null)
+            if (state == null)
             {
                 throw new ProcessManagerDataNotFoundException(id, this);
             }
@@ -98,7 +98,7 @@ namespace Hermes.Messaging.ProcessManagement
 
             state = ProcessManagerPersistence.Find(expression);
 
-            if (State == null)
+            if (state == null)
             {
                 Begin();
             }
@@ -113,7 +113,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             state = ProcessManagerPersistence.Get<T>(id);
 
-            if (State == null)
+            if (state == null)
             {
                 Begin(id);
             }
