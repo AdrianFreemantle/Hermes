@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -63,6 +62,11 @@ namespace Hermes.Reflection
                                              .Union(baseDirectory.GetFiles("*.exe", SearchOption.AllDirectories))
                                              .Where(info => ExclusionRules.All(func => !func(info.Name)));
 
+            GetTypesFromAssemblies(assemblyFiles);
+        }
+
+        private void GetTypesFromAssemblies(IEnumerable<FileInfo> assemblyFiles)
+        {
             foreach (var assemblyFile in assemblyFiles)
             {
                 try
@@ -75,8 +79,32 @@ namespace Hermes.Reflection
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(String.Format("Error while scanning assembly {0}\n{1}", assemblyFile.FullName, ex.GetFullExceptionMessage()));
+                    HandleScanningException(ex, assemblyFile);
                 }
+            }
+        }
+
+        private static void HandleScanningException(Exception ex, FileInfo assemblyFile)
+        {
+            try
+            {
+                var reflectionTypeLoadException = ex as ReflectionTypeLoadException;
+
+                if (reflectionTypeLoadException != null)
+                {
+                    var typeLoadExceptions = reflectionTypeLoadException.LoaderExceptions.Select(e => e.GetFullExceptionMessage()).ToArray();
+                    var fullExceptionMessage = String.Join("\n", typeLoadExceptions);
+
+                    Logger.Warn(String.Format("Error while scanning assembly {0}\n{1}", assemblyFile.FullName, fullExceptionMessage));
+                }
+                else
+                {
+                    Logger.Warn(String.Format("Error while scanning assembly {0}\n{1}", assemblyFile.FullName, ex.GetFullExceptionMessage()));
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Fatal("Error while handling scanning exception: {0}", exception.GetFullExceptionMessage());
             }
         }
 
