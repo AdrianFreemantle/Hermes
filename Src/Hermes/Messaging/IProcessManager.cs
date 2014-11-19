@@ -1,8 +1,12 @@
 ﻿namespace Hermes.Messaging
 {
-    public interface IProcessManager<out T> where T : class, IContainProcessManagerData
+    public interface IProcessManager
     {
-        IPersistProcessManagers ProcessManagerPersistence { get; set; }
+        bool IsComplete { get; }
+        bool IsNew { get; }
         IMessageBus Bus { get; set; }
+        IPersistProcessManagers ProcessManagerPersistence { get; set; }
+        void Save();
+        IContainProcessManagerData GetCurrentState();
     }
 }

@@ -40,7 +40,7 @@ namespace Hermes.Messaging.Transports
         {
             foreach (var handler in handlers)
             {
-                var processManager = handler as ProcessManager;
+                var processManager = handler as IProcessManager;
 
                 if (processManager != null)
                 {

@@ -1,48 +1,34 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Web.UI;
 using Hermes.Logging;
 using Hermes.Scheduling;
 
 namespace Hermes.Messaging.ProcessManagement
 {
-    public abstract class ProcessManager
+    public abstract class ProcessManager<T> : IProcessManager 
+        where T : class, IContainProcessManagerData, new()
     {
         protected readonly ILog Logger;
+        protected T State;
 
-        public bool IsComplete { get; protected set; }
-        public bool IsNew { get; protected set; }
-        public IMessageBus Bus { get; set; }
-        public IPersistProcessManagers ProcessManagerPersistence { get; set; }
-        internal abstract void Save();
-        internal abstract Guid Id { get; }
+        public virtual IMessageBus Bus { get; set; }
+        public virtual IPersistProcessManagers ProcessManagerPersistence { get; set; }
+        public virtual bool IsComplete { get; private set; }
+        public virtual bool IsNew { get; private set; }
 
         protected ProcessManager()
         {
             Logger = LogFactory.BuildLogger(GetType());
         }
-    }
 
-    public abstract class ProcessManager<T> : ProcessManager, IProcessManager<T> where T : class, IContainProcessManagerData, new()
-    {
-        private T state;
-
-        public T State
+        IContainProcessManagerData IProcessManager.GetCurrentState()
         {
-            get
-            {
-                if (state == null)
-                    throw new ProcessManagerNotInitializedException(this);
+            if (State == null)
+                throw new ProcessManagerNotInitializedException(this);
 
-                return state;
-            }
+            return State;
         }
 
-        internal override Guid Id
-        {
-            get { return State.Id; }
-        }
-        
         protected virtual void Begin()
         {
             Begin(Bus.CurrentMessage.CorrelationId);
@@ -52,7 +38,7 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Beginning ProcessManager with Id {0}", id);
 
-            state = new T
+            State = new T
             {
                 Id = id,
                 OriginalMessageId = Bus.CurrentMessage.MessageId,
@@ -67,9 +53,9 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Attempting to continue ProcessManager through an expression.");
 
-            state = ProcessManagerPersistence.Find(expression);
+            State = ((IProcessManager)this).ProcessManagerPersistence.Find(expression);
 
-            if (state == null)
+            if (State == null)
             {
                 throw new ProcessManagerDataNotFoundException(this);
             }
@@ -84,9 +70,9 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Continuing ProcessManager with Id {0}", id);
 
-            state = ProcessManagerPersistence.Get<T>(id);
+            State = ((IProcessManager)this).ProcessManagerPersistence.Get<T>(id);
 
-            if (state == null)
+            if (State == null)
             {
                 throw new ProcessManagerDataNotFoundException(id, this);
             }
@@ -96,9 +82,9 @@ namespace Hermes.Messaging.ProcessManagement
         {
             Logger.Debug("Attempting to begin or continue a ProcessManager through an expression.");
 
-            state = ProcessManagerPersistence.Find(expression);
+            State = ((IProcessManager)this).ProcessManagerPersistence.Find(expression);
 
-            if (state == null)
+            if (State == null)
             {
                 Begin();
             }
@@ -111,9 +97,9 @@ namespace Hermes.Messaging.ProcessManagement
 
         protected virtual void BeginOrContinue(Guid id)
         {
-            state = ProcessManagerPersistence.Get<T>(id);
+            State = ((IProcessManager)this).ProcessManagerPersistence.Get<T>(id);
 
-            if (state == null)
+            if (State == null)
             {
                 Begin(id);
             }
@@ -121,36 +107,65 @@ namespace Hermes.Messaging.ProcessManagement
 
         protected void Send(object command)
         {
-            Bus.Send(State.Id, command);
+            var currentState = ((IProcessManager)this).GetCurrentState();
+
+            Bus.Send(currentState.Id, command);
         }
 
         protected void ReplyToOriginator(object message)
         {
-            Bus.Reply(Address.Parse(State.Originator), State.OriginalMessageId, message);
+            var currentState = ((IProcessManager)this).GetCurrentState();
+
+            Bus.Reply(Address.Parse(currentState.Originator), currentState.OriginalMessageId, message);
         }
 
         protected void Publish(object @event)
         {
-            Bus.Publish(State.Id, @event);
+            var currentState = ((IProcessManager)this).GetCurrentState();
+
+            Bus.Publish(currentState.Id, @event);
         }
 
         protected void Timeout(TimeSpan timeSpan, object command)
         {
-            Bus.Defer(timeSpan, State.Id, command);
+            var currentState = ((IProcessManager)this).GetCurrentState();
+
+            Bus.Defer(timeSpan, currentState.Id, command);
         }
 
         protected void Timeout(TimeSpan timeSpan, CronSchedule schedule, object command)
         {
-            DateTime futureDate = DateTime.Now.Add(timeSpan);
-            DateTime timeoutDate = schedule.GetNextOccurrence(futureDate);
-            TimeSpan timeoutTime = timeoutDate - DateTime.Now;
+            var currentState = ((IProcessManager)this).GetCurrentState();
 
-            Bus.Defer(timeoutTime, State.Id, command);
+            DateTime futureDate = DateTime.UtcNow.Add(timeSpan);
+            DateTime timeoutDate = schedule.GetNextOccurrence(futureDate);
+            TimeSpan timeoutTime = timeoutDate.ToUniversalTime() - DateTime.UtcNow;
+
+            Bus.Defer(timeoutTime, currentState.Id, command);
         }
 
-        internal override void Save()
+        protected void Complete(Expression<Func<T, bool>> expression)
         {
-            State.Version++;
+            BeginOrContinue(expression);
+            Complete();
+        }
+        
+        protected void Complete(Guid id)
+        {
+            BeginOrContinue(id);
+            Complete();
+        }              
+
+        protected void Complete()
+        {
+            IsComplete = true;
+        }
+
+        void IProcessManager.Save()
+        {
+            var currentState = ((IProcessManager)this).GetCurrentState();
+
+            currentState.Version++;
 
             if (IsNew && IsComplete)
             {
@@ -160,23 +175,18 @@ namespace Hermes.Messaging.ProcessManagement
             if (IsNew)
             {
                 Logger.Debug("Creating ProcessManager with Id {0}", State.Id);
-                ProcessManagerPersistence.Create(State);
+                ((IProcessManager)this).ProcessManagerPersistence.Create(State);
             }
             else if (IsComplete)
             {
                 Logger.Debug("Completeing ProcessManager with Id {0}", State.Id);
-                ProcessManagerPersistence.Complete<T>(State.Id);
+                ((IProcessManager)this).ProcessManagerPersistence.Complete<T>(State.Id);
             }
             else
             {
                 Logger.Debug("Updating ProcessManager with Id {0}", State.Id);
-                ProcessManagerPersistence.Update(State);
+                ((IProcessManager)this).ProcessManagerPersistence.Update(State);
             }
         }        
-
-        protected virtual void Complete()
-        {
-            IsComplete = true;
-        }
     }
 }

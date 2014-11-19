@@ -75,7 +75,7 @@ namespace Hermes.Reflection
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    Logger.Error(String.Format("Error while scanning assembly {0}\n{1}", assemblyFile.FullName, ex.GetFullExceptionMessage()));
                 }
             }
         }
