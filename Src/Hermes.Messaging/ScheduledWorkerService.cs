@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Failover;
@@ -21,6 +22,7 @@ namespace Hermes.Messaging
         private CronSchedule cronSchedule;
         private TimeSpan timespanSchedule;
         private CancellationTokenSource tokenSource;
+        
         private bool disposed;
 
         protected abstract void DoWork();
@@ -53,14 +55,19 @@ namespace Hermes.Messaging
         ~ScheduledWorkerService()
         {
             Dispose(false);
-        }               
+        }
+
+        protected string GetServiceName()
+        {
+            return GetType().Name.SplitCamelCase();
+        }
 
         public virtual void Start()
         {
-            Logger.Info("Starting {0}", GetType().Name.SplitCamelCase());
+            Logger.Info("Starting {0}", GetServiceName());
 
             if(disposed)
-                throw new ObjectDisposedException(String.Format("Unable to start service {0} as it is disposed", GetType().Name));
+                throw new ObjectDisposedException(String.Format("Unable to start service {0} as it is disposed", GetServiceName()));
 
             lock (syncLock)
             {
@@ -70,8 +77,8 @@ namespace Hermes.Messaging
                     StartWorkers();
                 }    
             }
-        }    
-    
+        }        
+
         private void StartWorkers()
         {
             for (int i = 0; i < WorkerThreads; i++)
@@ -82,7 +89,7 @@ namespace Hermes.Messaging
 
         public void Stop()
         {
-            Logger.Info("Stopping {0}", GetType().Name.SplitCamelCase());
+            Logger.Info("Stopping {0}", GetServiceName());
 
             lock (syncLock)
             {
@@ -94,6 +101,7 @@ namespace Hermes.Messaging
         public void WorkerAction(object obj)
         {
             var cancellationToken = (CancellationToken)obj;
+            var stopwatch = new Stopwatch();
 
             DateTime nextRunTime = RunImmediatelyOnStartup ? DateTime.Now : GetNextOccurrence();
 
@@ -102,7 +110,12 @@ namespace Hermes.Messaging
                 if (nextRunTime <= DateTime.Now)
                 {
                     nextRunTime = GetNextOccurrence();
+                    stopwatch.Start();
+
                     DoWork();
+
+                    stopwatch.Stop();
+                    Logger.Debug("DoWork executed in {0}", stopwatch.Elapsed.ToString());
                 }
 
                 Thread.Sleep(TenMilliseconds);
