@@ -37,6 +37,19 @@ namespace Hermes.Scheduling
             return GetNextOccurrence(nextScheduleTime);
         }
 
+        public TimeSpan GetTimeUntilNextOccurrence()
+        {
+            return GetTimeUntilNextOccurrence(DateTime.Now);
+        }
+
+        public TimeSpan GetTimeUntilNextOccurrence(DateTime specificTime)
+        {
+            var twoDays = TimeSpan.FromDays(2);
+            DateTime futureDate = specificTime.Add(twoDays);
+            DateTime timeoutDate = GetNextOccurrence(futureDate);
+            return timeoutDate - specificTime;
+        }
+
         private DateTime GetNextOccurrence(ScheduleTime nextScheduleTime)
         {
             CalculateNextScheduledSecond(nextScheduleTime);

@@ -136,11 +136,7 @@ namespace Hermes.Messaging.ProcessManagement
         protected void Timeout(TimeSpan timeSpan, CronSchedule schedule, object command)
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
-
-            DateTime futureDate = DateTime.UtcNow.Add(timeSpan);
-            DateTime timeoutDate = schedule.GetNextOccurrence(futureDate);
-            TimeSpan timeoutTime = timeoutDate.ToUniversalTime() - DateTime.UtcNow;
-
+            var timeoutTime = schedule.GetTimeUntilNextOccurrence();
             Bus.Defer(timeoutTime, currentState.Id, command);
         }
 
