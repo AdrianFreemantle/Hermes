@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Hermes.EntityFramework
 {
@@ -14,36 +15,21 @@ namespace Hermes.EntityFramework
         /// <summary>
         /// Retrurns the first entity that can be found, if no entity is found a new unatached instance  is returned
         /// </summary>
-        public static TEntity FirstOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
+        public static TEntity FirstOrCreate<TEntity>(this IDbSet<TEntity> source, Expression<Func<TEntity, bool>> predicate) where TEntity : class, new()
         {
-            TEntity entity = source.Local.FirstOrDefault(predicate);
-
-            if (entity != null)
-                return entity;
-
-            entity = source.FirstOrDefault(predicate);
-
-            if (entity != null)
-                return entity;
-
-            return new TEntity();
+            return source.Local.FirstOrDefault(predicate.Compile()) ?? source.FirstOrDefault(predicate) ?? CreateEntity<TEntity>();
         }
 
         /// <summary>
         /// Retrurns the first entity that can be found, if no entity is found a new unatached instance  is returned
         /// </summary>
-        public static TEntity SingleOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
+        public static TEntity SingleOrCreate<TEntity>(this IDbSet<TEntity> source, Expression<Func<TEntity, bool>> predicate) where TEntity : class, new()
         {
-            TEntity entity = source.Local.SingleOrDefault(predicate);
+            return source.Local.SingleOrDefault(predicate.Compile()) ?? source.SingleOrDefault(predicate) ?? CreateEntity<TEntity>();
+        }
 
-            if(entity != null)
-                return entity;
-
-            entity = source.SingleOrDefault(predicate);
-
-            if (entity != null)
-                return entity;
-
+        private static TEntity CreateEntity<TEntity>() where TEntity : class, new()
+        {
             return new TEntity();
         }
     }
