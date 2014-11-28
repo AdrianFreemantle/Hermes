@@ -16,7 +16,17 @@ namespace Hermes.EntityFramework
         /// </summary>
         public static TEntity FirstOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
         {
-            return source.Local.FirstOrDefault(predicate) ?? source.FirstOrDefault(predicate) ?? CreateEntity<TEntity>();
+            TEntity entity = source.Local.FirstOrDefault(predicate);
+
+            if (entity != null)
+                return entity;
+
+            entity = source.FirstOrDefault(predicate);
+
+            if (entity != null)
+                return entity;
+
+            return new TEntity();
         }
 
         /// <summary>
@@ -24,11 +34,16 @@ namespace Hermes.EntityFramework
         /// </summary>
         public static TEntity SingleOrCreate<TEntity>(this IDbSet<TEntity> source, Func<TEntity, bool> predicate) where TEntity : class, new()
         {
-            return source.Local.SingleOrDefault(predicate) ?? source.SingleOrDefault(predicate) ?? CreateEntity<TEntity>();
-        }
+            TEntity entity = source.Local.SingleOrDefault(predicate);
 
-        private static TEntity CreateEntity<TEntity>() where TEntity : class, new()
-        {
+            if(entity != null)
+                return entity;
+
+            entity = source.SingleOrDefault(predicate);
+
+            if (entity != null)
+                return entity;
+
             return new TEntity();
         }
     }
