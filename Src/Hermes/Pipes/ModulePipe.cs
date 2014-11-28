@@ -36,7 +36,6 @@ namespace Hermes.Pipes
 
         private bool TryInvokeNext(T input, IModule<T> processor)
         {
-            FaultSimulator.Trigger();
             var result = processor.Process(input, () => InvokeNext(input));
             return result;
         }

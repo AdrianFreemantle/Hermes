@@ -87,7 +87,6 @@ namespace Hermes.Messaging.Transports
             {
                 currentMessageBeingProcessed.Value = incomingContext;
                 incomingContext.Process(incomingPipeline);
-                FaultSimulator.Trigger();
             }
             finally
             {

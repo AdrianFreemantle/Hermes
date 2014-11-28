@@ -91,7 +91,6 @@ namespace Hermes.Messaging.Pipeline
                 var pipeline = incomingPipeline.Build(ServiceLocator);
                 pipeline.Invoke(this);
                 Logger.Debug("Committing Transaction Scope");
-                FaultSimulator.Trigger();
                 scope.Complete();
             }
         }

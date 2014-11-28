@@ -35,7 +35,6 @@ namespace Hermes.Messaging.Pipeline.Modules
             catch (Exception ex)
             {
                 HandleException(input, ex);
-                FaultSimulator.Trigger();
                 return false;
             }
         }

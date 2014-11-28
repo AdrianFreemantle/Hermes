@@ -43,7 +43,6 @@ namespace Hermes.Messaging.Pipeline.Modules
             {
                 Logger.Debug("Committing {0} unit-of-work for message {1}", unitOfWork.GetType().FullName, input);
                 unitOfWork.Commit();
-                FaultSimulator.Trigger();
             }
         }
 

@@ -68,12 +68,6 @@ namespace Hermes.Messaging.Configuration
             internal set { rootContainer = value; }
         }
 
-        public static void EnableFaultSimulation(decimal percentageChance)
-        {
-            FaultSimulator.SetPercetageChanceOfErrorBeingThrown(percentageChance);
-        }
-
-
         public static int NumberOfWorkers
         {
             get { return numberOfWorkers; }

@@ -26,7 +26,6 @@ namespace Hermes.Messaging.Pipeline.Modules
             {
                 ProcessCompletedHeaders(input.TransportMessage, receivedTime);
                 SendToAuditQueue(input.TransportMessage);
-                FaultSimulator.Trigger();
                 return true;
             }
 
