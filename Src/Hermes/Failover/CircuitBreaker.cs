@@ -11,6 +11,8 @@ namespace Hermes.Failover
         private int firedTimes;
         private int failureCount;
 
+        public bool IsTripped { get { return firedTimes > 0; } }
+
         /// <summary>
         /// Create a <see cref="CircuitBreaker"/>.
         /// </summary>
