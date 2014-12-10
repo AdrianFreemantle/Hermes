@@ -8,8 +8,8 @@ namespace Hermes.Queries
                                                     where TResult : class, new()
     {
         void SetPageSize(int size);
-        List<TResult> FetchAll();
-        List<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate);
+        IEnumerable<TResult> FetchAll();
+        IEnumerable<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate);
         TResult FetchSingle(Expression<Func<TEntity, bool>> queryPredicate);
         TResult FetchSingleOrDefault(Expression<Func<TEntity, bool>> queryPredicate);
         TResult FetchFirst(Expression<Func<TEntity, bool>> queryPredicate);

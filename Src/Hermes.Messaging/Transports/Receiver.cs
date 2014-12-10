@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Transactions;
 
 using Hermes.Backoff;
-using Hermes.Failover;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 

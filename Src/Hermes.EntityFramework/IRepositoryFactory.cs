@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using Hermes.Persistence;
 
 namespace Hermes.EntityFramework
 {
