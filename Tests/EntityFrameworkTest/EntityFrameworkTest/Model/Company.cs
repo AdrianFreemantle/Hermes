@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Hermes.Persistence;
+﻿using System.Collections.Generic;
 
 namespace EntityFrameworkTest.Model
 {
-    public class Company : IPersistenceAudit, ISequentialGuidId
+    public class Company : EntityBase
     {
-        public virtual Guid Id { get; set; }
         public virtual string Name { get; set; }
-
         public virtual ICollection<Employee> Employees { get; set; }
-
-        public virtual DateTime ModifiedTimestamp { get; set; }
-        public virtual DateTime CreatedTimestamp { get; set; }
-        public virtual string ModifiedBy { get; set; }
-        public virtual string CreatedBy { get; set; }
     }
 }

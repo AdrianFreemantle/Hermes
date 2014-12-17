@@ -3,6 +3,7 @@ using System.Linq;
 using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
+using Hermes.Queries;
 
 namespace EntityFrameworkTest
 {
@@ -22,9 +23,10 @@ namespace EntityFrameworkTest
 
                 dynamic google = dynamicCompanyQuery.FetchSingle(company => company.Name == "Google");
 
-                List<dynamic> companiesMoreThanThreeEmps = dynamicCompanyQuery.FetchAll(company => company.Employees.Count >= 3);
+                IEnumerable<object> blah = dynamicCompanyQuery.FetchAll(company => company.Employees.Count >= 3);
 
                 var sandraComapny = dynamicCompanyQuery.FetchFirst(company => company.Employees.Any(employee => employee.Name.Contains("Sandra")));
+
             }
         }
     }
