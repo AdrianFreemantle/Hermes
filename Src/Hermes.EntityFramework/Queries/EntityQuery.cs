@@ -31,17 +31,17 @@ namespace Hermes.EntityFramework.Queries
 
         private IEnumerable<TResult> ExecuteQuery()
         {
-            return Includes(queryable).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable).Select(Selector()).Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(IQueryable<TEntity> query)
         {
-            return Includes(query).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(query).Select(Selector()).Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return Includes(queryable.Where(queryPredicate)).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable.Where(queryPredicate)).Select(Selector()).Select(Mapper());
         }
 
         private async Task<IEnumerable<TResult>> ExecuteQueryAsync()
