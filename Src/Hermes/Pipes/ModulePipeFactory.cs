@@ -25,5 +25,10 @@ namespace Hermes.Pipes
 
             return new ModulePipe<T>(chain, serviceLocator);
         }
+
+        public virtual ModulePipe<T> Build()
+        {
+            return Build(ServiceLocator.Current);
+        }
     }
 }
