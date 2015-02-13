@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Pipes
 {
