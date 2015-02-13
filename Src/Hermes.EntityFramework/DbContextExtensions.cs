@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using Hermes.Enums;
 using Hermes.Persistence;
@@ -13,36 +14,29 @@ namespace Hermes.EntityFramework
             where TWrapper : EnumWrapper<TEnum>
             where TEnum : struct, IComparable, IFormattable, IConvertible 
         {
-            var enumValues = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+            var enumValues = Enum.GetValues(typeof(TEnum)).Cast<TEnum>()
+                .Select(t => ObjectFactory.CreateInstance<TWrapper>(t))
+                .ToArray();
 
-            foreach (var enumValue in enumValues)
-            {
-                var wrapper = ObjectFactory.CreateInstance<TWrapper>(enumValue);
-                var dbSet = context.Set<TWrapper>();
-                AddOrUpdate(wrapper, dbSet);
-            }
+            AddOrUpdate(context.Set<TWrapper>(), enumValues);
         }
 
         public static void RegisterLookupTable<TLookup>(this DbContext context, TLookup lookup) 
             where TLookup : class, ILookupTable
         {
-            var dbSet = context.Set<TLookup>();
-            AddOrUpdate(lookup, dbSet);
+            AddOrUpdate(context.Set<TLookup>(), lookup);
         }
 
-        private static void AddOrUpdate<TLookup>(TLookup lookup, DbSet<TLookup> dbSet) 
+        public static void RegisterLookupTable<TLookup>(this DbContext context, params TLookup[] lookup)
             where TLookup : class, ILookupTable
         {
-            var savedItem = dbSet.SingleOrDefault(t => t.Id == lookup.Id);
+            AddOrUpdate(context.Set<TLookup>(), lookup);
+        }
 
-            if (savedItem != null)
-            {
-                savedItem.Description = "this does not actually change anything, it makes ef think this value has been updated.";
-            }
-            else
-            {
-                dbSet.Add(lookup);
-            }
+        private static void AddOrUpdate<TLookup>(DbSet<TLookup> dbSet, params TLookup[] lookups) 
+            where TLookup : class, ILookupTable
+        {
+            dbSet.AddOrUpdate(t => t.Id, lookups);
         }
 
         /// <summary>

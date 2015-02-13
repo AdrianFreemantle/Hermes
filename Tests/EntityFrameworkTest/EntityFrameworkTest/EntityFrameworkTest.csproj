@@ -49,27 +49,27 @@
     </Reference>
     <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.14.9\lib\net45\Hermes.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.3.6\lib\net45\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.0.14.9\lib\net45\Hermes.Domain.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.3.6\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.EntityFramework.0.14.9\lib\net45\Hermes.EntityFramework.dll</HintPath>
+      <HintPath>..\packages\Hermes.EntityFramework.3.3.6\lib\net45\Hermes.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.14.9\lib\net45\Hermes.Messaging.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.3.6\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.14.9\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.3.6\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.0.14.9\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.3.6\lib\net45\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="HibernatingRhinos.Profiler.Appender">
       <HintPath>..\packages\EntityFrameworkProfiler.Appender.2.0.2234.0\lib\HibernatingRhinos.Profiler.Appender.dll</HintPath>
@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="Endpoint.cs" />
     <Compile Include="Model\DatabaseInitializer.cs" />
+    <Compile Include="Model\EntityBase.cs" />
     <Compile Include="Model\EntityFrameworkTestContext.cs" />
     <Compile Include="Model\Company.cs" />
     <Compile Include="Model\Employee.cs" />
@@ -107,10 +108,6 @@
     <Compile Include="Queries\DyanamicCompanyQueries\DynamicCompanyQueryService.cs" />
     <Compile Include="Queries\EmployeeDtoQueries\EmployeeDto.cs" />
     <Compile Include="Queries\EmployeeDtoQueries\DtoEmployeeQueryService.cs" />
-    <Compile Include="Queries\EmployeeDtoQueries\FetchAllEmployeesForCompany.cs" />
-    <Compile Include="Queries\EmployeeDtoQueries\FetchEmployeesWithNameLike.cs" />
-    <Compile Include="Queries\EmployeeDtoQueries\FetchEmployeeWithName.cs" />
-    <Compile Include="Queries\EmployeeDtoQueries\FetchFirstEmployeeWithNameLike.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

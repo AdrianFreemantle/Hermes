@@ -13,7 +13,7 @@ namespace Hermes.Pipes
             return this;
         }
 
-        public virtual IEnumerable<T> Filter(IEnumerable<T> values)
+        public virtual ICollection<T> Filter(ICollection<T> values)
         {
             T[] current = values.ToArray();
 

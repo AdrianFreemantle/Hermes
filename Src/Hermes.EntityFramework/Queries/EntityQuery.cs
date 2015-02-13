@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Hermes.Queries;
 
 namespace Hermes.EntityFramework.Queries
@@ -25,21 +27,48 @@ namespace Hermes.EntityFramework.Queries
         protected virtual IQueryable<TEntity> Includes(IQueryable<TEntity> query)
         {
             return query;
-        }
+        }        
 
         private IEnumerable<TResult> ExecuteQuery()
         {
-            return Includes(queryable).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable).Select(Selector()).Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(IQueryable<TEntity> query)
         {
-            return Includes(query).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(query).Select(Selector()).Select(Mapper());
         }
 
         private IEnumerable<TResult> ExecuteQuery(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return Includes(queryable.Where(queryPredicate)).Select(Selector()).ToArray().Select(Mapper());
+            return Includes(queryable.Where(queryPredicate)).Select(Selector()).Select(Mapper());
+        }
+
+        private async Task<IEnumerable<TResult>> ExecuteQueryAsync()
+        {
+            dynamic[] result = await Includes(queryable)
+                .Select(Selector())
+                .ToArrayAsync();
+
+            return result.Select(Mapper());
+        }
+
+        private async Task<IEnumerable<TResult>> ExecuteQueryAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            dynamic[] result = await Includes(queryable.Where(queryPredicate))
+                .Select(Selector())
+                .ToArrayAsync();
+
+            return result.Select(Mapper());
+        }
+
+        private async Task<IEnumerable<TResult>> ExecuteQueryAsync(IQueryable<TEntity> query)
+        {
+            dynamic[] result = await Includes(query)
+                .Select(Selector())
+                .ToArrayAsync();
+
+            return result.Select(Mapper());
         }
 
         public void SetPageSize(int size)
@@ -48,14 +77,24 @@ namespace Hermes.EntityFramework.Queries
             pageSize = size;
         }
 
-        public List<TResult> FetchAll()
+        public IEnumerable<TResult> FetchAll()
         {
-            return ExecuteQuery().ToList();
+            return ExecuteQuery();
         }
 
-        public List<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate)
+        public Task<IEnumerable<TResult>> FetchAllAsync()
         {
-            return ExecuteQuery(queryPredicate).ToList();
+            return ExecuteQueryAsync();
+        }
+
+        public IEnumerable<TResult> FetchAll(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            return ExecuteQuery(queryPredicate);
+        }
+
+        public Task<IEnumerable<TResult>> FetchAllAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            return ExecuteQueryAsync(queryPredicate);
         }
 
         public TResult FetchSingle(Expression<Func<TEntity, bool>> queryPredicate)
@@ -63,9 +102,21 @@ namespace Hermes.EntityFramework.Queries
             return ExecuteQuery(queryPredicate).Single();
         }
 
+        public async Task<TResult> FetchSingleAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            IEnumerable<TResult> result = await ExecuteQueryAsync(queryPredicate);
+            return result.Single();
+        }
+
         public TResult FetchSingleOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
         {
             return ExecuteQuery(queryPredicate).SingleOrDefault();
+        }
+
+        public async Task<TResult> FetchSingleOrDefaultAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            IEnumerable<TResult> result = await ExecuteQueryAsync(queryPredicate);
+            return result.SingleOrDefault();
         }
 
         public TResult FetchFirst(Expression<Func<TEntity, bool>> queryPredicate)
@@ -73,9 +124,21 @@ namespace Hermes.EntityFramework.Queries
             return ExecuteQuery(queryPredicate).First();
         }
 
+        public async Task<TResult> FetchFirstAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            IEnumerable<TResult> result = await ExecuteQueryAsync(queryPredicate);
+            return result.First();
+        }
+
         public TResult FetchFirstOrDefault(Expression<Func<TEntity, bool>> queryPredicate)
         {
             return ExecuteQuery(queryPredicate).FirstOrDefault();
+        }
+
+        public async Task<TResult> FetchFirstOrDefaultAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            IEnumerable<TResult> result = await ExecuteQueryAsync(queryPredicate);
+            return result.FirstOrDefault();
         }
 
         public PagedResult<TResult> FetchPage<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy)
@@ -111,14 +174,69 @@ namespace Hermes.EntityFramework.Queries
             return new PagedResult<TResult>(results, pageNumber, pageSize, GetCount(queryPredicate));
         }
 
+        public async Task<PagedResult<TResult>> FetchPageAsync<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy)
+        {
+            return await FetchPageAsync(pageNumber, orderBy, OrderBy.Ascending);
+        }
+
+        public async Task<PagedResult<TResult>> FetchPageAsync<TProperty>(int pageNumber, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
+        {
+            var orderedQuery = GetOrderedQuery(orderBy, order)
+                .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
+                .Take(pageSize);
+
+            var result = await ExecuteQueryAsync(orderedQuery);
+            var count = await GetCountAsync();
+
+            return new PagedResult<TResult>(result, pageNumber, pageSize, count);
+        }
+
+        public async Task<PagedResult<TResult>> FetchPageAsync<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy)
+        {
+            return await FetchPageAsync(pageNumber, queryPredicate, orderBy, OrderBy.Ascending);
+        }
+
+        public async Task<PagedResult<TResult>> FetchPageAsync<TProperty>(int pageNumber, Expression<Func<TEntity, bool>> queryPredicate, Expression<Func<TEntity, TProperty>> orderBy, OrderBy order)
+        {
+            var orderedQuery = GetOrderedQuery(orderBy, order)
+                .Where(queryPredicate)
+                .Skip(NumberOfRecordsToSkip(pageNumber, pageSize))
+                .Take(pageSize);
+
+            var result = await ExecuteQueryAsync(orderedQuery);
+            var count = await GetCountAsync();
+
+            return new PagedResult<TResult>(result, pageNumber, pageSize, count);
+        }               
+
         public int GetCount(Expression<Func<TEntity, bool>> queryPredicate)
         {
             return queryable.Count(queryPredicate);
-        }
+        }        
 
         public int GetCount()
         {
             return queryable.Count();
+        }
+
+        public Task<int> GetCountAsync()
+        {
+            return queryable.CountAsync();
+        }
+
+        public Task<int> GetCountAsync(Expression<Func<TEntity, bool>> queryPredicate)
+        {
+            return queryable.CountAsync(queryPredicate);
+        }
+
+        public bool Any()
+        {
+            return queryable.Any();
+        }
+
+        public Task<bool> AnyAsync()
+        {
+            return queryable.AnyAsync();
         }
 
         public bool Any(Expression<Func<TEntity, bool>> queryPredicate)
@@ -126,10 +244,10 @@ namespace Hermes.EntityFramework.Queries
             return queryable.Any(queryPredicate);
         }
 
-        public bool Any()
+        public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> queryPredicate)
         {
-            return queryable.Any();
-        }
+            return queryable.AnyAsync(queryPredicate);
+        }        
 
         protected IQueryable<TEntity> GetOrderedQuery<TProperty>(Expression<Func<TEntity, TProperty>> orderByExpression, OrderBy order)
         {

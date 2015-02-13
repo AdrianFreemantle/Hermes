@@ -94,4 +94,7 @@ Global
 		{0CADAE78-E603-483A-92CB-3E3EB99F62F3} = {02F0A028-09F0-4C4F-B48C-6D620B7F30AF}
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F} = {02F0A028-09F0-4C4F-B48C-6D620B7F30AF}
 	EndGlobalSection
+	GlobalSection(NDepend) = preSolution
+		Project = ".\Hermes.ndproj"
+	EndGlobalSection
 EndGlobal

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.Serialization;
+using Hermes.Failover;
 
 namespace Hermes.Reflection
 {
@@ -135,9 +136,10 @@ namespace Hermes.Reflection
         {
             if (interfaceType.GetMethods().Any(mi => !(mi.IsSpecialName && (mi.Name.StartsWith("set_") || mi.Name.StartsWith("get_")))))
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("Interface {0} contains methods and can there for not be mapped. Be aware that non mapped interface can't be used to send messages.", interfaceType.Name));
-                return;
+                string message = String.Format("Interface {0} contains methods and can there for not be mapped. Be aware that non mapped interface can't be used to send messages.", interfaceType.Name);
+                CriticalError.Raise(message, new InvalidDataContractException(message));
             }
+            
             var mapped = CreateTypeFrom(interfaceType, moduleBuilder);
             interfaceToConcreteTypeMapping[interfaceType] = mapped;
             concreteToInterfaceTypeMapping[mapped] = interfaceType;

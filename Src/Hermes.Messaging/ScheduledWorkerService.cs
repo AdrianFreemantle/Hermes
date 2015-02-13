@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Hermes.Failover;
+using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Scheduling;
@@ -111,14 +112,30 @@ namespace Hermes.Messaging
                 {
                     nextRunTime = GetNextOccurrence();
                     stopwatch.Start();
-
-                    DoWork();
-
+                    
+                    ExecuteWork();
+                    
                     stopwatch.Stop();
                     Logger.Debug("DoWork executed in {0}", stopwatch.Elapsed.ToString());
                 }
 
                 Thread.Sleep(TenMilliseconds);
+            }
+        }
+
+        private void ExecuteWork()
+        {
+            using (var scope = Settings.RootContainer.BeginLifetimeScope())
+            {
+                try
+                {
+                    ServiceLocator.Current.SetCurrentLifetimeScope(scope);
+                    DoWork();
+                }
+                finally
+                {
+                    ServiceLocator.Current.SetCurrentLifetimeScope(null);
+                }
             }
         }
 

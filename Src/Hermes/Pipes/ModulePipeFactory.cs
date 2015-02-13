@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
+using ServiceLocator = Hermes.Ioc.ServiceLocator;
 
 namespace Hermes.Pipes
 {
@@ -24,6 +25,11 @@ namespace Hermes.Pipes
             }
 
             return new ModulePipe<T>(chain, serviceLocator);
+        }
+
+        public virtual ModulePipe<T> Build()
+        {
+            return Build(ServiceLocator.Current);
         }
     }
 }

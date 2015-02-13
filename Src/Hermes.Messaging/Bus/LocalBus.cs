@@ -42,7 +42,7 @@ namespace Hermes.Messaging.Bus
 
         protected virtual void ProcessCommand(object message)
         {
-            Logger.Info("Executing : {0}", message);
+            Logger.Info("User [{0}] Executing : {1}", CurrentUser.GetCurrentUserName(), message);
 
             if (ServiceLocator.Current.IsDisposed())
             {

@@ -47,6 +47,9 @@ namespace Hermes.Messaging.Timeouts
 
         public void Stop()
         {
+            if (Settings.IsSendOnly)
+                return;
+
             Logger.Info("Stopping Timeout Processor");
 
             if(tokenSource != null)
