@@ -28,7 +28,7 @@ namespace Hermes.Messaging.Transports
 
             for (int i = 0; i < Settings.NumberOfWorkers; i++)
             {
-                WorkerTask.Start(WorkerAction, tokenSource.Token);
+                WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
             }
         }
     

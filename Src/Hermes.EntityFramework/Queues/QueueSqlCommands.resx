@@ -118,28 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CreateQueue" xml:space="preserve">
-    <value>IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'taskQueue')
+    <value>BEGIN TRAN
+
+IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'queue')
 BEGIN 
-	EXEC( 'CREATE SCHEMA taskQueue' );
+	EXEC( 'CREATE SCHEMA queue' );
 END
 
 DECLARE @tblname nvarchar(127)
 DECLARE @sql nvarchar(4000)
+
 SET @tblname = quotename('{0}')
-              
-IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[taskQueue].' + @tblname) AND type in (N'U'))
+             
+IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[queue].' + @tblname) AND type in (N'U'))
 BEGIN
 	SET @sql = '
-    CREATE TABLE [taskQueue].' + @tblname + '
+    CREATE TABLE [queue].' + @tblname + '
     (
         [Id] [uniqueidentifier] NOT NULL,
+		[Priority] [int] NOT NULL DEFAULT 0,
         [RowVersion] [bigint] IDENTITY(1,1) NOT NULL
     ) ON [PRIMARY];                    
 
-    CREATE CLUSTERED INDEX [Index_RowVersion] ON [taskQueue].' + @tblname + '  ([RowVersion] ASC)
+    CREATE CLUSTERED INDEX [Index_RowVersion] ON [queue].' + @tblname + '  ([RowVersion] ASC)
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	
-	CREATE UNIQUE NONCLUSTERED INDEX [IX_Id] ON [taskQueue].' + @tblname + ' ([ID] ASC)
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_Id] ON [queue].' + @tblname + ' ([ID] ASC)
+	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	CREATE NONCLUSTERED INDEX [IX_Priority] ON [queue].' + @tblname + ' ([Priority] DESC)
 	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]'
 	
 	EXEC (@sql)
@@ -151,7 +158,7 @@ DECLARE @sql nvarchar(4000)
 SET @tblname = quotename('{0}')
 
 SET @sql = '
-	WITH m AS (SELECT TOP(1) [Id] FROM [taskQueue].' + @tblname + ' WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC)
+	WITH m AS (SELECT TOP(1) [Id] FROM [queue].' + @tblname + ' WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [Priority] DESC, [RowVersion] ASC)
 	DELETE FROM m
 	OUTPUT deleted.Id'
 	
@@ -163,8 +170,8 @@ DECLARE @sql nvarchar(4000)
 SET @tblname = quotename('{0}')
 
 SET @sql = '
-	INSERT INTO [taskQueue].' + @tblname + ' ([Id]) 
-	VALUES (''' + CAST(@Id as VARCHAR(50))  + ''')'
+	INSERT INTO [queue].' + @tblname + ' ([Id], [Priority]) 
+	VALUES (''' + CAST(@Id as VARCHAR(50))  + ''', ' + CAST(@Priority as VARCHAR(50)) + ')'
 	
 EXEC (@sql)</value>
   </data>
@@ -174,7 +181,7 @@ DECLARE @sql nvarchar(4000)
 SET @tblname = quotename('{0}')
 
 SET @sql = '
-	DELETE FROM [taskQueue].' + @tblname + ' 
+	DELETE FROM [queue].' + @tblname + ' 
 	WHERE [Id] = ''' + CAST(@Id as VARCHAR(50))  + '''
 	'
 EXEC (@sql)</value>

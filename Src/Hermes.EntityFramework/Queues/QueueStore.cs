@@ -46,10 +46,16 @@ namespace Hermes.EntityFramework.Queues
 
         public void Enqueue(string queueName, Guid id)
         {
+            Enqueue(queueName, id, 0);
+        }
+
+        public void Enqueue(string queueName, Guid id, int priority)
+        {
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName");
 
             Database database = unitOfWork.GetDatabase();
-            database.ExecuteSqlCommand(String.Format(QueueSqlCommands.Enqueue, queueName.ToUriSafeString()), new SqlParameter("Id", id));
+            database.ExecuteSqlCommand(String.Format(QueueSqlCommands.Enqueue, queueName.ToUriSafeString()), new SqlParameter("Id", id), new SqlParameter("Priority", priority));
         }
     }
 }
+

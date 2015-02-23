@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
@@ -13,9 +11,9 @@ namespace Hermes.Messaging
     public abstract class ScheduledWorkerService : IAmStartable, IDisposable
     {
         private readonly object syncLock = new object();
-        protected readonly uint WorkerThreads = 1;
-
         protected readonly ILog Logger;
+
+        protected uint WorkerThreads = 1;
         protected bool RunImmediatelyOnStartup;
 
         private static readonly TimeSpan TenMilliseconds = TimeSpan.FromMilliseconds(10);
@@ -84,7 +82,7 @@ namespace Hermes.Messaging
         {
             for (int i = 0; i < WorkerThreads; i++)
             {
-                WorkerTask.Start(WorkerAction, tokenSource.Token);
+                WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
             }
         }
 

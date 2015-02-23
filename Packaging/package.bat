@@ -1,4 +1,4 @@
-set var=3.3.14
+set var=3.3.16
 
 c:\LocalNugetPackages\nuget pack Hermes.Core.nuspec -Version %var%
 c:\LocalNugetPackages\nuget pack Hermes.Messaging.nuspec -Version %var%
