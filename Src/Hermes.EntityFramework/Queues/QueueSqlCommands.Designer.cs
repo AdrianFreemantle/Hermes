@@ -61,22 +61,26 @@ namespace Hermes.EntityFramework.Queues {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = &apos;taskQueue&apos;)
+        ///   Looks up a localized string similar to BEGIN TRAN
+        ///
+        ///IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = &apos;queue&apos;)
         ///BEGIN 
-        ///	EXEC( &apos;CREATE SCHEMA taskQueue&apos; );
+        ///	EXEC( &apos;CREATE SCHEMA queue&apos; );
         ///END
         ///
         ///DECLARE @tblname nvarchar(127)
         ///DECLARE @sql nvarchar(4000)
+        ///
         ///SET @tblname = quotename(&apos;{0}&apos;)
-        ///              
-        ///IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N&apos;[taskQueue].&apos; + @tblname) AND type in (N&apos;U&apos;))
+        ///             
+        ///IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N&apos;[queue].&apos; + @tblname) AND type in (N&apos;U&apos;))
         ///BEGIN
         ///	SET @sql = &apos;
-        ///    CREATE TABLE [taskQueue].&apos; + @tblname + &apos;
+        ///    CREATE TABLE [queue].&apos; + @tblname + &apos;
         ///    (
         ///        [Id] [uniqueidentifier] NOT NULL,
-        ///        [RowVersion] [bigint] IDENTITY(1,1)  [rest of string was truncated]&quot;;.
+        ///		[Priority] [int] NOT NULL DEFAULT 0,
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateQueue {
             get {
@@ -90,7 +94,7 @@ namespace Hermes.EntityFramework.Queues {
         ///SET @tblname = quotename(&apos;{0}&apos;)
         ///
         ///SET @sql = &apos;
-        ///	WITH m AS (SELECT TOP(1) [Id] FROM [taskQueue].&apos; + @tblname + &apos; WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [RowVersion] ASC)
+        ///	WITH m AS (SELECT TOP(1) [Id] FROM [queue].&apos; + @tblname + &apos; WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [Priority] DESC, [RowVersion] ASC)
         ///	DELETE FROM m
         ///	OUTPUT deleted.Id&apos;
         ///	
@@ -108,8 +112,8 @@ namespace Hermes.EntityFramework.Queues {
         ///SET @tblname = quotename(&apos;{0}&apos;)
         ///
         ///SET @sql = &apos;
-        ///	INSERT INTO [taskQueue].&apos; + @tblname + &apos; ([Id]) 
-        ///	VALUES (&apos;&apos;&apos; + CAST(@Id as VARCHAR(50))  + &apos;&apos;&apos;)&apos;
+        ///	INSERT INTO [queue].&apos; + @tblname + &apos; ([Id], [Priority]) 
+        ///	VALUES (&apos;&apos;&apos; + CAST(@Id as VARCHAR(50))  + &apos;&apos;&apos;, &apos; + CAST(@Priority as VARCHAR(50)) + &apos;)&apos;
         ///	
         ///EXEC (@sql).
         /// </summary>
@@ -125,7 +129,7 @@ namespace Hermes.EntityFramework.Queues {
         ///SET @tblname = quotename(&apos;{0}&apos;)
         ///
         ///SET @sql = &apos;
-        ///	DELETE FROM [taskQueue].&apos; + @tblname + &apos; 
+        ///	DELETE FROM [queue].&apos; + @tblname + &apos; 
         ///	WHERE [Id] = &apos;&apos;&apos; + CAST(@Id as VARCHAR(50))  + &apos;&apos;&apos;
         ///	&apos;
         ///EXEC (@sql).

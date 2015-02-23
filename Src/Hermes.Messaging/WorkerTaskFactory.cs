@@ -6,7 +6,7 @@ using Hermes.Failover;
 
 namespace Hermes.Messaging
 {
-    public static class WorkerTask
+    public static class WorkerTaskFactory
     {
         public static Task Start(Action<object> workerAction, CancellationToken token)
         {

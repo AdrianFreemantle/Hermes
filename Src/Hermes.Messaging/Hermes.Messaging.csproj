@@ -73,6 +73,7 @@
     <Compile Include="Configuration\MessageHandlerCache\HandlerCache.cs" />
     <Compile Include="Configuration\MessageHandlerCache\HandlerCacheItem.cs" />
     <Compile Include="InMemoryBusExtensions.cs" />
+    <Compile Include="ITask.cs" />
     <Compile Include="Management\SqlErrorQueueManager.cs" />
     <Compile Include="Management\TransportMessageDto.cs" />
     <Compile Include="Management\TransportMessageExtensions.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Pipeline\Modules\ExtractMessagesModule.cs" />
     <Compile Include="MessageExtensions.cs" />
     <Compile Include="SytemCircuitBreaker.cs" />
+    <Compile Include="TaskScheduler.cs" />
     <Compile Include="Timeouts\TimeoutData.cs" />
     <Compile Include="Transports\HeaderValueExtensions.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
@@ -155,7 +157,7 @@
     <Compile Include="Transports\Receiver.cs" />
     <Compile Include="Bus\SubscriptionManager.cs" />
     <Compile Include="EndPoints\WorkerEndpoint.cs" />
-    <Compile Include="WorkerTask.cs" />
+    <Compile Include="WorkerTaskFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hermes.Domain\Hermes.Domain.csproj">

@@ -34,7 +34,7 @@ namespace Hermes.Messaging.Timeouts
             Logger.Info("Starting Timeout Processor");
 
             tokenSource = new CancellationTokenSource();
-            WorkerTask.Start(WorkerAction, tokenSource.Token);
+            WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
         }
 
         private void PurgeQueueIfRequired()
