@@ -12,6 +12,7 @@ namespace LocalBus.Handlers
         IHandleMessage<AddRecordToDatabase>,
         IHandleMessage<IRecordAddedToDatabase>,
         IHandleMessage<IRecordAddedToDatabase_V2>,
+        IHandleMessage<RecordAddedToDatabase>,
         IValidateCommand<AddRecordToDatabase>
     {
         private readonly IRepositoryFactory repositoryFactory;
@@ -60,6 +61,11 @@ namespace LocalBus.Handlers
         public void Validate(AddRecordToDatabase command)
         {
             SequentialGuid.ValidateSequentialGuid(command.RecordId);
+        }
+
+        public void Handle(RecordAddedToDatabase m)
+        {
+            Console.WriteLine("blah");
         }
     }
 }

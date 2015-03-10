@@ -18,7 +18,6 @@ namespace Hermes.Messaging.Transports
 
             Type[] contracts = message.GetContracts();
             HandlerCacheItem[] handlerDetails = HandlerCache.GetHandlers(contracts);
-
             
             DispatchToHandlers(message, serviceLocator, handlerDetails, contracts);
         }

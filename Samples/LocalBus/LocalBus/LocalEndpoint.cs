@@ -35,7 +35,7 @@ namespace LocalBus
 
         private static bool IsEvent(Type type)
         {
-            return typeof(IEvent).IsAssignableFrom(type);
+            return typeof(IEvent).IsAssignableFrom(type) || typeof(IDomainEvent).IsAssignableFrom(type);
         }
     }    
 }

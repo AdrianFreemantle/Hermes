@@ -5,7 +5,6 @@ using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core.Registration;
-using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Microsoft.Practices.ServiceLocation;

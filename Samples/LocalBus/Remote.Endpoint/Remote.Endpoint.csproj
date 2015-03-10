@@ -33,31 +33,32 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.4.0\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Hermes">
-      <HintPath>..\packages\Hermes.Core.0.11.16\lib\net45\Hermes.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Hermes.Domain">
-      <HintPath>..\packages\Hermes.Core.0.11.16\lib\net45\Hermes.Domain.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.3.3.21\lib\net45\Hermes.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Messaging">
-      <HintPath>..\packages\Hermes.Messaging.0.11.16\lib\net45\Hermes.Messaging.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Core.3.3.21\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ObjectBuilder.Autofac">
-      <HintPath>..\packages\Hermes.Messaging.0.11.16\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.3.3.21\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.Serialization.Json">
-      <HintPath>..\packages\Hermes.Messaging.0.11.16\lib\net45\Hermes.Serialization.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Autofac.3.3.21\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.ServiceHost">
-      <HintPath>..\packages\Hermes.ServiceHost.0.11.16\lib\net45\Hermes.ServiceHost.exe</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.Messaging.3.3.21\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.ServiceHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.ServiceHost.3.3.21\lib\net45\Hermes.ServiceHost.exe</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -66,7 +67,8 @@
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,9 +77,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf">
-      <HintPath>..\packages\Hermes.ServiceHost.0.11.16\lib\net45\Topshelf.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Topshelf, Version=3.1.135.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.ServiceHost.3.3.21\lib\net45\Topshelf.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
