@@ -20,7 +20,5 @@
     <file src="..\bin\Hermes.Messaging.pdb" target="lib\net45" />
     <file src="..\bin\Hermes.Serialization.Json.dll" target="lib\net45" />
     <file src="..\bin\Hermes.Serialization.Json.pdb" target="lib\net45" />
-    <file src="..\bin\Hermes.ObjectBuilder.Autofac.dll" target="lib\net45" />
-    <file src="..\bin\Hermes.ObjectBuilder.Autofac.pdb" target="lib\net45" />
   </files>
 </package>

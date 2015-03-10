@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Hermes.Autofac</id>
+    <version>$version$</version>
+    <authors>Adrian Freemantle</authors>
+    <owners>Adrian Freemantle</owners>
+    <projectUrl>https://github.com/AdrianFreemantle/Hermes</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Hermes Autofac Adapter.</description>
+    <dependencies>
+      <dependency id="Autofac" version="3.5.2" />
+      <dependency id="Hermes.Core"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\Hermes.ObjectBuilder.Autofac.dll" target="lib\net45" />
+    <file src="..\bin\Hermes.ObjectBuilder.Autofac.pdb" target="lib\net45" />
+  </files>
+</package>
