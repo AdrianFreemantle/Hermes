@@ -1,6 +1,4 @@
 ﻿using System.Threading;
-using System.Transactions;
-using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;

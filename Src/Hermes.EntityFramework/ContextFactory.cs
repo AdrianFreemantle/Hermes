@@ -36,7 +36,7 @@ namespace Hermes.EntityFramework
         private void ConfigureContext(TContext context, ContextConfiguration contextConfiguration)
         {
             if (DebugTrace)
-                context.Database.Log = s => Logger.Debug(s);
+                context.Database.Log = s => Logger.Info(s);
 
             if (contextConfiguration == ContextConfiguration.Queryable)
             {
