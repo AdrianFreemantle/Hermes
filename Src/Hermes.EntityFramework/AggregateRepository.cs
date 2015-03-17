@@ -4,7 +4,6 @@ using System.Linq;
 using Hermes.Attributes;
 using Hermes.Domain;
 using Hermes.Logging;
-using Hermes.Messaging;
 using Hermes.Persistence;
 using Hermes.Reflection;
 

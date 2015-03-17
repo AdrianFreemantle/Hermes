@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C8D7188D-4A70-4CC6-A902-A9249C693283}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EventStore</RootNamespace>
+    <AssemblyName>EventStore</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes">
+      <HintPath>..\packages\Hermes.Core.3.3.22\lib\net45\Hermes.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Domain">
+      <HintPath>..\packages\Hermes.Core.3.3.22\lib\net45\Hermes.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.EntityFramework">
+      <HintPath>..\packages\Hermes.EntityFramework.3.3.22\lib\net45\Hermes.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Messaging">
+      <HintPath>..\packages\Hermes.Messaging.3.3.22\lib\net45\Hermes.Messaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.ObjectBuilder.Autofac">
+      <HintPath>..\packages\Hermes.Autofac.3.3.22\lib\net45\Hermes.ObjectBuilder.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Hermes.Serialization.Json">
+      <HintPath>..\packages\Hermes.Messaging.3.3.22\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commit.cs" />
+    <Compile Include="Endpoint.cs" />
+    <Compile Include="EventStoreContextInitializer.cs" />
+    <Compile Include="EventStoreContext.cs" />
+    <Compile Include="EventStoreDependencyRegistrar.cs" />
+    <Compile Include="Handler.cs" />
+    <Compile Include="LongCheckpoint.cs" />
+    <Compile Include="OptimisticEventStream.cs" />
+    <Compile Include="CommitAttempt.cs" />
+    <Compile Include="EventMessage.cs" />
+    <Compile Include="Interfaces\ICheckpoint.cs" />
+    <Compile Include="Interfaces\ICommit.cs" />
+    <Compile Include="Interfaces\ICommitEvents.cs" />
+    <Compile Include="Interfaces\IEventStream.cs" />
+    <Compile Include="Interfaces\IPersistStreams.cs" />
+    <Compile Include="OptimisticEventStore.cs" />
+    <Compile Include="Persistence\EventStream.cs" />
+    <Compile Include="PersistStreams.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
