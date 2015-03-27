@@ -111,7 +111,16 @@ namespace Hermes.Messaging.Storage.MsSql
         private SqlCommand BuildAddCommand(SqlConnection connection, ITimeoutData timoutData)
         {
             var command = connection.CreateCommand();
-            command.CommandText = String.Format(SqlCommands.AddTimeout, Address.Local);
+
+            if (Settings.IsLocalEndpoint)
+            {
+                command.CommandText = String.Format(SqlCommands.AddTimeout, Address.Parse(timoutData.DestinationAddress));
+            }
+            else
+            {
+                command.CommandText = String.Format(SqlCommands.AddTimeout, Address.Local);
+            }
+
             command.CommandType = CommandType.Text;
 
             command.Parameters.AddWithValue("@Id", timoutData.MessageId);
