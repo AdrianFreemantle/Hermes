@@ -41,7 +41,7 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
-            if (Settings.DisablePerformanceMonitoring)
+            if (Settings.DisablePerformanceMonitoring || input.IsLocalMessage)
                 return next();
 
             DateTime receivedTime = DateTime.UtcNow;

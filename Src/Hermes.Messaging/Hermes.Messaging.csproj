@@ -58,6 +58,7 @@
     <Compile Include="Bus\ControlBus.cs" />
     <Compile Include="Callbacks\IManageCallbacks.cs" />
     <Compile Include="Configuration\HandlerFactory.cs" />
+    <Compile Include="Configuration\HermesConfigurationException.cs" />
     <Compile Include="IManageErrorQueues.cs" />
     <Compile Include="Configuration\ComponentScanner.cs" />
     <Compile Include="Configuration\CurrentUser.cs" />

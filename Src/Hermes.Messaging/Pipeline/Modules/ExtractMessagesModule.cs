@@ -28,7 +28,7 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             Logger.Debug("Deserializing body for message {0}", input);
 
-            if (!input.IsControlMessage())
+            if (!input.IsControlMessage() && !input.IsLocalMessage)
             {
                 DeserializeMessage(input, ExtractMessageType(input));
             }

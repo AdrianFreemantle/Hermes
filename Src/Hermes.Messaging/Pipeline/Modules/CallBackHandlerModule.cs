@@ -18,6 +18,9 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
+            if (input.IsLocalMessage)
+                return next();
+
             Logger.Debug("Attempting to dispatch message {0} to registered callbacks.", input);
             callBackManager.HandleCallback(input);
             return next();

@@ -31,7 +31,6 @@ namespace Hermes.Messaging.EndPoints
             {
                 var bus = Settings.RootContainer.GetInstance<IMessageBus>();
                 Settings.UserNameResolver = () => bus.CurrentMessage.UserName;
-
             }
         }
 

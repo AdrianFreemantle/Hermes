@@ -22,6 +22,9 @@ namespace Hermes.Messaging.Pipeline.Modules
         {
             DateTime receivedTime = DateTime.UtcNow;
 
+            if (input.IsLocalMessage)
+                return next();
+
             if (next())
             {
                 ProcessCompletedHeaders(input.TransportMessage, receivedTime);

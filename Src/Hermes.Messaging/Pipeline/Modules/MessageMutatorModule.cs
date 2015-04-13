@@ -26,6 +26,9 @@ namespace Hermes.Messaging.Pipeline.Modules
 
         public bool Process(IncomingMessageContext input, Func<bool> next)
         {
+            if (input.IsLocalMessage)
+                return next();
+
             MutateMessage(input);
             return next();
         }

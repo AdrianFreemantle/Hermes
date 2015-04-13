@@ -31,13 +31,7 @@ namespace Hermes.Messaging.Bus
             if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
                 throw new InvalidOperationException("A command may not be executed while another command is being processed.");
 
-            if (Settings.IsSendOnly || Settings.IsClientEndpoint || Settings.IsLocalEndpoint)
-            {
-                ProcessCommand(command); 
-                return;
-            }
-
-            throw new InvalidOperationException("Only a client endpoint or local endpoint may execute a local command.");
+            ProcessCommand(command);
         }
 
         protected virtual void ProcessCommand(object message)

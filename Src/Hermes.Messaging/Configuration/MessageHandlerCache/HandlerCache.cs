@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using Hermes.Equality;
+using Hermes.Ioc;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
@@ -33,6 +35,14 @@ namespace Hermes.Messaging.Configuration.MessageHandlerCache
         {
             if(handlerAction == null)
                 return;
+
+            if (Settings.IsCommandType != null && Settings.IsCommandType(messageContract))
+            {
+                if (HandlerDetails.Any(d => d.ContainsHandlerFor(messageContract)))
+                {
+                    throw new HermesComponentRegistrationException(String.Format("A command may only be handled by one class. A duplicate command handler for command {0} was found on class {1}.", messageContract.Name, handlerType.FullName));
+                }
+            }
 
             HandlerCacheItem details = HandlerDetails.FirstOrDefault(detail => detail.HandlerType == handlerType);
 
