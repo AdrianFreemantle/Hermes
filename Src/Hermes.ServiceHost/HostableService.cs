@@ -14,6 +14,8 @@ namespace Hermes.ServiceHost
         public HostableService(Type hostableService)
         {
             this.hostableService = hostableService;
+
+            Console.Write(@"Hosting service {0}", GetDescription());
         }
 
         public TopshelfExitCode Run()

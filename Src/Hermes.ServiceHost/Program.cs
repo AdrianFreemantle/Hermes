@@ -26,17 +26,23 @@ namespace Hermes.ServiceHost
 
         private static void ConfigureServiceHost()
         {
+            Console.WriteLine(@"Configuring service host");
             CriticalError.DefineCriticalErrorAction(OnCriticalError);
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;            
             hostableService = HostFactory.GetHostableService();
+
+            Console.WriteLine(@"Setting AppDomain config file to: {0}", hostableService.GetConfigurationFilePath());
+
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", hostableService.GetConfigurationFilePath());
+
+            Console.WriteLine(@"Opening Exe Configuration");
             configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             ConfigureLogging();
         }
 
         private static void ConfigureLogging()
         {
+            Console.WriteLine(@"Configuring logging");
             bool useLogFile = false;
 
             useLogFile = GetUseLogFileSetting();
@@ -70,6 +76,8 @@ namespace Hermes.ServiceHost
 
         private static void RunHostedService()
         {
+            Console.WriteLine(@"Running hosted service.");
+
             logger.Info("Starting service host {0} for service {1} : {2}", 
                 Assembly.GetEntryAssembly().GetName().Name, 
                 hostableService.GetServiceName(), 
@@ -106,6 +114,8 @@ namespace Hermes.ServiceHost
             {
                 if (Environment.UserInteractive)
                 {
+                    Console.WriteLine(@"{0}", exception.GetFullExceptionMessage());
+
                     Console.WriteLine("Hermes Service Host is shutting down due to a fatal error. Press any key to exit.");
                     Console.ReadKey();
                     Environment.Exit(-1);
