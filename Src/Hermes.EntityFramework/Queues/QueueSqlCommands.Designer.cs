@@ -61,9 +61,7 @@ namespace Hermes.EntityFramework.Queues {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BEGIN TRAN
-        ///
-        ///IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = &apos;queue&apos;)
+        ///   Looks up a localized string similar to IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = &apos;queue&apos;)
         ///BEGIN 
         ///	EXEC( &apos;CREATE SCHEMA queue&apos; );
         ///END
@@ -80,7 +78,7 @@ namespace Hermes.EntityFramework.Queues {
         ///    (
         ///        [Id] [uniqueidentifier] NOT NULL,
         ///		[Priority] [int] NOT NULL DEFAULT 0,
-        ///      [rest of string was truncated]&quot;;.
+        ///        [RowVersion [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateQueue {
             get {
@@ -120,6 +118,21 @@ namespace Hermes.EntityFramework.Queues {
         internal static string Enqueue {
             get {
                 return ResourceManager.GetString("Enqueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @tblname nvarchar(127)
+        ///DECLARE @sql nvarchar(4000)
+        ///SET @tblname = quotename(&apos;{0}&apos;)
+        ///
+        ///SET @sql = &apos;SELECT TOP(1) [Id] FROM [queue].&apos; + @tblname + &apos; WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [Priority] DESC, [RowVersion] ASC&apos;
+        ///	
+        ///EXEC (@sql).
+        /// </summary>
+        internal static string Peek {
+            get {
+                return ResourceManager.GetString("Peek", resourceCulture);
             }
         }
         

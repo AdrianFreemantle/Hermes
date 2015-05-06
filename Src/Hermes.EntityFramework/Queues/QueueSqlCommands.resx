@@ -118,9 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CreateQueue" xml:space="preserve">
-    <value>BEGIN TRAN
-
-IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'queue')
+    <value>IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'queue')
 BEGIN 
 	EXEC( 'CREATE SCHEMA queue' );
 END
@@ -172,6 +170,15 @@ SET @tblname = quotename('{0}')
 SET @sql = '
 	INSERT INTO [queue].' + @tblname + ' ([Id], [Priority]) 
 	VALUES (''' + CAST(@Id as VARCHAR(50))  + ''', ' + CAST(@Priority as VARCHAR(50)) + ')'
+	
+EXEC (@sql)</value>
+  </data>
+  <data name="Peek" xml:space="preserve">
+    <value>DECLARE @tblname nvarchar(127)
+DECLARE @sql nvarchar(4000)
+SET @tblname = quotename('{0}')
+
+SET @sql = 'SELECT TOP(1) [Id] FROM [queue].' + @tblname + ' WITH (UPDLOCK, READPAST, ROWLOCK) ORDER BY [Priority] DESC, [RowVersion] ASC'
 	
 EXEC (@sql)</value>
   </data>

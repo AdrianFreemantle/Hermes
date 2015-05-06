@@ -14,28 +14,27 @@ namespace Hermes.EntityFramework
 
         public static T ExecuteScalarCommand<T>(this Database database, string command, params object[] parameters)
         {
-            using (DbContextTransaction dbContextTransaction = database.BeginTransaction())
+            try
             {
-                try
-                {
-                    Logger.Debug("Executing scalar command {0}", command);
-                    var result = ExecuteScalar<T>(dbContextTransaction, database, command, parameters);
-                    dbContextTransaction.Commit();
-                    return result;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error("Exception while executing scalar command {0} {1}", command, ex.GetFullExceptionMessage());
-                    dbContextTransaction.Rollback();
-                    throw;
-                }
+                database.Connection.Open();
+                Logger.Debug("Executing scalar command {0}", command);
+                var result = ExecuteScalar<T>(database, command, parameters);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Exception while executing scalar command {0} {1}", command, ex.GetFullExceptionMessage());
+                throw;
+            }
+            finally
+            {
+                database.Connection.Close();
             }
         }
 
-        private static T ExecuteScalar<T>(DbContextTransaction dbContextTransaction, Database database, string command, IEnumerable<object> parameters)
+        private static T ExecuteScalar<T>(Database database, string command, IEnumerable<object> parameters)
         {
             DbCommand cmd = database.Connection.CreateCommand();
-            cmd.Transaction = dbContextTransaction.UnderlyingTransaction;
             cmd.CommandText = command;
             cmd.CommandType = CommandType.Text;
             

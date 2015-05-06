@@ -14,6 +14,16 @@ namespace Hermes.EntityFramework.Queues
             this.unitOfWork = unitOfWork;
         }
 
+        public Guid Peek(string queueName)
+        {
+            Mandate.ParameterNotNullOrEmpty(queueName, "queueName");
+
+            Database database = unitOfWork.GetDatabase();
+
+            var command = String.Format(QueueSqlCommands.Peek, queueName.ToUriSafeString());
+            return database.ExecuteScalarCommand<Guid>(command);
+        }
+
         public Guid Deque(string queueName)
         {
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName");

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
+﻿using System;
+using Hermes.EntityFramework.Queues;
 using Hermes.Logging;
+using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
-using Hermes.Queries;
 
 namespace EntityFrameworkTest
 {
@@ -19,15 +18,36 @@ namespace EntityFrameworkTest
 
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
-                var dynamicCompanyQuery = scope.GetInstance<DynamicCompanyQueryService>();
-
-                dynamic google = dynamicCompanyQuery.FetchSingle(company => company.Name == "Google");
-
-                IEnumerable<object> blah = dynamicCompanyQuery.FetchAll(company => company.Employees.Count >= 3);
-
-                var sandraComapny = dynamicCompanyQuery.FetchFirst(company => company.Employees.Any(employee => employee.Name.Contains("Sandra")));
-
+                var bus = scope.GetInstance<IInMemoryBus>();
+                bus.Execute(new IntitalizeQueue{Name = "Test"});
             }
+        }
+    }
+
+    public class QueueHandler : IHandleMessage<IntitalizeQueue>
+    {
+        private readonly QueueFactory queueFactory;
+        private readonly QueueStore queueStore;
+
+
+        public QueueHandler(QueueFactory queueFactory, QueueStore queueStore)
+        {
+            this.queueFactory = queueFactory;
+            this.queueStore = queueStore;
+        }
+
+        public void Handle(IntitalizeQueue m)
+        {
+            queueFactory.CreateQueueIfNecessary(m.Name);
+
+            Guid id = Guid.NewGuid();
+            
+            queueStore.Enqueue("Test", id);
+            var peekId = queueStore.Peek("Test");
+            var dequeueId = queueStore.Deque("Test");
+            var empty = queueStore.Peek("Test");
+
+
         }
     }
 }

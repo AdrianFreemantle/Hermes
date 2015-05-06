@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using Hermes.Messaging.Transports.SqlTransport;
 
 namespace Hermes.EntityFramework.Queues
 {
@@ -17,7 +19,16 @@ namespace Hermes.EntityFramework.Queues
             Mandate.ParameterNotNullOrEmpty(queueName, "queueName");
 
             Database database = unitOfWork.GetDatabase();
-            database.ExecuteSqlCommand(String.Format(QueueSqlCommands.CreateQueue, queueName.ToUriSafeString()));
+
+            using (var connection = new SqlConnection(database.Connection.ConnectionString))
+            {
+                connection.Open();
+
+                using (var command = new SqlCommand(String.Format(QueueSqlCommands.CreateQueue, queueName.ToUriSafeString()), connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
