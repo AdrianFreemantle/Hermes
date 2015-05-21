@@ -49,10 +49,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf, Version=3.1.135.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Topshelf.3.1.4\lib\net40-full\Topshelf.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bus\ControlBus.cs" />
@@ -118,7 +114,6 @@
     <Compile Include="Transports\HeaderValueExtensions.cs" />
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
-    <Compile Include="Transports\Msmq\MsmqDequeStategy.cs" />
     <Compile Include="Pipeline\Modules\MessageMutatorModule.cs" />
     <Compile Include="Transports\OutgoingMessageUnitOfWork.cs" />
     <Compile Include="Transports\SqlTransport\SqlCommands.cs" />

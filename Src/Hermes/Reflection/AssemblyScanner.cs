@@ -136,7 +136,6 @@ namespace Hermes.Reflection
                         .Distinct(new TypeEqualityComparer()).ToArray();
         }
 
-
         ~AssemblyScanner()
         {
             Dispose(false);
