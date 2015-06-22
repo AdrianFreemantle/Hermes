@@ -18,52 +18,52 @@ namespace Hermes.ServiceHost
         private static HostableService hostableService;
         private static Configuration configuration;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             PrintWelcomeMessage();
-            
-            Console.WriteLine(@"Configuring service host");
+            ConfigureDefaultLogging();
+
+            logger.Info("Configuring service host");
             ConfigureServiceHost();
 
-            Console.WriteLine(@"Configuring logging.");
+            logger.Info("Configuring logging.");
             ConfigureLogging();
-            
-            Console.WriteLine(@"Running hosted service.");
+
+            logger.Info("Running hosted service.");
             RunHostedService();
         }
-
 
         private static void ConfigureServiceHost()
         {
             CriticalError.DefineCriticalErrorAction(OnCriticalError);
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;            
+            
             hostableService = HostFactory.GetHostableService();
 
-            Console.WriteLine(@"Setting AppDomain config file to: {0}", hostableService.GetConfigurationFilePath());
+            logger.Info("Setting AppDomain config file to: {0}", hostableService.GetConfigurationFilePath());
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", hostableService.GetConfigurationFilePath());
 
             configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             
         }
 
+        private static void ConfigureDefaultLogging()
+        {
+            LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
+            ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
+            logger = LogFactory.BuildLogger(typeof(Program));
+        }
+
         private static void ConfigureLogging()
         {
-            bool useLogFile = false;
-
-            useLogFile = GetUseLogFileSetting();
+            bool useLogFile = GetUseLogFileSetting();
 
             if (Environment.UserInteractive && !useLogFile)
-            {
-                LogFactory.BuildLogger = type => new ConsoleWindowLogger(type);
-                ConsoleWindowLogger.MinimumLogLevel = LogLevel.Debug;
-            }
-            else
-            {
-                var configFileInfo = new FileInfo(configuration.FilePath);
-                XmlConfigurator.Configure(configFileInfo);
-                LogFactory.BuildLogger = type => new Log4NetLogger(type);
-            }
-
+                return;
+            
+            var configFileInfo = new FileInfo(configuration.FilePath);
+            XmlConfigurator.Configure(configFileInfo);
+            LogFactory.BuildLogger = type => new Log4NetLogger(type);
             logger = LogFactory.BuildLogger(typeof (Program));
         }
 
@@ -132,9 +132,9 @@ namespace Hermes.ServiceHost
 
         private static void PrintWelcomeMessage()
         {
-            #if (DEBUG)
+            #if DEBUG
             Console.WriteLine(@"Hermes.ServiceHost : Running in DEBUG mode");
-            #elif (RELEASE)
+            #else 
             Console.WriteLine(@"Hermes.ServiceHost : Running in RELEASE mode");
             #endif
         }

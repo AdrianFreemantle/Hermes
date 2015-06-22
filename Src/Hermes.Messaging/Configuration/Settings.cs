@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
-using Hermes.Failover;
 using Hermes.Ioc;
 
 namespace Hermes.Messaging.Configuration
@@ -13,7 +13,7 @@ namespace Hermes.Messaging.Configuration
     {
         private const string EndpointNameSpace = ".Endpoint";
         private static int numberOfWorkers = 1;
-        private static readonly Dictionary<string,object> settings = new Dictionary<string, object>();
+        private static readonly Dictionary<string, string> settings = new Dictionary<string, string>();
         
         private static readonly Address ErrorAddress = Address.Parse("Error");
         private static readonly Address AuditAddress = Address.Parse("Audit");
@@ -120,25 +120,33 @@ namespace Hermes.Messaging.Configuration
 
             return endpointName;
         }
- 
-        public static T GetSetting<T>(string settingKey)
+
+        public static string GetSetting(string settingKey)
         {
             if (settings.ContainsKey(settingKey))
             {
-                return (T)settings[settingKey];
+                return ConfigurationManager.AppSettings[settingKey] ?? settings[settingKey];
             }
 
             throw new ConfigurationSettingNotFoundException(settingKey);
         }
 
+        public static void AddSetting(string key, string value)
+        {
+            settings[key] = value;
+        }
+
+        [Obsolete("Metod is deprecated, use the non-generic method GetSetting(string settingKey)", true)]
+        public static T GetSetting<T>(string settingKey)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        [Obsolete("Method is deprecated, use the method  AddSetting(string key, string value)", true)]
         public static void AddSetting(string settingKey, object value)
         {
-            if (settings.ContainsKey(settingKey))
-            {
-                settings.Remove(settingKey);
-            }
-
-            settings.Add(settingKey, value);
+            throw new NotImplementedException();
         }        
     }
 }

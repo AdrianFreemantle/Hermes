@@ -59,6 +59,7 @@
     <Compile Include="Caching\CacheTimer.cs" />
     <Compile Include="Caching\ObjectCache.cs" />
     <Compile Include="Caching\ObjectCacheException.cs" />
+    <Compile Include="Encryption\AesEncryption.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />

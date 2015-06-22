@@ -19,7 +19,7 @@ namespace Hermes.Messaging.Storage.MsSql
         public SqlSubscriptionStorage()
         {
             subscriptionCache = new SubscriptionCache();
-            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting(SqlTransportConfiguration.MessagingConnectionStringKey);
             CreateSubcribtionTableIfNecessary();
         }
 

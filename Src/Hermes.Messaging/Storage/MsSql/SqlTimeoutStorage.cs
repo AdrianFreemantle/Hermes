@@ -30,7 +30,7 @@ namespace Hermes.Messaging.Storage.MsSql
         {
             this.objectSerializer = objectSerializer;
             this.messageSerializer = messageSerializer;
-            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);           
+            connectionString = Settings.GetSetting(SqlTransportConfiguration.MessagingConnectionStringKey);           
             CreateTableIfNecessary();
         }
 

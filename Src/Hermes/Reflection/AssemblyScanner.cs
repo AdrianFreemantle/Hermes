@@ -8,19 +8,18 @@ using Hermes.Logging;
 
 namespace Hermes.Reflection
 {
-    public class AssemblyScanner : IDisposable
+    public static class AssemblyScanner 
     {
         private static readonly List<Func<string, bool>> ExclusionRules = new List<Func<string, bool>>();
         private static readonly ILog Logger = LogFactory.BuildLogger(typeof(AssemblyScanner));
 
-        private readonly List<Assembly> assemblies = new List<Assembly>();
-        private readonly List<Type> types = new List<Type>();         
-        private bool disposed;      
+        private static readonly List<Assembly> assemblies = new List<Assembly>();
+        private static readonly List<Type> types = new List<Type>();         
 
-        public IReadOnlyCollection<Type> Types { get { return types; } }
-        public IReadOnlyCollection<Assembly> Assemblies { get { return assemblies; } }
+        public static IReadOnlyCollection<Type> Types { get { return types; } }
+        public static IReadOnlyCollection<Assembly> Assemblies { get { return assemblies; } }
 
-        public AssemblyScanner()
+        static AssemblyScanner()
         {
             AssemblyScannerDefaultIgnoreRules();
             Scan();
@@ -30,6 +29,8 @@ namespace Hermes.Reflection
         {
             ExclusionRules.AddRange(new Func<string, bool>[]
             {
+                s => s.StartsWith("Topshelf.", StringComparison.CurrentCultureIgnoreCase),
+                s => s.StartsWith("mscorlib.", StringComparison.CurrentCultureIgnoreCase),
                 s => s.StartsWith("Microsoft.", StringComparison.CurrentCultureIgnoreCase),
                 s => s.StartsWith("ServiceStack.", StringComparison.CurrentCultureIgnoreCase),
                 s => s.StartsWith("ServiceStack.", StringComparison.CurrentCultureIgnoreCase),
@@ -43,14 +44,7 @@ namespace Hermes.Reflection
             });
         }
 
-        public static void Exclude(Func<string, bool> exclusionRule)
-        {
-            Mandate.ParameterNotNull(exclusionRule, "exclusionRule");
-
-            ExclusionRules.Add(exclusionRule);   
-        }
-
-        private void Scan()
+        private static void Scan()
         {
             DirectoryInfo baseDirectory = String.IsNullOrWhiteSpace(AppDomain.CurrentDomain.DynamicDirectory) 
                 ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
@@ -65,7 +59,7 @@ namespace Hermes.Reflection
             GetTypesFromAssemblies(assemblyFiles);
         }
 
-        private void GetTypesFromAssemblies(IEnumerable<FileInfo> assemblyFiles)
+        private static void GetTypesFromAssemblies(IEnumerable<FileInfo> assemblyFiles)
         {
             foreach (var assemblyFile in assemblyFiles)
             {
@@ -73,9 +67,8 @@ namespace Hermes.Reflection
                 {
                     Logger.Debug("Scanning file {0}", assemblyFile);
                     Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
-                    assembly.GetTypes();
-                    assemblies.Add(assembly);
                     types.AddRange(assembly.GetTypes());
+                    assemblies.Add(assembly);
                 }
                 catch (Exception ex)
                 {
@@ -108,12 +101,12 @@ namespace Hermes.Reflection
             }
         }
 
-        public ICollection<Type> GetConcreteTypesOf<TAbstract>()
+        public static ICollection<Type> GetConcreteTypesOf<TAbstract>()
         {
             return GetConcreteTypesOf(typeof (TAbstract));
         }
 
-        public ICollection<Type> GetConcreteTypesOf(Type abstractType)
+        public static ICollection<Type> GetConcreteTypesOf(Type abstractType)
         {
             if (!abstractType.IsAbstract)
             {
@@ -123,7 +116,7 @@ namespace Hermes.Reflection
             return types.Where(t => abstractType.IsAssignableFrom(t) && t != abstractType && !t.IsAbstract).ToArray();
         }
 
-        public ICollection<Type> GetTypesImplementingGenericInterface(Type openGenericInterface)
+        public static ICollection<Type> GetTypesImplementingGenericInterface(Type openGenericInterface)
         {
             if (!openGenericInterface.IsGenericType || !openGenericInterface.IsInterface)
             {
@@ -134,36 +127,6 @@ namespace Hermes.Reflection
                 t => t.GetInterfaces()
                       .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface))
                         .Distinct(new TypeEqualityComparer()).ToArray();
-        }
-
-        ~AssemblyScanner()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                assemblies.Clear();
-                types.Clear();
-            }
-
-            disposed = true;
         }
     }
 }

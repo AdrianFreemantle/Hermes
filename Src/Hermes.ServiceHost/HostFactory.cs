@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-
 using Hermes.Reflection;
 
 namespace Hermes.ServiceHost
 {
     static class HostFactory
-    {       
+    {
         public static HostableService GetHostableService()
         {
             Type[] serviceTypes = FindAllServiceTypes();
@@ -19,10 +18,7 @@ namespace Hermes.ServiceHost
       
         private static Type[] FindAllServiceTypes()
         {
-            using (var scanner = new AssemblyScanner())
-            {
-                return scanner.GetConcreteTypesOf<IService>().ToArray();
-            }
+            return AssemblyScanner.GetConcreteTypesOf<IService>().ToArray();
         }
 
         private static void ValidateThatOnlyOneServiceIsPresent(Type[] serviceTypes)

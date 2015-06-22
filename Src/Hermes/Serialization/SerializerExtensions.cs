@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Hermes.Compression;
+using Hermes.Encryption;
 
 namespace Hermes.Serialization
 {
@@ -32,6 +33,24 @@ namespace Hermes.Serialization
             }
 
             return serializer.DeserializeObject<T>(compressedObject.ToString());
+        }
+
+        public static byte[] Encrypt(this ISerializeObjects serializer, object objectToBeEncrypted, string password, string salt)
+        {
+            byte[] bytesToBeEncrypted = serializer.ToByteArray(objectToBeEncrypted);
+            byte[] passwordBytes = serializer.ToByteArray(password);
+            byte[] saltBytes = serializer.ToByteArray(salt);
+
+            return AesEncryption.Encrypt(bytesToBeEncrypted, passwordBytes, saltBytes);
+        }
+
+        public static T Decrypt<T>(this ISerializeObjects serializer, byte[] bytesToBeDecrypted, string password, string salt)
+        {
+            byte[] passwordBytes = serializer.ToByteArray(password);
+            byte[] saltBytes = serializer.ToByteArray(salt);
+            byte[] decryptedBytes = AesEncryption.Decrypt(bytesToBeDecrypted, passwordBytes, saltBytes);
+
+            return serializer.FromByteArray<T>(decryptedBytes);
         }
     }
 }

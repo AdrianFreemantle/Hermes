@@ -82,7 +82,7 @@ namespace Hermes.Messaging
         {
             for (int i = 0; i < WorkerThreads; i++)
             {
-                WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
+                var task = WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
             }
         }
 

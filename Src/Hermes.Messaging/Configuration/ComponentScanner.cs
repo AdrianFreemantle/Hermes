@@ -13,13 +13,11 @@ namespace Hermes.Messaging.Configuration
     {
         public static void Scan(IContainerBuilder containerBuilder)
         {
-            using (var scanner = new AssemblyScanner())
-            {
-                IEnumerable<Type> messageTypes = GetMesageTypes(scanner);
-                ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes(scanner);
-                ICollection<Type> commandValidatorTypes = GetCommandValidatorTypes(scanner);
-                ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes(scanner);
-                ICollection<Type> intializerTypes = GetInitializerTypes(scanner);
+                IEnumerable<Type> messageTypes = GetMesageTypes();
+                ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes();
+                ICollection<Type> commandValidatorTypes = GetCommandValidatorTypes();
+                ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes();
+                ICollection<Type> intializerTypes = GetInitializerTypes();
 
                 HandlerCache.InitializeCache(messageTypes, messageHandlerTypes);
 
@@ -27,7 +25,6 @@ namespace Hermes.Messaging.Configuration
                 RegisterTypes(containerBuilder, queryHandlerTypes, DependencyLifecycle.InstancePerUnitOfWork);
                 RegisterTypes(containerBuilder, commandValidatorTypes, DependencyLifecycle.InstancePerUnitOfWork);
                 RegisterTypes(containerBuilder, intializerTypes, DependencyLifecycle.SingleInstance);
-            }
         }
 
         private static void RegisterTypes(IContainerBuilder containerBuilder, IEnumerable<Type> types, DependencyLifecycle dependencyLifecycle)
@@ -38,47 +35,47 @@ namespace Hermes.Messaging.Configuration
             }
         }
 
-        private static IEnumerable<Type> GetMesageTypes(AssemblyScanner scanner)
+        private static IEnumerable<Type> GetMesageTypes()
         {
-            return scanner.Types
+            return AssemblyScanner.Types
                           .Where(Settings.IsCommandType)
-                          .Union(scanner.Types.Where(Settings.IsEventType))
-                          .Union(scanner.Types.Where(Settings.IsMessageType))
+                          .Union(AssemblyScanner.Types.Where(Settings.IsEventType))
+                          .Union(AssemblyScanner.Types.Where(Settings.IsMessageType))
                           .Distinct(new TypeEqualityComparer());
         }
 
-        private static ICollection<Type> GetMessageHandlerTypes(AssemblyScanner scanner)
+        private static ICollection<Type> GetMessageHandlerTypes()
         {
             return
-                scanner.Types.Where(
+                AssemblyScanner.Types.Where(
                     t => !t.IsAbstract &&  
                         t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessage<>)))
                        .Distinct(new TypeEqualityComparer())
                        .ToArray();
         }
 
-        private static ICollection<Type> GetCommandValidatorTypes(AssemblyScanner scanner)
+        private static ICollection<Type> GetCommandValidatorTypes()
         {
             return
-                scanner.Types.Where(
+                AssemblyScanner.Types.Where(
                     t => !t.IsAbstract &&
                         t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidateCommand<>)))
                        .Distinct(new TypeEqualityComparer())
                        .ToArray();
         }
 
-        private static ICollection<Type> GetQueryHandlerTypes(AssemblyScanner scanner)
+        private static ICollection<Type> GetQueryHandlerTypes()
         {
-            return scanner.Types.Where(
+            return AssemblyScanner.Types.Where(
                     t => !t.IsAbstract && 
                         t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
                        .Distinct(new TypeEqualityComparer())
                        .ToArray();
         }
 
-        private static ICollection<Type> GetInitializerTypes(AssemblyScanner scanner)
+        private static ICollection<Type> GetInitializerTypes()
         {
-            return scanner.Types
+            return AssemblyScanner.Types
                 .Where(t => typeof (INeedToInitializeSomething).IsAssignableFrom(t) && !t.IsAbstract)
                 .ToArray();
         }

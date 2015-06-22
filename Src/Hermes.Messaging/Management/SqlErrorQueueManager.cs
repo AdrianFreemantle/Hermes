@@ -24,7 +24,7 @@ namespace Hermes.Messaging.Management
         {
             this.serializer = serializer;
             this.messageSender = messageSender;
-            connectionString = Settings.GetSetting<string>(SqlTransportConfiguration.MessagingConnectionStringKey);
+            connectionString = Settings.GetSetting(SqlTransportConfiguration.MessagingConnectionStringKey);
         }
 
         public int GetErrorCount()
