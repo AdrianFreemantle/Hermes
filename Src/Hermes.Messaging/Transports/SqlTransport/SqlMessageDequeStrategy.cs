@@ -45,7 +45,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
             }
         }
 
-        TransportMessage FetchNextMessage(SqlCommand command)
+        private TransportMessage FetchNextMessage(SqlCommand command)
         {
             using (var dataReader = command.ExecuteReader(CommandBehavior.SingleRow))
             {

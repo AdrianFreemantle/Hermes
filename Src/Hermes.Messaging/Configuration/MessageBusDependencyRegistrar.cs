@@ -49,9 +49,9 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<UnitOfWorkModule>(DependencyLifecycle.InstancePerUnitOfWork);
             containerBuilder.RegisterType<OutgoingMessageContext>(DependencyLifecycle.InstancePerDependency);
 
-            var outgoingPipeline = new ModulePipeFactory<OutgoingMessageContext>()
-                .Add<MessageMutatorModule>()
+            var outgoingPipeline = new ModulePipeFactory<OutgoingMessageContext>()                
                 .Add<MessageSerializationModule>()
+                .Add<MessageMutatorModule>()
                 .Add<HeaderBuilderModule>()
                 .Add<CommandValidationModule>()
                 .Add<SendMessageModule>();

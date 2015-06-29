@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using Hermes.Logging;
+using Hermes.Messaging.Configuration;
 using Hermes.Persistence;
 
 namespace Hermes.EntityFramework.Queries
@@ -22,7 +23,14 @@ namespace Hermes.EntityFramework.Queries
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class
         {
-            return GetDbContext().Set<TEntity>().AsNoTracking();
+            var disableAsNoTracking = Settings.GetSetting("DisableDatabaseQueryAsNoTracking");
+
+            if (!String.IsNullOrWhiteSpace(disableAsNoTracking) && disableAsNoTracking.Equals("True", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return GetDbContext().Set<TEntity>();
+            }
+
+            return GetDbContext().Set<TEntity>().AsNoTracking();    
         }
 
         public IEnumerable<T> SqlQuery<T>(string sql, params SqlParameter[] parameters)
