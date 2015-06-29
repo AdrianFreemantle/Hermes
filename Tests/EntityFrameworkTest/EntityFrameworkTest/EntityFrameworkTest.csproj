@@ -41,27 +41,27 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Hermes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.3.7.16\lib\net45\Hermes.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.8.5\lib\net45\Hermes.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Core.3.7.16\lib\net45\Hermes.Domain.dll</HintPath>
+      <HintPath>..\packages\Hermes.Core.3.8.5\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.EntityFramework.3.7.16\lib\net45\Hermes.EntityFramework.dll</HintPath>
+      <HintPath>..\packages\Hermes.EntityFramework.3.8.5\lib\net45\Hermes.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.3.7.16\lib\net45\Hermes.Messaging.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.8.5\lib\net45\Hermes.Messaging.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.ObjectBuilder.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -69,7 +69,7 @@
     </Reference>
     <Reference Include="Hermes.Serialization.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hermes.Messaging.3.7.16\lib\net45\Hermes.Serialization.Json.dll</HintPath>
+      <HintPath>..\packages\Hermes.Messaging.3.8.5\lib\net45\Hermes.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="HibernatingRhinos.Profiler.Appender">
       <HintPath>..\packages\EntityFrameworkProfiler.Appender.2.0.2234.0\lib\HibernatingRhinos.Profiler.Appender.dll</HintPath>
@@ -82,7 +82,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

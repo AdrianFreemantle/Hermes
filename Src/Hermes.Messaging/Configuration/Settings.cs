@@ -123,9 +123,14 @@ namespace Hermes.Messaging.Configuration
 
         public static string GetSetting(string settingKey)
         {
+            if (ConfigurationManager.AppSettings[settingKey] != null)
+            {
+                return ConfigurationManager.AppSettings[settingKey];
+            }
+            
             if (settings.ContainsKey(settingKey))
             {
-                return ConfigurationManager.AppSettings[settingKey] ?? settings[settingKey];
+                return settings[settingKey];
             }
 
             throw new ConfigurationSettingNotFoundException(settingKey);
