@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using EntityFrameworkTest.Model;
 using EntityFrameworkTest.Queries.EmployeeDtoQueries;
+using Hermes.EntityFramework.Queries;
 using Hermes.EntityFramework.Queues;
 using Hermes.Logging;
 using Hermes.Messaging;
@@ -19,9 +22,11 @@ namespace EntityFrameworkTest
 
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
-                var queryService = scope.GetInstance<DtoEmployeeQueryService>();
+                var queryService = scope.GetInstance<DatabaseQuery>();
 
-                var any = queryService.Any();
+                var companies = queryService.GetQueryable<Company>();
+
+                var c = companies.ToArray();
             }
         }
     }
