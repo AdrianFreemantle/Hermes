@@ -23,7 +23,16 @@ namespace Hermes.EntityFramework.Queries
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class
         {
-            var disableAsNoTracking = Settings.GetSetting("DisableDatabaseQueryAsNoTracking");
+            string disableAsNoTracking = String.Empty;
+
+            try
+            {
+                disableAsNoTracking = Settings.GetSetting("DisableDatabaseQueryAsNoTracking");
+            }
+            catch (ConfigurationSettingNotFoundException)
+            {
+                //do nothing
+            }
 
             if (!String.IsNullOrWhiteSpace(disableAsNoTracking) && disableAsNoTracking.Equals("True", StringComparison.InvariantCultureIgnoreCase))
             {
