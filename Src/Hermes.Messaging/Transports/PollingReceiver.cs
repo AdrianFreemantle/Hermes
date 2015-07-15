@@ -8,15 +8,15 @@ using Hermes.Messaging.Configuration;
 
 namespace Hermes.Messaging.Transports
 {  
-    public class Receiver : IReceiveMessages
+    public class PollingReceiver : IReceiveMessages
     {
-        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (Receiver));
+        private static readonly ILog Logger = LogFactory.BuildLogger(typeof (PollingReceiver));
 
         private CancellationTokenSource tokenSource;
         private readonly IDequeueMessages dequeueStrategy;
         private Action<TransportMessage> messageReceived;
 
-        public Receiver(IDequeueMessages dequeueStrategy)
+        public PollingReceiver(IDequeueMessages dequeueStrategy)
         {
             this.dequeueStrategy = dequeueStrategy;
         }

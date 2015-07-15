@@ -12,12 +12,12 @@ namespace Hermes.Messaging.Transports
     public class HeaderValue
     {
         [DataMember(Name = "Key")]
-        public string Key { get; private set; }
+        public string Key { get; set; }
 
         [DataMember(Name = "Value")]
-        public string Value { get; private set; }
+        public string Value { get; set; }
 
-        protected HeaderValue()
+        public HeaderValue()
         {}
 
         public HeaderValue(string key, string value)

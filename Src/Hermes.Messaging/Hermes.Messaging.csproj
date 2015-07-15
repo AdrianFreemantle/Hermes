@@ -40,6 +40,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -115,6 +116,14 @@
     <Compile Include="Transports\IPublishMessages.cs" />
     <Compile Include="Transports\ITransportMessages.cs" />
     <Compile Include="Pipeline\Modules\MessageMutatorModule.cs" />
+    <Compile Include="Transports\Msmq\MsmqReceiver.cs" />
+    <Compile Include="Transports\Msmq\MsmqMessageSender.cs" />
+    <Compile Include="Transports\Msmq\MsmqSettings.cs" />
+    <Compile Include="Transports\Msmq\MsmqUnitOfWork.cs" />
+    <Compile Include="Transports\Msmq\MsmqUtilities.cs" />
+    <Compile Include="Transports\Msmq\QueueNotFoundException.cs" />
+    <Compile Include="Transports\Msmq\MsmqQueueCreator.cs" />
+    <Compile Include="Transports\Msmq\MsmqTransportConfiguration.cs" />
     <Compile Include="Transports\OutgoingMessageUnitOfWork.cs" />
     <Compile Include="Transports\SqlTransport\SqlCommands.cs" />
     <Compile Include="Transports\SqlTransport\SqlDataReaderExtensions.cs" />
@@ -150,7 +159,7 @@
     <Compile Include="Transports\Transport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bus\StorageDrivenPublisher.cs" />
-    <Compile Include="Transports\Receiver.cs" />
+    <Compile Include="Transports\PollingReceiver.cs" />
     <Compile Include="Bus\SubscriptionManager.cs" />
     <Compile Include="EndPoints\WorkerEndpoint.cs" />
     <Compile Include="WorkerTaskFactory.cs" />

@@ -21,7 +21,6 @@ namespace Hermes.Messaging.Configuration
             containerBuilder.RegisterType<MessageBus>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<Router>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<StorageDrivenPublisher>(DependencyLifecycle.SingleInstance);
-            containerBuilder.RegisterType<Receiver>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<CallBackManager>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<LocalBus>(DependencyLifecycle.SingleInstance);
             containerBuilder.RegisterType<SubscriptionManager>(DependencyLifecycle.SingleInstance);

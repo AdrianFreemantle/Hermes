@@ -18,6 +18,11 @@ namespace Hermes.Logging
         /// </summary>
         public static Func<Type, ILog> BuildLogger { get; set; }
 
+        public static ILog Build<T>()
+        {
+            return BuildLogger(typeof (T));
+        }
+
         private class NullLogger : ILog
         {
             public void Debug(string message, params object[] values)

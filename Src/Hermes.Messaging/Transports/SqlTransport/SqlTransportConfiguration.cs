@@ -37,6 +37,7 @@ namespace Hermes.Messaging.Transports.SqlTransport
         {
             public void Register(IContainerBuilder containerBuilder)
             {
+                containerBuilder.RegisterType<PollingReceiver>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlMessageDequeStrategy>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlMessageSender>(DependencyLifecycle.SingleInstance);
                 containerBuilder.RegisterType<SqlQueueCreator>(DependencyLifecycle.SingleInstance);
