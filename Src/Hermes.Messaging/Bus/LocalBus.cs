@@ -57,6 +57,7 @@ namespace Hermes.Messaging.Bus
 
         private void ProcessCommandWithExistingLifetimeScope(object message)
         {
+            Logger.Debug("Process command with existing lifetimeScope");
             var incomingContext = new IncomingMessageContext(message, ServiceLocator.Current);
             messageTransport.ProcessMessage(incomingContext);
         }
@@ -65,6 +66,8 @@ namespace Hermes.Messaging.Bus
         {
             try
             {
+                Logger.Debug("Process command with new lifetimeScope");
+
                 using (IContainer childContainer = container.BeginLifetimeScope())
                 {
                     ServiceLocator.Current.SetCurrentLifetimeScope(childContainer);
