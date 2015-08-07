@@ -31,7 +31,14 @@ namespace Hermes.Messaging.Bus
             if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
                 throw new InvalidOperationException("A command may not be executed while another command is being processed.");
 
-            ProcessCommand(command);
+            try
+            {
+                ProcessCommand(command);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.GetFullExceptionMessage());
+            }
         }
 
         protected virtual void ProcessCommand(object message)
