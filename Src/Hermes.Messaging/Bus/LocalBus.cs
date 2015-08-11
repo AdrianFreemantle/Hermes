@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Messaging.Configuration;
@@ -16,6 +18,8 @@ namespace Hermes.Messaging.Bus
         private readonly ITransportMessages messageTransport;
         private readonly IDispatchMessagesToHandlers dispatcher;
 
+        private readonly List<int> executingThreads = new List<int>();
+
         public LocalBus(ITransportMessages messageTransport, IContainer container, IDispatchMessagesToHandlers dispatcher)
         {
             this.messageTransport = messageTransport;
@@ -31,13 +35,30 @@ namespace Hermes.Messaging.Bus
             if (messageTransport.CurrentMessage.MessageId != Guid.Empty)
                 throw new InvalidOperationException("A command may not be executed while another command is being processed.");
 
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+
             try
             {
+                lock (executingThreads)
+                {
+                    if (executingThreads.Contains(threadId))
+                        throw new InvalidOperationException("A command may not be executed while another command is being processed.");
+
+                    executingThreads.Add(threadId);
+                }
+
                 ProcessCommand(command);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.GetFullExceptionMessage());
+            }
+            finally
+            {
+                lock (executingThreads)
+                {
+                    executingThreads.Remove(threadId);
+                }
             }
         }
 

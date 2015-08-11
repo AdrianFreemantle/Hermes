@@ -17,7 +17,7 @@ namespace Hermes.Messaging.Transports
         private readonly ModulePipeFactory<IncomingMessageContext> incomingPipeline;
         private readonly ModulePipeFactory<OutgoingMessageContext> outgoingPipeline;
 
-        private readonly ThreadLocal<IMessageContext> currentMessageBeingProcessed = new ThreadLocal<IMessageContext>();
+        private readonly WebSafeThreadLocal<IMessageContext> currentMessageBeingProcessed = new WebSafeThreadLocal<IMessageContext>();
 
         public IMessageContext CurrentMessage
         {

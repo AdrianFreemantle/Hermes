@@ -44,6 +44,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,6 +64,7 @@
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
+    <Compile Include="Ioc\WebSafeThreadLocal.cs" />
     <Compile Include="Messaging\CommandValidationException.cs" />
     <Compile Include="Messaging\IHermesMessage.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />

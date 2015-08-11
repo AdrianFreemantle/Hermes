@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
+using Hermes.Logging;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hermes.Ioc
 {
     public class ServiceLocator : ServiceLocatorImplBase
     {
-        private static readonly ThreadLocal<ServiceLocator> Instance = new ThreadLocal<ServiceLocator>();
+        private static readonly ILog Logger = LogFactory.Build<ServiceLocator>();
+
+        private static readonly WebSafeThreadLocal<ServiceLocator> Instance = new WebSafeThreadLocal<ServiceLocator>();
         private static readonly object SyncRoot = new Object();
         private IServiceLocator serviceProvider;
 
@@ -45,6 +47,15 @@ namespace Hermes.Ioc
 
         public void SetCurrentLifetimeScope(IServiceLocator provider)
         {
+            if (provider == null)
+            {
+                Logger.Debug("Clearing service provider");
+            }
+            else
+            {
+                Logger.Debug("Setting service provider {0}", provider.GetHashCode());
+            }
+
             serviceProvider = provider ?? new DisposedProvider();
         }
 

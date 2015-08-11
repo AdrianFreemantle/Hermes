@@ -33,8 +33,9 @@ namespace Hermes.ObjectBuilder.Autofac
             }
             else
             {
+
                 LifetimeScope = container;
-                Logger.Debug("Starting new lifetime scope {0}", LifetimeScope.GetHashCode());
+                Logger.Debug("Starting new lifetime scope {0} {1}", LifetimeScope.Tag, LifetimeScope.GetHashCode());
             }
         }
 
