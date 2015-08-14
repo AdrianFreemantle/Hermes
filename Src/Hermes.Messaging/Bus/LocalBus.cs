@@ -52,6 +52,7 @@ namespace Hermes.Messaging.Bus
             catch (Exception ex)
             {
                 Logger.Error(ex.GetFullExceptionMessage());
+                throw;
             }
             finally
             {
