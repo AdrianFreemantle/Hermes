@@ -6,14 +6,8 @@ using Hermes.EntityFramework.Queries;
 
 namespace EntityFrameworkTest.Queries.DyanamicCompanyQueries
 {
-    public class DynamicCompanyQueryService 
-        : EntityQuery<Company>
+    public class DynamicCompanyQueryService : QueryService<Company>
     {
-        public DynamicCompanyQueryService(DatabaseQuery databaseQuery)
-            : base(databaseQuery)
-        {
-        }
-
         protected override Expression<Func<Company, object>> Selector()
         {
             return company => new
@@ -23,6 +17,11 @@ namespace EntityFrameworkTest.Queries.DyanamicCompanyQueries
                 Employees = company.Employees.Select(employee => employee.Name),
             };
 
+        }
+
+        protected override IQueryable<Company> Includes(IQueryable<Company> query)
+        {
+            return query;
         }
     }
 }

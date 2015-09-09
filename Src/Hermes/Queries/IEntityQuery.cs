@@ -4,8 +4,9 @@ using System.Linq.Expressions;
 
 namespace Hermes.Queries
 {
-    public interface IEntityQuery<TEntity, TResult> where TEntity : class, new()
-                                                    where TResult : class, new()
+    public interface IEntityQuery<TEntity, TResult> 
+        where TEntity : class, new()
+        where TResult : class, new()
     {
         void SetPageSize(int size);
         IEnumerable<TResult> FetchAll();

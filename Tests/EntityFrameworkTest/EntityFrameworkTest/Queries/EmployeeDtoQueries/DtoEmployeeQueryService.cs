@@ -2,25 +2,19 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using EntityFrameworkTest.Model;
 using Hermes.EntityFramework.Queries;
-using Hermes.Queries;
 
 namespace EntityFrameworkTest.Queries.EmployeeDtoQueries
 {
-    public class DtoEmployeeQueryService : EntityQuery<Model.Employee,EmployeeDto>
+    public class DtoEmployeeQueryService : QueryService<Employee, object, EmployeeDto>
     {
-        public DtoEmployeeQueryService(DatabaseQuery databaseQuery) : 
-            base(databaseQuery)
-        {
-            
-        }
-
-        protected override IQueryable<Model.Employee> Includes(IQueryable<Model.Employee> query)
+        protected override IQueryable<Employee> Includes(IQueryable<Employee> query)
         {
             return query.Include(e => e.Company);
         }
 
-        protected override Expression<Func<Model.Employee, object>> Selector()
+        protected override Expression<Func<Employee, object>> Selector()
         {
             return employee => new EmployeeDto
             {

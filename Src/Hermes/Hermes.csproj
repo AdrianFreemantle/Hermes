@@ -76,6 +76,10 @@
     <Compile Include="Persistence\IUserNamePersistenceAudit.cs" />
     <Compile Include="Persistence\UnitOfWorkRollbackException.cs" />
     <Compile Include="Queries\IEntityQuery.cs" />
+    <Compile Include="Queries\IOrderedQueryable.cs" />
+    <Compile Include="Queries\IQueryable.cs" />
+    <Compile Include="Queries\IQueryService.cs" />
+    <Compile Include="Queries\Queryable.cs" />
     <Compile Include="Reflection\AssemblyScannerDefaultIgnoreRules.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />

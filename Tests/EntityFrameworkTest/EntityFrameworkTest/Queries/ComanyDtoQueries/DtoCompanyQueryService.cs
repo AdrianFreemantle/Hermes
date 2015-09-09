@@ -8,13 +8,8 @@ using Hermes.EntityFramework.Queries;
 
 namespace EntityFrameworkTest.Queries.ComanyDtoQueries
 {
-    public class DtoCompanyQueryService : EntityQuery<Company, CompanyDto>
+    public class DtoCompanyQueryService : QueryService<Company, object, CompanyDto>
     {
-        public DtoCompanyQueryService(DatabaseQuery databaseQuery)
-            : base(databaseQuery)
-        {
-        }
-
         protected override IQueryable<Company> Includes(IQueryable<Company> query)
         {
             return query.Include(company => company.Employees);

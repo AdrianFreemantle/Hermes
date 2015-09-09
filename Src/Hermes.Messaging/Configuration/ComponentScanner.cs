@@ -17,12 +17,14 @@ namespace Hermes.Messaging.Configuration
                 ICollection<Type> messageHandlerTypes = GetMessageHandlerTypes();
                 ICollection<Type> commandValidatorTypes = GetCommandValidatorTypes();
                 ICollection<Type> queryHandlerTypes = GetQueryHandlerTypes();
+                ICollection<Type> queryServiceTypes = GetQueryServiceTypes();
                 ICollection<Type> intializerTypes = GetInitializerTypes();
 
                 HandlerCache.InitializeCache(messageTypes, messageHandlerTypes);
 
                 RegisterTypes(containerBuilder, messageHandlerTypes, DependencyLifecycle.InstancePerUnitOfWork);
                 RegisterTypes(containerBuilder, queryHandlerTypes, DependencyLifecycle.InstancePerUnitOfWork);
+                RegisterTypes(containerBuilder, queryServiceTypes, DependencyLifecycle.InstancePerUnitOfWork);
                 RegisterTypes(containerBuilder, commandValidatorTypes, DependencyLifecycle.InstancePerUnitOfWork);
                 RegisterTypes(containerBuilder, intializerTypes, DependencyLifecycle.SingleInstance);
         }
@@ -69,6 +71,15 @@ namespace Hermes.Messaging.Configuration
             return AssemblyScanner.Types.Where(
                     t => !t.IsAbstract && 
                         t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IEntityQuery<,>))))
+                       .Distinct(new TypeEqualityComparer())
+                       .ToArray();
+        }
+
+        private static ICollection<Type> GetQueryServiceTypes()
+        {
+            return AssemblyScanner.Types.Where(
+                    t => !t.IsAbstract &&
+                        t.GetInterfaces().Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IQueryService<,,>))))
                        .Distinct(new TypeEqualityComparer())
                        .ToArray();
         }

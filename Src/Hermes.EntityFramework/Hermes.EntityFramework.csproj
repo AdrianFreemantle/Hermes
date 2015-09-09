@@ -79,6 +79,7 @@
     <Compile Include="ProcessManagager\ProcessManagerPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrderedQueryableExtensions.cs" />
+    <Compile Include="Queries\QueryService.cs" />
     <Compile Include="Queries\EntityQuery.cs" />
     <Compile Include="Queries\DatabaseQuery.cs" />
     <Compile Include="Queues\QueueStore.cs" />

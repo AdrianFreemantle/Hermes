@@ -54,6 +54,13 @@ namespace EntityFrameworkTest.Model
                 Name = "Peter Jones",
                 CompanyId = amazon.Id,
             });
+
+            context.Employees.Add(new Employee
+            {
+                Id = SequentialGuid.New(),
+                Name = "Peter Smith",
+                CompanyId = amazon.Id,
+            });
         }
     }
 }

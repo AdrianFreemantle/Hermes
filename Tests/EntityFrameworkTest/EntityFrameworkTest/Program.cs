@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using EntityFrameworkTest.Model;
+using EntityFrameworkTest.Queries.ComanyDtoQueries;
+using EntityFrameworkTest.Queries.DyanamicCompanyQueries;
 using EntityFrameworkTest.Queries.EmployeeDtoQueries;
 using Hermes.EntityFramework.Queries;
 using Hermes.EntityFramework.Queues;
@@ -22,39 +24,25 @@ namespace EntityFrameworkTest
 
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
-                var queryService = scope.GetInstance<DatabaseQuery>();
+                var dtoCompanyQueryService = scope.GetInstance<DtoCompanyQueryService>();
+                var dynamicCompanyQueryService = scope.GetInstance<DynamicCompanyQueryService>();
+                var dtoEmployeeQueryService = scope.GetInstance<DtoEmployeeQueryService>();
 
-                var companies = queryService.GetQueryable<Company>();
+                var googlePage = dtoCompanyQueryService
+                    .Query
+                    .Where(c => c.Employees.Any(employee => employee.Name.Contains("Smith")))
+                    .OrderBy(company => company.Name).FetchPage(1, 10);
 
-                var c = companies.ToArray();
+                var firstCompanyDto = dtoCompanyQueryService.Query.First();
+                var companiesWithMoreThanTwoEmployees = dtoCompanyQueryService.Query.Where(company => company.Employees.Count > 2).ToArray();
+
+                var ordered = dynamicCompanyQueryService.Query.Where(company => company.Employees.Count > 2)
+                    .OrderBy(company => company.Employees.Count)
+                    .ThenBy(company => company.Name)
+                    .ToArray();
+
+                dtoEmployeeQueryService.Query.FirstOrDefault(employee => employee.Name.Length > 2);
             }
-        }
-    }
-
-    public class QueueHandler : IHandleMessage<IntitalizeQueue>
-    {
-        private readonly QueueFactory queueFactory;
-        private readonly QueueStore queueStore;
-
-
-        public QueueHandler(QueueFactory queueFactory, QueueStore queueStore)
-        {
-            this.queueFactory = queueFactory;
-            this.queueStore = queueStore;
-        }
-
-        public void Handle(IntitalizeQueue m)
-        {
-            queueFactory.CreateQueueIfNecessary(m.Name);
-
-            Guid id = Guid.NewGuid();
-            
-            queueStore.Enqueue("Test", id);
-            var peekId = queueStore.Peek("Test");
-            var dequeueId = queueStore.Deque("Test");
-            var empty = queueStore.Peek("Test");
-
-
         }
     }
 }
