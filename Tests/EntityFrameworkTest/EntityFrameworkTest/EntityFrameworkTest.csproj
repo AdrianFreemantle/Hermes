@@ -55,6 +55,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Hermes.Core.3.9.17\lib\net45\Hermes.Domain.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hermes.EntityFramework.3.9.17\lib\net45\Hermes.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Hermes.Messaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Hermes.Messaging.3.9.17\lib\net45\Hermes.Messaging.dll</HintPath>
