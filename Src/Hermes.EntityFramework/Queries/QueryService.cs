@@ -27,12 +27,6 @@ namespace Hermes.EntityFramework.Queries
         }
     }
 
-    public abstract class QueryService<TEntity, TResult> : QueryService<TEntity, TResult, object>
-        where TEntity : class, new()
-        where TResult : class, new()
-    {
-    }
-
     public abstract class QueryService<TEntity> : QueryService<TEntity, object, object>
         where TEntity : class, new()
     {

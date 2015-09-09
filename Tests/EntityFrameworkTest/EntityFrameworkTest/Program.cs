@@ -25,7 +25,7 @@ namespace EntityFrameworkTest
             using (var scope = Settings.RootContainer.BeginLifetimeScope())
             {
                 var dtoCompanyQueryService = scope.GetInstance<DtoCompanyQueryService>();
-                var dynamicCompanyQueryService = scope.GetInstance<DynamicCompanyQueryService>();
+                
                 var dtoEmployeeQueryService = scope.GetInstance<DtoEmployeeQueryService>();
 
                 var googlePage = dtoCompanyQueryService
@@ -35,8 +35,10 @@ namespace EntityFrameworkTest
 
                 var firstCompanyDto = dtoCompanyQueryService.Query.First();
                 var companiesWithMoreThanTwoEmployees = dtoCompanyQueryService.Query.Where(company => company.Employees.Count > 2).ToArray();
+                var companyQueryService = scope.GetInstance<CompanyQueryService>();
 
-                var ordered = dynamicCompanyQueryService.Query.Where(company => company.Employees.Count > 2)
+                object[] ordered = companyQueryService.Query
+                    .Where(company => company.Employees.Count > 2)
                     .OrderBy(company => company.Employees.Count)
                     .ThenBy(company => company.Name)
                     .ToArray();
