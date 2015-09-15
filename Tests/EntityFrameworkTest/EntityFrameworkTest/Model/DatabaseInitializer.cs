@@ -14,6 +14,12 @@ namespace EntityFrameworkTest.Model
                 Name = "Google"
             });
 
+            var clientele = context.Companies.Add(new Company
+            {
+                Id = SequentialGuid.New(),
+                Name = "Google"
+            });
+
             var amazon = context.Companies.Add(new Company
             {
                 Id = SequentialGuid.New(),
@@ -44,6 +50,13 @@ namespace EntityFrameworkTest.Model
             context.Employees.Add(new Employee
             {
                 Id = SequentialGuid.New(),
+                Name = "George Peterson",
+                CompanyId = google.Id,
+            });
+
+            context.Employees.Add(new Employee
+            {
+                Id = SequentialGuid.New(),
                 Name = "Sandra Jones",
                 CompanyId = amazon.Id,
             });
@@ -60,6 +73,13 @@ namespace EntityFrameworkTest.Model
                 Id = SequentialGuid.New(),
                 Name = "Peter Smith",
                 CompanyId = amazon.Id,
+            });
+
+            context.Employees.Add(new Employee
+            {
+                Id = SequentialGuid.New(),
+                Name = "Adrian Freemantle",
+                CompanyId = clientele.Id,
             });
         }
     }

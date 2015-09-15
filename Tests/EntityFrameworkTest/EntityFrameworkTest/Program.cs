@@ -35,12 +35,10 @@ namespace EntityFrameworkTest
 
                 var firstCompanyDto = dtoCompanyQueryService.Query.First();
                 var companiesWithMoreThanTwoEmployees = dtoCompanyQueryService.Query.Where(company => company.Employees.Count > 2).ToArray();
-                var companyQueryService = scope.GetInstance<CompanyQueryService>();
-
-                object[] ordered = companyQueryService.Query
-                    .Where(company => company.Employees.Count > 2)
-                    .OrderBy(company => company.Employees.Count)
-                    .ThenBy(company => company.Name)
+                
+                var ordered = dtoCompanyQueryService.Query
+                    .OrderByDescending(company => company.Employees.Count)
+                    .ThenByDescending(company => company.Name)
                     .ToArray();
 
                 dtoEmployeeQueryService.Query.FirstOrDefault(employee => employee.Name.Length > 2);

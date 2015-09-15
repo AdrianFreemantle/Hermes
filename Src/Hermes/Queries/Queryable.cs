@@ -36,19 +36,19 @@ namespace Hermes.Queries
 
         public IOrderedQueryable<TEntity, TResult, TDto> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            queryable = queryable.OrderBy(keySelector);
+            queryable = queryable.OrderByDescending(keySelector);
             return this;
         }
 
         public IOrderedQueryable<TEntity, TResult, TDto> ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            queryable = queryable.OrderBy(keySelector);
+            queryable = ((IOrderedQueryable<TEntity>)queryable).ThenBy(keySelector);
             return this;
         }
 
         public IOrderedQueryable<TEntity, TResult, TDto> ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            queryable = queryable.OrderBy(keySelector);
+            queryable = ((IOrderedQueryable<TEntity>)queryable).ThenByDescending(keySelector);
             return this;
         }
 
