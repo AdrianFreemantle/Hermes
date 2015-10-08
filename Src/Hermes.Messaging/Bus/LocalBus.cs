@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Hermes.Ioc;
 using Hermes.Logging;
@@ -48,6 +49,12 @@ namespace Hermes.Messaging.Bus
                 }
 
                 ProcessCommand(command);
+            }
+            catch (CommandValidationException ex)
+            {
+                string description = ex.GetDescription();
+                Logger.Warn(description);
+                throw;
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 
 namespace Hermes.Messaging
 {
@@ -38,6 +39,23 @@ namespace Hermes.Messaging
             : base(message)
         {
             this.validationResults = validationResults.ToArray();
+        }
+
+        public string GetDescription()
+        {
+            if (ValidationResults == null || !ValidationResults.Any())
+                return Message;
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine(String.Format("A command validation exception has occured: {0}", Message));
+
+            foreach (var validationResult in ValidationResults)
+            {
+                builder.AppendLine(String.Format("{0}: {1}", validationResult.ErrorMessage, String.Join(", ", validationResult.MemberNames)));
+            }
+
+            return builder.ToString();
         }
     }
 }
