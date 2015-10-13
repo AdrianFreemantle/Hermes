@@ -12,6 +12,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7DE137
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ServiceHost", "Hermes.ServiceHost\Hermes.ServiceHost.csproj", "{925AAF48-6C3C-4606-9FC6-49A5175C1B26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Serialization.Json", "Hermes.Serialization.Json\Hermes.Serialization.Json.csproj", "{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ObjectBuilder.Autofac", "Hermes.ObjectBuilder.Autofac\Hermes.ObjectBuilder.Autofac.csproj", "{DB529F69-F0FE-4B40-BC7F-46850A7B400B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +28,18 @@ Global
 		{2266CC77-210B-48DB-8FA9-29C4CB432C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2266CC77-210B-48DB-8FA9-29C4CB432C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2266CC77-210B-48DB-8FA9-29C4CB432C1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{925AAF48-6C3C-4606-9FC6-49A5175C1B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F3ECB0-1FE2-48C0-B517-9B1ADC9ADD92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
