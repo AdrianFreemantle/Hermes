@@ -2,11 +2,13 @@
 
 namespace Hermes.Messaging
 {
-    public interface IMessageContext 
+    public interface IMessageContext
     {
+        MessageType MessageType { get; }
         Guid MessageId { get; }
-        Guid CorrelationId { get; }
-        string UserName { get; }
         Address ReplyToAddress { get; }
+        Address Destination { get; }
+        string UserName { get; }
+        Guid CorrelationId { get; }
     }
 }

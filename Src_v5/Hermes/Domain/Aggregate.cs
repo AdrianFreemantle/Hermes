@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hermes.Ioc;
+using Hermes.Messaging;
 using Hermes.Reflection;
 
 namespace Hermes.Domain
@@ -10,10 +12,12 @@ namespace Hermes.Domain
         private int version;
         private readonly HashSet<IAggregateEvent> changes = new HashSet<IAggregateEvent>();
         protected readonly HashSet<Entity> Entities = new HashSet<Entity>();
+        private readonly IInMemoryBus eventBus;
 
         protected Aggregate(IIdentity identity) 
             : base(identity)
         {
+            eventBus = ServiceLocator.Current.GetInstance<IInMemoryBus>();
         }
 
         IEnumerable<IAggregateEvent> IAggregate.GetUncommittedEvents()
@@ -91,7 +95,7 @@ namespace Hermes.Domain
             version++;
             source.UpdateEventDetails(@event, this);
             changes.Add(@event);
-            AggregateEventBus.Raise(@event);
+            eventBus.Raise(@event);
         }
 
         internal protected override bool ApplyEvent(IAggregateEvent @event, ApplyEventAs applyAs)

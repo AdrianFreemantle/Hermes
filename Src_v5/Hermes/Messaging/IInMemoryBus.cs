@@ -1,6 +1,8 @@
 ﻿namespace Hermes.Messaging
 {
-    public interface IInMemoryBus : IInMemoryCommandBus, IInMemoryEventBus
+    public interface IInMemoryBus 
     {
+        void Execute(object command);
+        void Raise(object @event);
     }
 }

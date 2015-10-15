@@ -14,7 +14,7 @@ namespace Hermes.Messaging
         /// <summary>
         /// Starts the receipt of messages.
         /// </summary>
-        void Start(Action<TransportMessage> handleMessage);
+        void Start(Action<IMessageContext> handleMessage);
 
         /// <summary>
         /// Stops receiving new messages.

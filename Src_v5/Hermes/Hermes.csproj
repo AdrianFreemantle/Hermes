@@ -60,10 +60,10 @@
     <Compile Include="Caching\CacheTimer.cs" />
     <Compile Include="Caching\ObjectCache.cs" />
     <Compile Include="Caching\ObjectCacheException.cs" />
+    <Compile Include="Configuration\CurrentUser.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Domain\Aggregate.cs" />
-    <Compile Include="Domain\AggregateEventBus.cs" />
     <Compile Include="Domain\AggregateIdAttribute.cs" />
     <Compile Include="Domain\DomainEventAggregateIdException.cs" />
     <Compile Include="Domain\DomainEventEntityIdException.cs" />
@@ -93,9 +93,16 @@
     <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
     <Compile Include="Ioc\WebSafeThreadLocal.cs" />
+    <Compile Include="Messaging\Bus\LocalBus.cs" />
+    <Compile Include="Messaging\IMessageContext.cs" />
+    <Compile Include="Messaging\MessageType.cs" />
     <Compile Include="Messaging\CommandValidationException.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
     <Compile Include="Messaging\IValidateCommand.cs" />
+    <Compile Include="Messaging\HeaderKeys.cs" />
+    <Compile Include="Messaging\MessageContext.cs" />
+    <Compile Include="Messaging\Transports\Transport.cs" />
+    <Compile Include="Messaging\Transports\OugoingMessageUnitOfWork.cs" />
     <Compile Include="Queries\IDatabaseQuery.cs" />
     <Compile Include="Persistence\IPersistenceAudit.cs" />
     <Compile Include="Persistence\ISequentialGuidId.cs" />
@@ -131,19 +138,14 @@
     <Compile Include="HermesSystemClock.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
     <Compile Include="Messaging\Address.cs" />
-    <Compile Include="Messaging\CompletionResult.cs" />
-    <Compile Include="Messaging\IContainProcessManagerData.cs" />
+    <Compile Include="Messaging\ProcessManagerData.cs" />
     <Compile Include="Messaging\ICreateMessageQueues.cs" />
     <Compile Include="Messaging\IDequeueMessages.cs" />
-    <Compile Include="Messaging\IDispatchMessagesToHandlers.cs" />
     <Compile Include="Messaging\IHandleMessage.cs" />
     <Compile Include="Messaging\IInMemoryBus.cs" />
-    <Compile Include="Messaging\IInMemoryCommandBus.cs" />
-    <Compile Include="Messaging\IInMemoryEventBus.cs" />
     <Compile Include="Messaging\IManageSubscriptions.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
-    <Compile Include="Messaging\IMessageContext.cs" />
-    <Compile Include="Messaging\INeedToInitializeSomething.cs" />
+    <Compile Include="Configuration\INeedToInitializeSomething.cs" />
     <Compile Include="Messaging\IPersistProcessManagers.cs" />
     <Compile Include="Messaging\IPersistTimeouts.cs" />
     <Compile Include="Messaging\IProcessManager.cs" />
@@ -153,8 +155,6 @@
     <Compile Include="Messaging\ISendMessages.cs" />
     <Compile Include="Messaging\ISerializeMessages.cs" />
     <Compile Include="Messaging\IStoreSubscriptions.cs" />
-    <Compile Include="Messaging\TimeoutData.cs" />
-    <Compile Include="Messaging\TransportMessage.cs" />
     <Compile Include="Persistence\ILookupTable.cs" />
     <Compile Include="Configuration\RuntimeEnvironment.cs" />
     <Compile Include="Serialization\ContentTypes.cs" />
@@ -225,7 +225,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Messaging\Persistence\" />
+    <Folder Include="Messaging\Pipeline\Modules\" />
+    <Folder Include="Messaging\Routing\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,9 +4,9 @@ namespace Hermes.Messaging
 {
     public interface IPersistTimeouts
     {
-        void Add(ITimeoutData timeout);
+        void Add(MessageContext timeout);
         void Purge();
-        bool TryFetchNextTimeout(out ITimeoutData timeoutData);
+        bool TryFetchNextTimeout(out MessageContext timeoutData);
         void Remove(Guid correlationId);
     }
 }

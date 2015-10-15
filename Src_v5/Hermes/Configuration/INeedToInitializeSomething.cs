@@ -1,4 +1,4 @@
-﻿namespace Hermes.Messaging
+﻿namespace Hermes.Configuration
 {
     public interface INeedToInitializeSomething
     {
