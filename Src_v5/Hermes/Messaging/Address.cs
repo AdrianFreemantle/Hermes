@@ -62,7 +62,7 @@ namespace Hermes.Messaging
             queue = queueName;
             queueLowerCased = queue.ToLower();
 
-            machine = machineName ?? RuntimeEnvironment.MachineName;
+            machine = machineName ?? RuntimeEnvironment.GetMachineName();
             machine = Machine;
             machineLowerCased = machine.ToLower();
         }
@@ -72,7 +72,7 @@ namespace Hermes.Messaging
         /// </summary>
         ///<param name="queueName">The queue name.</param>
         public Address(string queueName)
-            : this(queueName, RuntimeEnvironment.MachineName)
+            : this(queueName, RuntimeEnvironment.GetMachineName())
         {
         }
 
@@ -92,7 +92,7 @@ namespace Hermes.Messaging
             switch (address.Length)
             {
                 case 1:
-                    return new Address(address[queueIndex], RuntimeEnvironment.MachineName);
+                    return new Address(address[queueIndex], RuntimeEnvironment.GetMachineName());
                 case 2:
                     Mandate.ParameterNotNullOrEmpty(address[machineIndex], "destination", "Invalid machine name specified in destination address");
                     return new Address(address[queueIndex], address[machineIndex]);

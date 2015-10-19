@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,6 +44,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -60,7 +61,6 @@
     <Compile Include="Caching\CacheTimer.cs" />
     <Compile Include="Caching\ObjectCache.cs" />
     <Compile Include="Caching\ObjectCacheException.cs" />
-    <Compile Include="Configuration\CurrentUser.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\ConfigurationSettingNotFoundException.cs" />
     <Compile Include="Domain\Aggregate.cs" />
@@ -89,18 +89,27 @@
     <Compile Include="Domain\Testing\AggregateSpecificationException.cs" />
     <Compile Include="Domain\Testing\AggregateTestSpecification.cs" />
     <Compile Include="Encryption\AesEncryption.cs" />
+    <Compile Include="Messaging\MessageHandlerCache\ActionCacheItem.cs" />
+    <Compile Include="Messaging\MessageHandlerCache\HandlerCache.cs" />
+    <Compile Include="Messaging\MessageContractFactory.cs" />
     <Compile Include="Failover\FaultSimulator.cs" />
     <Compile Include="Ioc\HermesComponentRegistrationException.cs" />
     <Compile Include="Ioc\ServiceLocatorExtensions.cs" />
     <Compile Include="Ioc\WebSafeThreadLocal.cs" />
     <Compile Include="Messaging\Bus\LocalBus.cs" />
     <Compile Include="Messaging\IMessageContext.cs" />
+    <Compile Include="Messaging\MessageHandlerCache\HandlerCacheItem.cs" />
+    <Compile Include="Messaging\MessageHandlerCache\HandlerFactory.cs" />
     <Compile Include="Messaging\MessageType.cs" />
     <Compile Include="Messaging\CommandValidationException.cs" />
     <Compile Include="Messaging\IDomainEvent.cs" />
     <Compile Include="Messaging\IValidateCommand.cs" />
     <Compile Include="Messaging\HeaderKeys.cs" />
     <Compile Include="Messaging\MessageContext.cs" />
+    <Compile Include="Messaging\Pipeline\Modules\CommandValidationModule.cs" />
+    <Compile Include="Messaging\Pipeline\Modules\DispatchMessagesModule.cs" />
+    <Compile Include="Failover\SystemCircuitBreaker.cs" />
+    <Compile Include="Messaging\Pipeline\Modules\UnitOfWorkModule.cs" />
     <Compile Include="Messaging\Transports\Transport.cs" />
     <Compile Include="Messaging\Transports\OugoingMessageUnitOfWork.cs" />
     <Compile Include="Queries\IDatabaseQuery.cs" />
@@ -162,7 +171,6 @@
     <Compile Include="SingleGlobalInstance.cs" />
     <Compile Include="Enums\EnumConverter.cs" />
     <Compile Include="Compression\GzipCompressor.cs" />
-    <Compile Include="DataAnnotationValidator.cs" />
     <Compile Include="DeterministicGuid.cs" />
     <Compile Include="IEndpoint.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
@@ -227,7 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Messaging\Persistence\" />
-    <Folder Include="Messaging\Pipeline\Modules\" />
     <Folder Include="Messaging\Routing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

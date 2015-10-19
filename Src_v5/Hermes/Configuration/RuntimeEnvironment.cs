@@ -1,25 +1,24 @@
 ﻿using System;
+using System.Web;
 
 namespace Hermes.Configuration
 {
     public static class RuntimeEnvironment
     {
+        public static Func<string> GetCurrentUserName { get; set; }
+        public static Func<string> GetMachineName { get; set; }
+
         static RuntimeEnvironment()
         {
-            MachineNameAction = () => Environment.MachineName;
-        }
+            GetMachineName = () => Environment.MachineName;
 
-        /// <summary>
-        /// Returns the machine name where this endpoint is currently running
-        /// </summary>
-        public static string MachineName
-        {
-            get { return MachineNameAction(); }
-        }
+            GetCurrentUserName = () =>
+            {
+                if (HttpContext.Current == null || HttpContext.Current.User == null || String.IsNullOrWhiteSpace(HttpContext.Current.User.Identity.Name))
+                    return Environment.UserName;
 
-        /// <summary>
-        /// Get the machine name, allows for overrides
-        /// </summary>
-        public static Func<string> MachineNameAction { get; set; }
+                return HttpContext.Current.User.Identity.Name;
+            };
+        }
     }
 }

@@ -11,17 +11,22 @@ namespace Hermes.Configuration
     {
         private static readonly Dictionary<string, object> ConfigurationSettings = new Dictionary<string, object>();
 
+        public static T Get<T>(string settingKey)
+        {
+            return (T)Get(settingKey);
+        }
+
         public static object Get(string settingKey)
         {
-            if (ConfigurationManager.AppSettings[settingKey] != null)
-            {
-                return ConfigurationManager.AppSettings[settingKey];
-            }
-
             if (ConfigurationSettings.ContainsKey(settingKey))
             {
                 return ConfigurationSettings[settingKey];
             }
+
+            if (ConfigurationManager.AppSettings[settingKey] != null)
+            {
+                return ConfigurationManager.AppSettings[settingKey];
+            }            
 
             throw new ConfigurationSettingNotFoundException(settingKey);
         }

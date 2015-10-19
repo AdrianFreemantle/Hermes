@@ -30,7 +30,7 @@ namespace Hermes.Messaging.Bus
                 Destination = Address.Local,
                 ReplyToAddress = Address.Local,
                 MessageType = MessageType.LocalCommand,
-                UserName = CurrentUser.GetCurrentUserName()
+                UserName = RuntimeEnvironment.GetCurrentUserName()
             };
 
             transport.HandleIncommingMessage(commandContext);
@@ -49,7 +49,7 @@ namespace Hermes.Messaging.Bus
                 Destination = Address.Local,
                 ReplyToAddress = Address.Local,
                 MessageType = MessageType.LocalEvent,
-                UserName = CurrentUser.GetCurrentUserName(),
+                UserName = RuntimeEnvironment.GetCurrentUserName(),
             };
 
             transport.HandleIncommingMessage(eventContext);

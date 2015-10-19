@@ -1,4 +1,5 @@
 ﻿using System;
+using Hermes.Failover;
 using Hermes.Ioc;
 using Hermes.Logging;
 using Hermes.Pipes;
@@ -26,7 +27,15 @@ namespace Hermes.Messaging.Transports
 
         public virtual void HandleIncommingMessage(MessageContext messageContext)
         {
-            ProcessMessageContext(messageContext, DispatchIncommingMessageToPipleline);
+            try
+            {
+                ProcessMessageContext(messageContext, DispatchIncommingMessageToPipleline);
+            }
+            catch (Exception ex)
+            {
+                SystemCircuitBreaker.Trigger(ex);
+                throw;
+            }
         }
 
         private void DispatchIncommingMessageToPipleline(MessageContext messageContext)
