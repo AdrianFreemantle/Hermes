@@ -7,7 +7,6 @@ namespace Hermes.Messaging
     {
         public static readonly MessageContext Null;
 
-        public MessageType MessageType { get; set; }
         public object Message { get; set; }
         public string UserName { get; set; }
         public Guid CorrelationId { get; set; }
@@ -20,12 +19,12 @@ namespace Hermes.Messaging
         {
             Null = new MessageContext
             {
+                Message = new object(),
                 MessageId = Guid.Empty,
                 CorrelationId = Guid.Empty,
                 Destination = Address.Undefined,
                 ReplyToAddress = Address.Undefined,
                 UserName = String.Empty,
-                MessageType = MessageType.Unknown
             };
         }
 

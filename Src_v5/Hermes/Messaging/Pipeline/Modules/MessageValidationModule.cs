@@ -14,7 +14,7 @@ namespace Hermes.Messaging.Pipeline.Modules
         /// </summary>
         public bool Process(MessageContext input, Func<bool> next)
         {
-            if (input.MessageType == MessageType.Command || input.MessageType == MessageType.LocalCommand)
+            if (input.IsCommandMessage())
                 ValidateCommand(input.Message);
 
             return next();

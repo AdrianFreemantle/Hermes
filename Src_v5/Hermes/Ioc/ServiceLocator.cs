@@ -8,14 +8,20 @@ namespace Hermes.Ioc
     public class ServiceLocator : ServiceLocatorImplBase
     {
         private static readonly ILog Logger = LogFactory.Build<ServiceLocator>();
+        private static readonly DisposedProvider DisposedProvider;
 
         private static readonly WebSafeThreadLocal<ServiceLocator> Instance = new WebSafeThreadLocal<ServiceLocator>();
         private static readonly object SyncRoot = new Object();
         private IServiceLocator serviceProvider;
 
+        static ServiceLocator()
+        {
+            DisposedProvider = new DisposedProvider();
+        }
+
         private ServiceLocator()
         {
-            SetCurrentLifetimeScope(new DisposedProvider());
+            SetCurrentLifetimeScope(DisposedProvider);
         }
 
         public static ServiceLocator Current
@@ -44,18 +50,23 @@ namespace Hermes.Ioc
             return serviceProvider is DisposedProvider;
         }
 
+        public void ClearCurrentLifetimeScope()
+        {
+            SetCurrentLifetimeScope(null);
+        }
+
         public void SetCurrentLifetimeScope(IServiceLocator provider)
         {
             if (provider == null)
             {
                 Logger.Debug("Clearing service provider");
+                serviceProvider = DisposedProvider;
             }
             else
             {
                 Logger.Debug("Setting service provider {0}", provider.GetHashCode());
+                serviceProvider = provider;
             }
-
-            serviceProvider = provider ?? new DisposedProvider();
         }
 
         protected override object DoGetInstance(Type serviceType, string key)
