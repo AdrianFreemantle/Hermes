@@ -152,7 +152,7 @@
     <Compile Include="Messaging\ICreateMessageQueues.cs" />
     <Compile Include="Messaging\IDequeueMessages.cs" />
     <Compile Include="Messaging\IHandleMessage.cs" />
-    <Compile Include="Messaging\IInMemoryBus.cs" />
+    <Compile Include="Messaging\ILocalBus.cs" />
     <Compile Include="Messaging\IManageSubscriptions.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Configuration\INeedToInitializeSomething.cs" />

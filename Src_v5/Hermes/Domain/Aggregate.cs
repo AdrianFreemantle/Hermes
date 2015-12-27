@@ -12,12 +12,12 @@ namespace Hermes.Domain
         private int version;
         private readonly HashSet<IAggregateEvent> changes = new HashSet<IAggregateEvent>();
         protected readonly HashSet<Entity> Entities = new HashSet<Entity>();
-        private readonly IInMemoryBus eventBus;
+        private readonly ILocalBus eventBus;
 
         protected Aggregate(IIdentity identity) 
             : base(identity)
         {
-            eventBus = ServiceLocator.Current.GetInstance<IInMemoryBus>();
+            eventBus = ServiceLocator.Current.GetInstance<ILocalBus>();
         }
 
         IEnumerable<IAggregateEvent> IAggregate.GetUncommittedEvents()

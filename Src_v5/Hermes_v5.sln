@@ -18,6 +18,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Serialization.Json",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ObjectBuilder.Autofac", "Hermes.ObjectBuilder.Autofac\Hermes.ObjectBuilder.Autofac.csproj", "{DB529F69-F0FE-4B40-BC7F-46850A7B400B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Gateway", "Hermes.Gateway\Hermes.Gateway.csproj", "{47791FDE-FF48-42CA-9C2E-A14C5ED19020}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Gateway.TestServer", "Hermes.Gateway.TestServer\Hermes.Gateway.TestServer.csproj", "{7339492E-A073-4AC7-9AE1-69090CB62BB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Gateway.TestWebApp", "Hermes.Gateway.TestWebApp\Hermes.Gateway.TestWebApp.csproj", "{03D08748-23B0-4399-A8BC-BC9901488270}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +46,18 @@ Global
 		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB529F69-F0FE-4B40-BC7F-46850A7B400B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47791FDE-FF48-42CA-9C2E-A14C5ED19020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47791FDE-FF48-42CA-9C2E-A14C5ED19020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47791FDE-FF48-42CA-9C2E-A14C5ED19020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47791FDE-FF48-42CA-9C2E-A14C5ED19020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7339492E-A073-4AC7-9AE1-69090CB62BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7339492E-A073-4AC7-9AE1-69090CB62BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7339492E-A073-4AC7-9AE1-69090CB62BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7339492E-A073-4AC7-9AE1-69090CB62BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D08748-23B0-4399-A8BC-BC9901488270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D08748-23B0-4399-A8BC-BC9901488270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D08748-23B0-4399-A8BC-BC9901488270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D08748-23B0-4399-A8BC-BC9901488270}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

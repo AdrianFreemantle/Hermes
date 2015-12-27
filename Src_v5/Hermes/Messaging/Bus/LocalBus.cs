@@ -5,7 +5,7 @@ using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Bus
 {
-    public class LocalBus : IInMemoryBus
+    public class LocalBus : ILocalBus
     {
         private readonly Transport transport;
 
