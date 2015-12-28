@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Hermes.Messaging
 {
@@ -14,11 +15,6 @@ namespace Hermes.Messaging
         /// <summary>
         /// Starts the receipt of messages.
         /// </summary>
-        void Start(Action<IMessageContext> handleMessage);
-
-        /// <summary>
-        /// Stops receiving new messages.
-        /// </summary>
-        void Stop();
+        void Start(CancellationToken cancellationToken, Action<MessageContext> messageReceived);
     }
 }

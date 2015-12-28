@@ -25,14 +25,24 @@ namespace Hermes.Messaging
                 Destination = Address.Undefined,
                 ReplyToAddress = Address.Undefined,
                 UserName = String.Empty,
+                Headers= new Dictionary<string, string>()
             };
         }
 
         public MessageContext()
         {
+            Destination = Address.Undefined;
+            ReplyToAddress = Address.Undefined;
+            UserName = String.Empty;
             MessageId = SequentialGuid.New();
             CorrelationId = MessageId;
             Headers = new Dictionary<string, string>();
+        }
+
+        public MessageContext(object message)
+            : this()
+        {
+            Message = message;
         }
 
         public override int GetHashCode()
