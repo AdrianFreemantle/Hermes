@@ -3,9 +3,19 @@
 <head>
     <title></title>
     <script>
-        function PostToBus() {
+        function PostToLocalBus() {
             var request = new XMLHttpRequest();
             request.open('POST', 'http://localhost:12345/LocalBus', true);
+            request.setRequestHeader('MessageType', 'Hermes.Gateway.TestServer.TestCommand, Hermes.Gateway.TestServer');
+            var message = new Object();
+            message.Property1 = "Property1 Value";
+            message.Property2 = "Property2 Value";
+            var jsonString = JSON.stringify(message);
+            request.send(jsonString);
+        }
+        function PostToAsyncBus() {
+            var request = new XMLHttpRequest();
+            request.open('POST', 'http://localhost:12345/AsyncBus', true);
             request.setRequestHeader('MessageType', 'Hermes.Gateway.TestServer.TestCommand, Hermes.Gateway.TestServer');
             var message = new Object();
             message.Property1 = "Property1 Value";
@@ -16,6 +26,7 @@
     </script>
 </head>
 <body>
-    <button onclick="PostToBus()">PostToBus</button>
+    <button onclick="PostToLocalBus()">Execute</button>
+    <button onclick="PostToAsyncBus()">Send</button>
 </body>
 </html>

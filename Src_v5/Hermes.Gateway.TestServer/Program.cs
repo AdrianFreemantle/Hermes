@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Hermes.Messaging;
 using Hermes.Serialization.Json;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
@@ -12,7 +10,8 @@ namespace Hermes.Gateway.TestServer
     class Program
     {
         private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-        private static readonly OwinMiddlewareReceiver OwinMiddlewareReceiver = new OwinMiddlewareReceiver(new JsonObjectSerializer());
+        private static readonly OwinMiddlewareReceiver LocalBusReciever = new OwinMiddlewareReceiver(new JsonObjectSerializer());
+        private static readonly OwinMiddlewareReceiver AsyncBusReciever = new OwinMiddlewareReceiver(new JsonObjectSerializer());
 
         static void Main()
         {
@@ -53,16 +52,24 @@ namespace Hermes.Gateway.TestServer
 
         static void MapToBus(IAppBuilder builder)
         {
-            Action<MessageContext> executeCommand = message =>
+            LocalBusReciever.Start(CancellationTokenSource.Token, message =>
             {
-                Console.WriteLine(@"Message {0} of type {1} recieved at {2}", message.MessageId, message.GetType().FullName, DateTime.Now.ToLongTimeString());                
-            };
+                Console.WriteLine(@"{0}: Executing message {1} of type {2}", DateTime.Now.ToLongTimeString(), message.MessageId, message.GetType().FullName);                
+            });
 
-            OwinMiddlewareReceiver.Start(CancellationTokenSource.Token, executeCommand);
+            AsyncBusReciever.Start(CancellationTokenSource.Token, message =>
+            {
+                Console.WriteLine(@"{0}: Sending message {1} of type {2}", DateTime.Now.ToLongTimeString(), message.MessageId, message.GetType().FullName);                
+            });
 
             builder.Map("/LocalBus", app =>
             {
-                app.Use(OwinMiddlewareReceiver.Middleware());
+                app.Use(LocalBusReciever.Middleware());
+            });
+
+            builder.Map("/AsyncBus", app =>
+            {
+                app.Use(AsyncBusReciever.Middleware());
             });
         }
     }
