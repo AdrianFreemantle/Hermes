@@ -28,7 +28,7 @@ namespace Hermes.Messaging.Bus
             this.container = container;
         }
 
-        public void Execute(object command)
+        public void Execute<T>(T command) where T : class
         {
             Mandate.ParameterNotNull(command, "command");
             MessageRuleValidation.ValidateCommand(command);
@@ -70,7 +70,7 @@ namespace Hermes.Messaging.Bus
             }
         }
 
-        protected virtual void ProcessCommand(object message)
+        protected virtual void ProcessCommand<T>(T message)  where T : class
         {
             Logger.Info("User [{0}] Executing : {1}", CurrentUser.GetCurrentUserName(), message);
 
@@ -84,14 +84,14 @@ namespace Hermes.Messaging.Bus
             }
         }
 
-        private void ProcessCommandWithExistingLifetimeScope(object message)
+        private void ProcessCommandWithExistingLifetimeScope<T>(T message) where T : class
         {
             Logger.Debug("Process command with existing lifetimeScope");
             var incomingContext = new IncomingMessageContext(message, ServiceLocator.Current);
             messageTransport.ProcessMessage(incomingContext);
         }
 
-        private void ProcessCommandWithNewLifetimeScope(object message)
+        private void ProcessCommandWithNewLifetimeScope<T>(T message) where T : class
         {
             try
             {
@@ -110,7 +110,7 @@ namespace Hermes.Messaging.Bus
             }
         }
 
-        public void Raise(object @event)
+        public void Raise<T>(T @event) where T : class
         {
             if(!ServiceLocator.Current.HasServiceProvider())
                 throw new InvalidOperationException("A local event may only be raised within the context of an executing local command or received message.");

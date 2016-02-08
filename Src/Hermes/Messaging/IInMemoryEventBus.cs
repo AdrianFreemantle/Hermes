@@ -2,6 +2,6 @@
 {
     public interface IInMemoryEventBus
     {
-        void Raise(object @event);
+        void Raise<T>(T @event) where T : class;
     }
 }

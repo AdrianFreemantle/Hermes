@@ -4,22 +4,22 @@ namespace Hermes.Messaging
 {
     public interface IMessageBus  
     {
-        ICallback Send(object command);
-        ICallback Send(Address address, object command);
-        ICallback Send(Address address, Guid corrolationId, object command);
-        ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, object command);
-        ICallback Send(Guid corrolationId, object command);
-        ICallback Send(Guid corrolationId, TimeSpan timeToLive, object command);
+        ICallback Send<T>(T command) where T : class;
+        ICallback Send<T>(Address address, T command) where T : class;
+        ICallback Send<T>(Address address, Guid corrolationId, T command) where T : class;
+        ICallback Send<T>(Address address, Guid corrolationId, TimeSpan timeToLive, T command) where T : class;
+        ICallback Send<T>(Guid corrolationId, T command) where T : class;
+        ICallback Send<T>(Guid corrolationId, TimeSpan timeToLive, T command) where T : class;
 
-        void Publish(object @event);
-        void Publish(Guid correlationId, object @event);
+        void Publish<T>(T @event) where T : class;
+        void Publish<T>(Guid correlationId, T @event) where T : class;
 
-        void Reply(object message);
-        void Reply(Address address, Guid corrolationId, object message);
+        void Reply<T>(T message) where T : class;
+        void Reply<T>(Address address, Guid corrolationId, T message) where T : class;
         void Return<TEnum>(TEnum errorCode) where TEnum : struct, IComparable, IFormattable, IConvertible;
 
-        void Defer(TimeSpan delay, object command);
-        void Defer(TimeSpan delay, Guid corrolationId, object command);
+        void Defer<T>(TimeSpan delay, T command) where T : class;
+        void Defer<T>(TimeSpan delay, Guid corrolationId, T command) where T : class;
 
         IMessageContext CurrentMessage { get; }
     }

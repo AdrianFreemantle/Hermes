@@ -24,12 +24,12 @@ namespace Hermes.Messaging.Bus
             this.callBackManager = callBackManager;
         }
 
-        public void Defer(TimeSpan delay, object command)
+        public void Defer<T>(TimeSpan delay, T command) where T : class 
         {
             Defer(delay, Guid.Empty, command);
         }
 
-        public void Defer(TimeSpan delay, Guid correlationId, object command)
+        public void Defer<T>(TimeSpan delay, Guid correlationId, T command) where T : class 
         {
             if (Settings.IsClientEndpoint)
             {
@@ -44,47 +44,47 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(outgoingMessage);
         }
 
-        public ICallback Send(object command)
+        public ICallback Send<T>(T command) where T : class
         {
             Address destination = messageRouter.GetDestinationFor(command.GetType());
             return Send(destination, command);
         }
 
-        public ICallback Send(Address address, object command)
+        public ICallback Send<T>(Address address, T command) where T : class
         {
             return Send(address, Guid.Empty, command);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, object command)
+        public ICallback Send<T>(Address address, Guid corrolationId, T command) where T : class
         {
             return SendMessages(address, corrolationId, TimeSpan.MaxValue, command);
         }
 
-        public ICallback Send(Address address, Guid corrolationId, TimeSpan timeToLive, object command)
+        public ICallback Send<T>(Address address, Guid corrolationId, TimeSpan timeToLive, T command) where T : class
         {
             return SendMessages(address, corrolationId, timeToLive, command);
         }
 
-        public ICallback Send(Guid corrolationId, object command)
+        public ICallback Send<T>(Guid corrolationId, T command) where T : class
         {
             Address destination = messageRouter.GetDestinationFor(command.GetType());
             return SendMessages(destination, corrolationId, TimeSpan.MaxValue, command);
         }
 
-        public ICallback Send(Guid corrolationId, TimeSpan timeToLive, object command)
+        public ICallback Send<T>(Guid corrolationId, TimeSpan timeToLive, T command) where T : class
         {
             Address destination = messageRouter.GetDestinationFor(command.GetType());
             return SendMessages(destination, corrolationId, timeToLive, command);
         }
 
-        private ICallback SendMessages(Address address, Guid correlationId, TimeSpan timeToLive, object command)
+        private ICallback SendMessages<T>(Address address, Guid correlationId, TimeSpan timeToLive, T command) where T : class
         {
             var outgoingMessage = OutgoingMessageContext.BuildCommand(address, correlationId, timeToLive, command);
             messageTransport.SendMessage(outgoingMessage);
             return callBackManager.SetupCallback(outgoingMessage.CorrelationId);
         }
 
-        public void Reply(Address address, Guid corrolationId, object message)
+        public void Reply<T>(Address address, Guid corrolationId, T message) where T : class
         {
             if (corrolationId == Guid.Empty)
                 throw new InvalidOperationException("Reply was called but we have an empty correlation Id.");
@@ -97,7 +97,7 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(outgoingMessage);
         }
 
-        public void Reply(object message)
+        public void Reply<T>(T message) where T : class
         {
             var currentMessage = messageTransport.CurrentMessage;
 
@@ -127,12 +127,12 @@ namespace Hermes.Messaging.Bus
             messageTransport.SendMessage(outgoingMessage);
         }
 
-        public void Publish(object @event)
+        public void Publish<T>(T @event) where T : class
         {
             Publish(Guid.Empty, @event);
         }
 
-        public void Publish(Guid correlationId, object @event)
+        public void Publish<T>(Guid correlationId, T @event) where T : class
         {
             var outgoingMessage = OutgoingMessageContext.BuildEvent(correlationId, @event);
             messageTransport.SendMessage(outgoingMessage);

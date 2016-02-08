@@ -105,35 +105,35 @@ namespace Hermes.Messaging.ProcessManagement
             }
         }
 
-        protected void Send(object command)
+        protected void Send<TCommand>(TCommand command) where TCommand : class
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
 
             Bus.Send(currentState.Id, command);
         }
 
-        protected void ReplyToOriginator(object message)
+        protected void ReplyToOriginator<TReply>(TReply message) where TReply : class
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
 
             Bus.Reply(Address.Parse(currentState.Originator), currentState.OriginalMessageId, message);
         }
 
-        protected void Publish(object @event)
+        protected void Publish<TEvent>(TEvent @event) where TEvent : class
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
 
             Bus.Publish(currentState.Id, @event);
         }
 
-        protected void Timeout(TimeSpan timeSpan, object command)
+        protected void Timeout<TCommand>(TimeSpan timeSpan, TCommand command) where TCommand : class
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
 
             Bus.Defer(timeSpan, currentState.Id, command);
         }
 
-        protected void Timeout(TimeSpan timeSpan, CronSchedule schedule, object command)
+        protected void Timeout<TCommand>(TimeSpan timeSpan, CronSchedule schedule, TCommand command) where TCommand : class
         {
             var currentState = ((IProcessManager)this).GetCurrentState();
             var timeoutTime = schedule.GetTimeUntilNextOccurrence();

@@ -2,6 +2,6 @@
 {
     public interface IInMemoryCommandBus
     {
-        void Execute(object command);
+        void Execute<T>(T command) where T : class;
     }
 }
