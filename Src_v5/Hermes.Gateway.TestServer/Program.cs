@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Threading;
 using Hermes.Serialization.Json;
 using Microsoft.Owin.Cors;
@@ -10,8 +11,8 @@ namespace Hermes.Gateway.TestServer
     class Program
     {
         private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-        private static readonly OwinMiddlewareReceiver LocalBusReciever = new OwinMiddlewareReceiver(new JsonObjectSerializer());
-        private static readonly OwinMiddlewareReceiver AsyncBusReciever = new OwinMiddlewareReceiver(new JsonObjectSerializer());
+        private static readonly OwinMessageReceiver LocalBusReciever = new OwinMessageReceiver(new JsonObjectSerializer());
+        private static readonly OwinMessageReceiver AsyncBusReciever = new OwinMessageReceiver(new JsonObjectSerializer());
 
         static void Main()
         {
@@ -64,6 +65,7 @@ namespace Hermes.Gateway.TestServer
 
             builder.Map("/LocalBus", app =>
             {
+                app.Use<OwinSimpleMessageDeduplication>();
                 app.Use(LocalBusReciever.Middleware());
             });
 

@@ -37,6 +37,30 @@ namespace Hermes.Caching
             timer.Start();
         }
 
+        public bool Contains(string key)
+        {
+            Mandate.ParameterNotNullOrEmpty(key, "key");
+            
+            Guid cacheKey = DeterministicGuid.Create(key);
+            return Contains(cacheKey);
+        }
+
+        public bool Contains(Guid key)
+        {
+            Mandate.ParameterNotDefaut(key, "key");
+
+            locker.EnterReadLock();
+
+            try
+            {
+                return cache.ContainsKey(key);
+            }
+            finally
+            {
+                locker.ExitReadLock();
+            }
+        }
+
         public bool TryGetCachedObject<T>(string key, out T cachedItem)
         {
             Mandate.ParameterNotNullOrEmpty(key, "key");

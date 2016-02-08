@@ -11,13 +11,13 @@ using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, objec
 
 namespace Hermes.Gateway
 {
-    public class OwinMiddlewareReceiver : IReceiveMessages
+    public class OwinMessageReceiver : IReceiveMessages
     {
         private readonly ISerializeObjects serializer;
         private Action<MessageContext> messageReceived;
         private CancellationToken cancellationToken;
 
-        public OwinMiddlewareReceiver(ISerializeObjects serializer)
+        public OwinMessageReceiver(ISerializeObjects serializer)
         {
             this.serializer = serializer;
         }
@@ -54,9 +54,12 @@ namespace Hermes.Gateway
 
         private static void BuildOkayResponse(IOwinResponse response, MessageContext messageContext)
         {
+            var messageId = messageContext.MessageId.ToString();
+
             response.StatusCode = (int)HttpStatusCode.OK;
             response.ReasonPhrase = "OK";
-            response.Write(messageContext.MessageId.ToString());
+            response.Headers.Add("MessageId", new []{messageId});
+            response.Write(messageId);
         }
 
         private static void BuildServiceUnavailableResponse(IOwinResponse response)

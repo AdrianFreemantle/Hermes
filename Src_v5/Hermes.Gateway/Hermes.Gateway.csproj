@@ -45,7 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OwinMiddlewareReceiver.cs" />
+    <Compile Include="OwinMessageReceiver.cs" />
+    <Compile Include="OwinSimpleMessageDeduplication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
