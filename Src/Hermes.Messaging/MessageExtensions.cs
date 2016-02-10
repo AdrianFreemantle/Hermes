@@ -12,16 +12,19 @@ namespace Hermes.Messaging
 
         public static Type[] GetContracts(this object message)
         {
-            var messageType = message.GetType();
+            return GetContracts(message.GetType());
+        }
 
+        public static Type[] GetContracts(this Type messageType)
+        {
             if (Settings.IsCommandType(messageType) || Settings.IsMessageType(messageType))
             {
-                return new[] {messageType};
+                return new[] { messageType };
             }
-            
-            if(Settings.IsEventType(messageType))
+
+            if (Settings.IsEventType(messageType))
             {
-                return message.GetType()
+                return messageType
                     .GetInterfaces()
                     .Union(new[] { messageType })
                     .Distinct(EqualityComparer)

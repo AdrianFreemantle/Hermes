@@ -2,7 +2,7 @@
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
-    internal class ActionCacheItem
+    public class ActionCacheItem
     {
         public Action<object, object> Action { get; private set; }
         public Type MessageContract { get; private set; }

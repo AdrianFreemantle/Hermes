@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Hermes.Messaging.Transports
+namespace Hermes.Messaging
 {
     [DataContract]
     public class TransportMessage 

@@ -1,6 +1,4 @@
-﻿using Hermes.Messaging.Transports;
-
-namespace Hermes.Messaging
+﻿namespace Hermes.Messaging
 {
     public interface IDequeueMessages
     {

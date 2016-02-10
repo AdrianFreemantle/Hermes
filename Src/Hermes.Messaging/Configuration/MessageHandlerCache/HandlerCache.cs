@@ -7,9 +7,11 @@ using Hermes.Ioc;
 
 namespace Hermes.Messaging.Configuration.MessageHandlerCache
 {
-    internal static class HandlerCache
+    public static class HandlerCache
     {
         private static readonly List<HandlerCacheItem> HandlerDetails = new List<HandlerCacheItem>();
+
+        public static IEnumerable<HandlerCacheItem> CachedHandlers { get { return HandlerDetails; } }
 
         public static void InitializeCache(IEnumerable<Type> messageTypes, ICollection<Type> messageHandlerTypes)
         {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Transactions;
-
-// ReSharper disable CheckNamespace
+﻿// ReSharper disable CheckNamespace
 namespace System.Transactions
 // ReSharper restore CheckNamespace
 {

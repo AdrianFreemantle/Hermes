@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Hermes.Messaging.Transports;
-
 namespace Hermes.Messaging
 {
     /// <summary>

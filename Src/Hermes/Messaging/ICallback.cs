@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Hermes.Messaging.Callbacks;
-
 namespace Hermes.Messaging
 {
     public interface ICallback

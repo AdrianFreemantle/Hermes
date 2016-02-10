@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hermes.Messaging.Callbacks
+namespace Hermes.Messaging
 {
     [Serializable]
     public class CompletionResult

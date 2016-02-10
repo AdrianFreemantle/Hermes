@@ -81,6 +81,14 @@
     <Compile Include="Queries\IQueryService.cs" />
     <Compile Include="Queries\Queryable.cs" />
     <Compile Include="Reflection\AssemblyScannerDefaultIgnoreRules.cs" />
+    <Compile Include="Extensions\ByteArrayExtensions.cs" />
+    <Compile Include="Extensions\ConstructorInfoExtensions.cs" />
+    <Compile Include="Reflection\ILInstruction.cs" />
+    <Compile Include="Reflection\ILInstructionLoader.cs" />
+    <Compile Include="Reflection\ILOpCodeTranslator.cs" />
+    <Compile Include="Extensions\MethodBaseExtensions.cs" />
+    <Compile Include="Extensions\MethodInfoExtensions.cs" />
+    <Compile Include="Extensions\ParameterInfoExtensions.cs" />
     <Compile Include="Scheduling\Fields\SecondField.cs" />
     <Compile Include="Enums\EnumWrapper.cs" />
     <Compile Include="Equality\CompareObjects.cs" />
