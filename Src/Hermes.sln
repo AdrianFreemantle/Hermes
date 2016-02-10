@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Core.Tests", "Hermes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Cron.Tests", "Hermes.Cron.Tests\Hermes.Cron.Tests.csproj", "{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Reflector", "Hermes.Reflector\Hermes.Reflector.csproj", "{5FCC2C64-71A6-42D4-B955-11430C8CF594}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,10 @@ Global
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D0050B3-6C22-4CAC-AD60-6C700CEACB8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FCC2C64-71A6-42D4-B955-11430C8CF594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FCC2C64-71A6-42D4-B955-11430C8CF594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FCC2C64-71A6-42D4-B955-11430C8CF594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FCC2C64-71A6-42D4-B955-11430C8CF594}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

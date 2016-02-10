@@ -12,7 +12,6 @@ namespace Hermes.Reflection
         public OpCode OpCode { get; set; }
         public object Data { get; set; }
 
-
         public bool IsMethodCall
         {
             get
@@ -20,7 +19,6 @@ namespace Hermes.Reflection
                 return Data is MethodInfo;
             }
         }
-
 
         public bool IsConstructorCall
         {
