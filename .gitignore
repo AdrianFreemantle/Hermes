@@ -209,4 +209,8 @@ pip-log.txt
 buildartifacts
 /Scripts/Sequential Guid Generator/Ids.txt
 /Scripts/Sequential Guid Generator/Ids.txt
+<<<<<<< HEAD
 /bin_v5/Hermes.ServiceHost.exe
+=======
+/bin_v5
+>>>>>>> master

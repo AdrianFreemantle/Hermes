@@ -35,6 +35,7 @@ namespace Hermes.Messaging.Configuration
         public static int FirstLevelRetryAttempts { get; internal set; }
         public static bool IsClientEndpoint { get; internal set; }
         public static bool SubsribeToDomainEvents { get; internal set; }
+        public static bool SubsribeToEvents { get; internal set; }
         public static bool DisablePerformanceMonitoring { get; internal set; }
         public static bool DisableHeartbeatService { get; internal set; }
         public static bool DisableMessageAudit { get; set; }
@@ -77,7 +78,7 @@ namespace Hermes.Messaging.Configuration
         public static bool AutoSubscribeEvents
         {
             get { return autoSubscribeEvents; }
-            internal set { autoSubscribeEvents = value; }
+            set { autoSubscribeEvents = value; }
         }        
 
         public static TimeSpan SecondLevelRetryDelay
