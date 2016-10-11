@@ -25,7 +25,14 @@ namespace Hermes.EntityFramework.KeyValueStore
 
         string ToHash(dynamic key)
         {
-            byte[] hashBytes = SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(key.ToString()));
+            Mandate.ParameterNotNull(key, "key");
+
+            var keyString = key.ToString();
+
+            if(String.IsNullOrWhiteSpace(keyString))
+                throw new ArgumentException("The key object must provide a valid value when calling ToString()");
+            
+            byte[] hashBytes = SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(keyString));
             return BitConverter.ToString(hashBytes).Replace("-", "");
         }
 
@@ -69,6 +76,11 @@ namespace Hermes.EntityFramework.KeyValueStore
             }
 
             return Deserialize(entity.Value, Type.GetType(entity.ValueType));
+        }
+
+        public T Get<T>(dynamic key)
+        {
+            return (T)Get(key);
         }
 
         public void Remove(dynamic key)
