@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Service hosting framework using Topshelf.</description>
     <dependencies>
-      <dependency id="Hermes.Core"/>
+      <dependency id="Hermes.Core" version="$version$"/>
       <dependency id="log4net" version="2.0.5" />
     </dependencies>
   </metadata>

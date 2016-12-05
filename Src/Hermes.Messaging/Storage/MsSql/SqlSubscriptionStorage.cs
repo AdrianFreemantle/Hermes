@@ -4,15 +4,16 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
-
+using Hermes.Logging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports.SqlTransport;
-using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Hermes.Messaging.Storage.MsSql
 {
     public class SqlSubscriptionStorage : IStoreSubscriptions
     {
+        private static readonly ILog Logger = LogFactory.Build<SqlSubscriptionStorage>();
+
         private readonly string connectionString;
         private readonly SubscriptionCache subscriptionCache;
 
@@ -44,6 +45,7 @@ namespace Hermes.Messaging.Storage.MsSql
                 return;
             }
 
+
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             using (var connection = new SqlConnection(connectionString))
             {
@@ -51,6 +53,8 @@ namespace Hermes.Messaging.Storage.MsSql
 
                 foreach (var messageType in messageTypes)
                 {
+                    Logger.Debug("Subscribing to {0}", messageType.FullName);
+
                     SqlCommand command = new SqlCommand(SqlCommands.Subscribe, connection);
                     command.Parameters.Add(new SqlParameter("SubscriberEndpoint", client.ToString()));
                     command.Parameters.Add(new SqlParameter("MessageType", messageType.FullName));

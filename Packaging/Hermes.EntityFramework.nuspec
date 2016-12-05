@@ -10,8 +10,8 @@
     <description>Persistence library using Entity Framework 6</description>
     <dependencies>
       <dependency id="EntityFramework" version="6.1.3" />
-      <dependency id="Hermes.Core"/>
-      <dependency id="Hermes.Messaging"/>
+      <dependency id="Hermes.Core" version="$version$"/>
+      <dependency id="Hermes.Messaging" version="$version$"/>
     </dependencies>
   </metadata>
   <files>

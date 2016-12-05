@@ -10,7 +10,7 @@
     <description>Hermes Autofac Adapter.</description>
     <dependencies>
       <dependency id="Autofac" version="3.5.2" />
-      <dependency id="Hermes.Core"/>
+      <dependency id="Hermes.Core" version="$version$"/>
     </dependencies>
   </metadata>
   <files>
