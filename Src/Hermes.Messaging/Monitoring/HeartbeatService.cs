@@ -1,4 +1,5 @@
 ﻿using System;
+using Hermes.Logging;
 using Hermes.Messaging.Bus;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Transports;

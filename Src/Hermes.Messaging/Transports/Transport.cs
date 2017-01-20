@@ -29,6 +29,7 @@ namespace Hermes.Messaging.Transports
 
         public Transport(IReceiveMessages messageReceiver, IContainer container, ModulePipeFactory<IncomingMessageContext> incomingPipeline, ModulePipeFactory<OutgoingMessageContext> outgoingPipeline)
         {
+            Logger.Debug("Ctor");
             this.messageReceiver = messageReceiver;
             this.container = container;
             this.incomingPipeline = incomingPipeline;

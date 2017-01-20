@@ -1,14 +1,17 @@
-﻿using Hermes.Messaging.Pipeline;
+﻿using Hermes.Logging;
+using Hermes.Messaging.Pipeline;
 using Hermes.Messaging.Transports;
 
 namespace Hermes.Messaging.Bus
 {
     public class ControlBus
     {
+        private static readonly ILog Logger = LogFactory.Build<ControlBus>();
         private readonly ITransportMessages messageTransport;
 
         public ControlBus(ITransportMessages messageTransport)
         {
+            Logger.Debug("Ctor");
             this.messageTransport = messageTransport;
         }
 

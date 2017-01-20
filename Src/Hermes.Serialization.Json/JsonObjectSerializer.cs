@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters;
-
+using Hermes.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -12,15 +12,22 @@ namespace Hermes.Serialization.Json
     /// </summary>
     public class JsonObjectSerializer : ISerializeObjects
     {
-        static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        private static readonly ILog Logger = LogFactory.Build<JsonObjectSerializer>();
+        static readonly JsonSerializerSettings SerializerSettings;
+
+        static JsonObjectSerializer()
         {
-            TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-            TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            MissingMemberHandling = MissingMemberHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Populate,
-            Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.RoundtripKind }, new XContainerConverter() }
-        };
+            Logger.Debug("ctor");
+            SerializerSettings = new JsonSerializerSettings
+            {
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                TypeNameHandling = TypeNameHandling.All,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Populate,
+                Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.RoundtripKind }, new XContainerConverter() }
+            };
+        }
 
         public T DeserializeObject<T>(string value)
         {

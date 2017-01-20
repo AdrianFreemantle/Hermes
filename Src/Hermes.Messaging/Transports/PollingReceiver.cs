@@ -18,11 +18,13 @@ namespace Hermes.Messaging.Transports
 
         public PollingReceiver(IDequeueMessages dequeueStrategy)
         {
+            Logger.Debug("Ctor");
             this.dequeueStrategy = dequeueStrategy;
         }
 
         public void Start(Action<TransportMessage> handleMessage)
         {
+            Logger.Debug("Starting");
             messageReceived = handleMessage;
             tokenSource = new CancellationTokenSource();
 
@@ -34,6 +36,7 @@ namespace Hermes.Messaging.Transports
     
         public void Stop()
         {
+            Logger.Debug("Stop");
             if(tokenSource != null)
                 tokenSource.Cancel();
         }

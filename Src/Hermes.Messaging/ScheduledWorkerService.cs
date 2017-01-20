@@ -27,8 +27,9 @@ namespace Hermes.Messaging
         protected abstract void DoWork();
 
         protected ScheduledWorkerService()
-        {      
+        {
             Logger = LogFactory.BuildLogger(GetType());
+            Logger.Debug("ctor");
             timespanSchedule = TimeSpan.FromMinutes(1);
             RunImmediatelyOnStartup = true;
         }

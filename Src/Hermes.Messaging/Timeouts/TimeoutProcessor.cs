@@ -20,6 +20,8 @@ namespace Hermes.Messaging.Timeouts
 
         public TimeoutProcessor(IPersistTimeouts timeoutStore, ISendMessages messageSender)
         {
+            Logger.Debug("Ctor");
+
             this.timeoutStore = timeoutStore;
             this.messageSender = messageSender;
         }
@@ -29,9 +31,9 @@ namespace Hermes.Messaging.Timeouts
             if(Settings.IsSendOnly)
                 return;
 
-            PurgeQueueIfRequired();
-
             Logger.Info("Starting Timeout Processor");
+
+            PurgeQueueIfRequired();
 
             tokenSource = new CancellationTokenSource();
             WorkerTaskFactory.Start(WorkerAction, tokenSource.Token);
