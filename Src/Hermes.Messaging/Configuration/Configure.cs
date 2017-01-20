@@ -4,6 +4,7 @@ using System.Linq;
 using Hermes.Attributes;
 using Hermes.Failover;
 using Hermes.Ioc;
+using Hermes.Logging;
 using Hermes.Messaging;
 using Hermes.Messaging.Configuration;
 using Hermes.Messaging.Configuration.MessageHandlerCache;
@@ -15,6 +16,7 @@ namespace Hermes
 {
     public class Configure : IConfigureEndpoint, IConfigureWorker
     {
+        private static readonly ILog Logger = LogFactory.Build<Configure>();
         private static readonly Configure Instance;
         private static IContainerBuilder containerBuilder;        
 
@@ -65,18 +67,21 @@ namespace Hermes
 
         IConfigureEndpoint IConfigureEndpoint.DisablePerformanceMonitoring()
         {
+            Logger.Debug("Diabling performance monitoring");
             Settings.DisablePerformanceMonitoring = true;
             return this;
         }
 
         public IConfigureEndpoint DisableMessageAudit()
         {
+            Logger.Debug("Disabling message audit");
             Settings.DisableMessageAudit = true;
             return this;
         }
 
         public IConfigureEndpoint NumberOfWorkers(int numberOfWorkers)
         {
+            Logger.Debug("Setting number of working threads to {0}", numberOfWorkers);
             Settings.NumberOfWorkers = numberOfWorkers;
             return this;
         }
@@ -90,12 +95,14 @@ namespace Hermes
 
         public IConfigureEndpoint DisableHeartbeatService()
         {
+            Logger.Debug("Disabling Heartbeat service");
             Settings.DisableHeartbeatService = true;
             return this;
         }
 
         public IConfigureEndpoint DisableDistributedTransactions()
         {
+            Logger.Debug("Disabling distributed transactions");
             Settings.DisableDistributedTransactions = true;
             return this;
         }
@@ -128,6 +135,7 @@ namespace Hermes
 
         public IConfigureWorker DisablePerformanceMonitoring()
         {
+            Logger.Debug("Disabling performance monitoring");
             Settings.DisablePerformanceMonitoring = true;
             return this;
         }
@@ -162,6 +170,7 @@ namespace Hermes
 
         public IConfigureEndpoint SendOnlyEndpoint()
         {
+            Logger.Debug("Setting endpoint and send only");
             Settings.IsSendOnly = true;
             return this;
         }
@@ -174,18 +183,21 @@ namespace Hermes
 
         public IConfigureEndpoint EndpointName(string name)
         {
+            Logger.Debug("Setting endpoint name to {0}", name);
             Settings.SetEndpointName(name);
             return this;
         }
 
         public IConfigureEndpoint EnableCommandValidators()
         {
+            Logger.Debug("Enabling command validators");
             Settings.EnableCommandValidationClasses = true;
             return this;
         }
 
         internal void Start()
         {
+            Logger.Debug("Beginning startup process");
             ComponentScanner.Scan(containerBuilder);
 
             MapMessageTypes();
@@ -193,26 +205,32 @@ namespace Hermes
             SubscribeToEvents();
             CreateQueues();
             StartServices();
+
+            Logger.Debug("Startup process completed");
         }
 
         private static void MapMessageTypes()
         {
+            Logger.Debug("Mapping message types");
             var mapper = Settings.RootContainer.GetInstance<ITypeMapper>();
             mapper.Initialize(HandlerCache.GetAllHandledMessageContracts());
         }
 
         private static void StartServices()
         {
+            Logger.Debug("Starting services...");
             var startableObjects = Settings.RootContainer.GetAllInstances<IAmStartable>();
 
             foreach (var startableObject in startableObjects)
             {
+                Logger.Debug("Starting {0}", startableObject.GetType().FullName);
                 startableObject.Start();
             }
         }
 
         private static void RunInitializers()
         {
+            Logger.Debug("Running initializers.");
             var intializers = Settings.RootContainer.GetAllInstances<INeedToInitializeSomething>().ToArray();
 
             var orderedInitalizers = intializers
@@ -230,12 +248,14 @@ namespace Hermes
         {
             foreach (var init in intializers)
             {
+                Logger.Debug("Running initializer {0}", init.GetType().FullName);
                 init.Initialize();
             }
         }
 
         private static void CreateQueues()
         {
+            Logger.Debug("Creating message queues.");
             var queueCreator = Settings.RootContainer.GetInstance<ICreateMessageQueues>();
             queueCreator.CreateQueueIfNecessary(Settings.MonitoringEndpoint);
 
@@ -259,6 +279,8 @@ namespace Hermes
             {
                  return;   
             }
+
+            Logger.Debug("Subscribing to events");
 
             foreach (var eventType in HandlerCache.GetAllHandledMessageContracts().Where(type => Settings.IsEventType(type)))
             {
