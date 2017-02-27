@@ -287,6 +287,7 @@ namespace Hermes
                 if (typeof (IDomainEvent).IsAssignableFrom(eventType) && !Settings.SubsribeToDomainEvents)
                         continue;
 
+                Logger.Debug("Subscribing to {0}", eventType.FullName);
                 Settings.Subscriptions.Subscribe(eventType);
             }
         }
