@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Hermes.EntityFramework
 {
+    [Serializable]
     public class EntityValidationException : Exception
     {
         public EntityValidationException(DbEntityValidationException dbEntityValidationException)
